@@ -18,6 +18,7 @@ class ModifierHintPopup;
 * This is used by the GlobalXYWnd and GlobalCamera instances.
 */
 class MouseToolManager :
+    public wxEvtHandler,
     public wxutil::SingleIdleCallback,
     public IMouseToolManager
 {

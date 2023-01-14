@@ -22,8 +22,8 @@ private:
     wxSpinCtrl* _yValue;
     wxSpinCtrl* _zValue;
 
-    // Name of key
-    std::string _key;
+    // The target key
+    ITargetKey::Ptr _key;
 
 private:
 
@@ -34,14 +34,13 @@ private:
 
 public:
 	// Construct a TextPropertyEditor with an entity and key to edit
-	Vector3PropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
+	Vector3PropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
 	void updateFromEntity();
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                          const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<Vector3PropertyEditor>(parent, entities, name);
+        return std::make_shared<Vector3PropertyEditor>(parent, entities, key);
     }
 };
 

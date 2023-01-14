@@ -2,6 +2,7 @@
 
 #include "TargetKeyCollection.h"
 #include "render.h"
+#include "ientity.h"
 #include "irenderable.h"
 #include "ivolumetest.h"
 #include "math/Segment.h"

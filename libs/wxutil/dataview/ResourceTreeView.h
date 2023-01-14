@@ -6,6 +6,7 @@
 #include "TreeModelFilter.h"
 #include "IResourceTreePopulator.h"
 #include "../menu/PopupMenu.h"
+#include "wxutil/Icon.h"
 
 namespace wxutil
 {
@@ -76,7 +77,7 @@ private:
     TreeModelFilter::Ptr _treeModelFilter;
     wxDataViewItem _emptyFavouritesLabel;
     wxDataViewItem _progressItem;
-    wxIcon _progressIcon;
+    Icon _progressIcon;
 
     // The currently active populator object
     IResourceTreePopulator::Ptr _populator;
@@ -87,12 +88,15 @@ private:
 
     std::vector<ui::IMenuItemPtr> _customMenuItems;
 
-    decl::Type _declType;
+    // Typename used to store favourites. Favourites disabled if empty.
+    std::string _favouriteTypeName;
+    bool _setFavouritesRecursively;
 
     wxString _filterText;
 
     // The column that is hosting the declaration path (used by e.g. "copy to clipboard")
     TreeModel::Column _declPathColumn;
+    TreeModel::Column _favouriteKeyColumn;
 
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
@@ -130,10 +134,13 @@ public:
 
     virtual void Clear();
 
-    // Enable favourite management for the given declaration type
-    virtual void EnableFavouriteManagement(decl::Type declType);
+    // Enable favourite management for the given favourite type name
+    virtual void EnableFavouriteManagement(const std::string& typeName);
     // Disable favourite management features
     virtual void DisableFavouriteManagement();
+
+    // Whether add/remove favourites is operating recursively
+    virtual void EnableSetFavouritesRecursively(bool enabled);
 
     virtual bool IsDirectorySelected();
     virtual bool IsFavouriteSelected();
@@ -156,7 +163,11 @@ public:
 protected:
     virtual void PopulateContextMenu(wxutil::PopupMenu& popupMenu);
 
+    virtual void SetFavourite(TreeModel::Row& row, bool isFavourite);
     virtual void SetFavouriteRecursively(TreeModel::Row& row, bool isFavourite);
+
+    // Defines the column that is used to retrieve the key when adding/removing favourites
+    virtual void SetFavouriteKeyColumn(const TreeModel::Column& column);
 
     virtual void SetupTreeModelFilter();
 

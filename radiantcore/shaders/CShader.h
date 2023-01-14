@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShaderDefinition.h"
+#include "ShaderTemplate.h"
 #include <sigc++/connection.h>
 #include <memory>
 
@@ -17,16 +17,13 @@ private:
     bool _isInternal;
 
     // The unmodified template
-    ShaderTemplatePtr _originalTemplate;
+    ShaderTemplate::Ptr _originalTemplate;
 
     // The template this material is working with - if this instance 
     // has not been altered, this is the same as _originalTemplate
-	ShaderTemplatePtr _template;
+    ShaderTemplate::Ptr _template;
 
     sigc::connection _templateChanged;
-
-	// The shader file name (i.e. the file where this one is defined)
-	vfs::FileInfo _fileInfo;
 
 	// Name of shader
 	std::string _name;
@@ -40,21 +37,16 @@ private:
 
 	bool _visible;
 
-    // Vector of shader layers
-	IShaderLayerVector _layers;
-
     sigc::signal<void> _sigMaterialModified;
 
 public:
-	static bool m_lightingEnabled;
-
 	/*
-	 * Constructor. Sets the name and the ShaderDefinition to use.
+	 * Constructor. Sets the name and the ShaderTemplate to use.
 	 */
-	CShader(const std::string& name, const ShaderDefinition& definition);
+	CShader(const std::string& name, const ShaderTemplate::Ptr& declaration);
 
-    // Creates a named material from the given definition, with an option to flag this material as "internal"
-	CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal);
+    // Creates a named material from the given declaration, with an option to flag this material as "internal"
+	CShader(const std::string& name, const ShaderTemplate::Ptr& declaration, bool isInternal);
 
 	~CShader();
 
@@ -94,13 +86,21 @@ public:
 	int getSpectrum() const override;
     void setSpectrum(int spectrum) override;
 	DecalInfo getDecalInfo() const override;
+    void setDecalInfo(const DecalInfo& info) override;
 	Coverage getCoverage() const override;
 	std::string getDescription() const override;
     void setDescription(const std::string& description) override;
+    FrobStageType getFrobStageType() override;
+    void setFrobStageType(FrobStageType type) override;
+    IMapExpression::Ptr getFrobStageMapExpression() override;
+    void setFrobStageMapExpressionFromString(const std::string& expr) override;
+    Vector3 getFrobStageRgbParameter(std::size_t index) override;
+    void setFrobStageParameter(std::size_t index, double value) override;
+    void setFrobStageRgbParameter(std::size_t index, const Vector3& value) override;
 	std::string getDefinition() override;
 	bool isAmbientLight() const override;
 	bool isBlendLight() const override;
-	bool isCubicLight() const;
+	bool isCubicLight() const override;
 	bool isFogLight() const override;
     void setIsAmbientLight(bool newValue) override;
     void setIsBlendLight(bool newValue) override;
@@ -112,7 +112,9 @@ public:
 	bool isDiscrete() const override;
 	bool isVisible() const override;
 	void setVisible(bool visible) override;
-    const IShaderLayerVector& getAllLayers() const;
+    std::size_t getNumLayers() override;
+    IShaderLayer::Ptr getLayer(std::size_t index) override;
+    void foreachLayer(const std::function<bool(const IShaderLayer::Ptr&)>& functor) override;
     std::size_t addLayer(IShaderLayer::Type type) override;
     void removeLayer(std::size_t index) override;
     void swapLayerPosition(std::size_t first, std::size_t second) override;
@@ -133,16 +135,12 @@ public:
 	void realise();
 	void unrealise();
 
-	// Parse and load image maps for this shader
-	void realiseLighting();
-	void unrealiseLighting();
-
 	/*
 	 * Set name of shader.
 	 */
 	void setName(const std::string& name);
 
-	IShaderLayer* firstLayer() const;
+	IShaderLayer* firstLayer() override;
     int getParseFlags() const override;
 
     bool isModified() override;
@@ -156,8 +154,10 @@ public:
 
     void refreshImageMaps() override;
 
+    ParseResult updateFromSourceText(const std::string& sourceText) override;
+
     // Returns the current template (including any modifications) of this material
-    const ShaderTemplatePtr& getTemplate();
+    const ShaderTemplate::Ptr& getTemplate();
 
 private:
     void ensureTemplateCopy();

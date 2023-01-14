@@ -153,7 +153,10 @@
     <ClInclude Include="..\..\libs\debugging\render.h" />
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
     <ClInclude Include="..\..\libs\debugging\ScopedDebugTimer.h" />
-    <ClInclude Include="..\..\libs\decl\SpliceHelper.h" />
+    <ClInclude Include="..\..\libs\decl\DeclarationBase.h" />
+    <ClInclude Include="..\..\libs\decl\DeclarationCreator.h" />
+    <ClInclude Include="..\..\libs\decl\DeclLib.h" />
+    <ClInclude Include="..\..\libs\decl\EditableDeclaration.h" />
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
@@ -169,6 +172,7 @@
     <ClInclude Include="..\..\libs\messages\ApplicationIsActiveRequest.h" />
     <ClInclude Include="..\..\libs\messages\ApplicationShutdownRequest.h" />
     <ClInclude Include="..\..\libs\messages\AutomaticMapSaveRequest.h" />
+    <ClInclude Include="..\..\libs\messages\ClearConsole.h" />
     <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h" />
     <ClInclude Include="..\..\libs\messages\ComponentSelectionModeToggleRequest.h" />
     <ClInclude Include="..\..\libs\messages\FileOverwriteConfirmation.h" />
@@ -183,7 +187,9 @@
     <ClInclude Include="..\..\libs\messages\NotificationMessage.h" />
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />
     <ClInclude Include="..\..\libs\messages\TextureChanged.h" />
+    <ClInclude Include="..\..\libs\messages\TextureToolRequest.h" />
     <ClInclude Include="..\..\libs\messages\UnselectSelectionRequest.h" />
+    <ClInclude Include="..\..\libs\ModelExportOptions.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />
@@ -191,10 +197,12 @@
     <ClInclude Include="..\..\libs\os\fs.h" />
     <ClInclude Include="..\..\libs\os\path.h" />
     <ClInclude Include="..\..\libs\parser\CodeTokeniser.h" />
-    <ClInclude Include="..\..\libs\parser\DefBlockTokeniser.h" />
+    <ClInclude Include="..\..\libs\parser\DefBlockSyntaxParser.h" />
     <ClInclude Include="..\..\libs\parser\DefTokeniser.h" />
+    <ClInclude Include="..\..\libs\parser\GuiTokeniser.h" />
     <ClInclude Include="..\..\libs\parser\ParseException.h" />
     <ClInclude Include="..\..\libs\parser\ThreadedDeclParser.h" />
+    <ClInclude Include="..\..\libs\parser\ThreadedDefLoader.h" />
     <ClInclude Include="..\..\libs\parser\Tokeniser.h" />
     <ClInclude Include="..\..\libs\patch\PatchIterators.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
@@ -248,6 +256,7 @@
     <ClInclude Include="..\..\libs\selection\BestPoint.h" />
     <ClInclude Include="..\..\libs\selection\CollectiveSpawnargs.h" />
     <ClInclude Include="..\..\libs\selection\Device.h" />
+    <ClInclude Include="..\..\libs\selection\EntitiesFirstSelector.h" />
     <ClInclude Include="..\..\libs\selection\EntitySelection.h" />
     <ClInclude Include="..\..\libs\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\libs\selection\Pivot2World.h" />
@@ -283,7 +292,6 @@
     <ClInclude Include="..\..\libs\string\trim.h" />
     <ClInclude Include="..\..\libs\SurfaceShader.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />
-    <ClInclude Include="..\..\libs\ThreadedDefLoader.h" />
     <ClInclude Include="..\..\libs\time\ScopeTimer.h" />
     <ClInclude Include="..\..\libs\time\StopWatch.h" />
     <ClInclude Include="..\..\libs\time\Timer.h" />

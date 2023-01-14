@@ -1,9 +1,9 @@
 #pragma once
 
 #include <sigc++/trackable.h>
-#include <wx/panel.h>
 
-#include "wxutil/dataview/ResourceTreeView.h"
+#include "wxutil/decl/DeclarationSelector.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/preview/ParticlePreview.h"
 
 namespace ui
@@ -15,32 +15,27 @@ namespace ui
  * Features a resource tree view on the left and a render preview on the right.
  */
 class ParticleSelector :
-    public wxPanel,
+    public wxutil::DeclarationSelector,
     public sigc::trackable
 {
 private:
-    wxutil::ResourceTreeView::Columns _columns;
-
-    // Tree view listing all the particles
-    wxutil::ResourceTreeView* _treeView;
-
     // The preview widget
     wxutil::ParticlePreviewPtr _preview;
 
 public:
     ParticleSelector(wxWindow* parent);
 
-    std::string getSelectedParticle();
-    void setSelectedParticle(const std::string& particleName);
+    // Returns the selected particle name, including the .prt extension
+    std::string GetSelectedParticle();
 
-private:
-    wxutil::ResourceTreeView* createTreeView(wxWindow* parent);
+    // Set the selected particle (particleName includes the .prt extension)
+    void SetSelectedParticle(const std::string& particleName);
 
     // Populate the list of particles
-    void populateParticleList();
-    void reloadParticles();
+    void Populate() override;
 
-    void _onSelChanged(wxDataViewEvent& ev);
+private:
+    void reloadParticles();
 };
 
 }

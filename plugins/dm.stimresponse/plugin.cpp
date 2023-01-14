@@ -10,6 +10,7 @@
 #include "iradiant.h"
 #include "iundo.h"
 #include "i18n.h"
+#include "selectionlib.h"
 
 #include "StimResponseEditor.h"
 #include "ResponseEffectTypes.h"
@@ -39,23 +40,23 @@ public:
 		return _dependencies;
 	}
 
-	void initialiseModule(const IApplicationContext& ctx) override
-	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
+    void initialiseModule(const IApplicationContext& ctx) override
+    {
+        // Add the callback event
+        GlobalCommandSystem().addWithCheck("StimResponseEditor",
+                                           cmd::noArgs(ui::StimResponseEditor::ShowDialog),
+                                           [] { return selection::pred::haveEntitiesExact(1); });
 
-		// Add the callback event
-		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::ShowDialog);
+        // Add the menu item
+        GlobalMenuManager().add("main/entity",            // menu location path
+                                "StimResponse",           // name
+                                ui::menu::ItemType::Item, // type
+                                _("Stim/Response..."),    // caption
+                                "stimresponse.png",       // icon
+                                "StimResponseEditor");    // event name
+    }
 
-		// Add the menu item
-        GlobalMenuManager().add("main/entity", 	// menu location path
-				"StimResponse", // name
-				ui::menu::ItemType::Item,	// type
-				_("Stim/Response..."),	// caption
-				"stimresponse.png",	// icon
-				"StimResponseEditor"); // event name
-	}
-
-	void shutdownModule() override
+    void shutdownModule() override
 	{
 		// Free any resources, the effect types map holds eclass pointers
 		ResponseEffectTypes::Clear();

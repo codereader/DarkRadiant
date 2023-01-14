@@ -2,6 +2,7 @@
 
 #include "string/convert.h"
 #include "icolourscheme.h"
+#include "../OpenGLRenderSystem.h"
 
 namespace render
 {
@@ -333,9 +334,34 @@ void BuiltInShader::construct()
         break;
     }
 
+    case BuiltInShaderType::WireframeInactive:
+    {
+        setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(),
+            getRenderSystem().getObjectRenderer(), this));
+
+        pass.setRenderFlags(RENDER_DEPTHTEST);
+
+        // light grey rendering
+        pass.setColour({ 0.73f, 0.73f, 0.73f, 0.1f });
+
+        pass.setSortPosition(OpenGLState::SORT_BACKGROUND);
+        pass.setDepthFunc(GL_LESS);
+        pass.m_linewidth = 1;
+        pass.m_pointsize = 1;
+
+        enableViewType(RenderViewType::OrthoView);
+        break;
+    }
+
     default:
         throw std::runtime_error("Cannot construct this shader: " + getName());
     }
+}
+
+bool BuiltInShader::supportsVertexColours() const
+{
+    // Disable vertex colours for the inactive wireframe shader
+    return _type != BuiltInShaderType::WireframeInactive;
 }
 
 void BuiltInShader::constructOrthoMergeActionOverlay(OpenGLState& pass, const Colour4& colour,
@@ -378,7 +404,6 @@ void BuiltInShader::constructCameraMergeActionOverlay(OpenGLState& pass, const C
 
 void BuiltInShader::constructPointShader(OpenGLState& pass, float pointSize, OpenGLState::SortPosition sort)
 {
-    pass.setRenderFlag(RENDER_POINT_COLOUR);
     pass.setRenderFlag(RENDER_DEPTHWRITE);
 
     pass.setSortPosition(sort);

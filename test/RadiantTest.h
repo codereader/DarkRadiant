@@ -172,11 +172,13 @@ protected:
 		GlobalCommandSystem().executeCommand("OpenMap", mapsRelativePath);
 	}
 
+    static constexpr const char* DEFAULT_GAME_TYPE = "The Dark Mod 2.0 (Standalone)";
+
 	virtual void handleGameConfigMessage(game::ConfigurationNeeded& message)
 	{
 		game::GameConfiguration config;
 
-		config.gameType = "The Dark Mod 2.0 (Standalone)";
+		config.gameType = DEFAULT_GAME_TYPE;
 		config.enginePath = _context.getTestProjectPath();
 
 		message.setConfig(config);

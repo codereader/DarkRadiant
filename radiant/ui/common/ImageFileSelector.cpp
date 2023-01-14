@@ -2,6 +2,8 @@
 
 #include "i18n.h"
 #include "ImageFilePopulator.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -66,7 +68,14 @@ ImageFileSelector::ImageFileSelector(wxWindow* parent, wxTextCtrl* targetControl
     _okButton = dialogButtons->GetAffirmativeButton();
     _okButton->Disable();
 
-    GetSizer()->Add(_treeView, 1, wxALL|wxEXPAND, 12);
+    auto toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
+    toolbar->EnableFavouriteManagement(false);
+
+    auto treeViewSizer = new wxBoxSizer(wxVERTICAL);
+    treeViewSizer->Add(toolbar, 0, wxEXPAND | wxBOTTOM, 6);
+    treeViewSizer->Add(_treeView, 1, wxALL | wxEXPAND, 0);
+
+    GetSizer()->Add(treeViewSizer, 1, wxALL|wxEXPAND, 12);
     GetSizer()->Add(dialogButtons, 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 
     FitToScreen(0.5f, 0.7f);
@@ -85,7 +94,7 @@ int ImageFileSelector::ShowModal(const std::string& preselectItem)
 
     auto result = DialogBase::ShowModal();
 
-    if (result != wxID_OK)
+    if (result != wxID_OK && _targetControl->GetValue() != _previousValue)
     {
         // Restore the previous value on cancel
         _targetControl->SetValue(_previousValue);
@@ -131,9 +140,11 @@ void ImageFileSelector::onTreeSelectionChanged(wxDataViewEvent& ev)
     bool isFolder = row[_columns.isFolder].getBool();
     _okButton->Enable(!isFolder);
 
-    if (!isFolder)
+    // Only update the target control if the value differs
+    auto newValue = row[_columns.fullName].getString();
+    if (!isFolder && _targetControl && _targetControl->GetValue() != newValue)
     {
-        _targetControl->SetValue(row[_columns.fullName].getString());
+        _targetControl->SetValue(newValue);
     }
 }
 

@@ -52,6 +52,7 @@ private:
     void JumpToPrevFilterMatch();
 
     void _onEntryChar(wxKeyEvent& ev);
+    void _onEntryKey(wxKeyEvent& ev);
     void _onEntryText(wxCommandEvent& ev);
     void _onFilterButtonToggled(wxCommandEvent& ev);
     void _onTreeViewFilterTextCleared(wxCommandEvent& ev);

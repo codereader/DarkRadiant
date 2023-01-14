@@ -7,16 +7,17 @@
 #include "iparticles.h"
 #include "iparticlenode.h"
 #include "imap.h"
+#include "ui/ideclpreview.h"
 
 #include <string>
-#include <map>
 
 namespace wxutil
 {
 
 /// RenderPreview widget for particle systems
 class ParticlePreview :
-    public RenderPreview
+    public RenderPreview,
+    public ui::IDeclarationPreview
 {
 private:
     wxToolBarToolBase* _showAxesButton;
@@ -41,6 +42,10 @@ public:
 
 	~ParticlePreview();
 
+    wxWindow* GetPreviewWidget() override;
+
+    void ClearPreview() override;
+
     /**
      * Set the widget to display the given particle. If the particle name is the
      * empty string, the widget will release the currently displayed one.
@@ -48,15 +53,15 @@ public:
      * @param
      * String name of the particle to display.
      */
-    void setParticle(const std::string& particle);
+    void SetPreviewDeclName(const std::string& declName) override;
 
     /**
      * Get the model from the widget, in order to display properties about it.
      */
-    particles::IParticleDefPtr getParticle()
+    particles::IParticleDef::Ptr getParticle()
     {
         return _particleNode ? _particleNode->getParticle()->getParticleDef()
-                             : particles::IParticleDefPtr();
+                             : particles::IParticleDef::Ptr();
     }
 
 protected:

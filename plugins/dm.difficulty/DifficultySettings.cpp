@@ -154,7 +154,7 @@ void DifficultySettings::updateTreeModel()
         if (!setting.iter.IsOk())
         {
             // No iter corresponding to this setting yet, insert it
-			setting.iter = classIter.IsOk() ? _store->AddItem(classIter).getItem() : _store->AddItem().getItem();
+			setting.iter = classIter.IsOk() ? _store->AddItemUnderParent(classIter).getItem() : _store->AddItem().getItem();
 			settingAdded = true;
         }
 
@@ -166,7 +166,7 @@ void DifficultySettings::updateTreeModel()
 		colour.SetColour(setting.isDefault ? wxColor(112,112,112) : wxColor(0,0,0));
 
 		row[_columns.description] = setting.getDescString() + (overridden ? _(" (overridden)") : "");
-        row[_columns.description] = colour;
+        row[_columns.description].setAttr(colour);
 
         row[_columns.classname] = setting.className;
         row[_columns.settingId] = setting.id;
@@ -279,13 +279,13 @@ wxDataViewItem DifficultySettings::findOrInsertClassname(const std::string& clas
 
 wxDataViewItem DifficultySettings::insertClassName(const std::string& className, const wxDataViewItem& parent)
 {
-    wxutil::TreeModel::Row row = parent.IsOk() ? _store->AddItem(parent) : _store->AddItem();
+    wxutil::TreeModel::Row row = parent.IsOk() ? _store->AddItemUnderParent(parent) : _store->AddItem();
     
     wxDataViewItemAttr black;
 	black.SetColour(wxColor(0,0,0));
 
 	row[_columns.description] = className;
-    row[_columns.description] = black;
+    row[_columns.description].setAttr(black);
 
     row[_columns.classname] = className;
     row[_columns.settingId] = -1;
@@ -303,11 +303,11 @@ std::string DifficultySettings::getInheritanceKey(const std::string& className)
 
     // Get the inheritance chain of this class
     std::list<std::string> inheritanceChain;
-    for (const IEntityClass* currentClass = eclass.get();
+    for (IEntityClass* currentClass = eclass.get();
          currentClass != NULL;
          currentClass = currentClass->getParent())
     {
-        inheritanceChain.push_front(currentClass->getName());
+        inheritanceChain.push_front(currentClass->getDeclName());
     }
 
     // Build the inheritance key
@@ -341,7 +341,7 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
     std::string diffPrefix = "diff_" + string::to_string(_level) + "_";
     std::string prefix = diffPrefix + "change_";
 
-    eclass::AttributeList spawnargs = eclass::getSpawnargsWithPrefix(*def, prefix);
+    eclass::AttributeList spawnargs = eclass::getSpawnargsWithPrefix(def, prefix);
 
     for (eclass::AttributeList::iterator i = spawnargs.begin();
          i != spawnargs.end(); ++i)

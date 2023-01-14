@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include "igl.h"
+#include "iglprogram.h"
 
 namespace render
 {
@@ -19,6 +20,7 @@ enum class ShaderProgram
     CubeMap,
     ShadowMap,
     RegularStage,
+    BlendLight,
 };
 
 /**

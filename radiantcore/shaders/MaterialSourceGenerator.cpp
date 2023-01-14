@@ -280,12 +280,27 @@ void writeStageModifiers(std::ostream& stream, Doom3ShaderLayer& layer)
     }
 }
 
-void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
+namespace
+{
+    // Generates the dimension string " 200 300" including a leading whitespace
+    // Generates an empty string if the dimensions are 0,0
+    std::string generateRenderMapDimensions(const Doom3ShaderLayer& layer)
+    {
+        const auto& size = layer.getRenderMapSize();
+
+        return size.getLengthSquared() <= 0 ? "" : fmt::format(" {0} {1}",
+            static_cast<int>(layer.getRenderMapSize().x()),
+            static_cast<int>(layer.getRenderMapSize().y()));
+    }
+    
+}
+
+void writeBlendMap(std::ostream& stream, const Doom3ShaderLayer& layer)
 {
     // Blend types
     const auto& blendFunc = layer.getBlendFuncStrings();
 
-    if (!blendFunc.first.empty())
+    if (!blendFunc.first.empty() && !isDefaultBlendFunc(blendFunc))
     {
         stream << "\t\tblend " << blendFunc.first;
 
@@ -302,51 +317,60 @@ void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
     // Map
     auto mapExpr = layer.getMapExpression();
 
-    if (layer.getMapExpression())
+    switch (layer.getMapType())
     {
-        stream << "\t\t";
+    case IShaderLayer::MapType::Map:
+        stream << "\t\tmap " << (mapExpr ? mapExpr->getExpressionString() : "")  << "\n";
+        break;
+    case IShaderLayer::MapType::CubeMap:
+        stream << "\t\tcubeMap " << (mapExpr ? mapExpr->getExpressionString() : "") << "\n";
+        break;
+    case IShaderLayer::MapType::CameraCubeMap:
+        stream << "\t\tcameraCubeMap " << (mapExpr ? mapExpr->getExpressionString() : "") << "\n";
+        break;
+    case IShaderLayer::MapType::MirrorRenderMap:
+        // Whitespace separator will be generated along with the dimensions
+        stream << "\t\tmirrorRenderMap" << generateRenderMapDimensions(layer) << "\n";
 
-        switch (layer.getMapType())
+        // Mirror render stages are allowed to have map expressions
+        if (mapExpr)
         {
-        case IShaderLayer::MapType::Map:
-            stream << "map " << mapExpr->getExpressionString() << "\n";
-            break;
-        case IShaderLayer::MapType::CubeMap:
-            stream << "cubeMap " << mapExpr->getExpressionString() << "\n";
-            break;
-        case IShaderLayer::MapType::CameraCubeMap:
-            stream << "cameraCubeMap " << mapExpr->getExpressionString() << "\n";
-            break;
-        case IShaderLayer::MapType::MirrorRenderMap:
-            stream << "mirrorRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
-                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
-            break;
-        case IShaderLayer::MapType::RemoteRenderMap:
-            stream << "remoteRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
-                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
-            break;
-        case IShaderLayer::MapType::VideoMap:
-        {
-            auto videoMap = std::dynamic_pointer_cast<IVideoMapExpression>(mapExpr);
-
-            if (videoMap)
-            {
-                stream << "videoMap " << (videoMap->isLooping() ? "loop " : "") << videoMap->getExpressionString() << "\n";
-            }
-            break;
+            stream << "\t\tmap " << (mapExpr ? mapExpr->getExpressionString() : "") << "\n";
         }
-        case IShaderLayer::MapType::SoundMap:
-        {
-            auto soundMap = std::dynamic_pointer_cast<ISoundMapExpression>(mapExpr);
 
-            if (soundMap)
-            {
-                stream << "soundMap " << (soundMap->isWaveform() ? "waveform\n" : "\n");
-            }
-            break;
+        break;
+    case IShaderLayer::MapType::RemoteRenderMap:
+        // Whitespace separator will be generated along with the dimensions
+        stream << "\t\tremoteRenderMap" << generateRenderMapDimensions(layer) << "\n";
+
+        // Remote render stages are allowed to have map expressions
+        if (mapExpr)
+        {
+            stream << "\t\tmap " << (mapExpr ? mapExpr->getExpressionString() : "") << "\n";
         }
-        } // switch
+
+        break;
+    case IShaderLayer::MapType::VideoMap:
+    {
+        auto videoMap = std::dynamic_pointer_cast<IVideoMapExpression>(mapExpr);
+
+        if (videoMap)
+        {
+            stream << "\t\tvideoMap " << (videoMap->isLooping() ? "loop " : "") << videoMap->getExpressionString() << "\n";
+        }
+        break;
     }
+    case IShaderLayer::MapType::SoundMap:
+    {
+        auto soundMap = std::dynamic_pointer_cast<ISoundMapExpression>(mapExpr);
+
+        if (soundMap)
+        {
+            stream << "\t\tsoundMap " << (soundMap->isWaveform() ? "waveform\n" : "\n");
+        }
+        break;
+    }
+    } // switch
 }
 
 bool stageQualifiesForShortcut(Doom3ShaderLayer& layer)
@@ -417,6 +441,19 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
     return stream;
 }
 
+// Writes (x y z) or just a single number without parentheses if the vector has uniform values
+void writeScalarOrVector3(std::ostream& stream, const Vector3& vec)
+{
+    if (vec.x() == vec.y() && vec.y() == vec.z())
+    {
+        stream << vec.x();
+    }
+    else
+    {
+        stream << "(" << vec.x() << " " << vec.y() << " " << vec.z() << ")";
+    }
+}
+
 // Write the material to the given stream (one tab indentation)
 std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
 {
@@ -438,9 +475,20 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         stream << "\n";
     }
 
+    // Macros go first
+    bool hasDecalMacro = shaderTemplate.getParseFlags() & Material::PF_HasDecalMacro;
+
+    if (hasDecalMacro)
+    {
+        stream << "\t" << "DECAL_MACRO" << "\n";
+    }
+
     // Go through the material flags which reflect a single keyword
     for (const auto& pair : shaders::MaterialFlagKeywords)
     {
+        // Skip exporting noShadows is DECAL_MACRO is active
+        if (hasDecalMacro && pair.second == Material::FLAG_NOSHADOWS) continue;
+
         if (shaderTemplate.getMaterialFlags() & pair.second)
         {
             stream << "\t" << pair.first << "\n";
@@ -448,7 +496,9 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     }
 
     // Polygon Offset
-    if (shaderTemplate.getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
+    // DECAL_MACRO implies polygonOffset 1, prevent writing redundant information
+    if ((shaderTemplate.getMaterialFlags() & Material::FLAG_POLYGONOFFSET) != 0 &&
+        (shaderTemplate.getPolygonOffset() != 1 || !hasDecalMacro))
     {
         stream << fmt::format("\tpolygonOffset {0}\n", shaderTemplate.getPolygonOffset());
     }
@@ -489,7 +539,8 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     }
 
     // Sort
-    if (shaderTemplate.getMaterialFlags() & Material::FLAG_HAS_SORT_DEFINED)
+    if (shaderTemplate.getMaterialFlags() & Material::FLAG_HAS_SORT_DEFINED && 
+        (!hasDecalMacro || shaderTemplate.getSortRequest() != Material::SORT_DECAL))
     {
         stream << "\tsort ";
 
@@ -614,6 +665,9 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     // Surface flags
     for (const auto& pair : SurfaceFlags)
     {
+        // Skip exporting "discrete" is DECAL_MACRO is active
+        if (hasDecalMacro && pair.second == Material::SURF_DISCRETE) continue;
+
         if (shaderTemplate.getSurfaceFlags() & pair.second)
         {
             stream << "\t" << pair.first << "\n";
@@ -635,6 +689,31 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         stream << *layer;
     }
 
+    // FrobStage keywords
+    if (shaderTemplate.getFrobStageType() != Material::FrobStageType::Default)
+    {
+        stream << "\n\t";
+        stream << getStringForFrobStageType(shaderTemplate.getFrobStageType());
+
+        if (shaderTemplate.getFrobStageType() == Material::FrobStageType::Texture)
+        {
+            stream << " ";
+            const auto& expr = shaderTemplate.getFrobStageMapExpression();
+            stream << (expr ? expr->getExpressionString() : "_white"); // don't export invalid syntax
+        }
+
+        if (shaderTemplate.getFrobStageType() == Material::FrobStageType::Diffuse ||
+            shaderTemplate.getFrobStageType() == Material::FrobStageType::Texture)
+        {
+            stream << " ";
+            writeScalarOrVector3(stream, shaderTemplate.getFrobStageRgbParameter(0));
+            stream << " ";
+            writeScalarOrVector3(stream, shaderTemplate.getFrobStageRgbParameter(1));
+        }
+
+        stream << "\n";
+    }
+
     return stream;
 }
 
@@ -645,21 +724,6 @@ std::string MaterialSourceGenerator::GenerateDefinitionBlock(ShaderTemplate& sha
     output << shaderTemplate;
 
     return output.str();
-}
-
-void MaterialSourceGenerator::WriteMaterialGenerationComment(std::ostream& stream)
-{
-    stream << "/*" << std::endl
-        << "\tGenerated by DarkRadiant's Material Editor."
-        << std::endl << "*/" << std::endl;
-}
-
-void MaterialSourceGenerator::WriteFullMaterialToStream(std::ostream& stream, const MaterialPtr& material)
-{
-    stream << material->getName() << "\n";
-    stream << "{";
-    stream << material->getDefinition();
-    stream << "}" << std::endl;
 }
 
 }

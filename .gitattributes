@@ -1,5 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+.gitattributes export-ignore
+.github export-ignore
+.gitlab-ci.yml export-ignore
 
 # Custom for Visual Studio
 *.cs     diff=csharp

@@ -48,7 +48,7 @@ namespace {
     const char* PLACE_PLAYERSTART_TEXT = N_("Place Player Start here");
     const char* PLACE_PLAYERSTART_ICON = "player_start16.png";
     const char* ADD_MODEL_TEXT = N_("Create Model...");
-    const char* ADD_MODEL_ICON = "cmenu_add_model.png";
+    const char* ADD_MODEL_ICON = "model16green.png";
     const char* ADD_PARTICLE_TEXT = N_("Create Particle...");
     const char* ADD_PARTICLE_ICON = "particle16.png";
     const char* ADD_MONSTERCLIP_TEXT = N_("Surround with Monsterclip");
@@ -254,9 +254,12 @@ void OrthoContextMenu::addEntity()
         wxutil::EntityClassChooser::Purpose::ConvertEntity :
         wxutil::EntityClassChooser::Purpose::AddEntity;
 
-    auto className = wxutil::EntityClassChooser::ChooseEntityClass(purpose);
+    createEntity(wxutil::EntityClassChooser::ChooseEntityClass(purpose));
+}
 
-    if (className.empty()) return;
+void OrthoContextMenu::createEntity(const std::string& classname)
+{
+    if (classname.empty()) return;
 
     UndoableCommand command(_selectionInfo.anythingSelected ? "convertToEntity" : "createEntity");
 
@@ -264,7 +267,7 @@ void OrthoContextMenu::addEntity()
     // wrong number of brushes is selected.
     try
     {
-        GlobalEntityModule().createEntityFromSelection(className, _lastPoint);
+        GlobalEntityModule().createEntityFromSelection(classname, _lastPoint);
     }
     catch (cmd::ExecutionFailure& e)
     {
@@ -298,8 +301,9 @@ void OrthoContextMenu::callbackAddPrefab()
     if (!result.prefabPath.empty())
     {
         // Pass the call to the map algorithm and give the lastPoint coordinate as argument
-        GlobalCommandSystem().executeCommand(LOAD_PREFAB_AT_CMD,
-            result.prefabPath, _lastPoint, result.insertAsGroup);
+        GlobalCommandSystem().executeCommand(
+            LOAD_PREFAB_AT_CMD, {result.prefabPath, _lastPoint, result.insertAsGroup}
+        );
     }
 }
 
@@ -333,17 +337,24 @@ void OrthoContextMenu::callbackAddModel()
     UndoableCommand command("addModel");
 
     // Display the model selector and block waiting for a selection (may be empty)
-    ModelSelectorResult ms = ModelSelector::chooseModel("", true, true);
+    auto ms = ModelSelector::chooseModel("", true, true);
 
     // If a model was selected, create the entity and set its model key
-    if (ms.model.empty())
+    if (ms.name.empty())
     {
         return;
     }
 
+    if (ms.objectKind == ModelSelector::Result::ObjectKind::EntityClass)
+    {
+        createEntity(ms.name);
+        return;
+    }
+
+    // Create a model
     try
     {
-        auto modelDef = GlobalEntityClassManager().findModel(ms.model);
+        auto modelDef = GlobalEntityClassManager().findModel(ms.name);
 
         auto className = modelDef ? MODEL_CLASSNAME_ANIMATED : MODEL_CLASSNAME_STATIC;
 
@@ -352,7 +363,7 @@ void OrthoContextMenu::callbackAddModel()
         );
 
         //Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
-        modelNode->getEntity().setKeyValue("model", ms.model);
+        modelNode->getEntity().setKeyValue("model", ms.name);
         modelNode->getEntity().setKeyValue("skin", ms.skin);
 
         // If 'createClip' is ticked, create a clip brush

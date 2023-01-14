@@ -2,7 +2,6 @@
 
 #include <cstddef>
 #include "imodule.h"
-#include "ivolumetest.h"
 #include <memory>
 #include <sigc++/signal.h>
 #include "imanipulator.h"
@@ -49,6 +48,16 @@ namespace selection
         Edge,
         Face,
     };
+
+    // The selection strategy determining the scene objects chosen for selection tests
+    enum class SelectionMode
+    {
+        Entity,         // Entities only
+        Primitive,      // Primitives (no components), entities take precedence
+        GroupPart,      // Child Primitives of non-worldspawn entities
+        Component,      // Components
+        MergeAction,    // Merge Action nodes only
+    };
 }
 
 namespace selection
@@ -63,15 +72,6 @@ public:
 	eToggle,	// This is for Shift-Clicks to toggle the selection of an instance
 	eReplace,	// This is active if the mouse is moved to a NEW location and Alt-Shift is held
 	eCycle,		// This is active if the mouse STAYS at the same position and Alt-Shift is held
-  };
-
-  enum EMode
-  {
-    eEntity,
-    ePrimitive,
-	eGroupPart,
-    eComponent,
-    eMergeAction,
   };
 
 	/** greebo: An SelectionSystem::Observer gets notified
@@ -107,12 +107,13 @@ public:
 
 	virtual const SelectionInfo& getSelectionInfo() = 0;
 
-  virtual void SetMode(EMode mode) = 0;
-  virtual EMode Mode() const = 0;
+    virtual void setSelectionMode(SelectionMode mode) = 0;
+    virtual SelectionMode getSelectionMode() const = 0;
+
     virtual void SetComponentMode(ComponentSelectionMode mode) = 0;
     virtual ComponentSelectionMode ComponentMode() const = 0;
 
-	virtual sigc::signal<void, EMode>& signal_selectionModeChanged() = 0;
+	virtual sigc::signal<void, SelectionMode>& signal_selectionModeChanged() = 0;
 	virtual sigc::signal<void, ComponentSelectionMode>& signal_componentModeChanged() = 0;
 
   virtual std::size_t countSelected() const = 0;
@@ -228,6 +229,20 @@ public:
 
 	// Returns the center point of the current selection
 	virtual Vector3 getCurrentSelectionCenter() = 0;
+
+    // Toggles selection focus mode (only possible with a non-empty selection)
+    // After activating, only items that are part of the set can be selected and manipulated.
+    // Throws cmd::ExecutionNotPossible when trying to activate with an empty selection
+    virtual void toggleSelectionFocus() = 0;
+
+    // Returns true when focus mode is active
+    // In focus mode only certain elements in the map can be selected.
+    // It's also possible to select single parts of selection groups
+    // without disbanding the group.
+    virtual bool selectionFocusIsActive() = 0;
+
+    // Returns the volume the focus items are occupying
+    virtual AABB getSelectionFocusBounds() = 0;
 };
 
 }

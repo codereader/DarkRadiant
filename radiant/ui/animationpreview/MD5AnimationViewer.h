@@ -1,10 +1,10 @@
 #pragma once
 
-#include "imd5model.h"
 #include "ieclass.h"
 
 #include "AnimationPreview.h"
 #include "icommandsystem.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/dataview/TreeModel.h"
@@ -14,22 +14,9 @@ namespace ui
 {
 
 class MD5AnimationViewer :
-	public wxutil::DialogBase,
-	public ModelDefVisitor,
-	public wxutil::VFSTreePopulator::Visitor
+	public wxutil::DialogBase
 {
 public:
-	// Treemodel definitions
-	struct ModelListColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		wxutil::TreeModel::Column name;
-
-		ModelListColumns() : 
-			name(add(wxutil::TreeModel::Column::String)) 
-		{}
-	};
-
 	struct AnimListColumns :
 		public wxutil::TreeModel::ColumnRecord
 	{
@@ -51,13 +38,8 @@ public:
 private:
 	RunMode _runMode;
 
-	ModelListColumns _modelColumns;
-
-	// Liststore for the model list, and its selection object
-	wxutil::TreeModel::Ptr _modelList;
-	wxutil::TreeView* _modelTreeView;
-
-	wxutil::VFSTreePopulator _modelPopulator;
+	wxutil::DeclarationTreeView::Columns _modelColumns;
+	wxutil::DeclarationTreeView* _modelTreeView;
 
 	AnimListColumns _animColumns;
 
@@ -76,13 +58,6 @@ protected:
 
 public:
 	static void Show(const cmd::ArgumentList& args);
-
-	void visit(const IModelDefPtr& modelDef);
-
-	void visit(wxutil::TreeModel& store,
-				wxutil::TreeModel::Row& row,
-				const std::string& path,
-				bool isExplicit);
 
 	std::string getSelectedModel();
 	void setSelectedModel(const std::string& model);
@@ -106,7 +81,7 @@ private:
 	void populateModelList();
 	void populateAnimationList();
 
-	IModelDefPtr getSelectedModelDef();
+	IModelDef::Ptr getSelectedModelDef();
 };
 
 }

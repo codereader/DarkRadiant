@@ -343,26 +343,28 @@ public:
 
         if (!_material) return list;
 
-        for (const auto& layer : _material->getAllLayers())
+        _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             list.emplace_back(layer);
-        }
+            return true;
+        });
 
         return list;
     }
 
     std::size_t getNumStages()
     {
-        return _material ? _material->getAllLayers().size() : 0;
+        return _material ? _material->getNumLayers() : 0;
     }
 
     ScriptMaterialStage getStage(std::size_t index)
     {
-        if (!_material) return ScriptMaterialStage(IShaderLayer::Ptr());
+        if (!_material || index >= _material->getNumLayers())
+        {
+            return ScriptMaterialStage(IShaderLayer::Ptr());
+        }
 
-        const auto& layers = _material->getAllLayers();
-        
-        return ScriptMaterialStage(index >= 0 && index < layers.size() ? layers[index] : IShaderLayer::Ptr());
+        return ScriptMaterialStage(_material->getLayer(index));
     }
 
     ScriptEditableMaterialStage getEditableStage(std::size_t index)
@@ -600,6 +602,11 @@ public:
         return _material ? _material->getDecalInfo() : Material::DecalInfo();
     }
 
+    void setDecalInfo(const Material::DecalInfo& decalInfo)
+    {
+        if (_material) _material->setDecalInfo(decalInfo);
+    }
+
     Material::Coverage getCoverage()
     {
         return _material ? _material->getCoverage() : Material::MC_UNDETERMINED;
@@ -626,6 +633,44 @@ public:
     {
         throwIfMaterialCannotBeModified();
         if (_material) _material->setLightFalloffCubeMapType(type);
+    }
+
+    Material::FrobStageType getFrobStageType()
+    {
+        return _material ? _material->getFrobStageType() : Material::FrobStageType::Default;
+    }
+
+    void setFrobStageType(Material::FrobStageType type)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setFrobStageType(type);
+    }
+
+    std::string getFrobStageMapExpressionString()
+    {
+        return _material && _material->getFrobStageMapExpression() ? _material->getFrobStageMapExpression()->getExpressionString() : "";
+    }
+
+    void setFrobStageMapExpressionFromString(const std::string& expr)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setFrobStageMapExpressionFromString(expr);
+    }
+
+    Vector3 getFrobStageRgbParameter(std::size_t index)
+    {
+        return _material ? _material->getFrobStageRgbParameter(index) : Vector3(0, 0, 0);
+    }
+
+    void setFrobStageRgbParameter(std::size_t index, const Vector3& value)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setFrobStageRgbParameter(index, value);
+    }
+
+    void setFrobStageParameter(std::size_t index, double value)
+    {
+        setFrobStageRgbParameter(index, Vector3(value, value, value));
     }
 
     std::string getRenderBumpArguments()

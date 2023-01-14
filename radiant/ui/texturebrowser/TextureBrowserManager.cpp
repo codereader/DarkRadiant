@@ -1,15 +1,14 @@
 #include "TextureBrowserManager.h"
-#include "TextureBrowser.h"
+#include "TextureBrowserPanel.h"
 
 #include <list>
 #include <sigc++/functors/mem_fun.h>
 #include "i18n.h"
 #include "ui/ieventmanager.h"
+#include "ui/iuserinterface.h"
 #include "ishaderclipboard.h"
 #include "icommandsystem.h"
-#include "ui/igroupdialog.h"
 #include "ipreferencesystem.h"
-#include "itextstream.h"
 #include "module/StaticModule.h"
 
 namespace ui
@@ -17,8 +16,33 @@ namespace ui
 
 namespace
 {
-    const char* const MODULE_TEXTURE_BROWSER_MANAGER = "TextureBrowserManager";
+    constexpr const char* const MODULE_TEXTURE_BROWSER_MANAGER = "TextureBrowserManager";
 }
+
+class TextureBrowserControl :
+    public IUserControl
+{
+public:
+    std::string getControlName() override
+    {
+        return UserControl::TextureBrowser;
+    }
+
+    std::string getDisplayName() override
+    {
+        return _("Textures");
+    }
+
+    std::string getIcon() override
+    {
+        return "icon_texture.png";
+    }
+
+    wxWindow* createWidget(wxWindow* parent) override
+    {
+        return new TextureBrowserPanel(parent);
+    }
+};
 
 TextureBrowserManager::TextureBrowserManager()
 {}
@@ -32,25 +56,25 @@ std::string TextureBrowserManager::getSelectedShader()
 
 void TextureBrowserManager::setSelectedShader(const std::string& shader)
 {
-    for (TextureBrowser* browser : _browsers)
+    for (auto browser : _browsers)
     {
         browser->setSelectedShader(shader);
     }
 }
 
-void TextureBrowserManager::registerTextureBrowser(TextureBrowser* browser)
+void TextureBrowserManager::registerTextureBrowser(TextureBrowserPanel* browser)
 {
     _browsers.insert(browser);
 }
 
-void TextureBrowserManager::unregisterTextureBrowser(TextureBrowser* browser)
+void TextureBrowserManager::unregisterTextureBrowser(TextureBrowserPanel* browser)
 {
     _browsers.erase(browser);
 }
 
 void TextureBrowserManager::updateAllWindows()
 {
-    for (TextureBrowser* browser : _browsers)
+    for (auto browser : _browsers)
     {
         browser->queueUpdate();
     }
@@ -78,12 +102,6 @@ void TextureBrowserManager::registerPreferencePage()
     page.appendCheckBox(_("Show \"Other Materials\""), RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
 }
 
-// Static command target
-void TextureBrowserManager::toggleGroupDialogTexturesTab(const cmd::ArgumentList& args)
-{
-    GlobalGroupDialog().togglePage("textures");
-}
-
 const std::string& TextureBrowserManager::getName() const
 {
     static std::string _name(MODULE_TEXTURE_BROWSER_MANAGER);
@@ -100,6 +118,7 @@ const StringSet& TextureBrowserManager::getDependencies() const
         _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_SHADERCLIPBOARD);
+        _dependencies.insert(MODULE_USERINTERFACE);
     }
 
     return _dependencies;
@@ -107,24 +126,33 @@ const StringSet& TextureBrowserManager::getDependencies() const
 
 void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     GlobalEventManager().addRegistryToggle("TextureBrowserToggleUniformScale", RKEY_TEXTURE_USE_UNIFORM_SCALE);
     GlobalEventManager().addRegistryToggle("TextureBrowserHideUnused", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalEventManager().addRegistryToggle("TextureBrowserShowFavouritesOnly", RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
-    GlobalEventManager().addRegistryToggle("TextureBrowserShowNames",
-                                           RKEY_TEXTURES_SHOW_NAMES);
-    GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
+    GlobalEventManager().addRegistryToggle("TextureBrowserShowNames", RKEY_TEXTURES_SHOW_NAMES);
 
     registerPreferencePage();
 
     _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
         sigc::mem_fun(this, &TextureBrowserManager::onShaderClipboardSourceChanged)
     );
+
+    // Register the texture browser
+    GlobalUserInterface().registerControl(std::make_shared<TextureBrowserControl>());
+
+    GlobalMainFrame().signal_MainFrameConstructed().connect([this]
+    {
+        GlobalMainFrame().addControl(UserControl::TextureBrowser, IMainFrame::ControlSettings
+        {
+            IMainFrame::Location::PropertyPanel,
+            true
+        });
+    });
 }
 
 void TextureBrowserManager::shutdownModule()
 {
+    GlobalUserInterface().unregisterControl(UserControl::TextureBrowser);
     _shaderClipboardConn.disconnect();
 }
 

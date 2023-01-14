@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
+#include "igame.h"
 
 #include "string/split.h"
 #include "string/join.h"
@@ -200,62 +201,67 @@ void MenuElement::setAccelerator(const std::string& accelStr)
 
 MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 {
-	MenuElementPtr item;
+    MenuElementPtr item;
 
-	std::string nodeName = node.getName();
+    // Don't create anything if the menu item requires a non-existent game feature
+    if (auto feature = node.getAttributeValue("gamefeature");
+        !feature.empty() && !GlobalGameManager().currentGame()->hasFeature(feature))
+    {
+        return {};
+    }
 
-	if (nodeName == "menuItem")
-	{
-		item = std::make_shared<MenuItem>();
+    std::string nodeName = node.getName();
 
-		// Get the EventPtr according to the event
-		item->setEvent(node.getAttributeValue("command"));
-		item->setIcon(node.getAttributeValue("icon"));
-	}
-	else if (nodeName == "menuSeparator")
-	{
-		item = std::make_shared<MenuSeparator>();
-	}
-	else if (nodeName == "subMenu")
-	{
-		item = std::make_shared<MenuFolder>();
-	}
-	else if (nodeName == "menu")
-	{
-		item = std::make_shared<MenuBar>();
-	}
-	else
-	{
-		rError() << "MenuElement: Unknown node found: " << node.getName() << std::endl;
-		return item;
-	}
+    if (nodeName == "menuItem")
+    {
+        item = std::make_shared<MenuItem>();
 
-	item->setName(node.getAttributeValue("name"));
+        // Get the EventPtr according to the event
+        item->setEvent(node.getAttributeValue("command"));
+        item->setIcon(node.getAttributeValue("icon"));
+    }
+    else if (nodeName == "menuSeparator")
+    {
+        item = std::make_shared<MenuSeparator>();
+    }
+    else if (nodeName == "subMenu")
+    {
+        item = std::make_shared<MenuFolder>();
+    }
+    else if (nodeName == "menu")
+    {
+        item = std::make_shared<MenuBar>();
+    }
+    else
+    {
+        rError() << "MenuElement: Unknown node found: " << node.getName() << std::endl;
+        return item;
+    }
 
-	// Put the caption through gettext before passing it to setCaption
-	item->setCaption(_(node.getAttributeValue("caption").c_str()));
+    item->setName(node.getAttributeValue("name"));
 
-	// Parse subnodes
-	xml::NodeList childNodes = node.getChildren();
+    // Put the caption through gettext before passing it to setCaption
+    item->setCaption(_(node.getAttributeValue("caption").c_str()));
 
-	for (const xml::Node& childNode : childNodes)
-	{
-		if (childNode.getName() == "text" || childNode.getName() == "comment")
-		{
-			continue;
-		}
-		
-		// Allocate a new child item
-		MenuElementPtr childItem = CreateFromNode(childNode);
+    // Parse subnodes
+    xml::NodeList childNodes = node.getChildren();
 
-		// Add the child to the list
-		if (childItem)
-		{
-			item->addChild(childItem);
-		}
-	}
+    for (const xml::Node& childNode : childNodes)
+    {
+        if (childNode.getName() == "text" || childNode.getName() == "comment")
+        {
+            continue;
+        }
+        
+        // Allocate a new child item
+        MenuElementPtr childItem = CreateFromNode(childNode);
 
-	return item;
+        // Add the child to the list
+        if (childItem)
+            item->addChild(childItem);
+    }
+
+    return item;
 }
 
 MenuElementPtr MenuElement::CreateForType(ItemType type)

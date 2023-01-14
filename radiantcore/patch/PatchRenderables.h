@@ -124,6 +124,12 @@ protected:
 
         _needsUpdate = false;
 
+        if (_tess.height == 0 || _tess.width == 0)
+        {
+            clear();
+            return;
+        }
+
         // Generate the new index array
         std::vector<unsigned int> indices;
         indices.reserve(_indexer.getNumIndices(_tess));

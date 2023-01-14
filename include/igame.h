@@ -18,28 +18,37 @@ const char* const RKEY_MOD_BASE_PATH = "user/paths/modBasePath";
 namespace game
 {
 
-/**
- * \brief
- * Interface for an object representing a single game type.
- */
+/// Interface for an object representing a single game type.
 class IGame
 {
 public:
-    /**
-	 * \brief
-	 * Destructor
-	 */
-	virtual ~IGame() {}
+    /// Destructor
+    virtual ~IGame() {}
 
     /**
-     * \brief
-     * Get a string key value from the game file.
+     * \brief Get a string key value from the game file.
+     *
+     * The "key values" are the attributes on the top-level <game> node, for example "type",
+     * "name" and "index". Originally these were the only data items stored in the .game
+     * file, before it was expanded into a general XML tree.
      *
      * \param key
      * Name of the key to retrieve. If this key does not exist, a warning is
      * emitted and the empty string is returned.
 	 */
     virtual std::string getKeyValue(const std::string& key) const = 0;
+
+    /**
+     * @brief Test if this game has a specific optional feature.
+     *
+     * Games are allowed to specify certain features to expose in the UI, which might not be
+     * required in other games. Each feature is defined by a single text string which appears under
+     * the <features> node.
+     */
+    virtual bool hasFeature(const std::string& feature) const = 0;
+
+    /// Get the name of this game
+    virtual std::string getName() const = 0;
 
     /**
      * \brief
@@ -121,6 +130,9 @@ public:
 
 	// Returns the absolute path where prefabs are going to be saved to
 	virtual const std::string& getPrefabPath() = 0;
+
+    // Returns the active game configuration
+    virtual const GameConfiguration& getConfig() const = 0;
 
 	// Activates the given mod configuration
 	// Stores the given config, initialises VFS and constructs a few secondary paths

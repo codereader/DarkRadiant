@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="window">
-      <UniqueIdentifier>{57279c19-f6ac-43a7-8d84-d5026bcaa887}</UniqueIdentifier>
-    </Filter>
     <Filter Include="menu">
       <UniqueIdentifier>{7d42ed4c-3443-4ed5-a232-7e4c689d577a}</UniqueIdentifier>
     </Filter>
@@ -21,6 +18,12 @@
     </Filter>
     <Filter Include="dataview">
       <UniqueIdentifier>{77e3b8d8-cacc-4872-a5f5-a7c5d07f0551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sourceview">
+      <UniqueIdentifier>{7b81be5b-cc2f-43c2-bef8-fb9c7c1a31c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="decl">
+      <UniqueIdentifier>{6d847c23-2205-43c6-b505-8cc8778c1251}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +66,6 @@
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h">
       <Filter>preview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\wxutil\window\TransientWindow.h">
-      <Filter>window</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\ModalProgressDialog.h" />
     <ClInclude Include="..\..\libs\wxutil\MouseButton.h" />
     <ClInclude Include="..\..\libs\wxutil\MultiMonitor.h" />
@@ -73,7 +73,6 @@
     <ClInclude Include="..\..\libs\wxutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\PathEntry.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
-    <ClInclude Include="..\..\libs\wxutil\SourceView.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
@@ -146,11 +145,50 @@
       <Filter>menu</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\Bitmap.h" />
-    <ClInclude Include="..\..\libs\wxutil\LocalBitmapArtProvider.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\AutoSaveRequestBlocker.h">
       <Filter>dialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\FormLayout.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\DeclarationTreeView.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedDeclarationTreePopulator.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\sourceview\DeclarationSourceView.h">
+      <Filter>sourceview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\sourceview\DefinitionView.h">
+      <Filter>sourceview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\sourceview\SourceView.h">
+      <Filter>sourceview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\Icon.h" />
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelector.h">
+      <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclFileInfo.h">
+      <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\preview\EntityClassPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\WindowState.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\SkinPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.h">
+      <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\IndicatorColumn.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\DockablePanel.h" />
+    <ClInclude Include="..\..\libs\wxutil\TransientPopupWindow.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\EntityPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -171,14 +209,10 @@
     <ClCompile Include="..\..\libs\wxutil\preview\ModelPreview.cpp">
       <Filter>preview</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\wxutil\window\TransientWindow.cpp">
-      <Filter>window</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PanedPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PathEntry.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\DirChooser.cpp" />
@@ -229,6 +263,28 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\menu\FilterPopupMenu.cpp">
       <Filter>menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\DeclarationTreeView.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\sourceview\DefinitionView.cpp">
+      <Filter>sourceview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\sourceview\SourceView.cpp">
+      <Filter>sourceview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\sourceview\DeclarationSourceView.cpp">
+      <Filter>sourceview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\decl\DeclarationSelector.cpp">
+      <Filter>decl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\WindowState.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.cpp">
+      <Filter>decl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\preview\EntityPreview.cpp">
+      <Filter>preview</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

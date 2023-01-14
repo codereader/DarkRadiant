@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ui/materials/MaterialTreeView.h"
-#include "wxutil/menu/IconTextMenuItem.h"
-#include "wxutil/dataview/TreeModelFilter.h"
 
 namespace ui
 {
@@ -20,7 +18,6 @@ private:
     bool _testSingleTexSel();
     bool _testLoadInTexView();
     void _onApplyToSel();
-    void _onShowShaderDefinition();
     void _onLoadInTexView();
     void _onSelectItems(bool select);
     void _onTreeViewItemActivated(wxDataViewEvent& ev);

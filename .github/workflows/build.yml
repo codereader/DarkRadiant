@@ -11,9 +11,10 @@ jobs:
       SOLUTION_FILE_PATH: .\DarkRadiant.sln
       TESTS_FILE_PATH: .\install\Tests.exe
       BUILD_CONFIGURATION: Release
+      GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Inject commit hash in version.h Header
       env:
@@ -51,7 +52,7 @@ jobs:
       shell: powershell
       
     - name: Setup VSTest.console.exe
-      uses: darenm/Setup-VSTest@v1
+      uses: darenm/Setup-VSTest@v1.2
 
     - name: Run Unit Tests
       run: |
@@ -69,7 +70,7 @@ jobs:
       working-directory: .\tools\scripts
 
     - name: Upload Portable Package
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: darkradiant-portable-package-x64
         path: |
@@ -77,14 +78,14 @@ jobs:
           !tools/scripts/DarkRadiant_install.x64/**/*.pdb
 
     - name: Upload Portable Package PDBs
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: darkradiant-pdb-files-x64
         path: |
           tools/scripts/DarkRadiant_install.x64/**/*.pdb
 
     - name: Upload Test Results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: unit-test-results
         path: TestResults\*.trx
@@ -96,7 +97,7 @@ jobs:
       BUILD_TYPE: Release
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
     - name: Install Package Dependencies
       run: |

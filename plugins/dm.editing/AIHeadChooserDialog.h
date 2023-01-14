@@ -2,10 +2,7 @@
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
-#include "wxutil/dataview/TreeView.h"
-
-#include <set>
-#include <map>
+#include "wxutil/dataview/DeclarationTreeView.h"
 
 namespace ui
 {
@@ -13,33 +10,17 @@ namespace ui
 class AIHeadChooserDialog :
 	public wxutil::DialogBase
 {
-public:
-	typedef std::set<std::string> HeadList;
-
 private:
-	struct ListStoreColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		ListStoreColumns() : 
-			name(add(wxutil::TreeModel::Column::String))
-		{}
-
-		wxutil::TreeModel::Column name;
-	};
-
-	ListStoreColumns _columns;
-	wxutil::TreeModel::Ptr _headStore;
-	wxutil::TreeView* _headsView;
+    wxutil::DeclarationTreeView::Columns _columns;
+	wxutil::DeclarationTreeView* _headsView;
 
 	wxTextCtrl* _description;
 
 	// The model preview
-    wxutil::ModelPreviewPtr _preview;
+    std::unique_ptr<wxutil::ModelPreview> _preview;
 
 	// The name of the currently selected head
 	std::string _selectedHead;
-
-	static HeadList _availableHeads;
 
 public:
 	AIHeadChooserDialog();
@@ -53,12 +34,9 @@ public:
 private:
 	void populateHeadStore();
 
-	// Searches all entity classes for available heads
-	static void findAvailableHeads();
-
 	void handleSelectionChanged();
 	void onHeadSelectionChanged(wxDataViewEvent& ev);
     void _onItemActivated( wxDataViewEvent& ev );
 };
 
-} // namespace ui
+} // namespace

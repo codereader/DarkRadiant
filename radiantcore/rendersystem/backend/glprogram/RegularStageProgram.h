@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ishaderlayer.h"
 #include "GLSLProgramBase.h"
 
 namespace render
@@ -31,7 +32,7 @@ public:
     void setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour);
     void setModelViewProjection(const Matrix4& modelViewProjection);
     void setObjectTransform(const Matrix4& transform);
-    void setDiffuseTextureTransform(const Matrix4& transform);;
+    void setDiffuseTextureTransform(const Matrix4& transform);
 };
 
 } // namespace render

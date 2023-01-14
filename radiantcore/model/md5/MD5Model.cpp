@@ -128,7 +128,7 @@ void MD5Model::setModelPath(const std::string& modelPath) {
 	_modelPath = modelPath;
 }
 
-void MD5Model::applySkin(const ModelSkin& skin)
+void MD5Model::applySkin(const decl::ISkin::Ptr& skin)
 {
 	// Apply the skin to each surface, then try to capture shaders
     for (const auto& surface : _surfaces)
@@ -138,7 +138,7 @@ void MD5Model::applySkin(const ModelSkin& skin)
 
 		// Look up the remap for this surface's material name. If there is a remap
 		// change the Shader* to point to the new shader.
-		std::string remap = skin.getRemap(defaultMaterial);
+		auto remap = skin ? skin->getRemap(defaultMaterial) : std::string();
 
 		if (!remap.empty() && remap != activeMaterial)
 		{
@@ -328,6 +328,8 @@ void MD5Model::updateAnim(std::size_t time)
 	{
 		surface->updateToSkeleton(_skeleton);
 	}
+
+    updateAABB();
 
     signal_ModelAnimationUpdated().emit();
 }

@@ -1,0 +1,62 @@
+
+textures/parsertest/frobStage1
+{
+    stone
+    description	"vine_friendly"
+
+    diffusemap      textures/some/thing
+    bumpmap         textures/some/thing_local
+
+    frobstage_texture textures/some/thing 0.15 0.40
+}
+
+textures/parsertest/frobStage1_rgb
+{
+    stone
+    description	"vine_friendly"
+
+    diffusemap      textures/some/thing
+    bumpmap         textures/some/thing_local
+
+    frobstage_texture textures/some/thing (0.25 0.3 0.4) (0.50 0.6 0.7)
+}
+
+textures/parsertest/frobStage2
+{
+	stone
+
+	qer_editorimage		textures/some/thing_ed
+	diffusemap			textures/some/thing
+
+	frobstage_diffuse 0.25 0.50
+}
+
+textures/parsertest/frobStage3
+{
+	stone
+
+	qer_editorimage		textures/some/thing_ed
+	diffusemap			textures/some/thing
+
+    // Separately define the rgb factors to apply to the white overlay
+	frobstage_diffuse (0.25 0.3 0.4) (0.50 0.6 0.7)
+}
+
+textures/parsertest/frobStage4
+{
+	stone
+
+	qer_editorimage		textures/some/thing_ed
+	diffusemap			textures/some/thing
+
+	frobstage_none
+}
+
+// No frobstage keyword => frobstage type is default
+textures/parsertest/frobStage5
+{
+    stone
+
+    diffusemap      textures/some/thing
+    bumpmap         textures/some/thing_local
+}

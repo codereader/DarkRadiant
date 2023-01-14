@@ -1,5 +1,6 @@
 #include "RenderableAasFile.h"
 
+#include "imap.h"
 #include "iregistry.h"
 #include "ui/imainframe.h"
 #include "ivolumetest.h"

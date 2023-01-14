@@ -2,10 +2,12 @@ add_library(script MODULE
             interfaces/BrushInterface.cpp
             interfaces/CameraInterface.cpp
             interfaces/CommandSystemInterface.cpp
+            interfaces/DeclarationManagerInterface.cpp
             interfaces/DialogInterface.cpp
             interfaces/EClassInterface.cpp
             interfaces/EntityInterface.cpp
             interfaces/FileSystemInterface.cpp
+            interfaces/FxManagerInterface.cpp
             interfaces/GameInterface.cpp
             interfaces/GridInterface.cpp
             interfaces/LayerInterface.cpp
@@ -27,7 +29,6 @@ add_library(script MODULE
             ScriptingSystem.cpp
             ScriptModule.cpp)
 set_target_properties(script PROPERTIES CXX_VISIBILITY_PRESET hidden)
-target_compile_options(script PUBLIC ${SIGC_CFLAGS})
 target_include_directories(script SYSTEM PUBLIC
                            ${CMAKE_SOURCE_DIR}/libs/pybind
                            ${Python_INCLUDE_DIRS})

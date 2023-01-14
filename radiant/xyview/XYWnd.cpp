@@ -1,6 +1,7 @@
 #include "XYWnd.h"
 
 #include "i18n.h"
+#include "iclipper.h"
 #include "iscenegraph.h"
 #include "iundo.h"
 #include "ui/imainframe.h"
@@ -19,7 +20,6 @@
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 #include "ui/overlay/Overlay.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "registry/registry.h"
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"
@@ -37,6 +37,7 @@
 #include <fmt/format.h>
 #include <sigc++/functors/mem_fun.h>
 #include <functional>
+#include <wx/sizer.h>
 
 namespace ui
 {
@@ -61,15 +62,18 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 
 namespace
 {
-    const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
-    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+    constexpr const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
+    constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
-// Constructor
-XYWnd::XYWnd(int id, wxWindow* parent) :
+int XYWnd::_nextId = 1;
+
+XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner) :
+    DockablePanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::OrthoView),
-	_id(id),
-	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
+    _owner(owner),
+    _id(_nextId++),
+	_wxGLWidget(new wxutil::GLWidget(this, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
     _updateRequested(false),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
@@ -79,6 +83,11 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_chasingMouse(false),
 	_isActive(false)
 {
+    _owner.registerXYWnd(this);
+
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
+
     _width = 0;
     _height = 0;
 
@@ -103,28 +112,28 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	//_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
 	// wxGLWidget wireup
-	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(XYWnd::onGLResize), NULL, this);
+	_wxGLWidget->Bind(wxEVT_SIZE, &XYWnd::onGLResize, this);
 
-	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(XYWnd::onGLMouseMove), NULL, this);
+	_wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &XYWnd::onGLWindowScroll, this);
+    _wxGLWidget->Bind(wxEVT_MOTION, &XYWnd::onGLMouseMove, this);
 
-	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Bind(wxEVT_LEFT_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_LEFT_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_RIGHT_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_MIDDLE_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_MIDDLE_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_DOWN, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_DOWN, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_UP, &XYWnd::onGLMouseButtonRelease, this);
 
-	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
+	_wxGLWidget->Bind(wxEVT_IDLE, &XYWnd::onIdle, this);
 
 	_freezePointer.connectMouseEvents(
 		std::bind(&XYWnd::onGLMouseButtonPress, this, std::placeholders::_1),
@@ -141,9 +150,15 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
         sigc::mem_fun(this, &XYWnd::onCameraMoved));
 }
 
-// Destructor
+int XYWnd::getId() const
+{
+    return _id;
+}
+
 XYWnd::~XYWnd()
 {
+    _owner.unregisterXYWnd(this);
+
     _font.reset();
 
     destroyXYView();
@@ -155,11 +170,6 @@ XYWnd::~XYWnd()
                                   string::to_string(_origin));
     GlobalRegistry().setAttribute(recentPath, "scale",
                                   string::to_string(_scale));
-}
-
-int XYWnd::getId() const
-{
-    return _id;
 }
 
 void XYWnd::destroyXYView()
@@ -208,6 +218,11 @@ SelectionTestPtr XYWnd::createSelectionTestForPoint(const Vector2& point)
 const VolumeTest& XYWnd::getVolumeTest() const
 {
     return _view;
+}
+
+bool XYWnd::supportsDragSelections()
+{
+    return true;
 }
 
 int XYWnd::getDeviceWidth() const
@@ -964,6 +979,92 @@ void XYWnd::drawGrid()
             glEnd();
         }
     }
+
+    drawSelectionFocusArea(nDim1, nDim2, xb, xe, yb, ye);
+}
+
+void XYWnd::drawSelectionFocusArea(int nDim1, int nDim2, float xMin, float xMax, float yMin, float yMax)
+{
+    if (!GlobalSelectionSystem().selectionFocusIsActive()) return;
+
+    auto bounds = GlobalSelectionSystem().getSelectionFocusBounds();
+
+    if (!bounds.isValid()) return;
+
+    Vector3f focusMin = bounds.getOrigin() - bounds.getExtents();
+    Vector3f focusMax = bounds.getOrigin() + bounds.getExtents();
+
+    auto toggleAccel = GlobalEventManager().findAcceleratorForEvent("ToggleSelectionFocus");
+    auto unselectAccel = GlobalEventManager().findAcceleratorForEvent("UnSelectSelection");
+
+    std::string accelInfo;
+
+    if (unselectAccel)
+    {
+        accelInfo += unselectAccel->getString(false);
+    }
+
+    if (toggleAccel)
+    {
+        accelInfo += accelInfo.empty() ? "" : _(" or ");
+        accelInfo += toggleAccel->getString(false);
+    }
+
+    std::string focusHint = _("Selection Focus Active");
+
+    if (!accelInfo.empty())
+    {
+        focusHint += fmt::format(_(" (press {0} to exit)"), accelInfo);
+    }
+
+    glColor3d(0.3, 0.3, 0.3);
+    glRasterPos2d((focusMax[nDim1] + focusMin[nDim1])*0.5 - focusHint.length()*3.2/_scale, focusMax[nDim2] + 10 / _scale);
+    _font->drawString(focusHint);
+
+    // Define the blend function for transparency
+    glEnable(GL_BLEND);
+    glBlendColor(0, 0, 0, 0.15f);
+    glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+
+    Vector3 dragBoxColour(0, 0, 0);
+    glColor3dv(dragBoxColour);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    // Flood everything outside the bounds with an overlay
+    glBegin(GL_QUADS);
+
+    glVertex2f(xMin, yMin);
+    glVertex2f(xMin, focusMin[nDim2]);
+    glVertex2f(xMax, focusMin[nDim2]);
+    glVertex2f(xMax, yMin);
+
+    glVertex2f(xMin, yMax);
+    glVertex2f(xMax, yMax);
+    glVertex2f(xMax, focusMax[nDim2]);
+    glVertex2f(xMin, focusMax[nDim2]);
+
+    glVertex2f(xMin, focusMax[nDim2]);
+    glVertex2f(focusMin[nDim1], focusMax[nDim2]);
+    glVertex2f(focusMin[nDim1], focusMin[nDim2]);
+    glVertex2f(xMin, focusMin[nDim2]);
+
+    glVertex2f(focusMax[nDim1], focusMax[nDim2]);
+    glVertex2f(xMax, focusMax[nDim2]);
+    glVertex2f(xMax, focusMin[nDim2]);
+    glVertex2f(focusMax[nDim1], focusMin[nDim2]);
+
+    glEnd();
+#if 0
+    // The solid borders
+    glBlendColor(0, 0, 0, 0.4f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(focusMax[nDim1] + 2, focusMax[nDim2] + 2);
+    glVertex2f(focusMax[nDim1] + 2, focusMin[nDim2] - 2);
+    glVertex2f(focusMin[nDim1] - 2, focusMin[nDim2] - 2);
+    glVertex2f(focusMin[nDim1] - 2, focusMax[nDim2] + 2);
+    glEnd();
+#endif
+    glDisable(GL_BLEND);
 }
 
 void XYWnd::drawBlockGrid()
@@ -1353,16 +1454,11 @@ void XYWnd::draw()
 
     glLoadMatrixd(_modelView);
 
-    unsigned int flagsMask = RENDER_POINT_COLOUR | RENDER_VERTEX_COLOUR;
+    unsigned int flagsMask = RENDER_VERTEX_COLOUR | RENDER_BLEND;
 
     if (!getCameraSettings()->solidSelectionBoxes())
     {
         flagsMask |= RENDER_LINESTIPPLE;
-    }
-
-    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
-    {
-        flagsMask |= RENDER_BLEND;
     }
 
     {

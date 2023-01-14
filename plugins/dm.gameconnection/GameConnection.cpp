@@ -2,7 +2,6 @@
 #include "DiffStatus.h"
 #include "DiffDoom3MapWriter.h"
 #include "AutomationEngine.h"
-#include "GameConnectionDialog.h"
 
 #include "i18n.h"
 #include "igame.h"
@@ -11,6 +10,7 @@
 #include "imap.h"
 #include "ientity.h"
 #include "iselection.h"
+#include "ui/iuserinterface.h"
 #include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 
@@ -25,20 +25,24 @@
 #include <wx/artprov.h>
 #include <wx/process.h>
 
+#include "GameConnectionControl.h"
+#include "messages/MapFileOperation.h"
+#include "messages/NotificationMessage.h"
+
 namespace gameconn
 {
 
 namespace
 {
     //this is how often this class "thinks" when idle
-    const int THINK_INTERVAL = 123;
+    constexpr int THINK_INTERVAL = 123;
 
     //all ordinary requests, executed synchronously
-    const int TAG_GENERIC = 5;
+    constexpr int TAG_GENERIC = 5;
     //camera DR->TDM sync is continuous, executed asynchronously
-    const int TAG_CAMERA = 6;
+    constexpr int TAG_CAMERA = 6;
     //multistep procedure for TDM game start/restart
-    const int TAG_RESTART = 7;
+    constexpr int TAG_RESTART = 7;
 
     inline std::string messagePreamble(const std::string& type) {
         return fmt::format("message \"{}\"\n", type);
@@ -167,7 +171,6 @@ GameConnection::~GameConnection()
     disconnect(true);
 };
 
-
 void GameConnection::restartGame(bool dmap)
 {
     enum Steps {
@@ -197,8 +200,9 @@ void GameConnection::restartGame(bool dmap)
 
             if (step == STEP_START) {
                 //fetch all settings: mission, map, TDM path
-                if (GlobalMapModule().isUnnamed()) {
-                    showError("Cannot start TDM because no map file is opened.");
+                if (GlobalMapModule().isUnnamed())
+                {
+                    radiant::NotificationMessage::SendError("Cannot start TDM because no map file is opened.");
                     return {STEP_FINISHED, {}};
                 }
                 tdmDir = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_ENGINE_PATH));
@@ -241,7 +245,7 @@ void GameConnection::restartGame(bool dmap)
                     wxString cmdline = wxString::Format("%s +set com_automation 1", exeFullPath.c_str());
                     long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
                     if (res <= 0) {
-                        showError("Failed to run TheDarkMod executable.");
+                        radiant::NotificationMessage::SendError("Failed to run TheDarkMod executable.");
                         return {STEP_FINISHED, {}};
                     }
 
@@ -265,7 +269,8 @@ void GameConnection::restartGame(bool dmap)
                         return {STEP_SETMOD, {}};
                 }
                 if (timestampNow - timestampStartAttach > TDM_ATTACH_TIMEOUT) {
-                    showError("Timeout when connecting to just started TheDarkMod process.\nMake sure the game is in main menu, has com_automation enabled, and firewall does not block it.");
+                    radiant::NotificationMessage::SendError("Timeout when connecting to just started TheDarkMod process.\n"
+                        "Make sure the game is in main menu, has com_automation enabled, and firewall does not block it.");
                     return {STEP_FINISHED, {}};
                 }
 
@@ -298,14 +303,15 @@ void GameConnection::restartGame(bool dmap)
                 if (pendingSeqno) {
                     std::string response = _engine->getResponse(pendingSeqno);
                     if (response != "done") {
-                        showError("Failed to change installed mission in TheDarkMod.\nMake sure ?DR mission? is configured properly and game version is 2.09 or above.");
+                        radiant::NotificationMessage::SendError("Failed to change installed mission in TheDarkMod.\n"
+                            "Make sure ?DR mission? is configured properly and game version is 2.09 or above.");
                         return {STEP_FINISHED, {}};
                     }
                 }
                 //recheck currently installed FM just to be sure
                 std::map<std::string, std::string> statusProps = executeQueryStatus();
                 if (statusProps["currentfm"] != drModName) {
-                    showError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
+                    radiant::NotificationMessage::SendError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
                     return {STEP_FINISHED, {}};
                 }
 
@@ -324,7 +330,7 @@ void GameConnection::restartGame(bool dmap)
                 if (pendingSeqno) {
                     std::string response = _engine->getResponse(pendingSeqno);
                     if (response.find("ERROR:") != std::string::npos) {
-                        showError("Dmap printed error.\nPlease look at TheDarkMod console.");
+                        radiant::NotificationMessage::SendError("Dmap printed error.\nPlease look at TheDarkMod console.");
                         return {STEP_FINISHED, {}};
                     }
                 }
@@ -343,15 +349,15 @@ void GameConnection::restartGame(bool dmap)
                 //last check: everything should match!
                 std::map<std::string, std::string> statusProps = executeQueryStatus();
                 if (statusProps["currentfm"] != drModName) {
-                    showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
+                    radiant::NotificationMessage::SendError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
                     return {STEP_FINISHED, {}};
                 }
                 if (statusProps["mapname"] != drMapName) {
-                    showError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
+                    radiant::NotificationMessage::SendError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
                     return {STEP_FINISHED, {}};
                 }
                 if (statusProps["guiactive"] != "") {
-                    showError(fmt::format("GUI {} is active while we expect the game to start", statusProps["guiactive"]));
+                    radiant::NotificationMessage::SendError(fmt::format("GUI {} is active while we expect the game to start", statusProps["guiactive"]));
                     return {STEP_FINISHED, {}};
                 }
 
@@ -387,7 +393,7 @@ void GameConnection::restartGame(bool dmap)
         catch(const DisconnectException&) {
             //connection was lost unexpectedly during some step
             //most likely user has closed TDM while it was still being prepared
-            showError("Game restart failed: connection lost unexpectedly.");
+            radiant::NotificationMessage::SendError("Game restart failed: connection lost unexpectedly.");
         }
         return {STEP_FINISHED, {}};
     };
@@ -752,9 +758,18 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
 
         // Get a scoped exporter class
         auto exporter = GlobalMapModule().createMapExporter(writer, root, outStream);
-        exporter->exportMap(root, scene::traverseSubset(subsetNodes));
 
-        // end the life of the exporter instance here to finish the scene
+        try
+        {
+            // Pass the traversal function and the root of the subgraph to export
+            exporter->exportMap(root, scene::traverseSubset(subsetNodes));
+            // end the life of the exporter instance here to finish the scene
+            exporter.reset();
+        }
+        catch (map::FileOperation::OperationCancelled&)
+        {
+            radiant::NotificationMessage::SendInformation(_("Map export cancelled"));
+        }
     }
 
     return outStream.str();
@@ -797,28 +812,33 @@ const StringSet& GameConnection::getDependencies() const
     static StringSet _dependencies {
         MODULE_CAMERA_MANAGER, MODULE_COMMANDSYSTEM, MODULE_MAP,
         MODULE_SCENEGRAPH, MODULE_SELECTIONSYSTEM, MODULE_EVENTMANAGER,
-        MODULE_MENUMANAGER, MODULE_MAINFRAME
+        MODULE_MENUMANAGER, MODULE_USERINTERFACE, MODULE_MAINFRAME
     };
     return _dependencies;
 }
 
 void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
-    // Show/hide GUI window
-    GlobalCommandSystem().addCommand(
-        "GameConnectionDialogToggle",
-        gameconn::GameConnectionDialog::toggleDialog
-    );
-    GlobalMenuManager().add(
-        "main/map", "GameConnectionDialog",
-        ui::menu::ItemType::Item, _("Game Connection..."), "",
-        "GameConnectionDialogToggle"
-    );
+    // Don't add any commands if the hot_reload feature is not enabled by the current Game
+    if (!GlobalGameManager().currentGame()->hasFeature("hot_reload"))
+        return;
+
+    GlobalMenuManager().add("main/map", "GameConnectionPanel", ui::menu::ItemType::Item, _("Game Connection..."),
+        "", fmt::format("{0}{1}", ui::TOGGLE_CONTROL_STATEMENT_PREFIX, ui::GameConnectionControl::Name));
+
+    GlobalUserInterface().registerControl(std::make_shared<ui::GameConnectionControl>());
+
+    // Add to mainframe after startup, set control default location
+    GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
+    {
+        GlobalMainFrame().addControl(ui::GameConnectionControl::Name, { IMainFrame::Location::FloatingWindow, false });
+    });
 
     // Restart game
     GlobalCommandSystem().addCommand(
         "GameConnectionRestartGame",
-        [this](const cmd::ArgumentList& args) {
+        [this](const cmd::ArgumentList& args)
+        {
             bool dmap = false;
             for (int i = 0; i < args.size(); i++)
                 if (args[i].getString() == "dmap")
@@ -836,23 +856,15 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
             return isCameraSyncEnabled() != oldEnabled;
         }
     );
-    GlobalCommandSystem().addCommand(
-        "GameConnectionBackSyncCamera",
-        [this](const cmd::ArgumentList&) {
-            backSyncCamera();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
+                                     [this](const cmd::ArgumentList&) { backSyncCamera(); });
     _event_backSyncCamera = GlobalEventManager().addCommand(
         "GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera", false
     );
 
     // Reload map
-    GlobalCommandSystem().addCommand(
-        "GameConnectionReloadMap",
-        [this](const cmd::ArgumentList&) {
-            reloadMap();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionReloadMap",
+                                     [this](const cmd::ArgumentList&) { reloadMap(); });
     GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleAutoMapReload",
         [this](bool v) {
@@ -863,12 +875,8 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     );
 
     // Update map
-    GlobalCommandSystem().addCommand(
-        "GameConnectionUpdateMap",
-        [this](const cmd::ArgumentList&) {
-            doUpdateMap();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
+                                     [this](const cmd::ArgumentList&) { doUpdateMap(); });
     GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleAutoMapUpdate",
         [this](bool v) {
@@ -882,17 +890,12 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     // Respawn selected
     GlobalCommandSystem().addCommand(
         "GameConnectionRespawnSelected",
-        [this](const cmd::ArgumentList&) {
-            respawnSelectedEntities();
-        }
+        [this](const cmd::ArgumentList&) { respawnSelectedEntities(); }
     );
+
     // Pause game
-    GlobalCommandSystem().addCommand(
-        "GameConnectionPauseGame",
-        [this](const cmd::ArgumentList&) {
-            togglePauseGame();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionPauseGame",
+                                     [this](const cmd::ArgumentList&) { togglePauseGame(); });
 
     // Toolbar button(s)
     GlobalMainFrame().signal_MainFrameConstructed().connect(

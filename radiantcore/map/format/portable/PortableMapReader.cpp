@@ -76,7 +76,8 @@ void PortableMapReader::readLayers(const xml::Node& mapNode)
 {
 	try
 	{
-		_importFilter.getRootNode()->getLayerManager().reset();
+        auto& layerManager = _importFilter.getRootNode()->getLayerManager();
+        layerManager.reset();
 
 		auto mapLayers = getNamedChild(mapNode, TAG_MAP_LAYERS);
 
@@ -87,8 +88,30 @@ void PortableMapReader::readLayers(const xml::Node& mapNode)
 			auto id = string::convert<int>(layer.getAttributeValue(ATTR_MAP_LAYER_ID));
 			auto name = layer.getAttributeValue(ATTR_MAP_LAYER_NAME);
 
-			_importFilter.getRootNode()->getLayerManager().createLayer(name, id);
+            layerManager.createLayer(name, id);
+
+            // Check active layer properties
+            if (layer.getAttributeValue(ATTR_MAP_LAYER_ACTIVE) == ATTR_VALUE_TRUE)
+            {
+                layerManager.setActiveLayer(id);
+            }
+
+            // Set visibility (and make sure this happens before the hierarchy is restored)
+            if (layer.getAttributeValue(ATTR_MAP_LAYER_HIDDEN) == ATTR_VALUE_TRUE)
+            {
+                layerManager.setLayerVisibility(id, false);
+            }
 		}
+
+        // Restore the layer hierarchy after all layers have been created
+        for (const auto& layer : layers)
+        {
+            auto childLayerId = string::convert<int>(layer.getAttributeValue(ATTR_MAP_LAYER_ID));
+            // Parent layer ID is optional and defaults to -1
+            auto parentLayerId = string::convert<int>(layer.getAttributeValue(ATTR_MAP_LAYER_PARENT_ID), -1);
+
+            layerManager.setParentLayer(childLayerId, parentLayerId);
+        }
 	}
 	catch (const BadDocumentFormatException& ex)
 	{

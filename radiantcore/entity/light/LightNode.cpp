@@ -1,6 +1,7 @@
 #include "LightNode.h"
 
-#include "itextstream.h"
+#include "igrid.h"
+#include "ishaders.h"
 #include "icolourscheme.h"
 #include "../EntitySettings.h"
 #include <functional>
@@ -1012,6 +1013,11 @@ bool LightNode::isShadowCasting() const
     return EntityNode::isShadowCasting();
 }
 
+bool LightNode::isBlendLight() const
+{
+    return m_shader.isBlendLight();
+}
+
 /* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.
  */
 bool LightNode::isProjected() const {
@@ -1230,6 +1236,11 @@ const ShaderPtr& LightNode::getShader() const
     return m_shader.get();
 }
 
+bool LightNode::isVisible()
+{
+    return visible();
+}
+
 const IRenderEntity& LightNode::getLightEntity() const
 {
 	return *this;
@@ -1237,6 +1248,14 @@ const IRenderEntity& LightNode::getLightEntity() const
 
 void LightNode::onColourKeyChanged(const std::string& value)
 {
+    updateRenderables();
+}
+
+void LightNode::onRenderStateChanged()
+{
+    EntityNode::onRenderStateChanged();
+
+    clearRenderables();
     updateRenderables();
 }
 

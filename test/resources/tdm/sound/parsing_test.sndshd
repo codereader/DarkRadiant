@@ -10,6 +10,7 @@ parsing_test_case1
     looping
 
     sound/nonexistent.ogg
+    sound/nonexistent2.ogg
 }
 
 // Opening brace in the same line
@@ -39,4 +40,15 @@ parsing_test_case6
 // comment
 {
 	sound/nonexistent.ogg
+}
+
+sound test/jorge
+{
+    editor_displayFolder	test
+
+    volume -7
+    minDistance 2
+    maxDistance 17
+
+    sound/test/jorge.ogg
 }

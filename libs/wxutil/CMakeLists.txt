@@ -1,5 +1,6 @@
 add_library(wxutil
             ConsoleView.cpp
+            dataview/DeclarationTreeView.cpp
             dataview/KeyValueTable.cpp
             dataview/ResourceTreeView.cpp
             dataview/ResourceTreeViewToolbar.cpp
@@ -8,6 +9,8 @@ add_library(wxutil
             dataview/TreeModelFilter.cpp
             dataview/TreeView.cpp
             dataview/VFSTreePopulator.cpp
+            decl/DeclarationSelectorDialog.cpp
+            decl/DeclarationSelector.cpp
             dialog/DialogBase.cpp
             dialog/Dialog.cpp
             dialog/MessageBox.cpp
@@ -24,17 +27,20 @@ add_library(wxutil
             MouseToolHandler.cpp
             PanedPosition.cpp
             PathEntry.cpp
+            preview/EntityPreview.cpp
             preview/GuiRenderer.cpp
             preview/GuiView.cpp
             preview/ModelPreview.cpp
             preview/ParticlePreview.cpp
             preview/RenderPreview.cpp
             SerialisableWidgets.cpp
-            SourceView.cpp
+            sourceview/DeclarationSourceView.cpp
+            sourceview/DefinitionView.cpp
+            sourceview/SourceView.cpp
             Splitter.cpp
             WindowPosition.cpp
-            window/TransientWindow.cpp)
-target_compile_options(wxutil PUBLIC ${SIGC_CFLAGS} ${FTGL_CFLAGS})
+            WindowState.cpp)
+target_compile_options(wxutil PUBLIC ${FTGL_CFLAGS})
 target_link_libraries(wxutil PUBLIC
                       math
                       scenegraph

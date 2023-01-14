@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "idatastream.h"
+#include "itextstream.h"
 
 typedef unsigned char byte;
 
@@ -323,7 +324,7 @@ public:
 template<typename Flip>
 RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, stream::PointerInputStream& istream, const Flip& flip)
 {
-  RGBAImagePtr image (new RGBAImage(targa_header.width, targa_header.height));
+  auto image = std::make_shared<RGBAImage>(targa_header.width, targa_header.height);
 
   if (targa_header.image_type == 2 || targa_header.image_type == 3)
   {

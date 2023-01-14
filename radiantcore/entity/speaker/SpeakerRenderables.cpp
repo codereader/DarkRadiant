@@ -1,6 +1,8 @@
 #include "SpeakerRenderables.h"
 
+#include "ientity.h"
 #include "render.h"
+#include "entity/EntityNode.h"
 
 namespace entity
 {
@@ -60,7 +62,8 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     // The indices for 6 circles stay the same, so we can store this statically
     static auto CircleIndices = generateWireframeCircleIndices(vertices.size(), NumCircles);
 
-    auto colour = _entity.getEntityColour();
+    auto colour = _entity.getRenderState() == scene::INode::RenderState::Active ?
+        _entity.getEntityColour() : INACTIVE_ENTITY_COLOUR;
 
     // Move the points to their world position
     for (auto& vertex : vertices)
@@ -153,7 +156,8 @@ inline std::vector<unsigned int> generateSphereIndices()
 
 void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<render::RenderVertex>& vertices, double radius)
 {
-    auto colour = _entity.getEntityColour();
+    auto colour = _entity.getRenderState() == scene::INode::RenderState::Active ?
+        _entity.getEntityColour() : INACTIVE_ENTITY_COLOUR;
     colour.w() = 0.3;
 
     for (auto strip = 0; strip < NumCircles; ++strip)

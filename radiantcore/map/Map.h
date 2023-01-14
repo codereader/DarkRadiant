@@ -77,6 +77,7 @@ private:
 
     sigc::connection _modifiedStatusListener;
     sigc::connection _undoEventListener;
+    sigc::connection _layerHierarchyChangedListener;
 
     // Point trace for leak detection
     std::unique_ptr<PointFile> _pointTrace;
@@ -289,8 +290,9 @@ private:
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
-	void connectToUndoSystem();
+	void connectToRootNode();
 
+    void onLayerHierarchyChanged();
     void onUndoEvent(IUndoSystem::EventType type, const std::string& operationName);
 
     void cleanupMergeOperation();

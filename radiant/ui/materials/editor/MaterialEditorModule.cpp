@@ -34,8 +34,6 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        rMessage() << getName() << "::initialiseModule called." << std::endl;
-
         GlobalCommandSystem().addCommand("MaterialEditor", MaterialEditor::ShowDialog, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
         // Bind the command to the menu

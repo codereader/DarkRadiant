@@ -8,7 +8,6 @@
 #include "itextstream.h"
 #include "iradiant.h"
 #include "ui/imainframe.h"
-#include "ui/igroupdialog.h"
 #include "iundo.h"
 
 #include "interfaces/MathInterface.h"
@@ -34,6 +33,8 @@
 #include "interfaces/SelectionGroupInterface.h"
 #include "interfaces/CameraInterface.h"
 #include "interfaces/LayerInterface.h"
+#include "interfaces/DeclarationManagerInterface.h"
+#include "interfaces/FxManagerInterface.h"
 
 #include "PythonModule.h"
 
@@ -292,8 +293,6 @@ const StringSet& ScriptingSystem::getDependencies() const
 
 void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	module::GlobalModuleRegistry().signal_allModulesInitialised()
 		.connect(sigc::mem_fun(this, &ScriptingSystem::initialise));
@@ -328,6 +327,8 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	addInterface("SelectionGroupInterface", std::make_shared<SelectionGroupInterface>());
 	addInterface("CameraInterface", std::make_shared<CameraInterface>());
 	addInterface("LayerInterface", std::make_shared<LayerInterface>());
+	addInterface("DeclarationManager", std::make_shared<DeclarationManagerInterface>());
+	addInterface("FxManager", std::make_shared<FxManagerInterface>());
 
 	GlobalCommandSystem().addCommand(
 		"RunScript",

@@ -49,20 +49,20 @@ public:
  */
 class ScriptSoundShader
 {
-	ISoundShaderPtr _shader;
+	ISoundShader::Ptr _shader;
 
 public:
-	ScriptSoundShader(const ISoundShaderPtr& shader) :
+	ScriptSoundShader(const ISoundShader::Ptr& shader) :
 		_shader(shader)
 	{}
 
-	operator ISoundShaderPtr&() {
+	operator ISoundShader::Ptr&() {
 		return _shader;
 	}
 
 	std::string getName()
 	{
-		return _shader ? _shader->getName() : "";
+		return _shader ? _shader->getDeclName() : "";
 	}
 
 	ScriptSoundRadii getRadii()
@@ -77,12 +77,12 @@ public:
 
 	std::string getShaderFilePath()
 	{
-		return _shader ? _shader->getShaderFilePath() : std::string();
+		return _shader ? _shader->getDeclFilePath() : std::string();
 	}
 
 	std::string getDefinition()
 	{
-		return _shader ? _shader->getDefinition() : std::string();
+		return _shader ? _shader->getBlockSyntax().contents : std::string();
 	}
 
 	bool isNull() const {

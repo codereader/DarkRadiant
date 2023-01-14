@@ -1,15 +1,12 @@
 #include "SurfaceInspector.h"
 
 #include "i18n.h"
+#include "iscenegraph.h"
+#include "ui/ieventmanager.h"
+#include "iundo.h"
 
 #include <wx/wx.h>
 #include <wx/statline.h>
-
-#include "iscenegraph.h"
-#include "ui/ieventmanager.h"
-#include "itextstream.h"
-#include "ui/imainframe.h"
-#include "iundo.h"
 
 #include "wxutil/Bitmap.h"
 #include "wxutil/ControlButton.h"
@@ -20,19 +17,17 @@
 #include "registry/Widgets.h"
 #include "selectionlib.h"
 #include "math/FloatTools.h"
-#include "string/string.h"
+#include "string/convert.h"
 
-#include "textool/TexTool.h"
-#include "ui/patch/PatchInspector.h"
+#include "ui/materials/MaterialChooser.h"
 
 namespace ui
 {
 
 namespace
 {
-    const char* const WINDOW_TITLE = N_("Surface Inspector");
-    const char* const LABEL_PROPERTIES = N_("Texture Properties");
-    const char* const LABEL_OPERATIONS = N_("Texture Operations");
+    constexpr const char* const LABEL_PROPERTIES = N_("Texture Properties");
+    constexpr const char* const LABEL_OPERATIONS = N_("Texture Operations");
 
     const std::string HSHIFT = "horizshift";
     const std::string VSHIFT = "vertshift";
@@ -40,36 +35,35 @@ namespace
     const std::string VSCALE = "vertscale";
     const std::string ROTATION = "rotation";
 
-    const char* const LABEL_HSHIFT = N_("Horiz. Shift:");
-    const char* const LABEL_VSHIFT = N_("Vert. Shift:");
-    const char* const LABEL_HSCALE = N_("Horiz. Scale:");
-    const char* const LABEL_VSCALE = N_("Vert. Scale:");
-    const char* const LABEL_ROTATION = N_("Rotation:");
-    const char* const LABEL_SHADER = N_("Shader:");
-    const char* const FOLDER_ICON = "treeView16.png";
-    const char* const LABEL_STEP = N_("Step:");
+    constexpr const char* const LABEL_HSHIFT = N_("Horiz. Shift:");
+    constexpr const char* const LABEL_VSHIFT = N_("Vert. Shift:");
+    constexpr const char* const LABEL_HSCALE = N_("Horiz. Scale:");
+    constexpr const char* const LABEL_VSCALE = N_("Vert. Scale:");
+    constexpr const char* const LABEL_ROTATION = N_("Rotation:");
+    constexpr const char* const LABEL_SHADER = N_("Shader:");
+    constexpr const char* const FOLDER_ICON = "treeView16.png";
+    constexpr const char* const LABEL_STEP = N_("Step:");
 
-    const char* LABEL_FIT_TEXTURE = N_("Fit:");
-    const char* LABEL_FIT = N_("Fit");
+    constexpr const char* LABEL_FIT_TEXTURE = N_("Fit:");
+    constexpr const char* LABEL_FIT = N_("Fit");
 
-    const char* LABEL_ALIGN_TEXTURE = N_("Align:");
-    const char* LABEL_ALIGN_TOP = N_("Top");
-    const char* LABEL_ALIGN_BOTTOM = N_("Bottom");
-    const char* LABEL_ALIGN_RIGHT = N_("Right");
-    const char* LABEL_ALIGN_LEFT = N_("Left");
+    constexpr const char* LABEL_ALIGN_TEXTURE = N_("Align:");
+    constexpr const char* LABEL_ALIGN_TOP = N_("Top");
+    constexpr const char* LABEL_ALIGN_BOTTOM = N_("Bottom");
+    constexpr const char* LABEL_ALIGN_RIGHT = N_("Right");
+    constexpr const char* LABEL_ALIGN_LEFT = N_("Left");
 
-    const char* LABEL_FLIP_TEXTURE = N_("Flip:");
-    const char* LABEL_FLIPX = N_("Flip Horizontal");
-    const char* LABEL_FLIPY = N_("Flip Vertical");
+    constexpr const char* LABEL_FLIP_TEXTURE = N_("Flip:");
+    constexpr const char* LABEL_FLIPX = N_("Flip Horizontal");
+    constexpr const char* LABEL_FLIPY = N_("Flip Vertical");
 
-    const char* LABEL_MODIFY_TEXTURE = N_("Modify:");
-    const char* LABEL_NATURAL = N_("Natural");
-    const char* LABEL_NORMALISE = N_("Normalise");
+    constexpr const char* LABEL_MODIFY_TEXTURE = N_("Modify:");
+    constexpr const char* LABEL_NATURAL = N_("Natural");
+    constexpr const char* LABEL_NORMALISE = N_("Normalise");
 
-    const char* LABEL_DEFAULT_SCALE = N_("Default Scale:");
-    const char* LABEL_TEXTURE_LOCK = N_("Texture Lock");
+    constexpr const char* LABEL_DEFAULT_SCALE = N_("Default Scale:");
+    constexpr const char* LABEL_TEXTURE_LOCK = N_("Texture Lock");
 
-    const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
     const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
 
     const std::string RKEY_ROOT = "user/ui/textures/surfaceInspector/";
@@ -79,16 +73,14 @@ namespace
     const std::string RKEY_VSCALE_STEP = RKEY_ROOT + "vScaleStep";
     const std::string RKEY_ROTATION_STEP = RKEY_ROOT + "rotStep";
 
-    const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-
-    const double MAX_FLOAT_RESOLUTION = 1.0E-5;
+    constexpr double MAX_FLOAT_RESOLUTION = 1.0E-5;
 
     // Widget minimum sizes. Different values needed on Linux (which has various
     // GTK styles) vs Windows.
 #ifdef __WXMSW__
-    const int SPINBOX_WIDTH_CHARS = 7;
+    constexpr int SPINBOX_WIDTH_CHARS = 7;
 #else
-    const int SPINBOX_WIDTH_CHARS = 16;
+    constexpr int SPINBOX_WIDTH_CHARS = 16;
 #endif
 
     // Minimum pixel size for a widget. Converts to a wxSize of the specified
@@ -110,7 +102,7 @@ namespace
 
 void SurfaceInspector::ManipulatorRow::setValue(double v)
 {
-    value->SetValue(fmt::format("{}", v));
+    value->SetValue(fmt::format("{0:g}", v));
 }
 
 void SurfaceInspector::FitTextureWidgets::enable(bool enabled)
@@ -123,13 +115,11 @@ void SurfaceInspector::FitTextureWidgets::enable(bool enabled)
     height->Enable(enabled);
 }
 
-SurfaceInspector::SurfaceInspector() :
-	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+SurfaceInspector::SurfaceInspector(wxWindow* parent) :
+    DockablePanel(parent),
 	_callbackActive(false),
 	_updateNeeded(false)
 {
-	Connect(wxEVT_IDLE, wxIdleEventHandler(SurfaceInspector::onIdle), NULL, this);
-
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
@@ -148,36 +138,69 @@ SurfaceInspector::SurfaceInspector() :
         sigc::mem_fun(this, &SurfaceInspector::keyChanged)
     );
 
-	// Update the widget status
-	doUpdate();
-
 	// Get the relevant Events from the Manager and connect the widgets
-	connectEvents();
+	connectButtons();
 
-	InitialiseWindowPosition(410, 480, RKEY_WINDOW_STATE);
+    // Force the focus to the inspector window itself to avoid the cursor
+    // from jumping into the shader entry field
+    this->SetFocus();
 }
 
-SurfaceInspectorPtr& SurfaceInspector::InstancePtr()
+SurfaceInspector::~SurfaceInspector()
 {
-	static SurfaceInspectorPtr _instancePtr;
-	return _instancePtr;
+    if (panelIsActive())
+    {
+        disconnectEventHandlers();
+    }
 }
 
-void SurfaceInspector::onMainFrameShuttingDown()
+void SurfaceInspector::onPanelActivated()
 {
-	rMessage() << "SurfaceInspector shutting down." << std::endl;
+    connectEventHandlers();
 
-	if (IsShownOnScreen())
-	{
-		Hide();
-	}
-
-	// Destroy the window
-	SendDestroyEvent();
-	InstancePtr().reset();
+    // Re-scan the selection
+    doUpdate();
 }
 
-void SurfaceInspector::connectEvents()
+void SurfaceInspector::onPanelDeactivated()
+{
+    disconnectEventHandlers();
+}
+
+void SurfaceInspector::connectEventHandlers()
+{
+    // Connect the ToggleTexLock item to the corresponding command
+    GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
+
+    // Register self to the SelSystem to get notified upon selection changes.
+    _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+        [this](const ISelectable&) { doUpdate(); });
+
+    _undoHandler = GlobalMapModule().signal_postUndo().connect(
+        sigc::mem_fun(this, &SurfaceInspector::doUpdate));
+    _redoHandler = GlobalMapModule().signal_postRedo().connect(
+        sigc::mem_fun(this, &SurfaceInspector::doUpdate));
+
+    // Get notified about texture changes
+    _textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::TextureChanged,
+        radiant::TypeListener<radiant::TextureChangedMessage>(
+            sigc::mem_fun(this, &SurfaceInspector::handleTextureChangedMessage)));
+}
+
+void SurfaceInspector::disconnectEventHandlers()
+{
+    GlobalEventManager().findEvent("TogTexLock")->disconnectToggleButton(_texLockButton);
+
+    GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
+    _textureMessageHandler = 0;
+
+    _selectionChanged.disconnect();
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
+}
+
+void SurfaceInspector::connectButtons()
 {
 	// Be sure to connect these signals BEFORE the buttons are connected
 	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
@@ -198,9 +221,6 @@ void SurfaceInspector::connectEvents()
 		i->second.smaller->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 		i->second.larger->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	}
-
-	// Connect the ToggleTexLock item to the according command
-	GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
 
 	wxutil::button::connectToCommand(_flipTexture.flipX, "FlipTextureX");
 	wxutil::button::connectToCommand(_flipTexture.flipY, "FlipTextureY");
@@ -376,7 +396,7 @@ void SurfaceInspector::populateWindow()
 	_shaderEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onShaderEntryActivate), NULL, this);
 	shaderHBox->Add(_shaderEntry, 1, wxEXPAND);
 
-	// Create the icon button to open the ShaderChooser
+	// Create the icon button to open the MaterialChooser
     _selectShaderButton = new wxBitmapButton(
         this, wxID_ANY, wxutil::GetLocalBitmap(FOLDER_ICON)
     );
@@ -557,24 +577,6 @@ SurfaceInspector::createManipulatorRow(const std::string& label, wxutil::FormLay
 	return manipRow;
 }
 
-SurfaceInspector& SurfaceInspector::Instance()
-{
-	SurfaceInspectorPtr& instancePtr = InstancePtr();
-
-	if (instancePtr == NULL)
-	{
-		// Not yet instantiated, do it now
-		instancePtr.reset(new SurfaceInspector);
-
-		// Pre-destruction cleanup
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &SurfaceInspector::onMainFrameShuttingDown)
-        );
-	}
-
-	return *instancePtr;
-}
-
 void SurfaceInspector::onHarmoniseScale(bool useHorizontal)
 {
     auto horizValue = _manipulators[HSCALE].value->GetValue();
@@ -648,13 +650,11 @@ void SurfaceInspector::updateTexDef()
 // Public soft update function
 void SurfaceInspector::update()
 {
-    if (InstancePtr())
-    {
-		Instance()._updateNeeded = true;
-    }
+    _updateNeeded = true;
+    requestIdleCallback();
 }
 
-void SurfaceInspector::onIdle(wxIdleEvent& ev)
+void SurfaceInspector::onIdle()
 {
 	if (_updateNeeded)
 	{
@@ -668,11 +668,10 @@ void SurfaceInspector::doUpdate()
 
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
-	bool valueSensitivity = false;
 	bool haveSelection = (selectionInfo.totalCount > 0);
 
 	// If patches or entities are selected, the value entry fields have no meaning
-	valueSensitivity = (selectionInfo.patchCount == 0 &&
+	bool valueSensitivity = (selectionInfo.patchCount == 0 &&
 						selectionInfo.totalCount > 0 &&
 						selectionInfo.entityCount == 0 &&
 						GlobalSelectionSystem().getSelectedFaceCount() == 1);
@@ -788,7 +787,7 @@ void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
     std::string previousShader = _shaderEntry->GetValue().ToStdString();
 
 	// Instantiate the modal dialog, will block execution
-	auto* chooser = new ShaderChooser(this, _shaderEntry);
+	auto* chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular, _shaderEntry);
 
     chooser->signal_shaderChanged().connect(
         sigc::mem_fun(this, &SurfaceInspector::emitShader)
@@ -807,67 +806,9 @@ void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
 	chooser->Destroy();
 }
 
-// Static command target to toggle the window
-void SurfaceInspector::toggle(const cmd::ArgumentList& args)
-{
-	Instance().ToggleVisibility();
-}
-
-// TransientWindow callbacks
-void SurfaceInspector::_preShow()
-{
-	TransientWindow::_preShow();
-
-	// Disconnect everything, in some cases we get two consecutive Show() calls in wxGTK
-	_selectionChanged.disconnect();
-
-	GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
-	_textureMessageHandler = 0;
-
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
-
-	// Register self to the SelSystem to get notified upon selection changes.
-	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-		[this] (const ISelectable&) { doUpdate(); });
-
-	_undoHandler = GlobalMapModule().signal_postUndo().connect(
-		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
-	_redoHandler = GlobalMapModule().signal_postRedo().connect(
-		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
-
-	// Get notified about texture changes
-	_textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
-		radiant::IMessage::Type::TextureChanged,
-		radiant::TypeListener<radiant::TextureChangedMessage>(
-			sigc::mem_fun(this, &SurfaceInspector::handleTextureChangedMessage)));
-
-	// Re-scan the selection
-	doUpdate();
-}
-
 void SurfaceInspector::handleTextureChangedMessage(radiant::TextureChangedMessage& msg)
 {
-	_updateNeeded = true;
-}
-
-void SurfaceInspector::_postShow()
-{
-	// Force the focus to the inspector window itself to avoid the cursor
-	// from jumping into the shader entry field
-	this->SetFocus();
-}
-
-void SurfaceInspector::_preHide()
-{
-	TransientWindow::_preHide();
-
-	GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
-	_textureMessageHandler = 0;
-
-	_selectionChanged.disconnect();
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
+    update();
 }
 
 } // namespace ui

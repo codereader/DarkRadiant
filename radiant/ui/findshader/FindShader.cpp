@@ -1,11 +1,10 @@
 #include "FindShader.h"
 
 #include "i18n.h"
-#include "ui/imainframe.h"
 #include "imousetoolmanager.h"
 #include "ishaderclipboard.h"
 
-#include "ui/common/ShaderChooser.h"
+#include "ui/materials/MaterialChooser.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
@@ -23,39 +22,57 @@ namespace ui
 
 namespace
 {
-	const char* const FINDDLG_WINDOW_TITLE = N_("Find & Replace Shader");
-	const char* const COUNT_TEXT = N_("{0:d} shader(s) replaced.");
+    constexpr const char* const COUNT_TEXT = N_("{0:d} shader(s) replaced.");
 
     const std::string RKEY_ROOT = "user/ui/textures/findShaderDialog/";
-    const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
     const std::string RKEY_PICK_HINT_SHOWN = RKEY_ROOT + "pickHintShown";
 
-    const char* const PICK_TEXTURE_HINT = N_("When picking texture names, click the pick button and use {0}\n"
+    constexpr const char* const PICK_TEXTURE_HINT = N_("When picking texture names, click the pick button and use {0}\n"
                                              "in the camera view to pick a material name. The picked texture will be\n"
                                              "filled in the entry box next to the activated button.");
 }
 
-FindAndReplaceShader::FindAndReplaceShader() :
-	wxutil::TransientWindow(_(FINDDLG_WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow()),
+FindAndReplaceShader::FindAndReplaceShader(wxWindow* parent) :
+    DockablePanel(parent),
     _lastFocusedEntry(nullptr)
 {
-	// Create all the widgets
 	populateWindow();
-
-	Fit();
-	CenterOnParent();
-
-    GlobalShaderClipboard().signal_sourceChanged().connect(
-        sigc::mem_fun(this, &FindAndReplaceShader::onShaderClipboardChanged));
 }
 
 FindAndReplaceShader::~FindAndReplaceShader()
 {
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
+}
+
+void FindAndReplaceShader::onPanelActivated()
+{
+    connectListeners();
+}
+
+void FindAndReplaceShader::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void FindAndReplaceShader::connectListeners()
+{
+    _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
+        sigc::mem_fun(this, &FindAndReplaceShader::onShaderClipboardChanged));
+}
+
+void FindAndReplaceShader::disconnectListeners()
+{
+    _shaderClipboardConn.disconnect();
 }
 
 void FindAndReplaceShader::populateWindow()
 {
 	wxPanel* mainPanel = loadNamedPanel(this, "FindReplaceDialogMainPanel");
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(mainPanel, 1, wxEXPAND);
 
 	findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry")->Connect(
 		wxEVT_TEXT, wxCommandEventHandler(FindAndReplaceShader::onEntryChanged), NULL, this);
@@ -82,31 +99,30 @@ void FindAndReplaceShader::populateWindow()
 
 	findNamedObject<wxButton>(this, "FindReplaceDialogFindButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(FindAndReplaceShader::onReplace), NULL, this);
-	findNamedObject<wxButton>(this, "FindReplaceDialogCloseButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(FindAndReplaceShader::onClose), NULL, this);
 
 	findNamedObject<wxStaticText>(this, "FindReplaceDialogStatusLabel")->SetLabel("");
 
 	SetSize(mainPanel->GetMinSize());
+    Fit();
 }
 
 void FindAndReplaceShader::performReplace()
 {
-	const std::string find = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry")->GetValue().ToStdString();
-	const std::string replace = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry")->GetValue().ToStdString();
+	auto find = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry")->GetValue().ToStdString();
+	auto replace = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry")->GetValue().ToStdString();
 
 	bool selectedOnly = findNamedObject<wxCheckBox>(this, "FindReplaceDialogSearchCurSelection")->GetValue();
 
 	int replaced = scene::findAndReplaceShader(find, replace, selectedOnly);
 
-	wxStaticText* status = findNamedObject<wxStaticText>(this, "FindReplaceDialogStatusLabel");
+	auto status = findNamedObject<wxStaticText>(this, "FindReplaceDialogStatusLabel");
 	status->SetLabel(fmt::format(_(COUNT_TEXT), replaced));
 }
 
 void FindAndReplaceShader::onChooseFind(wxCommandEvent& ev)
 {
 	// Construct the modal dialog
-	ShaderChooser* chooser = new ShaderChooser(this, 
+	auto chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular,
 		findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry"));
 
 	chooser->ShowModal();
@@ -116,7 +132,7 @@ void FindAndReplaceShader::onChooseFind(wxCommandEvent& ev)
 void FindAndReplaceShader::onChooseReplace(wxCommandEvent& ev)
 {
 	// Construct the modal dialog
-	ShaderChooser* chooser = new ShaderChooser(this, 
+	auto chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular,
 		findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry"));
 
 	chooser->ShowModal();
@@ -156,11 +172,6 @@ void FindAndReplaceShader::onChoosePick(wxCommandEvent& ev)
 
         _lastFocusedEntry = findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry");
     }
-}
-
-void FindAndReplaceShader::onClose(wxCommandEvent& ev)
-{
-    Close();
 }
 
 void FindAndReplaceShader::onEntryChanged(wxCommandEvent& ev)
@@ -213,12 +224,4 @@ std::string FindAndReplaceShader::getPickHelpText()
     return fmt::format(_(PICK_TEXTURE_HINT), bindText);
 }
 
-void FindAndReplaceShader::ShowDialog(const cmd::ArgumentList& args)
-{
-	// Just instantiate a new dialog, this enters a main loop
-	FindAndReplaceShader* dialog = new FindAndReplaceShader;
-
-	dialog->Show();
-}
-
-} // namespace ui
+} // namespace

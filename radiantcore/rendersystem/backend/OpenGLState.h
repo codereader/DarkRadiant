@@ -1,14 +1,13 @@
 #pragma once
 
 #include "igl.h"
+#include "iglprogram.h"
 #include "ishaders.h"
 #include "ishaderlayer.h"
+#include "irender.h"
 
 #include "debugging/gl.h"
 #include "render/Colour4.h"
-
-// Full declaration in iglprogram.h
-class GLProgram;
 
 namespace render
 {
@@ -35,6 +34,7 @@ public:
         SORT_FIRST = -64,
         SORT_ZFILL = 0,             // used by depth buffer fill passes
         SORT_INTERACTION = 2,       // used by the DBS pass
+        SORT_BACKGROUND = 512,      // used by inactive nodes
         SORT_FULLBRIGHT = 1025,     // used by non-translucent editor passes
         SORT_TRANSLUCENT = 1026,    // used by blend-type editor passes
         SORT_OVERLAY_FIRST = 1028,  // used by decals
@@ -165,12 +165,12 @@ public:
      * \{
      */
 
-    GLint texture0; // diffuse
-    GLint texture1; // bump
-    GLint texture2; // specular
-    GLint texture3; // light texture
-    GLint texture4; // light falloff
-    GLint texture5; // shadow map
+    GLuint texture0; // diffuse
+    GLuint texture1; // bump
+    GLuint texture2; // specular
+    GLuint texture3; // light texture
+    GLuint texture4; // light falloff
+    GLuint texture5; // shadow map
 
     /**
      * \}
@@ -222,6 +222,10 @@ public:
      */
     IShaderLayer::CubeMapMode cubeMapMode;
 
+    // Whether to ignore the RGBA colour modulation defined by the associated shader stage
+    // in which case only the _colour member will be used.
+    bool ignoreStageColour;
+
     /// Default constructor
     OpenGLState()
     : _colour(Colour4::WHITE()),
@@ -245,7 +249,8 @@ public:
       m_linestipple_factor(1),
       m_linestipple_pattern(0xAAAA),
       glProgram(nullptr),
-      cubeMapMode(IShaderLayer::CUBE_MAP_NONE)
+      cubeMapMode(IShaderLayer::CUBE_MAP_NONE),
+      ignoreStageColour(false)
     { }
 
     // Determines the difference between this state and the target (current) state.
@@ -450,7 +455,7 @@ public:
 
         // Set the GL colour. Do this unconditionally, since setting glColor is
         // cheap and it avoids problems with leaked colour states.
-        if (stage0)
+        if (stage0 && !ignoreStageColour)
         {
             setColour(stage0->getColour());
         }
@@ -498,7 +503,7 @@ public:
 
     // Bind the given texture to the texture unit, if it is different from the
     // current state, then set the current state to the new texture.
-    static void SetTextureState(GLint& current, const GLint texture, GLenum textureUnit, GLenum textureMode)
+    static void SetTextureState(GLuint& current, const GLuint texture, GLenum textureUnit, GLenum textureMode)
     {
         if (texture == current) return;
 
@@ -526,7 +531,7 @@ private:
         glLoadMatrixd(tex);
     }
 
-    void setTextureState(GLint& current, const GLint texture, GLenum textureMode)
+    void setTextureState(GLuint& current, const GLuint texture, GLenum textureMode)
     {
         if (texture == current) return;
 

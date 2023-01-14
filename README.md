@@ -66,8 +66,12 @@ To compile DarkRadiant a number of libraries (with development headers) and a st
 * libeigen3-dev
 * libgit2-dev (optional)
 
-This does not include core development tools such as g++ or the git client
-to download the sources (use sudo apt-get install git for that). One possible set of packages might be:
+To generate the local offline HTML user guide, the `asciidoctor` command must be in your
+PATH. This is an optional dependency: if the command is not found, the CMake build will
+proceed without building the user guide.
+
+This does not include core development tools such as g++ or the git client to download the
+sources (use sudo apt-get install git for that). One possible set of packages might be:
 
 `sudo apt-get install git cmake g++ gettext pkg-config`
 

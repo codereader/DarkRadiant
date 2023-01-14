@@ -44,7 +44,11 @@ void RenderableBrushVertices::updateGeometry()
     static const Vector3& vertexColour = GlobalBrushCreator().getSettings().getVertexColour();
     static const Vector3& selectedVertexColour = GlobalBrushCreator().getSettings().getSelectedVertexColour();
 
-    detail::addColouredVertices(brushVertices, { vertexColour, 1 }, vertices, indices);
+    if (!brushVertices.empty())
+    {
+        detail::addColouredVertices(brushVertices, { vertexColour, 1 }, vertices, indices);
+    }
+
     detail::addColouredVertices(_selectedVertices, { selectedVertexColour, 1 }, vertices, indices);
 
     updateGeometryWithData(render::GeometryType::Points, vertices, indices);

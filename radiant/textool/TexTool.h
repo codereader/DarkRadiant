@@ -1,29 +1,29 @@
 #pragma once
 
-#include "icommandsystem.h"
 #include "itexturetoolmodel.h"
 
-#include "wxutil/window/TransientWindow.h"
-#include "math/Vector3.h"
 #include "math/AABB.h"
 #include "ishaders.h"
 #include "imanipulator.h"
-#include "iradiant.h"
 #include "iorthoview.h"
 #include "imousetool.h"
-#include "iselection.h"
-#include "iregistry.h"
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
 #include "wxutil/MouseToolHandler.h"
 #include "wxutil/FreezePointer.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/event/SingleIdleCallback.h"
 #include "tools/TextureToolMouseEvent.h"
 #include "render/TextureToolView.h"
 #include "messages/ManipulatorModeToggleRequest.h"
 #include "messages/ComponentSelectionModeToggleRequest.h"
 #include "messages/TextureChanged.h"
 #include "messages/GridSnapRequest.h"
+
+#include <wx/panel.h>
+
+#include "messages/TextureToolRequest.h"
+#include "wxutil/DockablePanel.h"
 
 class Winding;
 class Patch;
@@ -33,15 +33,13 @@ namespace wxutil { class GLWidget; }
 namespace ui
 {
 
-class TexTool;
-typedef std::shared_ptr<TexTool> TexToolPtr;
-
 class TexTool :
-	public wxutil::TransientWindow,
+	public wxutil::DockablePanel,
     public IOrthoViewBase,
 	public sigc::trackable,
     protected wxutil::MouseToolHandler,
-    protected wxutil::XmlResourceBasedWidget
+    protected wxutil::XmlResourceBasedWidget,
+    public wxutil::SingleIdleCallback
 {
 private:
 	// GL widget
@@ -80,16 +78,13 @@ private:
 	std::size_t _componentSelectionModeToggleRequestHandler;
 	std::size_t _textureMessageHandler;
 	std::size_t _gridSnapHandler;
+	std::size_t _texToolRequestHandler;
 
     bool _determineThemeFromImage;
 
 private:
-	// This is where the static shared_ptr of the singleton instance is held.
-	static TexToolPtr& InstancePtr();
-
-	/* TransientWindow callbacks */
-	virtual void _preHide() override;
-	virtual void _preShow() override;
+	void connectListeners();
+	void disconnectListeners();
 
 	void setGridActive(bool active);
 
@@ -145,16 +140,11 @@ private:
 	// UndoSystem event handler
 	void onUndoRedoOperation();
 
-    /**
-     * greebo: Shutdown listeners de-registering from
-     * the SelectionSystem, saving the window state, etc.
-     */
-    void onMainFrameShuttingDown();
-
     void handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request);
     void handleComponentSelectionModeToggleRequest(selection::ComponentSelectionModeToggleRequest& request);
     void handleGridSnapRequest(selection::GridSnapRequest& request);
     void handleTextureChanged(radiant::TextureChangedMessage& message);
+    void handleTextureToolRequest(TextureToolRequest& request);
 
     // Returns true if the texture tool window or the GL widget has focus
     bool textureToolHasFocus();
@@ -163,13 +153,8 @@ private:
     void determineThemeBasedOnPixelData(const std::vector<unsigned char>& pixels);
 
 public:
-	TexTool();
-
-	/** greebo: This is the static accessor method containing
-	 * the static instance of the TexTool class. Use this to access
-	 * the public member methods like toggle() and shutdown().
-	 */
-	static TexTool& Instance();
+	TexTool(wxWindow* parent);
+	~TexTool() override;
 
     int getWidth() const override;
     int getHeight() const override;
@@ -181,6 +166,7 @@ public:
     int getDeviceWidth() const override;
     int getDeviceHeight() const override;
     const VolumeTest& getVolumeTest() const override;
+    bool supportsDragSelections() override;
 
     // Request a deferred update of the UI elements
     void queueDraw() override;
@@ -192,18 +178,17 @@ public:
 	 */
 	void draw();
 
-	// Idle callback, used for deferred updates
-	void onIdle(wxIdleEvent& ev);
-
-	/** greebo: Static command targets
-	 */
-	static void toggle(const cmd::ArgumentList& args);
-
 	/** greebo: Registers the commands in the EventManager
 	 */
 	static void registerCommands();
 
 protected:
+	// Idle callback, used for deferred updates
+	void onIdle() override;
+
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
     MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
     MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
     MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
@@ -214,7 +199,6 @@ protected:
     IInteractiveView& getInteractiveView() override;
 
 private:
-    static void resetViewCmd(const cmd::ArgumentList& args);
     void updateProjection();
     double getTextureAspectRatio();
     void onManipulatorModeChanged(selection::IManipulator::Type type);

@@ -1,0 +1,65 @@
+// Test declarations used for some DeclarationManager unit tests
+ // Don't even alter the whitespace in this file.
+// Comments at the beginning of the file with an empty line in between
+
+ decl/removal/0
+{
+    diffusemap textures/removal/0
+}
+
+/* Without "testdecl" typename, C-style comment */
+decl/removal/1
+{
+    diffusemap textures/removal/1
+}
+// Some comments after decl/removal/1
+
+/**
+ A multiline comment before this decl
+ */
+testdecl decl/removal/2
+{
+    diffusemap textures/removal/2
+}
+// Some comments after decl/removal/2
+
+// Comment before decl/removal/3
+TestDecl decl/removal/3
+{
+    diffusemap textures/removal/3
+}
+
+// Multiple comment lines before decl/removal/a3
+/* mixed style comments too */
+	 // multiple comment with some whitespace at the start of each line
+ // multiple comment with some whitespace at the start of each line
+testDecl decl/removal/3a
+{
+    diffusemap textures/removal/a3
+}
+
+// Comment with a line before the start of the decl decl/removal/5
+
+testdecl decl/removal/5 { // a comment in the same line as the opening brace
+    diffusemap textures/removal/5
+}
+
+// Everything in the same line (before decl/removal/6)
+testdecl decl/removal/6 { diffusemap textures/removal/6 }
+testdecl decl/removal/7 { diffusemap textures/removal/7 }
+
+testdecl decl/removal/8 { diffusemap textures/removal/8 }
+
+// An old, commented out version of a decl that should not be touched
+// This is trying to mislead the splice helper cutting out the decl
+/*
+testdecl decl/removal/9
+{
+    diffusemap textures/old/5
+}
+*/
+
+testdecl decl/removal/9
+{
+    diffusemap textures/removal/5
+}

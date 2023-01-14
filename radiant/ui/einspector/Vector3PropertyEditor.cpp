@@ -37,10 +37,9 @@ wxSpinCtrl* makeSpinCtrl(wxPanel* parent)
 }
 
 // Constructor. Create the widgets here
-Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection& entities,
-                                             const std::string& name)
+Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _key(name)
+  _key(key)
 {
     // Construct the main widget (will be managed by the base class)
     wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
@@ -63,8 +62,8 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection&
     mainVBox->GetSizer()->Add(_zValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
 
     // Create the apply button
-    wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
-    applyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(Vector3PropertyEditor::_onApply), NULL, this);
+    wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply"));
+    applyButton->Bind(wxEVT_BUTTON, &Vector3PropertyEditor::_onApply, this);
 
     mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 
@@ -74,7 +73,7 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection&
 
 void Vector3PropertyEditor::updateFromEntity()
 {
-	setWidgetsFromKey(_entities.getSharedKeyValue(_key, false));
+	setWidgetsFromKey(_entities.getSharedKeyValue(_key->getFullKey(), false));
 }
 
 void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)
@@ -108,7 +107,7 @@ void Vector3PropertyEditor::_onApply(wxCommandEvent& ev)
 		+ string::to_string(_zValue->GetValue());
 
 	// Set the key on the entity
-	setKeyValue(_key, value);
+    setKeyValueOnSelection(_key->getFullKey(), value);
 }
 
 }

@@ -212,6 +212,12 @@
     <Filter Include="src\selection\textool">
       <UniqueIdentifier>{24592976-64c8-4027-81b7-5b83f62c43d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gl">
+      <UniqueIdentifier>{dc88a10c-1b0d-4e9b-844a-952046f324e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\fx">
+      <UniqueIdentifier>{8090888b-90cb-49eb-b203-f30f0635ab17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -254,9 +260,6 @@
       <Filter>src\vfs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystem.cpp">
-      <Filter>src\vfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystemModule.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\vfs\ZipArchive.cpp">
@@ -344,9 +347,6 @@
       <Filter>src\shaders</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderLayer.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderSystem.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\shaders\MapExpression.cpp">
@@ -892,9 +892,6 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\infofile\InfoFile.cpp">
       <Filter>src\map\infofile</Filter>
     </ClCompile>
@@ -1126,12 +1123,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\particles\ParticleLoader.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\eclass\EClassParser.cpp">
-      <Filter>src\eclass</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
@@ -1144,11 +1135,44 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationManager.cpp">
+      <Filter>src\decl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationFolderParser.cpp">
+      <Filter>src\decl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp">
+      <Filter>src\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\BlendLight.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\RegularLight.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fx\FxManager.cpp">
+      <Filter>src\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fx\FxDeclaration.cpp">
+      <Filter>src\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fx\FxAction.cpp">
+      <Filter>src\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\ModelNodeBase.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\SceneSelectionTesters.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\skins\Doom3ModelSkin.cpp">
+      <Filter>src\skins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1368,22 +1392,13 @@
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderLayer.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderSystem.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderFileLoader.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h">
@@ -2025,9 +2040,6 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\infofile\InfoFile.h">
       <Filter>src\map\infofile</Filter>
     </ClInclude>
@@ -2331,15 +2343,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h">
-      <Filter>src\eclass</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h">
-      <Filter>src\skins</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FenceSyncProvider.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
@@ -2364,11 +2367,91 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationManager.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFile.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationStreamParser.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h">
+      <Filter>src\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BlendLight.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\RegularLight.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fx\FxManager.h">
+      <Filter>src\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fx\FxDeclaration.h">
+      <Filter>src\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fx\FxAction.h">
+      <Filter>src\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\ModelNodeBase.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\IndexedBoxSurface.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\NullModelBoxSurface.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\SceneSelectionTesters.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\install\gl\cubemap_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\cubemap_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\interaction_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\interaction_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\regular_stage_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\regular_stage_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\shadowmap_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\shadowmap_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\zfill_alpha_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\zfill_alpha_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\blend_light_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\blend_light_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
   </ItemGroup>
 </Project>

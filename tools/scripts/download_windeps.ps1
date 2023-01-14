@@ -3,6 +3,14 @@ try
     Write-Host "Checking latest windeps package..."
 
     $headers = @{ "Accept" = "application/vnd.github.v3+json" }
+
+    # Use the API token provided by Github Actions if available
+    If ([string]::IsNullOrEmpty($env:GITHUB_API_TOKEN) -eq $false)
+    {
+        Write-Host "Using API Token to access the releases"
+        $headers.Add("Authorization", "Bearer " + $env:GITHUB_API_TOKEN)
+    }
+
     $uri = "https://api.github.com/repos/codereader/DarkRadiant_windeps/releases"
     $releases = Invoke-RestMethod -Headers $headers -Uri $uri
 

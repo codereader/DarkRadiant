@@ -24,7 +24,7 @@ RootNode::RootNode(const std::string& name) :
 	_selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
 	assert(_selectionSetManager);
 
-	_layerManager = GlobalLayerModule().createLayerManager();
+	_layerManager = GlobalLayerModule().createLayerManager(*this);
 	assert(_layerManager);
 
     _undoSystem = GlobalUndoSystemFactory().createUndoSystem();
@@ -107,6 +107,16 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 	_namespace->disconnect(child);
 
 	Node::onChildRemoved(child);
+}
+
+void RootNode::onFiltersChanged()
+{
+    // Recursively notify the whole tree
+    foreachNode([](const scene::INodePtr& node)
+    {
+        node->onFiltersChanged();
+        return true;
+    });
 }
 
 } // namespace map

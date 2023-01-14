@@ -5,15 +5,19 @@
 #include "imodelcache.h"
 #include "scenelib.h"
 #include "algorithm/Entity.h"
+#include "algorithm/FileUtils.h"
 #include "algorithm/Scene.h"
+#include "os/file.h"
 
 #include "render/VertexHashing.h"
+#include "string/replace.h"
 
 namespace test
 {
 
 using ModelTest = RadiantTest;
 using AseImportTest = ModelTest;
+using ObjImportTest = ModelTest;
 
 TEST_F(ModelTest, LwoPolyCount)
 {
@@ -462,7 +466,7 @@ TEST_F(ModelTest, NullModelTransformAfterSceneInsertion)
     auto entityOrigin = Vector3(320, 100, 0);
     auto funcEmitter = GlobalEntityModule().createEntityFromSelection("func_emitter", entityOrigin);
 
-    EXPECT_EQ(funcEmitter->getEntity().getKeyValue("model"), "-") << "Expected func_emitter to have a model after creation";
+    EXPECT_EQ(funcEmitter->getEntity().getKeyValue("model"), "-") << "Expected func_emitter to have a model key after creation";
 
     scene::addNodeToContainer(funcEmitter, GlobalMapModule().getRoot());
 
@@ -476,6 +480,234 @@ TEST_F(ModelTest, NullModelTransformAfterSceneInsertion)
     auto modelTranslation = nullModelNode->localToWorld().tCol().getVector3();
     EXPECT_TRUE(math::isNear(modelTranslation, entityOrigin, 0.01)) << 
         "Model node should be at the entity's origin, but was at " << modelTranslation;
+}
+
+inline void performModelNodeTest(const std::string& testProjectPath, const std::string& modelPath, int expectedPolyCount)
+{
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+    EXPECT_FALSE(algorithm::findChildModel(funcStatic)) << "No ModelNode expected after creating the entity";
+
+    EXPECT_TRUE(os::fileOrDirExists(testProjectPath + modelPath));
+
+    funcStatic->getEntity().setKeyValue("model", modelPath);
+
+    auto model = algorithm::findChildModel(funcStatic);
+    EXPECT_TRUE(model) << "No ModelNode after assigning a model path";
+
+    EXPECT_EQ(model->getIModel().getModelPath(), modelPath);
+    EXPECT_EQ(model->getIModel().getPolyCount(), expectedPolyCount);
+}
+
+// Setting the model key to point to an .ASE model should work
+TEST_F(ModelTest, ModelKeyReferencesAseModel)
+{
+    performModelNodeTest(_context.getTestProjectPath(), "models/ase/testcube.ase", 12);
+}
+
+TEST_F(ModelTest, ModelKeyReferencesLwoModel)
+{
+    performModelNodeTest(_context.getTestProjectPath(), "models/torch.lwo", 258);
+}
+
+TEST_F(ModelTest, ModelKeyReferencesMd5Model)
+{
+    performModelNodeTest(_context.getTestProjectPath(), "models/md5/flag01.md5mesh", 96);
+}
+
+TEST_F(ModelTest, ModelKeyReferencesModelDef)
+{
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+    EXPECT_FALSE(algorithm::findChildModel(funcStatic)) << "No ModelNode expected after creating the entity";
+
+    auto modelDef = GlobalEntityClassManager().findModel("flag_pirate01");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_TRUE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef mesh doesn't exist on disk";
+
+    funcStatic->getEntity().setKeyValue("model", "flag_pirate01");
+
+    auto model = algorithm::findChildModel(funcStatic);
+    EXPECT_TRUE(model) << "No ModelNode after assigning a model path";
+
+    EXPECT_EQ(model->getIModel().getModelPath(), modelDef->getMesh());
+    EXPECT_EQ(model->getIModel().getPolyCount(), 96);
+}
+
+TEST_F(ModelTest, ClearingModelKeyRemovesModel)
+{
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", "models/ase/testcube.ase");
+
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+
+    EXPECT_TRUE(algorithm::findChildModel(funcStatic));
+
+    funcStatic->getEntity().setKeyValue("model", "");
+
+    EXPECT_FALSE(algorithm::findChildModel(funcStatic)) << "ModelNode should be gone after clearing the model key";
+}
+
+// #5504: Reload Defs is not sufficient for reloading modelDefs
+TEST_F(ModelTest, ModelKeyReactsToReloadDecls)
+{
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+    EXPECT_FALSE(algorithm::findChildModel(funcStatic)) << "No ModelNode expected after creating the entity";
+
+    auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_FALSE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef shouldn't exist on disk";
+
+    auto defFilePath = modelDef->getDeclFilePath();
+
+    funcStatic->getEntity().setKeyValue("model", modelDef->getDeclName());
+
+    auto model = algorithm::findChildModel(funcStatic);
+    EXPECT_TRUE(model) << "No ModelNode after assigning a model path";
+
+    EXPECT_EQ(model->getIModel().getModelPath(), modelDef->getMesh());
+    EXPECT_EQ(model->getIModel().getPolyCount(), 0); // should be a null model
+
+    // Create a backup copy of the def file
+    BackupCopy backup(_context.getTestProjectPath() + defFilePath);
+
+    auto newMd5Mesh = "models/md5/flag01.md5mesh";
+    auto text = algorithm::loadTextFromVfsFile(defFilePath);
+    string::replace_all(text, modelDef->getMesh(), newMd5Mesh);
+    algorithm::replaceFileContents(_context.getTestProjectPath() + defFilePath, text);
+
+    GlobalDeclarationManager().reloadDeclarations();
+
+    EXPECT_EQ(modelDef->getMesh(), newMd5Mesh) << "Mesh change not reflected on existing instance";
+
+    // The child model node should have changed after reloadDecls
+    model = algorithm::findChildModel(funcStatic);
+    EXPECT_TRUE(model) << "No ModelNode after reloadDecls";
+
+    EXPECT_EQ(model->getIModel().getModelPath(), newMd5Mesh);
+    EXPECT_EQ(model->getIModel().getPolyCount(), 96); // should be the flag model's poly count now
+}
+
+TEST_F(ModelTest, ModelKeyMonitorsDef)
+{
+    auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_FALSE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef shouldn't exist on disk";
+
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", modelDef->getDeclName());
+
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+    EXPECT_TRUE(algorithm::findChildModel(funcStatic)) << "No ModelNode found after assigning the key";
+
+    // Change the syntax block of the def
+    auto newMd5Mesh = "models/md5/flag01.md5mesh";
+    auto syntax = modelDef->getBlockSyntax();
+    string::replace_all(syntax.contents, modelDef->getMesh(), newMd5Mesh);
+
+    // Assign the new syntax, this fires the decl changed signal, the entity should react
+    modelDef->setBlockSyntax(syntax);
+
+    auto model = algorithm::findChildModel(funcStatic);
+
+    EXPECT_TRUE(model) << "No ModelNode found on the entity";
+    EXPECT_EQ(model->getIModel().getModelPath(), newMd5Mesh);
+    EXPECT_EQ(model->getIModel().getPolyCount(), 96); // should be the flag model's poly count now
+}
+
+// Prove that the modelDef change subscription is restored after undo
+TEST_F(ModelTest, ModelKeyMonitorsDefAfterUndo)
+{
+    auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_FALSE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef shouldn't exist on disk";
+
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", modelDef->getDeclName());
+
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+
+    EXPECT_EQ(algorithm::findChildModel(funcStatic)->getIModel().getPolyCount(), 0) << "Model should be the NullModel";
+
+    // Change the model in the course of an undoable operation
+    {
+        UndoableCommand cmd("changeModelKey");
+        funcStatic->getEntity().setKeyValue("model", "models/ase/testcube.ase");
+    }
+
+    EXPECT_EQ(algorithm::findChildModel(funcStatic)->getIModel().getPolyCount(), 12) << "Model should be a cube now";
+
+    std::string newMd5Mesh("models/md5/flag01.md5mesh");
+
+    // Change the syntax of the modelDef
+    auto syntax = modelDef->getBlockSyntax();
+    syntax.contents = "mesh " + newMd5Mesh;
+    modelDef->setBlockSyntax(syntax);
+
+    // The entity should not be monitoring that modelDef, so no change is expected
+    EXPECT_EQ(algorithm::findChildModel(funcStatic)->getIModel().getPolyCount(), 12) << "Model should still be a cube";
+
+    // Change the modelDef back to something non-existent before undo
+    syntax.contents = "mesh some/nonexistent/mesh.md5mesh";
+    modelDef->setBlockSyntax(syntax);
+
+    // Now hit Undo, the entity's ModelKey should resume to monitor the modelDef
+    GlobalCommandSystem().execute("Undo");
+
+    syntax.contents = "mesh " + newMd5Mesh;
+    modelDef->setBlockSyntax(syntax);
+
+    auto model = algorithm::findChildModel(funcStatic);
+
+    EXPECT_TRUE(model) << "No ModelNode found on the entity";
+    EXPECT_EQ(model->getIModel().getModelPath(), newMd5Mesh) << "ModelKey didn't react to the mesh change";
+    EXPECT_EQ(model->getIModel().getPolyCount(), 96) << "Polycount is incorrect after the def change";
+}
+
+// #6035: ReloadDecls causes the ModelKey to refresh the model, resetting its transform to identity
+TEST_F(ModelTest, ModelOriginIsPreservedAfterDefChange)
+{
+    auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_FALSE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef shouldn't exist on disk";
+
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", modelDef->getDeclName());
+    funcStatic->getEntity().setKeyValue("origin", "300 100 50");
+
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+    auto modelNode = algorithm::findChildModelNode(funcStatic);
+    EXPECT_TRUE(modelNode) << "No ModelNode found after assigning the key";
+
+    // Check and remember this translation
+    auto translation = modelNode->localToWorld().tCol();
+    EXPECT_TRUE(math::isNear(translation, { 300, 100, 50 }, 0.001));
+    EXPECT_TRUE(math::isNear(translation, funcStatic->localToWorld().tCol(), 0.001));
+
+    // Change the syntax block of the def
+    auto newMd5Mesh = "models/md5/flag01.md5mesh";
+    auto syntax = modelDef->getBlockSyntax();
+    string::replace_all(syntax.contents, modelDef->getMesh(), newMd5Mesh);
+    modelDef->setBlockSyntax(syntax);
+
+    modelNode = algorithm::findChildModelNode(funcStatic);
+
+    EXPECT_TRUE(modelNode) << "No ModelNode found on the entity after changing the def";
+    auto newTranslation = modelNode->localToWorld().tCol();
+    EXPECT_TRUE(math::isNear(newTranslation, translation, 0.001))
+        << "Translation changed after reloading the def, was " << translation << ", it changed to " << newTranslation;
+}
+
+// an .obj file with usemtl directly referring to the material name
+TEST_F(ObjImportTest, UseMtlReferencingMaterial)
+{
+    auto model = GlobalModelCache().getModel("models/cube_with_usemtl.obj");
+    EXPECT_TRUE(model);
+
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+    EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "textures/common/caulk")
+        << "OBJ Model loader should have taken the material from the usemtl keyword";
 }
 
 }

@@ -16,7 +16,7 @@ class ModelPropertyEditor :
 {
 private:
 	// Keyvalue to set
-	std::string _key;
+    ITargetKey::Ptr _key;
 
 private:
 
@@ -27,13 +27,11 @@ private:
 public:
 
 	// Main constructor
-    ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-        const std::string& name, const std::string& options);
+    ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                  const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<ModelPropertyEditor>(parent, entities, name, options);
+        return std::make_shared<ModelPropertyEditor>(parent, entities, key);
     }
 };
 

@@ -30,6 +30,8 @@ namespace wxutil
 namespace
 {
     const GLfloat PREVIEW_FOV = 60;
+    constexpr float NEAR_CLIP_PLANE = 0.1f;
+    constexpr float FAR_CLIP_PLANE = 32768.0f;
 
     // Widget names
     const std::string BOTTOM_BOX("bottomBox");
@@ -46,6 +48,7 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
 	_glWidget(new wxutil::GLWidget(_mainPanel, std::bind(&RenderPreview::drawPreview, this), "RenderPreview")),
     _initialised(false),
 	_renderGrid(registry::getValue<bool>(RKEY_RENDERPREVIEW_SHOWGRID)),
+    _enableLightingModeAtStart(false),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
     _viewOrigin(0, 0, 0),
     _viewAngles(0, 0, 0),
@@ -79,6 +82,11 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _freezePointer.connectMouseEvents(
         std::bind(&RenderPreview::onGLMouseClick, this, std::placeholders::_1),
         std::bind(&RenderPreview::onGLMouseRelease, this, std::placeholders::_1));
+}
+
+void RenderPreview::setStartupLightingMode(bool enableAtStart)
+{
+    _enableLightingModeAtStart = enableAtStart;
 }
 
 void RenderPreview::setupToolbars(bool enableAnimation)
@@ -219,7 +227,7 @@ void RenderPreview::initialisePreview()
 
     if (_renderSystem->shaderProgramsAvailable())
     {
-        setLightingModeEnabled(false);
+        setLightingModeEnabled(_enableLightingModeAtStart);
     }
 
     // In case it didn't happen until now, make sure the rendersystem is realised
@@ -228,11 +236,21 @@ void RenderPreview::initialisePreview()
     updateModelViewMatrix();
 }
 
+const Vector3& RenderPreview::getViewOrigin()
+{
+    return _viewOrigin;
+}
+
 void RenderPreview::setViewOrigin(const Vector3& origin)
 {
     _viewOrigin = origin;
 
     updateModelViewMatrix();
+}
+
+const Vector3& RenderPreview::getViewAngles()
+{
+    return _viewAngles;
 }
 
 void RenderPreview::setViewAngles(const Vector3& angles)
@@ -474,6 +492,9 @@ bool RenderPreview::drawPreview()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Make sure the scene is ready
+    getScene();
+
 	// Pre-Render event
 	if (!onPreRender())
 	{
@@ -483,7 +504,7 @@ bool RenderPreview::drawPreview()
 	}
 
     // Set up the camera
-    Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
+    Matrix4 projection = camera::calculateProjectionMatrix(NEAR_CLIP_PLANE, FAR_CLIP_PLANE, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Keep the modelview matrix in the volumetest class up to date
     _view.construct(projection, getModelViewMatrix(), _previewWidth, _previewHeight);
@@ -535,7 +556,7 @@ void RenderPreview::renderWireFrame()
     RenderStateFlags flags = getRenderFlagsWireframe();
 
     // Set up the camera
-    Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
+    Matrix4 projection = camera::calculateProjectionMatrix(NEAR_CLIP_PLANE, FAR_CLIP_PLANE, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Front-end render phase, collect OpenGLRenderable objects from the scene
     render::CamRenderer renderer(_view, _shaders);

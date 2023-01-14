@@ -230,6 +230,7 @@
     <ClCompile Include="..\..\plugins\dm.editing\ReadmeTxt.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.editing\AIEditingControl.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIEditingPanel.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadChooserDialog.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadPropertyEditor.h" />
@@ -249,6 +250,7 @@
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedCheckbox.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedSpinButton.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargReplacer.h" />
+    <ClInclude Include="..\..\plugins\dm.editing\ThreadedEntityDefPopulator.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="wxutillib.vcxproj">

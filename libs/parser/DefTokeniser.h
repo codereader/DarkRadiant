@@ -340,10 +340,8 @@ public:
         } // end of for loop
 
         // Return true if we have added anything to the token
-        if (tok != "")
-            return true;
-        else
-            return false;
+        // If we ran out of tokens after the closing quote, even an empty string is a valid token
+        return tok != "" || _state == AFTER_CLOSING_QUOTE;
     }
 };
 
@@ -557,7 +555,7 @@ public:
      */
     BasicDefTokeniser(std::istream& str,
                       const char* delims = WHITESPACE,
-                      const char* keptDelims = "{}()")
+                      const char* keptDelims = "{}(),")
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
            DefTokeniserFunc(delims, keptDelims)),

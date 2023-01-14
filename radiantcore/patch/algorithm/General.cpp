@@ -89,7 +89,7 @@ void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams,
 	targetPatch->invertMatrix();
 }
 
-void stitchTextures(const cmd::ArgumentList& args)
+void stitchTextures()
 {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
@@ -304,6 +304,12 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
 
             auto& dimensionToExpand = patch1Edge.edgeType == EdgeType::Row ? numNewRows : numNewColumns;
             dimensionToExpand += numNewEdges;
+
+            // Check if the new dimensions are out of bounds
+            if (numNewColumns > MAX_PATCH_WIDTH || numNewRows > MAX_PATCH_HEIGHT)
+            {
+                throw cmd::ExecutionFailure(_("Merged patch would exceed maximum dimensions, cannot proceed."));
+            }
 
             // Create the new patch
             auto newPatchNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);

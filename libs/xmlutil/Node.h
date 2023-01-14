@@ -15,6 +15,8 @@ namespace xml
 class Node;
 typedef std::vector<Node> NodeList;
 
+class Document;
+
 /* Node
  *
  * A representation of an XML node. This class wraps an xmlNodePtr as used
@@ -24,21 +26,27 @@ typedef std::vector<Node> NodeList;
 class Node
 {
 private:
+    const Document* _owner;
 
     // The contained xmlNodePtr. This points to part of a wider xmlDoc
     // structure which is not owned by this Node object.
     xmlNodePtr _xmlNode;
 
 public:
+    // Construct a Node from a provided xmlNodePtr.
+	Node(const Document* owner, xmlNodePtr node);
 
-    // Construct a Node from the provided xmlNodePtr.
-	Node(xmlNodePtr node);
+    Node(const Node& other) = default;
+    Node(Node&& other) = default;
 
-	// Get the actual node pointer to a given node
-    xmlNodePtr getNodePtr() const;
+    Node& operator=(const Node& other) = default;
+    Node& operator=(Node&& other) = default;
+
+    // Returns true if this node is not empty (null)
+    bool isValid() const;
 
     // Get the name of the given node
-    const std::string getName() const;
+    std::string getName() const;
 
 	// Get a list of nodes which are children of this node
     NodeList getChildren() const;
@@ -71,6 +79,12 @@ public:
 
 	// Unlink and delete the node and all its children
 	void erase();
+
+private:
+    friend class Document;
+
+    // Private accessor, used by the friend Document class
+    xmlNodePtr getNodePtr() const;
 };
 
 } // namespace xml

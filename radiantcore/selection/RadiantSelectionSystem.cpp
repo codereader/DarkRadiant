@@ -28,6 +28,9 @@
 
 #include <functional>
 
+#include "SceneSelectionTesters.h"
+#include "command/ExecutionNotPossible.h"
+
 namespace selection
 {
 
@@ -36,10 +39,11 @@ namespace selection
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestWorkZoneRecalculation(true),
     _defaultManipulatorType(IManipulator::Drag),
-    _mode(ePrimitive),
+    _mode(SelectionMode::Primitive),
     _componentMode(ComponentSelectionMode::Default),
     _countPrimitive(0),
-    _countComponent(0)
+    _countComponent(0),
+    _selectionFocusActive(false)
 {}
 
 const SelectionInfo& RadiantSelectionSystem::getSelectionInfo() {
@@ -63,110 +67,135 @@ void RadiantSelectionSystem::removeObserver(Observer* observer)
 void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool isComponent)
 {
     // Cycle through the list of observers and call the moved method
-    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); )
+    for (auto i = _observers.begin(); i != _observers.end(); )
 	{
         (*i++)->selectionChanged(node, isComponent);
     }
 }
 
-void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-    const VolumeTest& view, SelectionSystem::EMode mode, ComponentSelectionMode componentMode)
+void RadiantSelectionSystem::toggleSelectionFocus()
 {
-    // The (temporary) storage pool
-    SelectionPool selector;
-    SelectionPool sel2;
-
-    switch(mode)
+    if (_selectionFocusActive)
     {
-        case eEntity:
+        rMessage() << "Leaving selection focus mode" << std::endl;
+        _selectionFocusActive = false;
+        
+        GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
         {
-            // Instantiate a walker class which is specialised for selecting entities
-            EntitySelector entityTester(selector, test);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
+            node->setRenderState(scene::INode::RenderState::Active);
+            return true;
+        });
 
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-        }
-        break;
-
-        case ePrimitive:
+        // Re-select the pieces we had selected before entering
+        for (const auto& node : _selectionFocusPool)
         {
-            // Do we have a camera view (filled rendering?)
-            if (view.fill() || !higherEntitySelectionPriority())
+            // Nodes might have been removed in the meantime
+            if (node->inScene())
             {
-                // Test for any visible elements (primitives, entities), but don't select child primitives
-                AnySelector anyTester(selector, test);
-                GlobalSceneGraph().foreachVisibleNodeInVolume(view, anyTester);
-            }
-            else
-            {
-                // We have an orthoview, here, select entities first
-
-                // First, obtain all the selectable entities
-                EntitySelector entityTester(selector, test);
-                GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
-
-                // Now retrieve all the selectable primitives
-                PrimitiveSelector primitiveTester(sel2, test);
-                GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
-            }
-
-            // Add the first selection crop to the target vector
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-
-            // Add the secondary crop to the vector (if it has any entries)
-            for (SelectionPool::const_iterator i = sel2.begin(); i != sel2.end(); ++i) {
-                // Check for duplicates
-                SelectablesList::iterator j;
-                for (j = targetList.begin(); j != targetList.end(); ++j) {
-                    if (*j == i->second) break;
-                }
-                // Insert if not yet in the list
-                if (j == targetList.end()) {
-                    targetList.push_back(i->second);
-                }
+                Node_setSelected(node, true);
             }
         }
-        break;
 
-        case eGroupPart:
-        {
-            // Retrieve all the selectable primitives of group nodes
-            GroupChildPrimitiveSelector primitiveTester(selector, test);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
+        _selectionFocusPool.clear();
+        SceneChangeNotify();
+        return;
+    }
 
-            // Add the selection crop to the target vector
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-        }
-        break;
+    if (_selectionInfo.totalCount == 0)
+    {
+        throw cmd::ExecutionNotPossible("Nothing selected, cannot toggle selection focus mode");
+    }
 
-        case eComponent:
-        {
-            ComponentSelector selectionTester(selector, test, componentMode);
-            SelectionSystem::foreachSelected(selectionTester);
+    _selectionFocusActive = true;
+    _selectionFocusPool.clear();
 
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-        }
-        break;
+    // Set the whole scene to inactive
+    GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
+    {
+        node->setRenderState(scene::INode::RenderState::Inactive);
+        return true;
+    });
 
-        case eMergeAction:
-        {
-            MergeActionSelector tester(selector, test);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
+    // Extract the selection and set these nodes to active (including all child nodes)
+    foreachSelected([&](const auto& node)
+    {
+        node->setRenderState(scene::INode::RenderState::Active);
+        node->foreachNode([](const auto& child) { child->setRenderState(scene::INode::RenderState::Active); return true; });
+        _selectionFocusPool.insert(node);
+    });
 
-            // Add the selection crop to the target vector
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-        }
-        break;
-    } // switch
+    rMessage() << "Activated selection focus mode, got " << _selectionFocusPool.size() << " selectables in the pool" << std::endl;
+
+    deselectAll();
+    SceneChangeNotify();
 }
 
-/* greebo: This is true if nothing is selected (either in component mode or in primitive mode)
- */
+bool RadiantSelectionSystem::selectionFocusIsActive()
+{
+    return _selectionFocusActive;
+}
+
+AABB RadiantSelectionSystem::getSelectionFocusBounds()
+{
+    AABB bounds;
+
+    for (const auto& node : _selectionFocusPool)
+    {
+        if (node->inScene())
+        {
+            bounds.includeAABB(node->worldAABB());
+        }
+    }
+
+    return bounds;
+}
+
+bool RadiantSelectionSystem::nodeCanBeSelectionTested(const scene::INodePtr& node)
+{
+    // All nodes pass if no focus is active, otherwise restrict to the pool
+    if (!_selectionFocusActive || !node) return true;
+
+    // Nodes can also be tested if their parent happens to be in the focus, otherwise
+    // it'd be impossible to select focused func_static (their children are the ones that are tested)
+    return _selectionFocusPool.count(node) > 0 || _selectionFocusPool.count(node->getParent()) > 0;
+}
+
+ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(SelectionMode mode)
+{
+    auto nodePredicate = std::bind(&RadiantSelectionSystem::nodeCanBeSelectionTested, this, std::placeholders::_1);
+
+    switch (mode)
+    {
+    case SelectionMode::Primitive:
+        return std::make_shared<PrimitiveSelectionTester>(nodePredicate);
+    case SelectionMode::Entity:
+        return std::make_shared<EntitySelectionTester>(nodePredicate);
+    case SelectionMode::GroupPart:
+        return std::make_shared<GroupChildPrimitiveSelectionTester>(nodePredicate);
+    case SelectionMode::MergeAction:
+        return std::make_shared<MergeActionSelectionTester>(nodePredicate);
+    case SelectionMode::Component:
+        return std::make_shared<ComponentSelectionTester>(*this, nodePredicate);
+
+    default:
+        throw std::invalid_argument("Selection Mode not supported yet");
+    }
+}
+
+void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
+    const VolumeTest& view, SelectionMode mode)
+{
+    auto tester = createSceneSelectionTester(mode);
+    tester->testSelectScene(view, test);
+
+    tester->foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
+}
+
 bool RadiantSelectionSystem::nothingSelected() const
 {
-    return (Mode() == eComponent && _countComponent == 0) ||
-           (Mode() == ePrimitive && _countPrimitive == 0) ||
-           (Mode() == eGroupPart && _countPrimitive == 0);
+    return (getSelectionMode() == SelectionMode::Component && _countComponent == 0) ||
+           (getSelectionMode() == SelectionMode::Primitive && _countPrimitive == 0) ||
+           (getSelectionMode() == SelectionMode::GroupPart && _countPrimitive == 0);
 }
 
 void RadiantSelectionSystem::pivotChanged()
@@ -184,8 +213,7 @@ bool RadiantSelectionSystem::higherEntitySelectionPriority() const
     return registry::getValue<bool>(RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
-// Sets the current selection mode (Entity, Component or Primitive)
-void RadiantSelectionSystem::SetMode(SelectionSystem::EMode mode)
+void RadiantSelectionSystem::setSelectionMode(SelectionMode mode)
 {
     // Only change something if the mode has actually changed
     if (_mode != mode)
@@ -197,8 +225,8 @@ void RadiantSelectionSystem::SetMode(SelectionSystem::EMode mode)
     }
 }
 
-// returns the currently active mode
-SelectionSystem::EMode RadiantSelectionSystem::Mode() const {
+SelectionMode RadiantSelectionSystem::getSelectionMode() const
+{
     return _mode;
 }
 
@@ -219,7 +247,7 @@ ComponentSelectionMode RadiantSelectionSystem::ComponentMode() const
     return _componentMode;
 }
 
-sigc::signal<void, SelectionSystem::EMode>& RadiantSelectionSystem::signal_selectionModeChanged()
+sigc::signal<void, SelectionMode>& RadiantSelectionSystem::signal_selectionModeChanged()
 {
     return _sigSelectionModeChanged;
 }
@@ -257,7 +285,7 @@ std::size_t RadiantSelectionSystem::registerManipulator(const ISceneManipulator:
 
 void RadiantSelectionSystem::unregisterManipulator(const ISceneManipulator::Ptr& manipulator)
 {
-	for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
+	for (auto i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
 		if (i->second == manipulator)
 		{
@@ -280,7 +308,7 @@ const ISceneManipulator::Ptr& RadiantSelectionSystem::getActiveManipulator()
 
 void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 {
-	Manipulators::const_iterator found = _manipulators.find(manipulatorId);
+	auto found = _manipulators.find(manipulatorId);
 
 	if (found == _manipulators.end())
 	{
@@ -304,11 +332,11 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 
 void RadiantSelectionSystem::setActiveManipulator(IManipulator::Type manipulatorType)
 {
-	for (const Manipulators::value_type& pair : _manipulators)
+	for (const auto& [_, manipulator] : _manipulators)
 	{
-		if (pair.second->getType() == manipulatorType)
+		if (manipulator->getType() == manipulatorType)
 		{
-			_activeManipulator = pair.second;
+			_activeManipulator = manipulator;
 
 			// Release the user lock when switching manipulators
 			_pivot.setUserLocked(false);
@@ -364,6 +392,13 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     if (isSelected)
 	{
         _selection.append(node);
+
+        // Any selectable that is not in the pool yet will be added
+        // otherwise creating new nodes is making them unselectable
+        if (_selectionFocusActive)
+        {
+            _selectionFocusPool.insert(node);
+        }
     }
     else
 	{
@@ -479,9 +514,7 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected)
 // Traverse the current selection components and visit them with the given visitor class
 void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 {
-    for (SelectionListType::const_iterator i = _componentSelection.begin();
-         i != _componentSelection.end();
-         /* in-loop increment */)
+    for (auto i = _componentSelection.begin(); i != _componentSelection.end(); /* in-loop increment */)
     {
         visitor.visit((i++)->first);
     }
@@ -489,9 +522,7 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 
 void RadiantSelectionSystem::foreachSelected(const std::function<void(const scene::INodePtr&)>& functor)
 {
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
         functor((i++)->first);
     }
@@ -499,9 +530,7 @@ void RadiantSelectionSystem::foreachSelected(const std::function<void(const scen
 
 void RadiantSelectionSystem::foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor)
 {
-	for (SelectionListType::const_iterator i = _componentSelection.begin();
-         i != _componentSelection.end();
-         /* in-loop increment */)
+	for (auto i = _componentSelection.begin(); i != _componentSelection.end(); /* in-loop increment */)
     {
         functor((i++)->first);
     }
@@ -511,9 +540,7 @@ void RadiantSelectionSystem::foreachBrush(const std::function<void(Brush&)>& fun
 {
 	BrushSelectionWalker walker(functor);
 
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
 		walker.visit((i++)->first); // Handles group nodes recursively
     }
@@ -523,9 +550,7 @@ void RadiantSelectionSystem::foreachFace(const std::function<void(IFace&)>& func
 {
 	FaceSelectionWalker walker(functor);
 
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
 		walker.visit((i++)->first); // Handles group nodes recursively
     }
@@ -538,9 +563,7 @@ void RadiantSelectionSystem::foreachPatch(const std::function<void(IPatch&)>& fu
 {
 	PatchSelectionWalker walker(functor);
 
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
 		walker.visit((i++)->first); // Handles group nodes recursively
     }
@@ -565,7 +588,7 @@ IFace& RadiantSelectionSystem::getSingleSelectedFace()
 
 // Hub function for "deselect all", this passes the deselect call to the according functions
 void RadiantSelectionSystem::deselectAll() {
-    if (Mode() == eComponent) {
+    if (getSelectionMode() == SelectionMode::Component) {
         setSelectedAllComponents(false);
     }
     else {
@@ -592,17 +615,24 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     {
         SelectionPool selector;
 
-        ComponentSelector selectionTester(selector, test, ComponentSelectionMode::Face);
-        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
+        ComponentSelector tester(selector, test, ComponentSelectionMode::Face);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), [&](const scene::INodePtr& node)
+        {
+            if (nodeCanBeSelectionTested(node))
+            {
+                tester.testNode(node);
+            }
+            return true;
+        });
 
         // Load them all into the vector
-        for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
+        for (auto i = selector.begin(); i != selector.end(); ++i)
         {
             candidates.push_back(i->second);
         }
     }
     else {
-        testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+        testSelectScene(candidates, test, test.getVolume(), getSelectionMode());
     }
 
     // Was the selection test successful (have we found anything to select)?
@@ -611,15 +641,16 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     onSelectionPerformed();
 }
 
-namespace algorithm
+void RadiantSelectionSystem::setSelectionStatus(ISelectable* selectable, bool selected)
 {
+    // In focus mode the selection is not propagated to group peers
+    if (_selectionFocusActive)
+    {
+        selectable->setSelected(selected);
+        return;
+    }
 
-// If the selectable is a GroupSelectable, the respective callback is used
-inline void setSelectionStatus(ISelectable* selectable, bool selected)
-{
-	IGroupSelectable* groupSelectable = dynamic_cast<IGroupSelectable*>(selectable);
-
-	if (groupSelectable)
+	if (auto groupSelectable = dynamic_cast<IGroupSelectable*>(selectable); groupSelectable)
 	{
 		groupSelectable->setSelected(selected, true); // propagate selection state to group peers
 	}
@@ -627,8 +658,6 @@ inline void setSelectionStatus(ISelectable* selectable, bool selected)
 	{
 		selectable->setSelected(selected);
 	}
-}
-
 }
 
 void RadiantSelectionSystem::performPointSelection(const SelectablesList& candidates, EModifier modifier)
@@ -644,7 +673,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 		{
 			ISelectable* best = candidates.front();
 			// toggle selection of the object with least depth (=first in the list)
-			algorithm::setSelectionStatus(best, !best->isSelected());
+			setSelectionStatus(best, !best->isSelected());
 		}
 		break;
 
@@ -655,7 +684,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 		case eReplace:
 		{
 			// select closest (=first in the list)
-			algorithm::setSelectionStatus(candidates.front(), true);
+			setSelectionStatus(candidates.front(), true);
 		}
 		break;
 
@@ -673,21 +702,18 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 				if ((*i)->isSelected())
 				{
 					// unselect the currently selected one
-					algorithm::setSelectionStatus(*i, false);
-					//(*i)->setSelected(false);
+					setSelectionStatus(*i, false);
 
 					// check if there is a "next" item in the list, if not: select the first item
 					++i;
 
 					if (i != candidates.end())
 					{
-						algorithm::setSelectionStatus(*i, true);
-						//(*i)->setSelected(true);
+						setSelectionStatus(*i, true);
 					}
 					else
 					{
-						algorithm::setSelectionStatus(candidates.front(), true);
-						//candidates.front()->setSelected(true);
+						setSelectionStatus(candidates.front(), true);
 					}
 					break;
 				}
@@ -724,18 +750,25 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
 
     if (face)
     {
-        ComponentSelector selectionTester(pool, test, ComponentSelectionMode::Face);
-        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
+        ComponentSelector tester(pool, test, ComponentSelectionMode::Face);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), [&](const scene::INodePtr& node)
+        {
+            if (nodeCanBeSelectionTested(node))
+            {
+                tester.testNode(node);
+            }
+            return true;
+        });
 
         // Load them all into the vector
-        for (SelectionPool::const_iterator i = pool.begin(); i != pool.end(); ++i)
+        for (auto i = pool.begin(); i != pool.end(); ++i)
         {
             candidates.push_back(i->second);
         }
     }
     else
     {
-        testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+        testSelectScene(candidates, test, test.getVolume(), getSelectionMode());
     }
 
     // Since toggling a selectable might trigger a group-selection
@@ -751,7 +784,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
 
     for (const auto& state : selectableStates)
     {
-        algorithm::setSelectionStatus(state.first, state.second);
+        setSelectionStatus(state.first, state.second);
     }
 
     onSelectionPerformed();
@@ -791,15 +824,19 @@ void RadiantSelectionSystem::onManipulationEnd()
     assert(activeManipulator);
 
     // greebo: Deselect all faces if we are in brush and drag mode
-    if ((Mode() == SelectionSystem::ePrimitive || Mode() == SelectionSystem::eGroupPart) &&
-        activeManipulator->getType() == selection::IManipulator::Drag)
+    if ((getSelectionMode() == SelectionMode::Primitive || getSelectionMode() == SelectionMode::GroupPart) &&
+        activeManipulator->getType() == IManipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
-    // Remove all degenerated brushes from the scene graph (should emit a warning)
-    SelectionSystem::foreachSelected(RemoveDegenerateBrushWalker());
+    {
+        // Remove all degenerated brushes from the scene graph (should emit a warning)
+        // Do this in an undoable transaction we cannot be sure that one is active at this point
+        UndoableCommand cmd(_("Degenerate Brushes removed"));
+        SelectionSystem::foreachSelected(RemoveDegenerateBrushWalker());
+    }
 
     pivotChanged();
     activeManipulator->setSelected(false);
@@ -843,7 +880,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     });
 
     // greebo: Deselect all faces if we are in brush and drag mode
-    if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::IManipulator::Drag)
+    if (getSelectionMode() == SelectionMode::Primitive && activeManipulator->getType() == IManipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
@@ -952,12 +989,10 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
 
 void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	_pivot.initialise();
 
 	// Add manipulators
-	registerManipulator(std::make_shared<DragManipulator>(_pivot));
+	registerManipulator(std::make_shared<DragManipulator>(_pivot, *this, *this));
 	registerManipulator(std::make_shared<ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64.0f));
 	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
@@ -985,6 +1020,10 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
     GlobalCommandSystem().addCommand("ToggleEntitySelectionMode", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("ToggleGroupPartSelectionMode", std::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("ToggleMergeActionSelectionMode", std::bind(&RadiantSelectionSystem::toggleMergeActionMode, this, std::placeholders::_1));
+
+    GlobalCommandSystem().addWithCheck("ToggleSelectionFocus",
+        [this](const auto&) { toggleSelectionFocus(); },
+        [this]() { return _selectionFocusActive || _selectionInfo.totalCount > 0; });
 
     GlobalCommandSystem().addCommand("ToggleComponentSelectionMode",
         std::bind(&RadiantSelectionSystem::toggleComponentModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
@@ -1015,6 +1054,8 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 
 void RadiantSelectionSystem::shutdownModule()
 {
+    _selectionFocusPool.clear();
+
     // greebo: Unselect everything so that no references to scene::Nodes
     // are kept after shutdown, causing destruction issues.
     setSelectedAll(false);
@@ -1050,7 +1091,7 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 {
 	// This seems to be a fail-safe method, to detect situations where component mode is still
 	// active without any primitive selected - in which case the method exits component mode.
-	if (Mode() == eComponent && countSelected() == 0)
+	if (getSelectionMode() == SelectionMode::Component && countSelected() == 0)
 	{
 		activateDefaultMode();
 		onComponentModeChanged();
@@ -1059,11 +1100,11 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 
 std::size_t RadiantSelectionSystem::getManipulatorIdForType(IManipulator::Type type)
 {
-	for (const Manipulators::value_type& pair : _manipulators)
+	for (const auto& [id, manipulator] : _manipulators)
 	{
-		if (pair.second->getType() == type)
+		if (manipulator->getType() == type)
 		{
-			return pair.first;
+			return id;
 		}
 	}
 
@@ -1185,7 +1226,7 @@ void RadiantSelectionSystem::toggleManipulatorMode(IManipulator::Type type)
 
 void RadiantSelectionSystem::activateDefaultMode()
 {
-	SetMode(ePrimitive);
+	setSelectionMode(SelectionMode::Primitive);
 	SetComponentMode(ComponentSelectionMode::Default);
 
 	SceneChangeNotify();
@@ -1193,7 +1234,7 @@ void RadiantSelectionSystem::activateDefaultMode()
 
 void RadiantSelectionSystem::toggleComponentMode(ComponentSelectionMode mode)
 {
-	if (Mode() == eComponent && ComponentMode() == mode)
+	if (getSelectionMode() == SelectionMode::Component && ComponentMode() == mode)
 	{
 		// De-select all the selected components before switching back
 		setSelectedAllComponents(false);
@@ -1206,7 +1247,7 @@ void RadiantSelectionSystem::toggleComponentMode(ComponentSelectionMode mode)
 			toggleManipulatorMode(_defaultManipulatorType);
 		}
 
-		SetMode(eComponent);
+		setSelectionMode(SelectionMode::Component);
 		SetComponentMode(mode);
 	}
 
@@ -1258,13 +1299,13 @@ void RadiantSelectionSystem::toggleComponentModeCmd(const cmd::ArgumentList& arg
 
 void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 {
-	if (Mode() == eEntity)
+	if (getSelectionMode() == SelectionMode::Entity)
 	{
 		activateDefaultMode();
 	}
 	else
 	{
-		SetMode(eEntity);
+		setSelectionMode(SelectionMode::Entity);
 		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
@@ -1274,7 +1315,7 @@ void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 
 void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
 {
-	if (Mode() == eGroupPart)
+	if (getSelectionMode() == SelectionMode::GroupPart)
 	{
 		activateDefaultMode();
 	}
@@ -1308,7 +1349,7 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
             });
         });
 
-		SetMode(eGroupPart);
+		setSelectionMode(SelectionMode::GroupPart);
 		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
@@ -1318,9 +1359,9 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
 
 void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args)
 {
-    auto oldMode = Mode();
+    auto oldMode = getSelectionMode();
 
-    if (Mode() == eMergeAction)
+    if (getSelectionMode() == SelectionMode::MergeAction)
     {
         activateDefaultMode();
     }
@@ -1331,15 +1372,20 @@ void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args
         setSelectedAll(false);
         setSelectedAllComponents(false);
 
-        SetMode(eMergeAction);
+        setSelectionMode(SelectionMode::MergeAction);
         SetComponentMode(ComponentSelectionMode::Default);
     }
 
-    if (oldMode != Mode())
+    if (oldMode != getSelectionMode())
     {
         onManipulatorModeChanged();
         onComponentModeChanged();
     }
+}
+
+void RadiantSelectionSystem::toggleSelectionFocus(const cmd::ArgumentList& args)
+{
+    toggleSelectionFocus();
 }
 
 void RadiantSelectionSystem::onManipulatorModeChanged()
@@ -1366,7 +1412,7 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
         return; // already handled by other systems
     }
 
-	if (Mode() == eComponent)
+    if (getSelectionMode() == SelectionMode::Component)
 	{
 		if (countSelectedComponents() != 0)
 		{
@@ -1386,7 +1432,15 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
 		}
 		else
 		{
-			setSelectedAll(false);
+            if (countSelected() > 0)
+            {
+                setSelectedAll(false);
+            }
+            // With no selection left, hitting ESC will leave focus mode
+            else if (_selectionFocusActive)
+            {
+                toggleSelectionFocus();
+            }
 		}
 	}
 }
@@ -1395,6 +1449,8 @@ void RadiantSelectionSystem::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapUnloading || ev == IMap::MapLoading)
 	{
+        _selectionFocusActive = false;
+        _selectionFocusPool.clear();
 		setSelectedAll(false);
 		setSelectedAllComponents(false);
 	}

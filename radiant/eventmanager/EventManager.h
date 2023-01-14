@@ -26,6 +26,9 @@ private:
 	std::multimap<std::string, wxMenuItem*> _menuItems;
 	std::multimap<std::string, const wxToolBarToolBase*> _toolItems;
 
+	// Reverse mapping of menu IDs back to command strings
+	std::map<int, std::string> _commandsByMenuID;
+
 	// The command-to-accelerator map containing all registered shortcuts
 	typedef std::map<std::string, Accelerator::Ptr> AcceleratorMap;
 	AcceleratorMap _accelerators;
@@ -95,6 +98,8 @@ public:
 
 	std::string getEventStr(wxKeyEvent& ev) override;
 
+    IAccelerator::Ptr findAcceleratorForEvent(const std::string& eventName) override;
+
 private:
 	void saveEventListToRegistry();
 
@@ -114,6 +119,7 @@ private:
 	bool isModifier(wxKeyEvent& ev);
 	void onToolItemClicked(wxCommandEvent& ev);
 	void onMenuItemClicked(wxCommandEvent& ev);
+    void aboutToOpenMenu(wxMenu& ev);
 };
 
 }

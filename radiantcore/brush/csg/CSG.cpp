@@ -11,6 +11,7 @@
 
 #include "scenelib.h"
 #include "shaderlib.h"
+#include "selectionlib.h"
 
 #include "registry/registry.h"
 #include "brush/Face.h"
@@ -493,10 +494,13 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 
 void registerCommands()
 {
-	GlobalCommandSystem().addCommand("CSGSubtract", subtractBrushesFromUnselected);
-	GlobalCommandSystem().addCommand("CSGMerge", mergeSelectedBrushes);
-	GlobalCommandSystem().addCommand("CSGHollow", hollowSelectedBrushes);
-	GlobalCommandSystem().addCommand("CSGRoom", makeRoomForSelectedBrushes);
+    using selection::pred::haveBrush;
+
+    GlobalCommandSystem().addWithCheck("CSGSubtract", subtractBrushesFromUnselected,
+                                       haveBrush);
+    GlobalCommandSystem().addWithCheck("CSGMerge", mergeSelectedBrushes, haveBrush);
+    GlobalCommandSystem().addWithCheck("CSGHollow", hollowSelectedBrushes, haveBrush);
+    GlobalCommandSystem().addWithCheck("CSGRoom", makeRoomForSelectedBrushes, haveBrush);
 }
 
 } // namespace algorithm

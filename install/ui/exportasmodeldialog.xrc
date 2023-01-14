@@ -77,6 +77,96 @@
 						<option>0</option>
 						<flag>wxBOTTOM|wxTOP</flag>
 						<border>6</border>
+						<object class="wxStaticText" name="ExportDialogOriginLabel">
+							<label>Model Origin</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxGridSizer">
+							<rows>4</rows>
+							<cols>1</cols>
+							<vgap>6</vgap>
+							<hgap>0</hgap>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+								<border>0</border>
+								<object class="wxRadioButton" name="ExportOriginUseMapOrigin">
+									<style>wxRB_GROUP</style>
+									<label>Use Map Origin</label>
+									<value>0</value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+								<border>0</border>
+								<object class="wxRadioButton" name="ExportOriginUseSelectionCenter">
+									<label>Use Selection Center</label>
+									<value>0</value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>0</border>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL</flag>
+										<border>0</border>
+										<object class="wxRadioButton" name="ExportOriginUseEntityOrigin">
+											<label>Use Origin of Entity:</label>
+											<value>0</value>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxLEFT</flag>
+										<border>6</border>
+										<object class="wxChoice" name="ExportDialogEntitySelector">
+											<selection>0</selection>
+											<content />
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+								<border>0</border>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL</flag>
+										<border>6</border>
+										<object class="wxRadioButton" name="ExportOriginUseCustomOrigin">
+											<label>Use Custom Origin:</label>
+											<value>0</value>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL</flag>
+										<border>6</border>
+										<object class="wxTextCtrl" name="ExportDialogCustomOrigin">
+											<value>0 0 0</value>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxTOP</flag>
+						<border>6</border>
 						<object class="wxStaticText" name="ExportDialogOptionLabel">
 							<label>Export Options</label>
 							<wrap>-1</wrap>
@@ -88,15 +178,6 @@
 						<border>12</border>
 						<object class="wxBoxSizer">
 							<orient>wxVERTICAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxCheckBox" name="ExportDialogCenterObjects">
-									<label>Center Objects around Origin</label>
-									<checked>0</checked>
-								</object>
-							</object>
 							<object class="sizeritem">
 								<option>0</option>
 								<flag>wxBOTTOM|wxTOP</flag>
@@ -119,17 +200,8 @@
 								<option>0</option>
 								<flag>wxBOTTOM|wxTOP</flag>
 								<border>6</border>
-								<object class="wxCheckBox" name="ExportDialogUseEntityOrigin">
-									<label>Use Entity Origin as export Origin</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
 								<object class="wxCheckBox" name="ExportDialogExportLightsAsObjects">
-									<label>Export Lights as Objects (small octahedrons)</label>
+									<label>Export Lights as Objects (small Octahedrons)</label>
 									<checked>0</checked>
 								</object>
 							</object>
@@ -148,6 +220,8 @@
 								<object class="wxButton" name="ExportDialogCancelButton">
 									<label>Cancel</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="sizeritem">
@@ -157,6 +231,8 @@
 								<object class="wxButton" name="ExportDialogExportButton">
 									<label>Export</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 						</object>

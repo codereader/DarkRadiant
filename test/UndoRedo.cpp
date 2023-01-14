@@ -553,7 +553,7 @@ TEST_F(UndoTest, CreateBrushBasedEntity)
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1")) << "Worldspawn should have lost this brush";
 
     EXPECT_FALSE(Node_getEntity(brush->getParent())->isWorldspawn());
-    EXPECT_EQ(Node_getEntity(brush->getParent())->getEntityClass()->getName(), "atdm:mover_door_sliding");
+    EXPECT_EQ(Node_getEntity(brush->getParent())->getEntityClass()->getDeclName(), "atdm:mover_door_sliding");
 
     auto entityName = Node_getEntity(entity)->getKeyValue("name");
     EXPECT_TRUE(algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName)) << "Could not look up the entity by name";
@@ -574,7 +574,7 @@ TEST_F(UndoTest, CreateBrushBasedEntity)
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1")) << "Worldspawn should have lost this brush";
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(entity, "textures/numbers/1")) << "The door should have this brush now";
     EXPECT_FALSE(Node_getEntity(brush->getParent())->isWorldspawn());
-    EXPECT_EQ(Node_getEntity(brush->getParent())->getEntityClass()->getName(), "atdm:mover_door_sliding");
+    EXPECT_EQ(Node_getEntity(brush->getParent())->getEntityClass()->getDeclName(), "atdm:mover_door_sliding");
     EXPECT_TRUE(algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName)) << "Could not look up the entity by name";
 }
 

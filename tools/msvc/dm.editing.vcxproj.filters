@@ -111,5 +111,11 @@
     <ClInclude Include="..\..\plugins\dm.editing\MissionInfoTextFile.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\ThreadedEntityDefPopulator.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\AIEditingControl.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

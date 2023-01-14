@@ -1,9 +1,12 @@
 #include "RadiantTest.h"
 
 #include "igrid.h"
+#include "iselectable.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
 #include <sigc++/connection.h>
+
+#include "algorithm/Scene.h"
 #include "messages/GridSnapRequest.h"
 
 namespace test
@@ -153,6 +156,54 @@ TEST_F(GridTest, GridSnapMessageIsSent)
     EXPECT_TRUE(messageReceived) << "No message received during SnapToGrid";
 
     GlobalRadiantCore().getMessageBus().removeListener(handler);
+}
+
+/*
+ * After grid-snapping some brushes might be degenerate, and before solving #6120
+ * these were not immediately removed the scene. Next time the selection system had
+ * been finishing an operation (which in this scenario is a null operation), the
+ * degenerate brushes had been removed outside any undoable transaction.
+ * Hitting undo crashed the app due to dangling references.
+ */
+TEST_F(GridTest, DegenerateBrushesAreRemovedAfterGridsnap)
+{
+    loadMap("degenerate_brushes_after_gridsnap.map");
+
+    // Select all world brushes
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    worldspawn->foreachNode([](const auto& node)
+    {
+        Node_setSelected(node, true);
+        return true;
+    });
+
+    EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Need to have at least one brush selected";
+
+    // Set a large grid size to let brushes disappear on snap
+    GlobalGrid().setGridSize(GRID_8);
+    GlobalCommandSystem().executeCommand("SnapToGrid");
+
+    auto childCount = algorithm::getChildCount(worldspawn);
+    EXPECT_GT(childCount, 0) << "Must have some brushes after grid snapping";
+
+    // Make all brushes calculate their faces
+    worldspawn->foreachNode([](const auto& node)
+    {
+        if (auto brush = Node_getIBrush(node); brush)
+        {
+            brush->evaluateBRep();
+        }
+        return true;
+    });
+
+    // Start and end a manipulation (without moving anything)
+    GlobalSelectionSystem().onManipulationStart();
+    GlobalSelectionSystem().onManipulationEnd();
+
+    EXPECT_EQ(algorithm::getChildCount(worldspawn), childCount) << "Manipulation should not have altered the child count";
+
+    // Fire undo, which caused a crash as described in #6120
+    GlobalCommandSystem().executeCommand("Undo");
 }
 
 }

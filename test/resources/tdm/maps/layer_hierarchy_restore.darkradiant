@@ -1,0 +1,58 @@
+DarkRadiant Map Information File Version 2
+{
+	MapProperties
+	{
+		KeyValue { "EditTimeInSeconds" "34" } 
+		KeyValue { "LastCameraAngle" "0 0 0" } 
+		KeyValue { "LastCameraPosition" "0 0 30" } 
+	}
+	MapEditTimings
+	{
+		TotalSecondsEdited { 34 }
+	}
+	Layers
+	{
+		Layer 0 { Default }
+		Layer 1 { box }
+		Layer 2 { BoardsandStuff }
+		Layer 3 { Tst }
+		Layer 4 { Test2 }
+		Layer 5 { Test3 }
+		Layer 6 { Test4 }
+		Layer 7 { Test6 }
+		Layer 8 { Test7 }
+		Layer 9 { Test8 }
+	}
+	LayerProperties
+	{
+		ActiveLayer { 9 }
+		HiddenLayers { 2 1 6 7 }
+	}
+	LayerHierarchy
+	{
+		Layer 0 Parent { -1 }
+		Layer 1 Parent { -1 }
+		Layer 2 Parent { -1 }
+		Layer 3 Parent { 9 }
+		Layer 4 Parent { 2 }
+		Layer 5 Parent { 3 }
+		Layer 6 Parent { 3 }
+		Layer 7 Parent { 3 }
+		Layer 8 Parent { 4 }
+		Layer 9 Parent { 2 }
+	}
+	NodeToLayerMapping
+	{
+		Node { 0 } // entity (world)
+		Node { 0 } // brush (Brush)
+	}
+	SelectionSets
+	{
+	}
+	SelectionGroups
+	{
+	}
+	SelectionGroupNodeMapping
+	{
+	}
+}

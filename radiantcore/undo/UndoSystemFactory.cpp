@@ -26,8 +26,6 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        rMessage() << getName() << "::initialiseModule called" << std::endl;
-
         // add the preference settings
         constructPreferences();
     }

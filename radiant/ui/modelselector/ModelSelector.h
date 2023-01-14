@@ -18,23 +18,10 @@
 #include "wxutil/dataview/KeyValueTable.h"
 
 #include <string>
+#include <wx/tglbtn.h>
 
 namespace ui
 {
-
-/**
- * Data structure containing the model, the skin name and the options to be returned from
- * the Model Selector.
- */
-struct ModelSelectorResult
-{
-    // Model and skin strings
-    std::string model;
-    std::string skin;
-
-    // Model creation options
-    bool createClip = false;
-};
 
 class ModelPopulator;
 
@@ -44,14 +31,46 @@ typedef std::shared_ptr<ModelSelector> ModelSelectorPtr;
 /// Dialog for browsing and selecting a model and/or skin
 class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBasedWidget
 {
+public:
+    /**
+     * Data structure containing the kind (model/eclass),
+     * the name of the object and a possible skin name.
+     * Als contains the options (whether to create Monsterclip).
+     */
+    struct Result
+    {
+        enum class ObjectKind
+        {
+            Model,
+            EntityClass,
+        };
+
+        // The object to create
+        ObjectKind objectKind;
+
+        // Eclass/Model name
+        std::string name;
+
+        // The skin of the model (if not empty)
+        std::string skin;
+
+        // Model creation options
+        bool createClip = false;
+    };
+
+private:
 	wxPanel* _dialogPanel;
 
 	// Model preview widget
-    wxutil::ModelPreviewPtr _modelPreview;
+    std::unique_ptr<wxutil::ModelPreview> _modelPreview;
 
     // Main tree view with model hierarchy
 	ModelTreeView* _treeView;
     wxToggleButton* _showSkinsBtn = nullptr;
+
+    // The model name which the info panels are currently displaying info for
+    std::string _infoModel;
+    std::string _infoSkin;
 
     // Key/value table for model information
     wxutil::KeyValueTable* _infoTable;
@@ -59,20 +78,34 @@ class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBased
     // Materials list table
     MaterialsList* _materialsList;
 
+    struct RelatedEntityColumns :
+        public wxutil::TreeModel::ColumnRecord
+    {
+        RelatedEntityColumns() :
+            eclassName(add(wxutil::TreeModel::Column::String)),
+            skin(add(wxutil::TreeModel::Column::String))
+        {}
+
+        wxutil::TreeModel::Column eclassName;
+        wxutil::TreeModel::Column skin;
+    };
+
+    RelatedEntityColumns _relatedEntityColumns;
+    wxutil::TreeModel::Ptr _relatedEntityStore;
+    wxutil::TreeView* _relatedEntityView;
+    wxutil::PopupMenuPtr _relatedEntityContextMenu;
+
 	// The window position tracker
 	wxutil::WindowPosition _position;
 	wxutil::PanedPosition _panedPosition;
-
-	// Last selected model, which will be returned by showAndBlock() once the
-	// recursive main loop exits.
-	std::string _lastModel;
-	std::string _lastSkin;
 
     // Whether to show advanced options panel
     bool _showOptions;
 
 	sigc::connection _modelsReloadedConn;
 	sigc::connection _skinsReloadedConn;
+
+    Result _result;
 
 private:
 	// Private constructor, creates widgets
@@ -85,9 +118,7 @@ private:
 	static ModelSelectorPtr& InstancePtr();
 
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
-	ModelSelectorResult showAndBlock(const std::string& curModel,
-                                     bool showOptions,
-                                     bool showSkins);
+	Result showAndBlock(const std::string& curModel, bool showOptions, bool showSkins);
 
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
@@ -97,7 +128,7 @@ private:
 	// Populate the tree view with models
 	void populateModels();
 
-	void showInfoForSelectedModel();
+	void handleSelectionChange();
 
 	void cancelDialog();
 
@@ -113,11 +144,16 @@ private:
 	// update the displayed model.
 	void onSelectionChanged(wxDataViewEvent& ev);
 
+	void onRelatedEntitySelectionChange(wxDataViewEvent& ev);
+	void onRelatedEntityActivated(wxDataViewEvent& ev);
+	void onRelatedEntityContextMenu(wxDataViewEvent& ev);
+	void onShowClassDefinition();
+
 	// Connected to the ModelCache/SkinCache signal, fires after the refresh commands are done
 	void onSkinsOrModelsReloaded();
 
 	void onModelLoaded(const model::ModelNodePtr& modelNode);
-
+    void onMaterialVisibilityStatusChanged();
 	void onMainFrameShuttingDown();
 
 protected:
@@ -136,8 +172,7 @@ public:
 	 *
 	 * @showOptions: whether to show the advanced options tab.
 	 */
-	static ModelSelectorResult chooseModel(
-			const std::string& curModel = "", bool showOptions = true, bool showSkins = true);
+	static Result chooseModel(const std::string& curModel = "", bool showOptions = true, bool showSkins = true);
 
 	// Starts the background population thread
     static void Populate();

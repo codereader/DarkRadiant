@@ -12,6 +12,7 @@
 #include <set>
 #include <functional>
 #include <algorithm>
+#include <sigc++/signal.h>
 
 #include "imodule.h"
 #include "iarchive.h"
@@ -82,7 +83,9 @@ public:
     }
 
     FileInfo(const FileInfo& other) = default;
+    FileInfo(FileInfo&& other) = default;
     FileInfo& operator=(const FileInfo& other) = default;
+    FileInfo& operator=(FileInfo&& other) = default;
 
     /// Top-level directory (if any), e.g. "def" or "models"
     std::string topDir;
@@ -154,38 +157,8 @@ public:
     // method.
 	typedef std::function<void(const FileInfo&)> VisitorFunc;
 
-	/**
-	 * Interface for VFS observers.
-	 *
-	 * A VFS observer is automatically notified of events relating to the
-	 * VFS, including startup and shutdown.
-	 */
-	class Observer
-	{
-	public:
-		virtual ~Observer() {}
-
-		/**
-		 * Notification of VFS initialisation.
-		 *
-		 * This method is invoked for all VFS observers when the VFS is
-		 * initialised. An empty default implementation is provided.
-		 */
-		virtual void onFileSystemInitialise() {}
-
-		/**
-		 * Notification of VFS shutdown.
-		 *
-		 * This method is invoked for all VFS observers when the VFS is shut
-		 * down. An empty default implementation is provided.
-		 */
-		virtual void onFileSystemShutdown() {}
-	};
-
-	typedef std::set<std::string> ExtensionSet;
-
 	// Initialises the filesystem using the given search order.
-	virtual void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedArchiveExtensions) = 0;
+	virtual void initialise(const SearchPaths& vfsSearchPaths, const std::set<std::string>& allowedArchiveExtensions) = 0;
 
     // Returns true if the filesystem has already been initialised
     virtual bool isInitialised() const = 0;
@@ -194,14 +167,11 @@ public:
 	virtual void shutdown() = 0;
 
     // Returns the extension set this VFS instance has been initialised with
-    virtual const ExtensionSet& getArchiveExtensions() const = 0;
+    virtual const std::set<std::string>& getArchiveExtensions() const = 0;
 
-	// greebo: Adds/removes observers to/from the VFS
-    // Observers should also check isInitialised() after adding themselves
-    // since the VFS might have been initialised already. Calling addObserver()
-    // won't call onFileSystemInitialise() if that's the case.
-	virtual void addObserver(Observer& observer) = 0;
-	virtual void removeObserver(Observer& observer) = 0;
+    // A signal that is emitted when the VFS has been initialised, i.e. the paths have been
+    // set, the archives/directories are known and can be traversed
+    virtual sigc::signal<void>& signal_Initialised() = 0;
 
 	// Returns the number of files in the VFS matching the given filename
 	virtual int getFileCount(const std::string& filename) = 0;
@@ -266,7 +236,7 @@ public:
 
 }
 
-const char* const MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
+constexpr const char* const MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
 
 inline vfs::VirtualFileSystem& GlobalFileSystem()
 {

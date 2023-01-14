@@ -105,14 +105,14 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml:
 		{
 			// Create a new ToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxutil::GetLocalBitmap(icon),
+				wxutil::GetLocalBitmap(icon, wxART_TOOLBAR),
 				tooltip);
 		}
 		else
 		{
 			// Create a new ToggleToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxutil::GetLocalBitmap(icon),
+				wxutil::GetLocalBitmap(icon, wxART_TOOLBAR),
 				tooltip, wxITEM_CHECK);
 		}
 
@@ -142,10 +142,6 @@ wxToolBar* ToolbarManager::createToolbarFromNode(xml::Node& node, wxWindow* pare
 	toolbar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
 		align == "vertical" ? wxTB_VERTICAL : wxTB_HORIZONTAL,
 		node.getAttributeValue("name"));
-
-    // Adjust the toolbar bitmap size to add some padding - despite its name
-    // this will not resize the actual icons, just the buttons
-    toolbar->SetToolBitmapSize(wxSize(20, 20));
 
 	for (const auto& toolNode : toolItemList)
 	{

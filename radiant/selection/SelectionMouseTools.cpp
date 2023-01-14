@@ -70,7 +70,10 @@ MouseTool::Result BasicSelectionTool::onMouseMove(Event& ev)
 {
     _current = ev.getDevicePosition();
 
-    updateDragSelectionRectangle(ev);
+    if (ev.getInteractiveView().supportsDragSelections())
+    {
+        updateDragSelectionRectangle(ev);
+    }
 
     return Result::Continued;
 }
@@ -142,7 +145,7 @@ void BasicSelectionTool::testSelect(MouseTool::Event& ev)
     Vector2 delta(ev.getDevicePosition() - _start);
 
     // If the mouse pointer has moved more than <epsilon>, this is considered a drag operation
-    if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
+    if (ev.getInteractiveView().supportsDragSelections() && fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
     {
         // Construct the selection test according to the area the user covered with his drag
         render::View scissored(_view);

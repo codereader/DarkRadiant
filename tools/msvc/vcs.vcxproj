@@ -200,6 +200,7 @@
     <ClInclude Include="..\..\plugins\vcs\Reference.h" />
     <ClInclude Include="..\..\plugins\vcs\Remote.h" />
     <ClInclude Include="..\..\plugins\vcs\Repository.h" />
+    <ClInclude Include="..\..\plugins\vcs\Signature.h" />
     <ClInclude Include="..\..\plugins\vcs\Tree.h" />
     <ClInclude Include="..\..\plugins\vcs\ui\CommitDialog.h" />
     <ClInclude Include="..\..\plugins\vcs\ui\VcsStatus.h" />

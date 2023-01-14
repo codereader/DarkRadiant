@@ -32,7 +32,6 @@ private:
     bool _showSkins;
 
     wxDataViewItem _progressItem;
-    wxIcon _modelIcon;
 
 public:
     ModelTreeView(wxWindow* parent);
@@ -44,6 +43,11 @@ public:
 
     std::string GetSelectedModelPath();
     std::string GetSelectedSkin();
+
+    // Highlights the given skin of the currently selected model
+    // Does nothing if there's no such skin for the current model
+    // or if there's no model at all. Only functional if _showSkins is enabled.
+    void SetSelectedSkin(const std::string& skin);
 
     void CollapseModelDefsFolder();
 
@@ -58,6 +62,8 @@ protected:
 
 private:
     std::string GetColumnValue(const wxutil::TreeModel::Column& column);
+    void showDefinition();
+    bool testShowDefinition();
 };
 
 }

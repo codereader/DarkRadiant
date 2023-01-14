@@ -216,6 +216,11 @@ std::string Manager::getUserEnginePath()
     return _config.enginePath;
 }
 
+const GameConfiguration& Manager::getConfig() const
+{
+    return _config;
+}
+
 void Manager::applyConfig(const GameConfiguration& config)
 {
 	if (!GameConfigUtil::PathsValid(config))
@@ -303,7 +308,7 @@ void Manager::initialiseVfs()
 	// The list of paths which will be passed to the VFS init method
 	vfs::SearchPaths vfsSearchPaths;
 
-	vfs::VirtualFileSystem::ExtensionSet extensions;
+	std::set<std::string> extensions;
 	string::split(extensions, currentGame()->getKeyValue("archivetypes"), " ");
 
     for (const auto& extension : extensions)

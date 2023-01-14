@@ -39,6 +39,11 @@ bool TextureBoundsAccumulator::processNode(const textool::INode::Ptr& node)
     return true;
 }
 
+const Matrix3& TextureNodeManipulator::getTransform() const
+{
+    return _transform;
+}
+
 bool TextureNodeManipulator::processNode(const textool::INode::Ptr& node)
 {
     applyTransform(node, _transform);

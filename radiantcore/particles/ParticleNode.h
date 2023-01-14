@@ -45,6 +45,9 @@ public:
 
     void onRemoveFromScene(scene::IMapRootNode& root) override;
 
+protected:
+    void onVisibilityChanged(bool isVisibleNow) override;
+
 private:
 	void update(const VolumeTest& viewVolume) const;
 };

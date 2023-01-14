@@ -6,7 +6,9 @@
 #include "glprogram/GenericVFPProgram.h"
 #include "glprogram/ShadowMapProgram.h"
 #include "glprogram/RegularStageProgram.h"
+#include "glprogram/BlendLightProgram.h"
 
+#include "irender.h"
 #include "itextstream.h"
 #include "iregistry.h"
 #include "imodule.h"
@@ -30,6 +32,7 @@ GLProgramFactory::GLProgramFactory()
     _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<CubeMapProgram>();
     _builtInPrograms[ShaderProgram::ShadowMap] = std::make_shared<ShadowMapProgram>();
     _builtInPrograms[ShaderProgram::RegularStage] = std::make_shared<RegularStageProgram>();
+    _builtInPrograms[ShaderProgram::BlendLight] = std::make_shared<BlendLightProgram>();
 }
 
 GLProgram* GLProgramFactory::getBuiltInProgram(ShaderProgram builtInProgram)

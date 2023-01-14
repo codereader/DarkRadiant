@@ -45,24 +45,7 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundShaderPreview::onSelectionChanged, this);
 	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundShaderPreview::onItemActivated, this);
 
-	_shaderFileLabel = new wxStaticText(this, wxID_ANY, "");
-	_shaderFileLabel->SetFont(_shaderFileLabel->GetFont().Bold());
-
-	_shaderNameLabel = new wxStaticText(this, wxID_ANY, "");
-	_shaderNameLabel->SetFont(_shaderNameLabel->GetFont().Bold());
-
-	_shaderDescriptionSizer = new wxBoxSizer(wxHORIZONTAL);
-
-	_shaderDescriptionSizer->Add(new wxStaticText(this, wxID_ANY, _("Sound Shader ")), 0, wxALIGN_CENTER_VERTICAL, 0);
-	_shaderDescriptionSizer->Add(_shaderNameLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
-	_shaderDescriptionSizer->Add(new wxStaticText(this, wxID_ANY, _(" defined in ")), 0, wxALIGN_CENTER_VERTICAL, 0);
-	_shaderDescriptionSizer->Add(_shaderFileLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
-
-	auto* vbox = new wxBoxSizer(wxVERTICAL);
-	vbox->Add(_shaderDescriptionSizer, 0, wxEXPAND|wxTOP|wxBOTTOM, 6);
-	vbox->Add(_treeView, 1, wxEXPAND);
-
-	GetSizer()->Add(vbox, 1, wxEXPAND);
+	GetSizer()->Add(_treeView, 1, wxEXPAND);
 	GetSizer()->Add(createControlPanel(this), 0, wxALIGN_BOTTOM | wxLEFT, 12);
 
 	// Attach to the close event
@@ -115,10 +98,15 @@ wxSizer* SoundShaderPreview::createControlPanel(wxWindow* parent)
 	return vbox;
 }
 
-void SoundShaderPreview::setSoundShader(const std::string& soundShader)
+void SoundShaderPreview::ClearPreview()
 {
-	_soundShader = soundShader;
-	update();
+    SetPreviewDeclName({});
+}
+
+void SoundShaderPreview::SetPreviewDeclName(const std::string& declName)
+{
+    _soundShader = declName;
+    update();
 }
 
 void SoundShaderPreview::playRandomSoundFile()
@@ -157,7 +145,7 @@ void SoundShaderPreview::update()
 		// Get the list of sound files associated to this shader
 		const auto& shader = GlobalSoundManager().getSoundShader(_soundShader);
 
-		if (!shader->getName().empty())
+		if (!shader->getDeclName().empty())
 		{
 			// Retrieve the list of associated filenames (VFS paths)
 			auto list = shader->getSoundFileList();
@@ -179,20 +167,12 @@ void SoundShaderPreview::update()
 				}
 			}
 
-			_shaderNameLabel->SetLabel(shader->getName());
-			_shaderFileLabel->SetLabel(shader->getShaderFilePath());
-			_shaderDescriptionSizer->Layout();
-
 			handleSelectionChange();
 		}
 		else
 		{
 			// Not a valid soundshader, switch to inactive
 			Enable(false);
-
-			_shaderNameLabel->SetLabel("-");
-			_shaderFileLabel->SetLabel("-");
-			_shaderDescriptionSizer->Layout();
 		}
 	}
     else

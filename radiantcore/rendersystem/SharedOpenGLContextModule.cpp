@@ -62,7 +62,6 @@ const StringSet& SharedOpenGLContextModule::getDependencies() const
 
 void SharedOpenGLContextModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 void SharedOpenGLContextModule::shutdownModule()

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<user>
+	<ui>
+		<favourites>
+            <Material>
+                <favourite value="textures/some/weird/name" />
+            </Material>
+            <materials>
+                <favourite value="textures/common/ladder"/>
+            </materials>
+            <entityDefs>
+                <favourite value="atdm:ai_proguard"/>
+            </entityDefs>
+            <soundShaders>
+                <favourite value="clock_tick01"/>
+                <favourite value="clock_tick02"/>
+            </soundShaders>
+            <models>
+                <favourite value="bush02.lwo"/>
+                <favourite value="bush01.lwo"/>
+            </models>
+            <particles>
+                <favourite value="heavy_rain"/>
+                <favourite value="barrelfire"/>
+            </particles>
+		</favourites>
+		<mediaBrowser>
+			<favourites>
+				<favourite value="textures/base_trim/gotrustcol1"/>
+				<favourite value="textures/common/caulk"/>
+				<favourite value="textures/common/clip"/>
+				<favourite value="textures/common/monster_clip"/>
+				<favourite value="textures/darkmod/stone/cobblestones/blocks_mixedsize01_dark"/>
+				<favourite value="textures/darkmod/stone/cobblestones/blocks_mixedsize03_mossy"/>
+			</favourites>
+		</mediaBrowser>
+	</ui>
+</user>

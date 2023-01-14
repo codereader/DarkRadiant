@@ -244,10 +244,17 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
     _hintCloseTimer.StartOnce(HINT_POPUP_CLOSE_TIMEOUT_MSECS);
     _shouldClosePopup = false;
 
-    // Ensure the popup exists
+    // Ensure the popup exists, but we need to have a valid main frame window
+    auto mainParent = GlobalMainFrame().getWxTopLevelWindow();
+
+    if (mainParent == nullptr)
+    {
+        return;
+    }
+
     if (!_hintPopup)
     {
-        _hintPopup = new ModifierHintPopup(GlobalMainFrame().getWxTopLevelWindow(), *this);
+        _hintPopup = new ModifierHintPopup(mainParent, *this);
     }
 
     _hintPopup->SetText(statusText);

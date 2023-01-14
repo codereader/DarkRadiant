@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sigc++/connection.h>
-#include "wxutil/dataview/ResourceTreeView.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 
 namespace ui
 {
@@ -10,11 +10,11 @@ namespace ui
  * Special tree view for displaying the available materials
  */
 class MaterialTreeView :
-    public wxutil::ResourceTreeView
+    public wxutil::DeclarationTreeView
 {
 public:
     struct TreeColumns :
-        public wxutil::ResourceTreeView::Columns
+        public DeclarationTreeView::Columns
     {
         // We just need one additional column to store the "is other materials folder" flag
         TreeColumns() :
@@ -36,6 +36,10 @@ public:
     const TreeColumns& Columns() const;
     
     virtual void SetTreeMode(MaterialTreeView::TreeMode mode) override;
+
+    // Returns the name of the texture folder without any "Other Materials" prefix
+    // Returns an empty string if no folder is selected
+    std::string GetSelectedTextureFolderName();
 
     // Loads all the materials
     virtual void Populate();

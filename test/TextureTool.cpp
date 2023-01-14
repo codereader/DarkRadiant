@@ -1107,6 +1107,9 @@ void dragManipulateSelectionTowardsLowerRight(const Vector2& startTexcoord, cons
     render::View scissored(view);
     ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.05, 0.05)));
 
+    SelectionVolume test(scissored);
+    manipulator->testSelect(test, GlobalTextureToolSelectionSystem().getPivot2World());
+
     auto manipComponent = manipulator->getActiveComponent();
     auto pivot2World = GlobalTextureToolSelectionSystem().getPivot2World();
     manipComponent->beginTransformation(pivot2World, scissored, devicePoint);
@@ -1166,6 +1169,50 @@ TEST_F(TextureToolTest, DragManipulateFace)
 
     // The texcoords of the other face should not have been changed
     oldUv = oldFaceDownUvs.begin();
+    for (const auto& vertex : faceDown->getWinding())
+    {
+        EXPECT_EQ(oldUv->x(), vertex.texcoord.x());
+        EXPECT_EQ(oldUv->y(), vertex.texcoord.y());
+        ++oldUv;
+    }
+}
+
+TEST_F(TextureToolTest, DragResizeFace)
+{
+    auto brush = setupBrushNodeForTextureTool();
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+    auto faceDown = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, -1));
+
+    // Remember the texcoords of this face
+    auto oldFaceUpUvs = getTexcoords(faceUp);
+    auto oldFaceDownUvs = getTexcoords(faceDown);
+
+    // Select the face
+    auto textoolFace = findTexToolFaceWithNormal(faceUp->getPlane3().normal());
+    textoolFace->setSelected(true);
+
+    // Get the texture space bounds of this face
+    auto oldBounds = algorithm::getTextureSpaceBounds(*faceUp);
+
+    // Construct a view that includes the UV bounds
+    auto bounds = oldBounds;
+    bounds.extents *= 1.5f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Check the device coords a point outside the face bounds
+    auto startPoint = Vector2(oldBounds.getOrigin().x(), oldBounds.getOrigin().y()) + Vector2(oldBounds.getExtents().x() * 1.15, 0);
+    dragManipulateSelectionTowardsLowerRight(startPoint, view);
+
+    // The UV extents of that brush must have been increased
+    auto newBounds = algorithm::getTextureSpaceBounds(*faceUp);
+
+    EXPECT_GT(newBounds.getExtents().x(), oldBounds.getExtents().x()) << "Brush UV bounds X should have been increased";
+    EXPECT_EQ(newBounds.getExtents().y(), oldBounds.getExtents().y()) << "Brush UV bounds Y should have stayed the same";
+
+    // The texcoords of the other face should not have been changed
+    auto oldUv = oldFaceDownUvs.begin();
     for (const auto& vertex : faceDown->getWinding())
     {
         EXPECT_EQ(oldUv->x(), vertex.texcoord.x());

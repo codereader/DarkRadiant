@@ -10,7 +10,6 @@
 #include "ifilter.h"
 #include "irender.h"
 #include "texturelib.h"
-#include "string/predicate.h"
 
 #include <functional>
 
@@ -29,33 +28,25 @@ namespace
         auto texture = layer->getTexture();
         return texture ? texture : getDefaultInteractionTexture(layer->getType());
     }
-}
 
-// Triplet of diffuse, bump and specular shaders
-struct OpenGLShader::DBSTriplet
-{
-    // DBS layers
-    IShaderLayer::Ptr diffuse;
-    IShaderLayer::Ptr bump;
-    IShaderLayer::Ptr specular;
-
-    // Need-depth-fill flag
-    bool needDepthFill;
-
-    // Initialise
-    DBSTriplet()
-    : needDepthFill(true)
-    { }
-
-    // Clear pointers
-    void reset()
+    IShaderLayer::Ptr findFirstLayerOfType(const MaterialPtr& material, IShaderLayer::Type type)
     {
-        diffuse.reset();
-        bump.reset();
-        specular.reset();
-        needDepthFill = false;
+        IShaderLayer::Ptr found;
+
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+        {
+            if (layer->getType() == type)
+            {
+                found = layer;
+                return false;
+            }
+
+            return true;
+        });
+
+        return found;
     }
-};
+}
 
 OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem) :
     _name(name),
@@ -107,13 +98,21 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
+
     // Always using CW culling by default
     glFrontFace(GL_CW);
 
     if (hasSurfaces())
     {
+        if (supportsVertexColours())
+        {
+            glEnableClientState(GL_COLOR_ARRAY);
+        }
+        else
+        {
+            glDisableClientState(GL_COLOR_ARRAY);
+        }
+
         _geometryRenderer.renderAllVisibleGeometry();
 
         // Surfaces are not allowed to render vertex colours (for now)
@@ -401,14 +400,6 @@ OpenGLState& OpenGLShader::appendDepthFillPass()
     return _depthFillPass->state();
 }
 
-OpenGLState& OpenGLShader::appendInteractionPass()
-{
-    _interactionPass = std::make_shared<InteractionPass>(*this, _renderSystem);
-    _shaderPasses.push_back(_interactionPass);
-
-    return _interactionPass->state();
-}
-
 // Test if we can render in bump map mode
 bool OpenGLShader::canUseLightingMode() const
 {
@@ -416,90 +407,13 @@ bool OpenGLShader::canUseLightingMode() const
         _renderSystem.getCurrentShaderProgram() == RenderSystem::SHADER_PROGRAM_INTERACTION;
 }
 
-void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
-                                            const DBSTriplet& triplet)
+OpenGLState& OpenGLShader::appendInteractionPass(std::vector<IShaderLayer::Ptr>& stages)
 {
-    // Get texture components. If any of the triplet is missing, look up the
-    // default from the shader system.
-    if (triplet.diffuse)
-    {
-        pass.texture0 = getTextureOrInteractionDefault(triplet.diffuse)->getGLTexNum();
-		pass.stage0 = triplet.diffuse;
-    }
-    else
-    {
-        pass.texture0 = getDefaultInteractionTexture(IShaderLayer::DIFFUSE)->getGLTexNum();
-    }
+    // Store all stages in a single interaction pass
+    _interactionPass = std::make_shared<InteractionPass>(*this, _renderSystem, stages);
+    _shaderPasses.push_back(_interactionPass);
 
-    if (triplet.bump)
-    {
-        pass.texture1 = getTextureOrInteractionDefault(triplet.bump)->getGLTexNum();
-		pass.stage1 = triplet.bump;
-    }
-    else
-    {
-        pass.texture1 = getDefaultInteractionTexture(IShaderLayer::BUMP)->getGLTexNum();
-    }
-
-    if (triplet.specular)
-    {
-        pass.texture2 = getTextureOrInteractionDefault(triplet.specular)->getGLTexNum();
-		pass.stage2 = triplet.specular;
-    }
-    else
-    {
-        pass.texture2 = getDefaultInteractionTexture(IShaderLayer::SPECULAR)->getGLTexNum();
-    }
-}
-
-// Add an interaction layer
-void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
-{
-	// Set layer vertex colour mode and alphatest parameters
-    IShaderLayer::VertexColourMode vcolMode = IShaderLayer::VERTEX_COLOUR_NONE;
-    double alphaTest = -1;
-
-    if (triplet.diffuse)
-    {
-        vcolMode = triplet.diffuse->getVertexColourMode();
-        alphaTest = triplet.diffuse->getAlphaTest();
-    }
-
-    // Append a depthfill shader pass if requested
-    if (triplet.needDepthFill && triplet.diffuse)
-    {
-        // Create depth-buffer fill pass with alpha test
-        auto& zPass = appendDepthFillPass();
-
-        // Store the alpha test value
-        zPass.alphaThreshold = static_cast<GLfloat>(alphaTest);
-
-        // We need a diffuse stage to be able to performthe alpha test
-        zPass.stage0 = triplet.diffuse;
-        zPass.texture0 = getTextureOrInteractionDefault(triplet.diffuse)->getGLTexNum();
-    }
-
-    // Add the DBS pass
-    auto& dbsPass = appendInteractionPass();
-
-    // Populate the textures and remember the stage reference
-    setGLTexturesFromTriplet(dbsPass, triplet);
-
-    dbsPass.setVertexColourMode(vcolMode);
-
-    if (vcolMode != IShaderLayer::VERTEX_COLOUR_NONE)
-    {
-        // Vertex colours allowed
-        dbsPass.setRenderFlag(RENDER_VERTEX_COLOUR);
-    }
-
-    applyAlphaTestToPass(dbsPass, alphaTest);
-
-	// Apply the diffuse colour modulation
-	if (triplet.diffuse)
-	{
-		dbsPass.setColour(triplet.diffuse->getColour());
-	} 
+    return _interactionPass->state();
 }
 
 void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
@@ -515,18 +429,18 @@ void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
 // Construct lighting mode render passes
 void OpenGLShader::constructLightingPassesFromMaterial()
 {
-    // Build up and add shader passes for DBS triplets as they are found. A
-    // new triplet is found when (1) the same DBS layer type is seen twice, (2)
-    // we have at least one DBS layer then see a blend layer, or (3) we have at
-    // least one DBS layer then reach the end of the layers.
+    // Build up and add shader passes for DBS stages similar to the game code.
+    // DBS stages are first sorted and stored in the interaction pass where
+    // they will be evaluated and grouped to DBS triplets in every frame.
+    // All other layers are treated as independent blend layers.
 
-    DBSTriplet triplet;
-    const IShaderLayerVector& allLayers = _material->getAllLayers();
+    std::vector<IShaderLayer::Ptr> interactionLayers;
+    IShaderLayer::Ptr diffuseForDepthFillPass;
 
-    for (const auto& layer : allLayers)
+    _material->foreachLayer([&] (const IShaderLayer::Ptr& layer)
     {
         // Skip programmatically disabled layers
-        if (!layer->isEnabled()) continue;
+        if (!layer->isEnabled()) return true;
 
 		// Make sure we had at least one evaluation call to fill the material registers
 		layer->evaluateExpressions(0);
@@ -534,84 +448,70 @@ void OpenGLShader::constructLightingPassesFromMaterial()
         switch (layer->getType())
         {
         case IShaderLayer::DIFFUSE:
-            if (triplet.diffuse)
+            // Use the diffusemap with the highest opacity for the z-fill pass
+            if (!diffuseForDepthFillPass || 
+                (diffuseForDepthFillPass->getAlphaTest() != -1 && layer->getAlphaTest() == -1))
             {
-                appendInteractionLayer(triplet);
-                triplet.reset();
+                diffuseForDepthFillPass = layer;
             }
-            triplet.diffuse = layer;
+            interactionLayers.push_back(layer);
             break;
 
         case IShaderLayer::BUMP:
-            if (triplet.bump)
-            {
-                appendInteractionLayer(triplet);
-                triplet.reset();
-            }
-            triplet.bump = layer;
-            break;
-
         case IShaderLayer::SPECULAR:
-            if (triplet.specular)
-            {
-                appendInteractionLayer(triplet);
-                triplet.reset();
-            }
-            triplet.specular = layer;
+            interactionLayers.push_back(layer);
             break;
 
         case IShaderLayer::BLEND:
-            if (triplet.specular || triplet.bump || triplet.diffuse)
-            {
-                appendInteractionLayer(triplet);
-                triplet.reset();
-            }
-
             appendBlendLayer(layer);
         }
-    }
 
-    // Submit final pass if we reach the end
-    if (triplet.specular || triplet.bump || triplet.diffuse)
-	{
-		appendInteractionLayer(triplet);
-	}
+        return true;
+    });
+
+    // Sort interaction stages: bumps go first, then diffuses, speculars last
+    std::sort(interactionLayers.begin(), interactionLayers.end(), [](const IShaderLayer::Ptr& a, const IShaderLayer::Ptr& b)
+    {
+        // Use the enum value to sort stages
+        return static_cast<int>(a->getType()) < static_cast<int>(b->getType());
+    });
+
+    if (!interactionLayers.empty())
+    {
+        // Translucent materials don't contribute to the depth buffer
+        if (_material->getCoverage() != Material::MC_TRANSLUCENT)
+        {
+            // Create depth-buffer fill pass, possibly with alpha test
+            auto& zPass = appendDepthFillPass();
+
+            zPass.stage0 = diffuseForDepthFillPass;
+            zPass.texture0 = diffuseForDepthFillPass ? 
+                getTextureOrInteractionDefault(diffuseForDepthFillPass)->getGLTexNum() :
+                getDefaultInteractionTexture(IShaderLayer::DIFFUSE)->getGLTexNum();
+            zPass.alphaThreshold = diffuseForDepthFillPass ? diffuseForDepthFillPass->getAlphaTest() : -1.0f;
+        }
+
+        appendInteractionPass(interactionLayers);
+    }
 }
 
-void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
+void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass, const IShaderLayer::Ptr& diffuseLayer)
 {
-    bool hasDiffuseLayer = false;
-
     // Determine alphatest from first diffuse layer
-    const IShaderLayerVector allLayers = _material->getAllLayers();
-
-    for (IShaderLayerVector::const_iterator i = allLayers.begin();
-         i != allLayers.end();
-         ++i)
+    if (diffuseLayer && diffuseLayer->getAlphaTest() > 0)
     {
-        const IShaderLayer::Ptr& layer = *i;
-
-        if (layer->getType() == IShaderLayer::DIFFUSE)
-        {
-            hasDiffuseLayer = true;
-
-            if (layer->getAlphaTest() > 0)
-            {
-                applyAlphaTestToPass(pass, layer->getAlphaTest());
-                break;
-            }
-        }
+        applyAlphaTestToPass(pass, diffuseLayer->getAlphaTest());
     }
 
     // If this is a purely blend material (no DBS layers), set the editor blend
-    // mode from the first blend layer.
+    // mode from the first layer.
 	// greebo: Hack to let "shader not found" textures be handled as diffusemaps
-    if (!hasDiffuseLayer && !allLayers.empty() && _material->getName() != "_default")
+    if (!diffuseLayer && _material->getNumLayers() > 0 && _material->getName() != "_default")
     {
 		pass.setRenderFlag(RENDER_BLEND);
 		pass.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
 
-		BlendFunc bf = allLayers[0]->getBlendFunc();
+		BlendFunc bf = _material->getLayer(0)->getBlendFunc();
 		pass.m_blend_src = bf.src;
 		pass.m_blend_dst = bf.dest;
     }
@@ -625,6 +525,16 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     // Render the editor texture in legacy mode
     auto editorTex = _material->getEditorImage();
     previewPass.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
+
+    // If there's a diffuse stage's, link it to this shader pass to inherit
+    // settings like scale and translate
+    previewPass.stage0 = findFirstLayerOfType(_material, IShaderLayer::DIFFUSE);
+
+    // Evaluate the expressions of the diffuse stage once to be able to get a meaningful alphatest value
+    if (previewPass.stage0)
+    {
+        previewPass.stage0->evaluateExpressions(0);
+    }
 
     previewPass.setRenderFlag(RENDER_FILL);
     previewPass.setRenderFlag(RENDER_TEXTURE_2D);
@@ -645,10 +555,13 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     }
 
     // Set up blend properties
-    determineBlendModeForEditorPass(previewPass);
+    determineBlendModeForEditorPass(previewPass, previewPass.stage0);
 
     // Set the GL color to white
     previewPass.setColour(Colour4::WHITE());
+
+    // For the editor preview pass we always ignore the evaluated colour of the material stage
+    previewPass.ignoreStageColour = true;
 
     // Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
@@ -683,6 +596,13 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     // Set the texture
     state.texture0 = layerTex->getGLTexNum();
 
+    // BlendLights need to load the fall off image into texture unit 1
+    if (_material->isBlendLight())
+    {
+        state.texture1 = _material->lightFalloffImage()->getGLTexNum();
+        state.setRenderFlag(RENDER_CULLFACE);
+    }
+
     // Get the blend function
     BlendFunc blendFunc = layer->getBlendFunc();
     state.m_blend_src = blendFunc.src;
@@ -709,6 +629,12 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
         state.setRenderFlag(RENDER_TEXTURE_CUBEMAP);
         state.clearRenderFlag(RENDER_TEXTURE_2D);
     }
+    else if (_material && _material->isBlendLight())
+    {
+        state.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::BlendLight);
+        state.setRenderFlag(RENDER_TEXTURE_2D);
+        state.setRenderFlag(RENDER_PROGRAM);
+    }
     else
     {
         state.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::RegularStage);
@@ -718,6 +644,7 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
 
     // Colour modulation
     state.setColour(layer->getColour());
+    state.setVertexColourMode(layer->getVertexColourMode());
 
 	// Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
@@ -788,21 +715,6 @@ void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
 
 void OpenGLShader::construct()
 {
-    switch (_name[0])
-    {
-    // greebo: For a small amount of commits, I'll leave these here to catch my attention
-    case '(': // fill shader
-    case '[':
-    case '<': // wireframe shader
-    case '{': // cam + wireframe shader
-    case '$': // hardcoded legacy stuff
-    {
-        rWarning() << "Legacy shader request encountered" << std::endl;
-        assert(false);
-        return;
-    }
-    }
-
     // Construct the shader from the material definition
     constructFromMaterial(GlobalMaterialManager().getMaterial(_name));
     enableViewType(RenderViewType::Camera);

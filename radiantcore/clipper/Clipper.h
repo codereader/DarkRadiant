@@ -82,9 +82,8 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override;
 
 	// Command targets
-	void clipSelectionCmd(const cmd::ArgumentList& args);
-	void splitSelectedCmd(const cmd::ArgumentList& args);
-	void flipClipperCmd(const cmd::ArgumentList& args);
+	void clipSelectionCmd();
+	void splitSelectedCmd();
 
 }; // class Clipper
 

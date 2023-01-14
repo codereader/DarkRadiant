@@ -14,7 +14,7 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
-    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
+    _renderableBox(*this, localAABB(), m_origin),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
 
@@ -27,7 +27,7 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
-    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
+    _renderableBox(*this, localAABB(), m_origin),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
 
@@ -103,8 +103,10 @@ void GenericEntityNode::onPreRender(const VolumeTest& volume)
 {
     EntityNode::onPreRender(volume);
 
-    _renderableBox.update(getColourShader());
-    _renderableArrow.update(getColourShader());
+    const auto& shader = getRenderState() == RenderState::Active ? getColourShader() : getInactiveShader();
+
+    _renderableBox.update(shader);
+    _renderableArrow.update(shader);
 }
 
 void GenericEntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
@@ -120,8 +122,7 @@ void GenericEntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     EntityNode::setRenderSystem(renderSystem);
 
     // Clear the geometry from any previous shader
-    _renderableBox.clear();
-    _renderableArrow.clear();
+    clearRenderables();
 }
 
 const Vector3& GenericEntityNode::getDirection() const
@@ -187,8 +188,7 @@ void GenericEntityNode::updateTransform()
                                   .transformDirection(Vector3(1, 0, 0));
     }
 
-    _renderableBox.queueUpdate();
-    _renderableArrow.queueUpdate();
+    updateRenderables();
 	transformChanged();
 }
 
@@ -274,8 +274,7 @@ void GenericEntityNode::onInsertIntoScene(scene::IMapRootNode& root)
     // Call the base class first
     EntityNode::onInsertIntoScene(root);
 
-    _renderableBox.queueUpdate();
-    _renderableArrow.queueUpdate();
+    updateRenderables();
 }
 
 void GenericEntityNode::onRemoveFromScene(scene::IMapRootNode& root)
@@ -283,8 +282,7 @@ void GenericEntityNode::onRemoveFromScene(scene::IMapRootNode& root)
     // Call the base class first
     EntityNode::onRemoveFromScene(root);
 
-    _renderableBox.clear();
-    _renderableArrow.clear();
+    clearRenderables();
 }
 
 void GenericEntityNode::onVisibilityChanged(bool isVisibleNow)
@@ -293,13 +291,11 @@ void GenericEntityNode::onVisibilityChanged(bool isVisibleNow)
 
     if (isVisibleNow)
     {
-        _renderableBox.queueUpdate();
-        _renderableArrow.queueUpdate();
+        updateRenderables();
     }
     else
     {
-        _renderableBox.clear();
-        _renderableArrow.clear();
+        clearRenderables();
     }
 }
 
@@ -325,6 +321,26 @@ void GenericEntityNode::rotationChanged()
 
 	m_rotation = m_rotationKey.m_rotation;
 	updateTransform();
+}
+
+void GenericEntityNode::updateRenderables()
+{
+    _renderableBox.queueUpdate();
+    _renderableArrow.queueUpdate();
+}
+
+void GenericEntityNode::clearRenderables()
+{
+    _renderableBox.clear();
+    _renderableArrow.clear();
+}
+
+void GenericEntityNode::onRenderStateChanged()
+{
+    EntityNode::onRenderStateChanged();
+
+    clearRenderables();
+    updateRenderables();
 }
 
 

@@ -1,0 +1,84 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -13 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/0" 0 0 0
+( 0 1 0 -282 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/0" 0 0 0
+( 1 0 0 6 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/0" 0 0 0
+( 0 0 -1 -11 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/0" 0 0 0
+( 0 -1 0 152 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/0" 0 0 0
+( -1 0 0 -194 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/0" 0 0 0
+}
+}
+// primitive 1
+{
+patchDef2
+{
+"textures/numbers/0"
+( 3 3 0 0 0 )
+(
+( ( -94 381 1 0 0 ) ( -94 446 1 0 -4.0625 ) ( -94 511 1 0 -8.125 ) )
+( ( 0 381 1 5.875 0 ) ( 0 446 1 5.875 -4.0625 ) ( 0 511 1 5.875 -8.125 ) )
+( ( 94 381 1 11.75 0 ) ( 94 446 1 11.75 -4.0625 ) ( 94 511 1 11.75 -8.125 ) )
+)
+}
+}
+}
+// entity 1
+{
+"classname" "atdm:torch_brazier"
+"name" "atdm_torch_brazier_1"
+"origin" "-562 367 0"
+"rotation" "1 0 0 0 1 0 0 0 1"
+}
+// entity 2
+{
+"classname" "func_static"
+"name" "func_static_1"
+"origin" "-391 264 0"
+"rotation" "1 0 0 0 1 0 0 0 1"
+"model" "models/moss_patch.ase"
+}
+// entity 3
+{
+"classname" "func_emitter"
+"name" "func_emitter_1"
+"origin" "-282 382 1"
+"model" "tdm_fire_torch.prt"
+}
+// entity 4
+{
+"classname" "func_static"
+"name" "func_static_2"
+"model" "func_static_2"
+"origin" "201 216 1"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -12 ) ( ( 0.06250000000000004 0 -0.9375 ) ( 0 0.06250000000000003 0.1875 ) ) "textures/numbers/1" 0 0 0
+( 0 1 0 -65 ) ( ( 0.0625 0 -0.1875 ) ( 0 0.0625 0 ) ) "textures/numbers/1" 0 0 0
+( 1 0 0 -94 ) ( ( 0.06250000000000004 0 -0.9375 ) ( 0 0.06249999999999999 2.220446049250313e-16 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 -12 ) ( ( 0.06250000000000004 0 -0.9375 ) ( 0 0.06250000000000003 0.8125 ) ) "textures/numbers/1" 0 0 0
+( 0 -1 0 -65 ) ( ( 0.0625 0 -0.8125 ) ( 0 0.0625 0.9999999999999998 ) ) "textures/numbers/1" 0 0 0
+( -1 0 0 -94 ) ( ( 0.06250000000000004 0 -0.0625 ) ( 0 0.0625 0 ) ) "textures/numbers/1" 0 0 0
+}
+}
+// primitive 1
+{
+patchDef2
+{
+"textures/numbers/0"
+( 3 3 0 0 0 )
+(
+( ( 205 380 1 0 0 ) ( 205 445 1 0 -4.0625 ) ( 205 510 1 0 -8.125 ) )
+( ( 299 380 1 5.875 0 ) ( 299 445 1 5.875 -4.0625 ) ( 299 510 1 5.875 -8.125 ) )
+( ( 393 380 1 11.75 0 ) ( 393 445 1 11.75 -4.0625 ) ( 393 510 1 11.75 -8.125 ) )
+)
+}
+}
+}

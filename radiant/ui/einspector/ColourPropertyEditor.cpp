@@ -13,10 +13,9 @@ namespace ui
 {
 
 // Main ctor
-ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-										   const std::string& name)
+ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _key(name)
+  _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
@@ -41,7 +40,7 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, IEntitySelection& e
 void ColourPropertyEditor::updateFromEntity()
 {
 	// Set colour button's colour, also take inherited values into account
-	setColourButton(_entities.getSharedKeyValue(_key, true));
+	setColourButton(getKeyValueFromSelection(_key->getFullKey()));
 }
 
 // Set displayed colour from the keyvalue
@@ -74,7 +73,7 @@ std::string ColourPropertyEditor::getSelectedColour()
 void ColourPropertyEditor::_onColorSet(wxColourPickerEvent& ev)
 {
 	// Set the new keyvalue on the entity
-	setKeyValue(_key, getSelectedColour());
+    setKeyValueOnSelection(_key->getFullKey(), getSelectedColour());
 }
 
 

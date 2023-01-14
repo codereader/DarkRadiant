@@ -18,20 +18,20 @@ class AIVocalSetPropertyEditor final :
 private:
 	// The top-level widget
 	wxPanel* _widget;
-
     IEntitySelection& _entities;
+    ITargetKey::Ptr _key;
+    sigc::signal<void(const std::string&, const std::string&)> _sigKeyValueApplied;
 
 public:
-	~AIVocalSetPropertyEditor();
+	~AIVocalSetPropertyEditor() override;
 
-    AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-        const std::string& key, const std::string& options);
+    AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
 	wxPanel* getWidget() override;
 	void updateFromEntities() override;
+    sigc::signal<void(const std::string&, const std::string&)>& signal_keyValueApplied() override;
 	
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& key, const std::string& options);
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
 private:
 	void onChooseButton(wxCommandEvent& ev);

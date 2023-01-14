@@ -59,8 +59,6 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
 		GlobalCommandSystem().addCommand("ReloadReadables", ui::ReadableReloader::run);
 
@@ -85,7 +83,7 @@ private:
 			"ReadableEditorDialog"
 		);
 
-		mm.insert("main/file/refreshShaders",
+		mm.insert("main/file/reloadDecls",
 			"ReloadReadables", ui::menu::ItemType::Item,
 			_("Reload Readable Guis"), // caption
 			"book.png", // icon

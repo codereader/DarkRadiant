@@ -3,8 +3,9 @@
 #include "modelskin.h"
 
 #include <string>
-#include <map>
 #include <memory>
+
+#include "decl/EditableDeclaration.h"
 
 namespace skins
 {
@@ -14,51 +15,64 @@ namespace skins
  * maps between an existing texture and a new texture, and possibly the name of
  * the model that this skin is associated with.
  */
-class Doom3ModelSkin
-: public ModelSkin
+class Skin :
+    public decl::EditableDeclaration<decl::ISkin>
 {
-	// Map of texture switches
-	typedef std::map<std::string, std::string> StringMap;
-	StringMap _remaps;
+    struct SkinData
+    {
+        using Ptr = std::shared_ptr<SkinData>;
 
-	std::string _name;
-	std::string _skinFileName;
+        // The list of models this skin is matching
+        std::set<std::string> matchingModels;
+
+	    // Ordered list of texture remaps (as they appear in the decl)
+        std::vector<Remapping> remaps;
+    };
+
+    // The unchanged skin data
+    SkinData::Ptr _original;
+
+    // The current skin data (might be modified)
+    SkinData::Ptr _current;
 
 public:
-	Doom3ModelSkin(const std::string& name) :
-		_name(name)
-	{}
+    Skin(const std::string& name);
 
-	std::string getName() const {
-		return _name;
-	}
+    std::string getName() const;
 
-	void setSkinFileName(const std::string& fileName) {
-		_skinFileName = fileName;
-	}
+    std::string getSkinFileName() const;
 
-	std::string getSkinFileName() const {
-		return _skinFileName;
-	}
+    const std::set<std::string>& getModels() override;
+    void addModel(const std::string& model) override;
+    void removeModel(const std::string& model) override;
+
+    const std::vector<Remapping>& getAllRemappings() override;
+    void addRemapping(const Remapping& remapping) override;
+    void removeRemapping(const std::string& material) override;
+    void clearRemappings() override;
 
 	// Get this skin's remap for the provided material name (if any).
-	std::string getRemap(const std::string& name) const {
-		StringMap::const_iterator i = _remaps.find(name);
-		if(i != _remaps.end()) {
-			return i->second;
-		}
-		else { // none found
-			return "";
-		}
-	}
+    std::string getRemap(const std::string& name) override;
 
 	// Add a remap pair to this skin
-	void addRemap(const std::string& src, const std::string& dst) {
-		_remaps.insert(StringMap::value_type(src, dst));
-	}
+    void addRemap(const std::string& src, const std::string& dst);
 
+    // Visit the functor with the name of each model mentioned in this skin declaration
+    void foreachMatchingModel(const std::function<void(const std::string&)>& functor);
+
+    bool isModified() override;
+    void setIsModified();
+    void commitModifications() override;
+    void revertModifications() override;
+
+protected:
+    void onBeginParsing() override;
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
+    std::string generateSyntax() override;
+
+private:
+    void ensureSkinDataBackup();
 };
-typedef std::shared_ptr<Doom3ModelSkin> Doom3ModelSkinPtr;
 
 
 }

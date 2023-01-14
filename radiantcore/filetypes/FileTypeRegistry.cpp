@@ -85,8 +85,6 @@ const StringSet& FileTypeRegistry::getDependencies() const
 
 void FileTypeRegistry::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	registerPattern("*", FileTypePattern(_("All Files"), "*", "*.*"));
 }
 

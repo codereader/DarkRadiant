@@ -14,7 +14,7 @@ void EClassColourManager::addOverrideColour(const std::string& eclass, const Vec
 
 bool EClassColourManager::applyColours(IEntityClass& eclass)
 {
-    auto foundOverride = _overrides.find(eclass.getName());
+    auto foundOverride = _overrides.find(eclass.getDeclName());
     if (foundOverride != _overrides.end())
     {
         eclass.setColour(foundOverride->second);
@@ -73,7 +73,6 @@ const StringSet& EClassColourManager::getDependencies() const
 
 void EClassColourManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 module::StaticModuleRegistration<EClassColourManager> eclassColourManagerModule;

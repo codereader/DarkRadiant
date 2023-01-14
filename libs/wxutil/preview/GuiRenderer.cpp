@@ -112,19 +112,18 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	if (window->backgroundShader != NULL && (matcolor[3] > 0 || _ignoreVisibility))
 	{
 		// Get the diffuse layer
-		const IShaderLayerVector layers = window->backgroundShader->getAllLayers();
-
 		TexturePtr tex;
 
-		for (IShaderLayerVector::const_iterator i = layers.begin(); i != layers.end(); ++i)
+        window->backgroundShader->foreachLayer([&](const IShaderLayer::Ptr& layer)
 		{
-			if ((*i)->getType() == IShaderLayer::DIFFUSE)
+			if (layer->getType() == IShaderLayer::DIFFUSE)
 			{
 				// Found the diffuse
-				tex = (*i)->getTexture();
-				break;
+				tex = layer->getTexture();
+				return false;
 			}
-		}
+            return true;
+		});
 
 		if (tex == NULL)
 		{

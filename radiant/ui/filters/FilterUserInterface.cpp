@@ -36,8 +36,6 @@ const StringSet& FilterUserInterface::getDependencies() const
 
 void FilterUserInterface::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Create the Toggle objects to connect menu items and toggle buttons
 	refreshFilterToggles();
 

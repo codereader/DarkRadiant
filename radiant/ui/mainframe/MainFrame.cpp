@@ -1,17 +1,15 @@
 #include "MainFrame.h"
 
 #include "i18n.h"
-#include "ui/igroupdialog.h"
+#include "ui/iusercontrol.h"
 #include "imap.h"
 #include "ui/ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "ui/ientityinspector.h"
 #include "ieclass.h"
 #include "iorthoview.h"
 #include "iregistry.h"
 #include "iradiant.h"
 
-#include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/CameraWndManager.h"
 
@@ -25,6 +23,7 @@
 
 #include "module/StaticModule.h"
 #include "messages/ApplicationShutdownRequest.h"
+#include "messages/TextureToolRequest.h"
 #include <functional>
 #include <fmt/format.h>
 #include <sigc++/functors/mem_fun.h>
@@ -37,21 +36,19 @@
 
 namespace
 {
-	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 	const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
 	const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
-
-	const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
 }
 
 namespace ui
 {
 
 MainFrame::MainFrame() :
-	_topLevelWindow(NULL),
+	_topLevelWindow(nullptr),
 	_screenUpdatesEnabled(false), // not enabled until constructed
-    _defLoadingBlocksUpdates(false)
+    _defLoadingBlocksUpdates(false),
+    _mapLoadingBlocksUpdates(false)
 {}
 
 // RegisterableModule implementation
@@ -67,7 +64,6 @@ const StringSet& MainFrame::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_MAINFRAME_LAYOUT_MANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
@@ -81,8 +77,6 @@ const StringSet& MainFrame::getDependencies() const
 
 void MainFrame::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "MainFrame::initialiseModule called." << std::endl;
-
 	// Add another page for Multi-Monitor stuff
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
 
@@ -105,10 +99,22 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 
 	page.appendCombo(_("Start DarkRadiant on monitor"), RKEY_MULTIMON_START_MONITOR, list);
 
-	// Add the toggle max/min command for floating windows
-	GlobalCommandSystem().addCommand("ToggleFullScreenCamera",
-		std::bind(&MainFrame::toggleFullscreenCameraView, this, std::placeholders::_1)
-	);
+    GlobalCommandSystem().addCommand(FOCUS_CONTROL_COMMAND,
+        std::bind(&MainFrame::focusControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
+    GlobalCommandSystem().addCommand(TOGGLE_CONTROL_COMMAND,
+        std::bind(&MainFrame::toggleControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
+    GlobalCommandSystem().addCommand(TOGGLE_MAIN_CONTROL_COMMAND,
+        std::bind(&MainFrame::toggleMainControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
+    GlobalCommandSystem().addCommand(CREATE_CONTROL_COMMAND,
+        std::bind(&MainFrame::createControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
 
 	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
 
@@ -149,13 +155,26 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 	);
 
     // When the eclass defs are in progress of being loaded, block all updates
-    GlobalEntityClassManager().defsLoadingSignal().connect(
+    _defsLoadingSignal = GlobalDeclarationManager().signal_DeclsReloading(decl::Type::EntityDef).connect(
         [this]() { _defLoadingBlocksUpdates = true; }
     );
 
-    GlobalEntityClassManager().defsLoadedSignal().connect([this]()
+    _defsLoadedSignal = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
+        [this]() { _defLoadingBlocksUpdates = false; }
+    );
+
+    // Block updates when a map is loading
+    _mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
+        [this](IMap::MapEvent ev)
         {
-            _defLoadingBlocksUpdates = false;
+            if (ev == IMap::MapLoading)
+            {
+                _mapLoadingBlocksUpdates = true;
+            }
+            else if (ev == IMap::MapLoaded)
+            {
+                _mapLoadingBlocksUpdates = false;
+            }
         }
     );
 
@@ -166,10 +185,12 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 
 void MainFrame::shutdownModule()
 {
-	rMessage() << "MainFrame::shutdownModule called." << std::endl;
-
+    _mapEventSignal.disconnect();
 	_mapNameChangedConn.disconnect();
 	_mapModifiedChangedConn.disconnect();
+
+    _defsLoadingSignal.disconnect();
+    _defsLoadedSignal.disconnect();
 
 	disableScreenUpdates();
 }
@@ -236,64 +257,34 @@ void MainFrame::setDesktopCompositionEnabled(bool enabled)
 }
 #endif
 
-void MainFrame::toggleFullscreenCameraView(const cmd::ArgumentList& args)
-{
-	if (_currentLayout == NULL) return;
-
-	// Issue the call
-	_currentLayout->toggleFullscreenCameraView();
-}
-
 void MainFrame::construct()
 {
 	// Create the base window and the default widgets
 	create();
 
-	std::string activeLayout = GlobalRegistry().get(RKEY_ACTIVE_LAYOUT);
-
-	if (activeLayout.empty())
-	{
-		activeLayout = AUI_LAYOUT_NAME; // fall back to hardcoded layout
-	}
-
-	// Apply the layout
-	applyLayout(activeLayout);
-
-	if (_currentLayout == NULL)
-	{
-		// Layout is still empty, this is not good
-		rError() << "Could not restore layout " << activeLayout << std::endl;
-
-		if (activeLayout != AUI_LAYOUT_NAME)
-		{
-			// Try to fallback to floating layout
-			applyLayout(AUI_LAYOUT_NAME);
-		}
-	}
-
-#ifdef __linux__
-	// #4526: In Linux, do another restore after the top level window has been shown
-	// After startup, GTK emits onSizeAllocate events which trigger a Layout() sequence
-	// messing up the pane positions, so do the restore() one more time after the main
-	// window came up.
-	_topLevelWindow->Bind(wxEVT_SHOW, [&](wxShowEvent& ev)
-	{
-		if (_currentLayout && ev.IsShown())
-		{
-			_currentLayout->restoreStateFromRegistry();
-		}
-
-		ev.Skip();
-	});
-#endif
-
-	// register the commands
-	GlobalMainFrameLayoutManager().registerCommands();
-
 	// Emit the "constructed" signal to give modules a chance to register
 	// their UI parts. Clear the signal afterwards.
 	signal_MainFrameConstructed().emit();
 	signal_MainFrameConstructed().clear();
+
+    // Restore the saved layout now that all signal listeners have added their controls
+    _layout->restoreStateFromRegistry();
+
+#ifdef __linux__
+    // #4526: In Linux, do another restore after the top level window has been shown
+    // After startup, GTK emits onSizeAllocate events which trigger a Layout() sequence
+    // messing up the pane positions, so do the restore() one more time after the main
+    // window came up.
+    _topLevelWindow->Bind(wxEVT_SHOW, [&](wxShowEvent& ev)
+    {
+        if (_layout && ev.IsShown())
+        {
+            _layout->restoreStateFromRegistry();
+        }
+
+        ev.Skip();
+    });
+#endif
 
 	enableScreenUpdates();
 
@@ -303,10 +294,10 @@ void MainFrame::construct()
 void MainFrame::removeLayout()
 {
 	// Sanity check
-	if (_currentLayout == NULL) return;
+	if (!_layout) return;
 
-	_currentLayout->deactivate();
-	_currentLayout = IMainFrameLayoutPtr();
+	_layout->deactivate();
+    _layout.reset();
 }
 
 void MainFrame::preDestructionCleanup()
@@ -314,7 +305,7 @@ void MainFrame::preDestructionCleanup()
 	saveWindowPosition();
 
     // Free the layout
-    if (_currentLayout)
+    if (_layout)
     {
         removeLayout();
     }
@@ -352,6 +343,8 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 			return;
 		}
     }
+
+    _layout->saveStateToRegistry();
 
     wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
 
@@ -404,8 +397,7 @@ void MainFrame::createTopLevelWindow()
     wxTheApp->SetTopWindow(_topLevelWindow);
 
     // Listen for close events
-    _topLevelWindow->Bind(wxEVT_CLOSE_WINDOW,
-                          &MainFrame::onTopLevelFrameClose, this);
+    _topLevelWindow->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::onTopLevelFrameClose, this);
 }
 
 void MainFrame::restoreWindowPosition()
@@ -449,7 +441,7 @@ wxToolBar* MainFrame::getToolbar(IMainFrame::Toolbar type)
     // any
     if (type == Toolbar::CAMERA)
     {
-        CamWndPtr cw = GlobalCamera().getActiveCamWnd();
+        auto cw = GlobalCamera().getActiveCamWnd();
         return cw ? cw->getToolbar() : nullptr;
     }
 
@@ -462,17 +454,12 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-    // Add the console
-	IGroupDialog::PagePtr consolePage(new IGroupDialog::Page);
+    _layout = std::make_shared<AuiLayout>();
+    _layout->activate();
 
-	consolePage->name = "console";
-	consolePage->windowLabel = _("Console");
-	consolePage->page = new Console(getWxTopLevelWindow());
-	consolePage->tabIcon = "iconConsole16.png";
-	consolePage->tabLabel = _("Console");
-	consolePage->position = IGroupDialog::Page::Position::Console;
-
-	GlobalGroupDialog().addPage(consolePage);
+    addControl(UserControl::Console, ControlSettings{ Location::PropertyPanel, true });
+    addControl(UserControl::EntityInspector, ControlSettings{ Location::PropertyPanel, true });
+    addControl(UserControl::MediaBrowser, ControlSettings{ Location::PropertyPanel, true });
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
@@ -499,7 +486,7 @@ void MainFrame::saveWindowPosition()
 
 bool MainFrame::screenUpdatesEnabled()
 {
-	return _screenUpdatesEnabled && !_defLoadingBlocksUpdates;
+	return _screenUpdatesEnabled && !_defLoadingBlocksUpdates && !_mapLoadingBlocksUpdates;
 }
 
 void MainFrame::enableScreenUpdates() {
@@ -525,69 +512,72 @@ void MainFrame::updateAllWindows(bool force)
 
     GlobalXYWndManager().updateAllViews(force);
 
-    if (TexTool::Instance().IsShown())
+    if (force)
     {
-        if (force)
-        {
-            TexTool::Instance().forceRedraw();
-        }
-        else
-        {
-            TexTool::Instance().queueDraw();
-        }
+        TextureToolRequest::Send(TextureToolRequest::ForceViewRefresh);
     }
-}
-
-void MainFrame::setActiveLayoutName(const std::string& name)
-{
-    GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, name);
-}
-
-void MainFrame::applyLayout(const std::string& name)
-{
-	if (getCurrentLayout() == name)
-	{
-		// nothing to do
-		rMessage() << "MainFrame: Won't activate layout " << name
-			<< ", is already active." << std::endl;
-		return;
-	}
-
-	// Set or clear?
-	if (!name.empty())
+    else
     {
-		// Try to find that new layout
-		IMainFrameLayoutPtr layout = GlobalMainFrameLayoutManager().getLayout(name);
-
-		if (layout == NULL) {
-			rError() << "MainFrame: Could not find layout with name " << name << std::endl;
-			return;
-		}
-
-		// Found a new layout, remove the old one
-		removeLayout();
-
-		rMessage() << "MainFrame: Activating layout " << name << std::endl;
-
-		// Store and activate the new layout
-		_currentLayout = layout;
-		_currentLayout->activate();
-	}
-	else {
-		// Empty layout name => remove
-		removeLayout();
-	}
-}
-
-std::string MainFrame::getCurrentLayout()
-{
-	return (_currentLayout != NULL) ? _currentLayout->getName() : "";
+        TextureToolRequest::Send(TextureToolRequest::QueueViewRefresh);
+    }
 }
 
 IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std::string& title,
 		const std::string& message, bool forceDisplay)
 {
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
+}
+
+void MainFrame::addControl(const std::string& controlName, const ControlSettings& defaultSettings)
+{
+    _layout->registerControl(controlName, defaultSettings);
+}
+
+void MainFrame::focusControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        // Enumerate possible control names?
+        rMessage() << "Usage: FocusControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _layout->focusControl(args.at(0).getString());
+}
+
+void MainFrame::createControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rMessage() << "Usage: CreateControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _layout->createControl(args.at(0).getString());
+}
+
+void MainFrame::toggleControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        // Enumerate possible control names?
+        rMessage() << "Usage: ToggleControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _layout->toggleControl(args.at(0).getString());
+}
+
+void MainFrame::toggleMainControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        // Enumerate possible control names?
+        rMessage() << "Usage: ToggleMainControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _layout->toggleMainControl(args.at(0).getString());
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()

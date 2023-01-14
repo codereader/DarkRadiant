@@ -32,7 +32,7 @@ public:
 
 	/* Deletes this key and all its children,
 	 * this includes multiple instances nodes matching this key */
-	void deleteXPath(const std::string& path);
+    std::size_t deleteXPath(const std::string& path);
 
 	/*	Adds a key to the XMLRegistry (without value, just the node)
 	 *  All required parent nodes are created automatically, if they don't exist */

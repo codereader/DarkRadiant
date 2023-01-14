@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include "i18n.h"
+#include "ieclass.h"
 #include "ifilesystem.h"
 #include "imodelcache.h"
 #include "ientity.h"
@@ -20,6 +21,7 @@
 #include "registry/registry.h"
 #include "scene/Traverse.h"
 #include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
 #include "Models.h"
 
 namespace map
@@ -42,11 +44,11 @@ scene::LayerList getAllLayersOfSelection()
     return unionSet;
 }
 
-void exportSelectedAsModel(const ModelExportOptions& options)
+void exportSelectedAsModel(const model::ModelExportOptions& options)
 {
 	if (!path_is_absolute(options.outputFilename.c_str()))
 	{
-		throw std::runtime_error("Output path must be absolute.");
+		throw cmd::ExecutionNotPossible(_("Output path must be absolute."));
 	}
 
 	std::string outputFormat = options.outputFormat;
@@ -71,30 +73,37 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 	// Call the traverseSelected function to hit the exporter with each node
 	traverseSelected(GlobalSceneGraph().root(), exporter);
 
-	exporter.setCenterObjects(options.centerObjects);
+	exporter.setCenterObjects(options.exportOrigin != model::ModelExportOrigin::MapOrigin);
 	exporter.setSkipCaulkMaterial(options.skipCaulk);
 	exporter.setExportLightsAsObjects(options.exportLightsAsObjects);
 
-	if (options.useEntityOrigin)
+	if (options.exportOrigin == model::ModelExportOrigin::EntityOrigin)
 	{
-		// Check if we have a single entity selected
-		const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+		// Find the specified entity
+        Entity* foundEntity = nullptr;
 
-		if (info.totalCount == 1 && info.entityCount == 1)
-		{
-			Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+        GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+        {
+            auto entity = Node_getEntity(node);
+            if (!foundEntity && entity && entity->getKeyValue("name") == options.entityName)
+            {
+                foundEntity = entity;
+            }
+        });
 
-			if (entity != nullptr)
-			{
-				Vector3 entityOrigin = string::convert<Vector3>(entity->getKeyValue("origin"));
-				exporter.setOrigin(entityOrigin);
-			}
-		}
-		else
+		if (foundEntity == nullptr)
 		{
-			rWarning() << "Will ignore the UseEntityOrigin setting as we don't have a single entity selected." << std::endl;
+            throw cmd::ExecutionFailure(fmt::format(_("Could not find the entity with name {0}"), options.entityName));
 		}
+
+		exporter.setOrigin(string::convert<Vector3>(foundEntity->getKeyValue("origin")));
+        exporter.setCenterObjects(true);
 	}
+    else if (options.exportOrigin == model::ModelExportOrigin::CustomOrigin)
+    {
+        exporter.setOrigin(options.customExportOrigin);
+        exporter.setCenterObjects(true);
+    }
 
 	exporter.processNodes();
 
@@ -110,7 +119,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 	// Check the pre-requisites before exporting
 	if (options.replaceSelectionWithModel && rootPath.empty())
 	{
-		throw std::runtime_error(_("To replace the selection with the exported model\nthe output path must be located within the mod/project."));
+		throw cmd::ExecutionFailure(_("To replace the selection with the exported model\nthe output path must be located within the mod/project."));
 	}
 
 	rMessage() << "Exporting selection to file " << outputPath << outputFile << std::endl;
@@ -133,46 +142,45 @@ void exportSelectedAsModel(const ModelExportOptions& options)
         selection::algorithm::deleteSelection();
 
         // Create an entity of the same class in its place
-        try
+        // Place the model in the world origin, unless we set "center objects" to true
+        Vector3 modelPos(0, 0, 0);
+
+        if (options.exportOrigin != model::ModelExportOrigin::MapOrigin)
         {
-            // Place the model in the world origin, unless we set "center objects" to true
-            Vector3 modelPos(0, 0, 0);
-
-            if (options.centerObjects)
-            {
-                modelPos = -exporter.getCenterTransform().translation();
-            }
-
-            auto className = lastSelectedEntity ? lastSelectedEntity->getKeyValue("classname") : "func_static";
-            auto eclass = GlobalEntityClassManager().findOrInsert(className, false);
-            auto modelNode = GlobalEntityModule().createEntity(eclass);
-            scene::addNodeToContainer(modelNode, root);
-
-            auto newEntity = Node_getEntity(modelNode);
-            newEntity->setKeyValue("model", relativeModelPath);
-            newEntity->setKeyValue("origin", string::to_string(modelPos));
-            modelNode->assignToLayers(previousLayerSet);
-
-            if (lastSelectedEntity)
-            {
-                // Preserve all spawnargs of the last selected entity, except for a few
-                std::set<std::string> spawnargsToDiscard{ "model", "classname", "origin", "rotation" };
-
-                lastSelectedEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
-                {
-                    if (spawnargsToDiscard.count(string::to_lower_copy(key)) > 0) return;
-
-                    rMessage() << "Replaced entity inherits the key " << key << " with value " << value << std::endl;
-                    newEntity->setKeyValue(key, value);
-                });
-            }
-
-            Node_setSelected(modelNode, true);
+            modelPos = -exporter.getCenterTransform().translation();
         }
-        catch (cmd::ExecutionFailure& ex)
+
+        auto className = lastSelectedEntity ? lastSelectedEntity->getKeyValue("classname") : "func_static";
+        auto eclass = GlobalEntityClassManager().findClass(className);
+
+        if (!eclass)
         {
-            throw std::runtime_error(fmt::format(_("Unable to create model: {0}"), ex.what()));
+            throw cmd::ExecutionFailure(fmt::format(_("Cannot replace exported entity, class {0} not found"), className));
         }
+
+        auto modelNode = GlobalEntityModule().createEntity(eclass);
+        scene::addNodeToContainer(modelNode, root);
+
+        auto newEntity = Node_getEntity(modelNode);
+        newEntity->setKeyValue("model", relativeModelPath);
+        newEntity->setKeyValue("origin", string::to_string(modelPos));
+        modelNode->assignToLayers(previousLayerSet);
+
+        if (lastSelectedEntity)
+        {
+            // Preserve all spawnargs of the last selected entity, except for a few
+            std::set<std::string> spawnargsToDiscard{ "model", "classname", "origin", "rotation" };
+
+            lastSelectedEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
+            {
+                if (spawnargsToDiscard.count(string::to_lower_copy(key)) > 0) return;
+
+                rMessage() << "Replaced entity inherits the key " << key << " with value " << value << std::endl;
+                newEntity->setKeyValue(key, value);
+            });
+        }
+
+        Node_setSelected(modelNode, true);
     }
     
     // It's possible that the export overwrote a model we're already using in this map, refresh it
@@ -181,61 +189,64 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
 void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 {
-	if (args.size() < 2 || args.size() > 7)
+	if (args.size() < 2 || args.size() > 8)
 	{
-		rMessage() << "Usage: ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]" << std::endl;
+		rMessage() << "Usage: ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] "
+	                    "[<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]" << std::endl;
 		rMessage() << "   <Path> must be an absolute file system path" << std::endl;
-		rMessage() << "   pass [<CenterObjects>] as 1 to center objects around the origin" << std::endl;
-		rMessage() << "   pass [<SkipCaulk>] as 1 to skip caulked surfaces" << std::endl;
-		rMessage() << "   pass [<ReplaceSelectionWithModel>] as 1 to delete the selection and put the exported model in its place" << std::endl;
-		rMessage() << "   pass [<UseEntityOrigin>] as 1 to use the entity origin as export origin (only applicable if a single entity is selected)" << std::endl;
-		rMessage() << "   pass [<ExportLightsAsObjects>] as 1 to export lights as small polyhedric objects" << std::endl;
+		rMessage() << "   <ExportFormat> one of the available formats, e.g. lwo, ase, obj" << std::endl;
+		rMessage() << "   [<ExportOrigin>]: 0 = Map origin, 1 = SelectionCenter, 2 = EntityOrigin, 3 = CustomOrigin" << std::endl;
+		rMessage() << "   [<OriginEntityName>]: the name of the entity defining origin (if ExportOrigin == 2)" << std::endl;
+		rMessage() << "   [<CustomOrigin>]: the Vector3 to be used as custom origin (if ExportOrigin == 3)" << std::endl;
+		rMessage() << "   [<SkipCaulk>] as 1 to skip caulked surfaces" << std::endl;
+		rMessage() << "   [<ReplaceSelectionWithModel>] as 1 to delete the selection and put the exported model in its place" << std::endl;
+		rMessage() << "   [<ExportLightsAsObjects>] as 1 to export lights as small polyhedric objects" << std::endl;
 		return;
 	}
 
-	ModelExportOptions options;
+	model::ModelExportOptions options;
 
 	options.outputFilename = args[0].getString();
 	options.outputFormat = args[1].getString();
+	options.exportOrigin = model::ModelExportOrigin::MapOrigin;
+	options.entityName = std::string();
+	options.customExportOrigin = Vector3(0,0,0);
 	options.skipCaulk = false;
-	options.centerObjects = false;
 	options.replaceSelectionWithModel = false;
-	options.useEntityOrigin = false;
 	options.exportLightsAsObjects = false;
 
 	if (args.size() >= 3)
 	{
-		options.centerObjects = (args[2].getInt() != 0);
+		options.exportOrigin = model::getExportOriginFromString(args[2].getString());
 	}
 
-	if (args.size() >= 4)
-	{
-		options.skipCaulk = (args[3].getInt() != 0);
-	}
+    if (args.size() >= 4)
+    {
+        options.entityName = args[3].getString();
+    }
 
-	if (args.size() >= 5)
-	{
-		options.replaceSelectionWithModel = (args[4].getInt() != 0);
-	}
+    if (args.size() >= 5)
+    {
+        options.customExportOrigin = args[4].getVector3();
+    }
 
 	if (args.size() >= 6)
 	{
-		options.useEntityOrigin = (args[5].getInt() != 0);
+		options.skipCaulk = (args[5].getInt() != 0);
 	}
 
 	if (args.size() >= 7)
 	{
-		options.exportLightsAsObjects = (args[6].getInt() != 0);
+		options.replaceSelectionWithModel = (args[6].getInt() != 0);
 	}
 
-	try
+	if (args.size() >= 8)
 	{
-		exportSelectedAsModel(options);
+		options.exportLightsAsObjects = (args[7].getInt() != 0);
 	}
-	catch (std::runtime_error& ex)
-	{
-		rError() << "Failed to export model: " << ex.what() << std::endl;
-	}
+
+    // Forward the call, leak any ExecutionFailure exceptions
+	exportSelectedAsModel(options);
 }
 
 }

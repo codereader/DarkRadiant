@@ -352,10 +352,18 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     m_patch.evaluateTransform();
     m_patch.updateTesselation();
 
-    _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
-    _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
-
-    _renderableSurfaceSolid.attachToEntity(_renderEntity);
+    if (m_patch.getWidth() > 0 && m_patch.getHeight() > 0)
+    {
+        _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
+        _renderableSurfaceWireframe.update(getRenderState() == RenderState::Active ? 
+            _renderEntity->getWireShader() : _inactiveShader);
+        _renderableSurfaceSolid.attachToEntity(_renderEntity);
+    }
+    else
+    {
+        _renderableSurfaceSolid.clear();
+        _renderableSurfaceWireframe.clear();
+    }
 
     if (isSelected() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
     {
@@ -376,7 +384,7 @@ void PatchNode::onPreRender(const VolumeTest& volume)
 
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+    if (GlobalSelectionSystem().getSelectionMode() != selection::SelectionMode::Component)
     {
         // The coloured selection overlay should use the same triangulated surface to avoid z fighting
         collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
@@ -401,11 +409,13 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     if (renderSystem)
 	{
         _ctrlPointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
+        _inactiveShader = renderSystem->capture(BuiltInShaderType::WireframeInactive);
         _ctrlLatticeShader = renderSystem->capture(BuiltInShaderType::PatchLattice);
 	}
 	else
 	{
         _ctrlPointShader.reset();
+        _inactiveShader.reset();
         _ctrlLatticeShader.reset();
 	}
 }
@@ -522,4 +532,11 @@ void PatchNode::onVisibilityChanged(bool visible)
         // Queue an update, renderables are automatically shown in onPreRender
         updateAllRenderables();
     }
+}
+
+void PatchNode::onRenderStateChanged()
+{
+    SelectableNode::onRenderStateChanged();
+
+    _renderableSurfaceWireframe.queueUpdate();
 }

@@ -17,9 +17,9 @@
 namespace ui
 {
 
-EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name) :
+EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key) :
 	PropertyEditor(entities),
-	_key(name)
+	_key(key)
 {
 	constructBrowseButtonPanel(parent, _("Choose target entity..."),
 		PropertyEditorFactory::getBitmapFor("entity"));
@@ -28,7 +28,7 @@ EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, IEntitySelection& e
 void EntityPropertyEditor::onBrowseButtonClick()
 {
 	// Use a new dialog window to get a selection from the user
-    auto previousValue = _entities.getSharedKeyValue(_key, false);
+    auto previousValue = _entities.getSharedKeyValue(_key->getFullKey(), false);
 	std::string selection = EntityChooser::ChooseEntity(previousValue);
 
 	// Only apply non-empty selections if the value has actually changed
@@ -37,7 +37,7 @@ void EntityPropertyEditor::onBrowseButtonClick()
 		UndoableCommand cmd("changeKeyValue");
 
 		// Apply the change
-        setKeyValue(_key, selection);
+        setKeyValueOnSelection(_key->getFullKey(), selection);
 	}
 }
 

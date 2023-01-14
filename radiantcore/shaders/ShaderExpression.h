@@ -147,7 +147,10 @@ public:
 
 	float getValue(std::size_t time) override
 	{
-		// parmNN is 0 without entity
+        // RGBA _color parms [0-3] have default value 1.0
+        if (_parmNum < 4) return 1.0f;
+
+		// The rest of the parms is 0 by default
 		return 0.0f;
 	}
 
@@ -320,7 +323,7 @@ public:
 
     virtual std::string convertToString() override
     {
-        return fmt::format("{0}[{1}]", _tableDef->getName(), _lookupExpr->getExpressionString());
+        return fmt::format("{0}[{1}]", _tableDef->getDeclName(), _lookupExpr->getExpressionString());
     }
 
     virtual Ptr clone() const override

@@ -6,7 +6,9 @@
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
-#include <wx/event.h>
+
+#include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 class ISelectable;
 class Entity;
@@ -24,17 +26,15 @@ class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
-	public wxEvtHandler,
+	public wxutil::DockablePanel,
 	public Entity::Observer,
-	public sigc::trackable
+	public sigc::trackable,
+    public wxutil::SingleIdleCallback
 {
 private:
 	sigc::connection _selectionChangedSignal;
 
-	wxWindow* _tempParent;
 	wxScrolledWindow* _mainPanel;
-
-	bool _queueUpdate;
 
 	typedef std::map<std::string, SpawnargLinkedCheckbox*> CheckboxMap;
 	CheckboxMap _checkboxes;
@@ -50,28 +50,29 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
+    bool _rescanSelectionOnIdle;
+
 public:
-	AIEditingPanel();
+	AIEditingPanel(wxWindow* parent);
+	~AIEditingPanel() override;
 
-	static AIEditingPanel& Instance();
-	static void Shutdown();
-
-	static void onMainFrameConstructed();
-
-	void onKeyInsert(const std::string& key, EntityKeyValue& value);
-    void onKeyChange(const std::string& key, const std::string& val);
-	void onKeyErase(const std::string& key, EntityKeyValue& value);
+	void onKeyInsert(const std::string& key, EntityKeyValue& value) override;
+    void onKeyChange(const std::string& key, const std::string& val) override;
+	void onKeyErase(const std::string& key, EntityKeyValue& value) override;
 
 	void postUndo();
 	void postRedo();
 
 protected:
-	void OnPaint(wxPaintEvent& ev);
-
+    void onIdle() override;
 	void onBrowseButton(wxCommandEvent& ev, const std::string& key);
 
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
-	static AIEditingPanelPtr& InstancePtr();
+    void connectListeners();
+    void disconnectListeners();
 
 	void constructWidgets();
 	wxSizer* createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton);
@@ -80,7 +81,6 @@ private:
 									  const std::string& buttonLabel, const std::string& buttonIcon,
 									  const std::string& key);
 
-	void onMainFrameShuttingDown();
 	void onSelectionChanged(const ISelectable& selectable);
 
 	void rescanSelection();

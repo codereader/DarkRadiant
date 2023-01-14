@@ -1,8 +1,9 @@
 #include "ModelKey.h"
 
 #include <functional>
+
+#include "entitylib.h"
 #include "imodelcache.h"
-#include "ifilter.h"
 #include "modelskin.h"
 #include "string/replace.h"
 #include "scenelib.h"
@@ -64,36 +65,63 @@ void ModelKey::attachModelNode()
 	// If the "model" spawnarg is empty, there's nothing to attach
     if (_model.path.empty()) return;
 
+    // The actual model path to request the model from the file cache
+    std::string actualModelPath(_model.path);
+
+    // Check if the model key is pointing to a def
+    auto modelDef = GlobalEntityClassManager().findModel(_model.path);
+
+    if (modelDef)
+    {
+        // We have a valid modelDef, use the mesh defined there
+        actualModelPath = modelDef->getMesh();
+
+        // Start watching the modelDef for changes
+        subscribeToModelDef(modelDef);
+    }
+
 	// We have a non-empty model key, send the request to
 	// the model cache to acquire a new child node
-	_model.node = GlobalModelCache().getModelNode(_model.path);
+	_model.node = GlobalModelCache().getModelNode(actualModelPath);
 
 	// The model loader should not return NULL, but a sanity check is always ok
-	if (_model.node)
-	{
-		// Add the model node as child of the entity node
-		_parentNode.addChildNode(_model.node);
+    if (!_model.node) return;
 
-		// Assign the model node to the same layers as the parent entity
-		_model.node->assignToLayers(_parentNode.getLayers());
+	// Add the model node as child of the entity node
+	_parentNode.addChildNode(_model.node);
 
-		// Inherit the parent node's visibility. This should do the trick to resolve #2709
-		// but is not as heavy on performance as letting the Filtersystem check the whole subgraph
+	// Assign the model node to the same layers as the parent entity
+	_model.node->assignToLayers(_parentNode.getLayers());
 
-		// The sophisticated check would be like this
-		// GlobalFilterSystem().updateSubgraph(_parentNode.getSelf());
+	// Inherit the parent node's visibility. This should do the trick to resolve #2709
+	// but is not as heavy on performance as letting the Filtersystem check the whole subgraph
 
-		// Copy the visibility flags from the parent node (#4141 and #5134)
-		scene::assignVisibilityFlagsFromNode(*_model.node, _parentNode);
-	}
+	// Copy the visibility flags from the parent node (#4141 and #5134)
+	scene::assignVisibilityFlagsFromNode(*_model.node, _parentNode);
+
+    // Assign idle pose to modelDef meshes
+    if (modelDef)
+    {
+        scene::applyIdlePose(_model.node, modelDef);
+    }
+
+    // Mark the transform of this model as changed, it must re-evaluate itself
+    _model.node->transformChanged();
 }
 
 void ModelKey::detachModelNode()
 {
+    unsubscribeFromModelDef();
+
     if (!_model.node) return; // nothing to do
 
     _parentNode.removeChildNode(_model.node);
     _model.node.reset();
+}
+
+void ModelKey::onModelDefChanged()
+{
+    attachModelNodeKeepinSkin();
 }
 
 void ModelKey::attachModelNodeKeepinSkin()
@@ -125,7 +153,7 @@ void ModelKey::attachModelNodeKeepinSkin()
 void ModelKey::skinChanged(const std::string& value)
 {
 	// Check if we have a skinnable model
-	SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
+	auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
 
 	if (skinned)
 	{
@@ -147,4 +175,30 @@ void ModelKey::importState(const ModelNodeAndPath& data)
 {
 	_model.path = data.path;
 	_model.node = data.node;
+    _model.modelDefMonitored = data.modelDefMonitored;
+
+    if (_model.modelDefMonitored)
+    {
+        unsubscribeFromModelDef();
+
+        if (auto modelDef = GlobalEntityClassManager().findModel(_model.path); modelDef)
+        {
+            subscribeToModelDef(modelDef);
+        }
+    }
+}
+
+void ModelKey::subscribeToModelDef(const IModelDef::Ptr& modelDef)
+{
+    // Monitor this modelDef for potential mesh changes
+    _modelDefChanged = modelDef->signal_DeclarationChanged().connect(
+        sigc::mem_fun(this, &ModelKey::onModelDefChanged)
+    );
+    _model.modelDefMonitored = true;
+}
+
+void ModelKey::unsubscribeFromModelDef()
+{
+    _modelDefChanged.disconnect();
+    _model.modelDefMonitored = false;
 }

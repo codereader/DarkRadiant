@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "irenderable.h"
+#include "ideclmanager.h"
 
 #include <functional>
 #include <sigc++/signal.h>
@@ -36,40 +37,27 @@ typedef std::shared_ptr<IParticleNode> IParticleNodePtr;
  * Each particle system is made up of one or more particle stages, information
  * about which is provided via the IStageDef interface.
  */
-class IParticleDef
+class IParticleDef :
+    public decl::IDeclaration
 {
 public:
+    using Ptr = std::shared_ptr<IParticleDef>;
 
-    /**
-	 * Destructor
-	 */
 	virtual ~IParticleDef() {}
-
-	/// Get the name of the particle system.
-	virtual const std::string& getName() const = 0;
-
-	/**
-	 * Get the name of the .prt file this particle is defined in.
-	 * Might return an empty string if this particle def has not been saved yet.
-	 */
-	virtual const std::string& getFilename() const = 0;
 
 	virtual void setFilename(const std::string& filename) = 0;
 
 	/**
 	 * Set/get the depth hack flag
 	 */
-	virtual float getDepthHack() const = 0;
+	virtual float getDepthHack() = 0;
 	virtual void setDepthHack(float value) = 0;
 
 	/// Returns the number of stages for this particle system.
-	virtual std::size_t getNumStages() const = 0;
-
-    /// Get a const stage definition from the particle definition
-	virtual const IStageDef& getStage(std::size_t stageNum) const = 0;
+	virtual std::size_t getNumStages() = 0;
 
     /// Get a stage definition from the particle definition
-	virtual IStageDef& getStage(std::size_t stageNum) = 0;
+	virtual const std::shared_ptr<IStageDef>& getStage(std::size_t stageNum) = 0;
 
 	/**
 	 * Add a new stage to this particle, returns the index of the new stage.
@@ -91,16 +79,14 @@ public:
     /// Signal emitted when some aspect of the particle def has changed
     virtual sigc::signal<void>& signal_changed() = 0;
 
-	// Comparison operators - particle defs are considered equal if all properties (except the name!),
+	// Comparison operator - particle defs are considered equal if all properties (except the name!),
 	// number of stages and stage contents are the equal
-	virtual bool operator==(const IParticleDef& other) const = 0;
-	virtual bool operator!=(const IParticleDef& other) const = 0;
+	virtual bool isEqualTo(const Ptr& other) = 0;
 
 	// Copies all properties from the other particle, overwriting this one
 	// Note: Name, filename and observers are not copied
-	virtual void copyFrom(const IParticleDef& other) = 0;
+	virtual void copyFrom(const Ptr& other) = 0;
 };
-typedef std::shared_ptr<IParticleDef> IParticleDefPtr;
 
 /**
  * A renderable particle, which is capable of compiling the
@@ -127,13 +113,13 @@ public:
 	/**
 	 * Get the particle definition used by this renderable.
 	 */
-	virtual const IParticleDefPtr& getParticleDef() const = 0;
+	virtual const IParticleDef::Ptr& getParticleDef() const = 0;
 
 	/**
 	 * Set the particle definition. You'll need to call update() after
 	 * setting a new particle def.
 	 */
-	virtual void setParticleDef(const IParticleDefPtr& def) = 0;
+	virtual void setParticleDef(const IParticleDef::Ptr& def) = 0;
 
 	/**
 	 * greebo: Particles have a main direction, usually defined by the
@@ -162,13 +148,6 @@ typedef std::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
  */
 typedef std::function< void (const IParticleDef&) > ParticleDefVisitor;
 
-/* CONSTANTS */
-namespace
-{
-	const char* PARTICLES_DIR = "particles/";
-	const char* PARTICLES_EXT = "prt";
-}
-
 /// Inteface for the particles manager
 class IParticlesManager :
 	public RegisterableModule
@@ -182,10 +161,10 @@ public:
 	virtual void forEachParticleDef(const ParticleDefVisitor&) = 0;
 
     /// Return the definition object for the given named particle system
-	virtual IParticleDefPtr getDefByName(const std::string& name) = 0;
+	virtual IParticleDef::Ptr getDefByName(const std::string& name) = 0;
 
 	// Finds or creates the particle def with the given name, always returns non-NULL
-	virtual IParticleDefPtr findOrInsertParticleDef(const std::string& name) = 0;
+	virtual IParticleDef::Ptr findOrInsertParticleDef(const std::string& name) = 0;
 
 	// Removes the named particle definition from the storage
 	virtual void removeParticleDef(const std::string& name) = 0;
@@ -217,26 +196,11 @@ public:
 	 * throws a std::runtime_error on any failure.
 	 */
 	virtual void saveParticleDef(const std::string& particle) = 0;
-
-	/**
-     * \brief
-     * Force the particles manager to reload all particle definitions from the
-     * .prt files.
-     *
-     * Any existing references to IParticleDefs will remain valid, but their
-     * contents might change.  Anything sensitive to these changes (like the
-     * renderable particles) should connect to the particles reloaded signal.
-	 *
-     * If particle defs are removed from the .prt files, the corresponding
-     * IParticleDef instance will remain in memory, but will be empty after
-     * reload.
-	 */
-	virtual void reloadParticleDefs() = 0;
 };
 
 } // namespace
 
-const char* const MODULE_PARTICLESMANAGER = "ParticlesManager";
+constexpr const char* const MODULE_PARTICLESMANAGER = "ParticlesManager";
 
 // Accessor
 inline particles::IParticlesManager& GlobalParticlesManager()

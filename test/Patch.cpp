@@ -47,7 +47,7 @@ TEST_F(PatchTest, SnapVertexToGrid)
     GlobalGrid().setGridSize(GRID_4);
 
     // Switch to vertex component mode and select a single patch vertex
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eComponent);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Component);
     GlobalSelectionSystem().SetComponentMode(selection::ComponentSelectionMode::Vertex);
 
     // Pick a vertex from the patch
@@ -76,7 +76,7 @@ TEST_F(PatchTest, VertexSnappingIsUndoable)
     GlobalGrid().setGridSize(GRID_4);
 
     // Switch to vertex component mode and select a single patch vertex
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eComponent);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Component);
     GlobalSelectionSystem().SetComponentMode(selection::ComponentSelectionMode::Vertex);
 
     // Pick a vertex from the patch

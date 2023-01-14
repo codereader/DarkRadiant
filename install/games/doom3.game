@@ -167,8 +167,7 @@
 		<property match="_color" category="Basic" type="colour" />
 		<property match="angle"
                   category="Basic"
-                  type="angle"
-                  options="0,360">The direction this entity initially faces.  Generally applied to AI or player_start entities.</property>
+                  type="angle">The direction this entity initially faces.  Generally applied to AI or player_start entities.</property>
 		<property match="falloff" category="Light" type="text" />
 		<property match="light_radius" category="Light" type="vector3" />
 		<property match="light_rotation" category="Light" type="text" />
@@ -186,7 +185,6 @@
 			match="texture"
 			category="Light"
 			type="texture"
-			options="lights,fogs"
 		/>
 		<property match="extinguished" category="Light" type="bool" />
 		<property match="model" category="Model" type="model">The displayed model or particle system for this entity. For a func_static or other entity type which can have brushes as children, this key must be set to the same value as "name" if brushes are used</property>
@@ -210,6 +208,8 @@
 		<property match="bind" category="Links" type="entity" />
 		<property match="bindToJoint" category="Links" type="text" />
 		<property match="s_shader" category="Sound" type="sound" />
+    <property match="fx" category="Basic" type="fx" />
+    <property match="fx_.+" category="Basic" type="fx" />
 		<property match="snd_.*" category="Sound" type="sound" hidden="1" />
 		<property match="s_mindistance" category="Sound" type="text" />
 		<property match="s_maxdistance" category="Sound" type="text" />

@@ -1,15 +1,15 @@
 #include <sigc++/connection.h>
-#include <wx/frame.h>
 
 #include "iscript.h"
+#include "icommandsystem.h"
 #include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 #include "i18n.h"
-#include "ui/igroupdialog.h"
+#include "ui/iuserinterface.h"
 #include "module/StaticModule.h"
 
 #include "ScriptMenu.h"
-#include "ScriptWindow.h"
+#include "ScriptPanel.h"
 
 namespace ui
 {
@@ -37,6 +37,8 @@ public:
             MODULE_SCRIPTING_SYSTEM,
             MODULE_MENUMANAGER,
             MODULE_MAINFRAME,
+            MODULE_USERINTERFACE,
+            MODULE_COMMANDSYSTEM,
         };
 
 		return _dependencies;
@@ -45,11 +47,11 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
 		// Bind the reloadscripts command to the menu
-        GlobalMenuManager().insert("main/file/refreshShaders", 	// menu location path
+        GlobalMenuManager().insert("main/file/reloadDecls", 	// menu location path
 			"ReloadScripts", // name
 			menu::ItemType::Item,	// type
 			_("Reload Scripts"),	// caption
-			"",	// icon
+			"icon_script.png",	// icon
 			"ReloadScripts"); // event name
 
 		// Subscribe to get notified as soon as Radiant is fully initialised
@@ -59,10 +61,14 @@ public:
 
 		_scriptsReloadedConn = GlobalScriptingSystem().signal_onScriptsReloaded()
 			.connect(sigc::mem_fun(this, &ScriptUserInterfaceModule::onScriptsReloaded));
+
+        GlobalUserInterface().registerControl(std::make_shared<ScriptPanel>());
 	}
 
 	void shutdownModule() override
 	{
+        GlobalUserInterface().unregisterControl(ScriptPanel::Name);
+
 		_scriptsReloadedConn.disconnect();
 		_scriptMenu.reset();
 	}
@@ -78,17 +84,11 @@ private:
 	{
 		_scriptMenu = std::make_shared<ScriptMenu>();
 
-		// Add the scripting widget to the groupdialog
-		IGroupDialog::PagePtr page(new IGroupDialog::Page);
-
-		page->name = "ScriptWindow";
-		page->windowLabel = _("Script");
-		page->page = new ScriptWindow(GlobalMainFrame().getWxTopLevelWindow());
-		page->tabIcon = "icon_script.png";
-		page->tabLabel = _("Script");
-		page->position = IGroupDialog::Page::Position::Console - 10; // insert before console
-
-		GlobalGroupDialog().addPage(page);
+        GlobalMainFrame().addControl(ScriptPanel::Name, IMainFrame::ControlSettings
+        {
+            IMainFrame::Location::PropertyPanel,
+            true
+        });
 	}
 };
 

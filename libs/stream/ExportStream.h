@@ -9,6 +9,7 @@
 
 #include "os/fs.h"
 #include "os/path.h"
+#include "os/file.h"
 
 namespace stream
 {
@@ -83,21 +84,10 @@ public:
         fs::path targetPath = _outputDirectory;
         targetPath /= _filename;
 
-        if (fs::exists(targetPath))
+        if (fs::exists(targetPath) && !os::moveToBackupFile(targetPath))
         {
-            try
-            {
-                // Move the old target file to .bak (overwriting any existing .bak file)
-                fs::rename(targetPath, targetPath.string() + ".bak");
-            }
-            catch (fs::filesystem_error& e)
-            {
-                rError() << "Could not rename the existing file to .bak: " << targetPath.string() << std::endl
-                    << e.what() << std::endl;
-
-                throw std::runtime_error(
-                    fmt::format(_("Could not rename the existing file to .bak: {0}"), targetPath.string()));
-            }
+            throw std::runtime_error(
+                fmt::format(_("Could not rename the existing file to .bak: {0}"), targetPath.string()));
         }
 
         try

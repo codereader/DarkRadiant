@@ -78,16 +78,31 @@ std::string Game::getXPathRoot() const
 
 std::string Game::getKeyValue(const std::string& key) const
 {
-	xml::NodeList found = GlobalRegistry().findXPath(getXPathRoot());
+    if (xml::NodeList found = GlobalRegistry().findXPath(getXPathRoot()); !found.empty()) {
+        return found[0].getAttributeValue(key);
+    }
+    else {
+        rError() << "Game: Keyvalue '" << key << "' not found for game type '" << _name << "'"
+                 << std::endl;
+        return "";
+    }
+}
 
-	if (!found.empty())
-    {
-		return found[0].getAttributeValue(key);
-	}
-     
-	rError() << "Game: Keyvalue '" << key << "' not found for game type '" << _name << "'" << std::endl;
+bool Game::hasFeature(const std::string& feature) const
+{
+    xml::NodeList nodes = getLocalXPath("/features");
+    if (nodes.empty())
+        return false;
 
-	return "";
+    // Find the first available feature which matches the query feature
+    xml::NodeList features = nodes[0].getNamedChildren("feature");
+    for (const auto& f: features) {
+        if (f.getContent() == feature)
+            return true;
+    }
+
+    // Nothing found, so the optional feature isn't present
+    return false;
 }
 
 xml::NodeList Game::getLocalXPath(const std::string& localPath) const

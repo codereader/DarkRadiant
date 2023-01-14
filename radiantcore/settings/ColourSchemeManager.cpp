@@ -219,8 +219,6 @@ const StringSet& ColourSchemeManager::getDependencies() const
 
 void ColourSchemeManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	loadColourSchemes();
     emitEclassOverrides();
 }

@@ -1,39 +1,39 @@
 #pragma once
 
+#include <memory>
+#include <sigc++/connection.h>
+
 #include "iscenegraph.h"
 #include "imousetool.h"
 #include "icameraview.h"
-#include "ui/ieventmanager.h"
 #include "igl.h"
-#include "irender.h"
+#include "ui/ieventmanager.h"
+
+#include "wxutil/DockablePanel.h"
 #include "wxutil/GLWidget.h"
 #include "wxutil/FreezePointer.h"
-#include "wxutil/WindowPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/event/KeyEventFilter.h"
 #include "wxutil/MouseToolHandler.h"
 #include "wxutil/DeferredMotionDelta.h"
 
 #include <wx/wxprec.h>
-#include <wx/glcanvas.h>
 #include <wx/timer.h>
 #include <wx/stopwatch.h>
-#include "render/View.h"
 
-#include "Rectangle.h"
-#include <memory>
-#include "util/Noncopyable.h"
-#include <sigc++/connection.h>
-#include "tools/CameraMouseToolEvent.h"
-#include "render/RenderStatistics.h"
 #include "render/CamRenderer.h"
+#include "render/RenderStatistics.h"
+#include "render/View.h"
+#include "util/Noncopyable.h"
+#include "Rectangle.h"
+#include "tools/CameraMouseToolEvent.h"
 #include "messages/TextureChanged.h"
 
 constexpr int CAMWND_MINSIZE_X = 240;
 constexpr int CAMWND_MINSIZE_Y = 200;
 
-#define SPEED_MOVE 32
-#define SPEED_TURN 22.5
+constexpr double SPEED_MOVE = 32.0;
+constexpr double SPEED_TURN = 22.5;
 
 class SelectionTest;
 
@@ -41,10 +41,11 @@ namespace render { class CamRenderer; };
 
 namespace ui
 {
+class CameraWndManager;
 
 /// Main 3D view widget
 class CamWnd :
-    public wxEvtHandler,
+    public wxutil::DockablePanel,
     public camera::IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,
@@ -52,6 +53,9 @@ class CamWnd :
     private wxutil::XmlResourceBasedWidget,
     protected wxutil::MouseToolHandler
 {
+private:
+    CameraWndManager& _owner;
+
     // Overall panel including toolbar and GL widget
     wxPanel* _mainWxWidget;
 
@@ -81,9 +85,23 @@ class CamWnd :
 
     // Camera toolbar and associated button IDs
     wxToolBar* _camToolbar = nullptr;
-    int _farClipInID = wxID_NONE;
-    int _farClipOutID = wxID_NONE;
-    int _farClipToggleID = wxID_NONE;
+    struct {
+        // Lighting mode buttons
+        int wireFrame = wxID_NONE;
+        int flatShade = wxID_NONE;
+        int textured = wxID_NONE;
+        int lighting = wxID_NONE;
+        int lightingShadow = wxID_NONE;
+
+        // Far clip buttons
+        int farClipIn = wxID_NONE;
+        int farClipOut = wxID_NONE;
+        int farClipToggle = wxID_NONE;
+
+        // Animation control buttons
+        int startTime = wxID_NONE;
+        int stopTime = wxID_NONE;
+    } _btnIDs;
 
     std::size_t _mapValidHandle;
 
@@ -111,13 +129,12 @@ class CamWnd :
 
     IGLFont::Ptr _glFont;
 
+    sigc::connection _shadowMappingKeyChangedHandler;
     std::size_t _textureChangedHandler;
 
 public:
-    // Constructor and destructor
-    CamWnd(wxWindow* parent);
-
-    virtual ~CamWnd();
+    CamWnd(wxWindow* parent, CameraWndManager& owner);
+    ~CamWnd() override;
 
     // The unique ID of this camwindow
     int getId();
@@ -127,6 +144,7 @@ public:
 
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
     const VolumeTest& getVolumeTest() const override;
+    bool supportsDragSelections() override;
     int getDeviceWidth() const override;
     int getDeviceHeight() const override;
     void queueDraw() override;
@@ -153,6 +171,9 @@ public:
 
     /// \see ICameraView::getCameraOrigin
     const Vector3& getCameraOrigin() const;
+
+    /// \see ICameraView::setCameraOrigin
+    void setCameraOrigin(const Vector3& origin);
 
     const Frustum& getViewFrustum() const;
 
@@ -201,6 +222,9 @@ public:
     void moveForwardDiscrete(double units);
 
 protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
     void handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags);
     void handleKeyEvent(KeyEventType eventType, unsigned int freeMoveFlags, const std::function<void()>& discreteMovement);
 
@@ -213,6 +237,9 @@ protected:
     virtual IInteractiveView& getInteractiveView() override;
 
 private:
+    void connectEventHandlers();
+    void disconnectEventHandlers();
+
     void constructGUIComponents();
     void constructToolbar();
     void setFarClipButtonSensitivity();
@@ -230,10 +257,7 @@ private:
     void drawTime();
     void drawGrid();
     void requestRedraw(bool force);
-
-    // Motion and ICameraView related
-    void setCameraOrigin(const Vector3& origin);
-
+    
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void onGLResize(wxSizeEvent& ev);

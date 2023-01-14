@@ -16,7 +16,22 @@ class InteractionPass :
     public OpenGLShaderPass
 {
 public:
-    InteractionPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem);
+    // An interaction stage prepared for rendering
+    struct Stage
+    {
+        IShaderLayer::Ptr stage;
+        GLuint texture;
+    };
+
+private:
+    std::vector<Stage> _interactionStages;
+
+    GLuint _defaultDiffuseTexture;
+    GLuint _defaultBumpTexture;
+    GLuint _defaultSpecularTexture;
+
+public:
+    InteractionPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem, std::vector<IShaderLayer::Ptr>& stages);
 
     InteractionProgram& getProgram()
     {
@@ -37,6 +52,13 @@ public:
     {
         return GetTextureTransformFromStage(state().stage2);
     }
+
+    const std::vector<Stage>& getInteractionStages() const
+    {
+        return _interactionStages;
+    }
+
+    GLuint getDefaultInteractionTextureBinding(IShaderLayer::Type type);
 
     // Generates the state with all the required flags for drawing interaction passes
     static OpenGLState GenerateInteractionState(GLProgramFactory& programFactory);

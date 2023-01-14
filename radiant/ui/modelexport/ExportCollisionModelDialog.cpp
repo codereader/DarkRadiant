@@ -19,14 +19,14 @@ void ExportCollisionModelDialog::Show(const cmd::ArgumentList& args)
 				containing the collision hull primitives."));
 	}
 
-	auto modelAndSkin = ModelSelector::chooseModel("", false, false);
+	auto result = ModelSelector::chooseModel("", false, false);
 
-	if (modelAndSkin.model.empty())
+	if (result.name.empty() || result.objectKind != ModelSelector::Result::ObjectKind::Model)
 	{
 		return;
 	}
 
-	GlobalCommandSystem().executeCommand("ExportSelectedAsCollisionModel", modelAndSkin.model);
+	GlobalCommandSystem().executeCommand("ExportSelectedAsCollisionModel", result.name);
 }
 
 }

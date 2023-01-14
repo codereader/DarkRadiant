@@ -10,7 +10,7 @@
 #include "wxutil/PanedPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "MaterialPreview.h"
-#include "wxutil/SourceView.h"
+#include "wxutil/sourceview/SourceView.h"
 
 #include "../MaterialTreeView.h"
 #include "Binding.h"
@@ -86,7 +86,9 @@ private:
 
     bool _stageUpdateInProgress;
     bool _materialUpdateInProgress;
-    bool _lightUpdateInProgress;
+    bool _previewSceneUpdateInProgress;
+    bool _updateFromSourceTextInProgress;
+    bool _sourceTextUpdateInProgress;
 
     std::string _materialToPreselect;
 
@@ -100,10 +102,18 @@ public:
 
     static void ShowDialog(const cmd::ArgumentList& args);
 
-    void _onClose(wxCommandEvent& ev);
-    void _onReloadImages(wxCommandEvent& ev);
+protected:
+    // Intercept close commands from pressing ESC keys
+    bool _onDeleteEvent() override;
 
 private:
+    void loadSettings();
+    void saveSettings();
+    
+    // Asks user to save each unmodified material.
+    // Returns true if it is safe to go ahead and close the dialog
+    bool okToCloseDialog();
+
     void setupBasicMaterialPage();
     void setupMaterialTreeView();
     void setupMaterialStageView();
@@ -143,6 +153,8 @@ private:
     IShaderLayer::Ptr getSelectedStage();
     IEditableShaderLayer::Ptr getEditableStageForSelection();
     std::pair<IShaderLayer::Ptr, std::size_t> findMaterialStageByType(IShaderLayer::Type type);
+    void assignDecalInfoToMaterial(const MaterialPtr& material, bool isEnabled);
+    void createDecalColourBinding(const std::string& controlName, const std::function<double(const MaterialPtr&)>& loadFunc);
 
     void updateBasicPageFromMaterial();
     void updateBasicImagePreview();
@@ -166,6 +178,7 @@ private:
     bool isAllowedToChangeMaterial();
     bool askUserAboutModifiedMaterial();
     bool saveCurrentMaterial();
+    void deleteCurrentMaterial();
     void revertCurrentMaterial();
     void copySelectedMaterial();
 
@@ -173,6 +186,7 @@ private:
     void _onMaterialSelectionChanged(wxDataViewEvent& ev);
     void _onNewMaterial(wxCommandEvent& ev);
     void _onSaveMaterial(wxCommandEvent& ev);
+    void _onDeleteMaterial(wxCommandEvent& ev);
     void _onCopyMaterial(wxCommandEvent& ev);
     void _onRevertMaterial(wxCommandEvent& ev);
     void _onUnlockMaterial(wxCommandEvent& ev);
@@ -194,10 +208,16 @@ private:
     void _onBasicAddFrobStages(wxCommandEvent& ev);
     void _onBasicRemoveFrobStages(wxCommandEvent& ev);
     void _onBasicTestFrobStages(wxMouseEvent& ev);
+    void _onClose(wxCommandEvent& ev);
+    void _onReloadImages(wxCommandEvent& ev);
+    void _onSourceTextChanged(wxStyledTextEvent& ev);
 
+    void applyMapExpressionToStage(const IEditableShaderLayer::Ptr& stage, const std::string& value);
     void toggleSelectedStage();
     void onMaterialChanged();
     void convertTextCtrlToMapExpressionEntry(const std::string& ctrlName);
+
+    decl::DeclarationBlockSyntax getBlockSyntaxFromSourceView();
 
     // Shortcut
     template<typename ObjectClass>

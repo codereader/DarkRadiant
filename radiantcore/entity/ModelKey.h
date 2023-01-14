@@ -2,7 +2,9 @@
 
 #include <string>
 #include "inode.h"
+#include "ieclass.h"
 #include "ObservedUndoable.h"
+#include <sigc++/connection.h>
 
 /**
  * @brief A ModelKey watches the "model" spawnarg of an entity.
@@ -10,7 +12,8 @@
  * As soon as the keyvalue changes, the according modelnode is loaded and
  * inserted into the entity's Traversable.
  */
-class ModelKey: public sigc::trackable
+class ModelKey :
+    public sigc::trackable
 {
 private:
 	// The parent node, where the model node can be added to (as child)
@@ -20,6 +23,7 @@ private:
 	{
 		scene::INodePtr node;
 		std::string path;
+        bool modelDefMonitored;
 	};
 
 	ModelNodeAndPath _model;
@@ -29,6 +33,8 @@ private:
 
 	// Saves modelnode and modelpath to undo stack
 	undo::ObservedUndoable<ModelNodeAndPath> _undo;
+
+    sigc::connection _modelDefChanged;
 
 public:
 	ModelKey(scene::INode& parentNode);
@@ -56,13 +62,17 @@ public:
 	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 private:
-	// Loads the model node and attaches it to the parent node
-	void attachModelNode();
+    void onModelDefChanged();
 
+	// Loads the model node and attaches it to the parent node
+    void attachModelNode();
     void detachModelNode();
 
     // Attaches a model node, making sure that the skin setting is kept
     void attachModelNodeKeepinSkin();
 
 	void importState(const ModelNodeAndPath& data);
+
+    void subscribeToModelDef(const IModelDef::Ptr& modelDef);
+    void unsubscribeFromModelDef();
 };

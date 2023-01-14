@@ -126,18 +126,12 @@ void XMLRegistry::deleteXPath(const std::string& path)
 
     assert(!_shutdown);
 
-    // Add the toplevel node to the path if required
-    xml::NodeList nodeList = findXPath(path);
+    auto numDeletedNodes = _userTree.deleteXPath(path);
+    numDeletedNodes += _standardTree.deleteXPath(path);
 
-    if (!nodeList.empty())
+    if (numDeletedNodes > 0)
     {
         _changesSinceLastSave++;
-    }
-
-    for (xml::Node& node : nodeList)
-    {
-        // unlink and delete the node
-        node.erase();
     }
 }
 
@@ -299,8 +293,6 @@ const StringSet& XMLRegistry::getDependencies() const
 
 void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << "XMLRegistry::initialiseModule called" << std::endl;
-
     // Load the XML files from the runtime data directory
     std::string base = ctx.getRuntimeDataPath();
 

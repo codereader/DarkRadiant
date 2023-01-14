@@ -1,0 +1,185 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 1 0 -266 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 1 0 0 -316 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 5 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 -1 0 130 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( -1 0 0 124 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+}
+}
+// primitive 1
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0.75 ) ) "textures/numbers/2" 0 0 0
+( 0 1 0 -90 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+( 1 0 0 -316 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 -0.5 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+( 0 -1 0 -46 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+( -1 0 0 124 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+}
+}
+// primitive 2
+{
+brushDef3
+{
+( 0 0 1 5 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 1 0 -266 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 1 0 0 -316 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 -1 0 130 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( -1 0 0 124 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+}
+}
+// primitive 3
+{
+brushDef3
+{
+( 0 0 1 -99 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0.75 ) ) "textures/numbers/4" 0 0 0
+( 0 1 0 -207 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/4" 0 0 0
+( 1 0 0 -457 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0 ) ) "textures/numbers/4" 0 0 0
+( 0 0 -1 83 ) ( ( 0.03125 0 -0.5 ) ( 0 0.03125 0 ) ) "textures/numbers/4" 0 0 0
+( 0 -1 0 189 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/4" 0 0 0
+( -1 0 0 439 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0 ) ) "textures/numbers/4" 0 0 0
+}
+}
+// primitive 4
+{
+patchDef2
+{
+"textures/numbers/4"
+( 3 3 0 0 0 )
+(
+( ( 431 181 75 0 0 ) ( 431 198 75 0 -0.5625 ) ( 431 215 75 0 -1.125 ) )
+( ( 448 181 75 0.5625 0 ) ( 448 198 75 0.5625 -0.5625 ) ( 448 215 75 0.5625 -1.125 ) )
+( ( 465 181 75 1.125 0 ) ( 465 198 75 1.125 -0.5625 ) ( 465 215 75 1.125 -1.125 ) )
+)
+}
+}
+}
+// entity 1
+{
+"classname" "func_static"
+"name" "func_static_1"
+"model" "func_static_1"
+"origin" "220 198 -169"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 -1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( -1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+}
+}
+}
+// entity 2
+{
+"classname" "func_static"
+"name" "torch1"
+"model" "models/torch.lwo"
+"origin" "448 198 -9"
+"rotation" "1 0 0 0 1 0 0 0 1"
+}
+// entity 3
+{
+"classname" "func_static"
+"name" "torch2"
+"model" "models/torch.lwo"
+"origin" "448 198 -59"
+"rotation" "1 0 0 0 1 0 0 0 1"
+}
+// entity 4
+{
+"classname" "func_static"
+"name" "func_static_above_torches"
+"model" "func_static_above_torches"
+"origin" "448 198 -3"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 1 0 0 -40 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 14 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 -1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( -1 0 0 -38 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+}
+}
+}
+// entity 5
+{
+"classname" "func_static"
+"name" "func_static_top"
+"model" "func_static_top"
+"origin" "-84 198 -1"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 -1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( -1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+}
+}
+}
+// entity 6
+{
+"classname" "func_static"
+"name" "func_static_middle"
+"model" "func_static_middle"
+"origin" "-84 198 -169"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+( 0 1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+( 1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+( 0 -1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+( -1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+}
+}
+}
+// entity 7
+{
+"classname" "func_static"
+"name" "func_static_bottom"
+"model" "func_static_bottom"
+"origin" "-84 198 -321"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 -1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( -1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+}
+}
+}
+// entity 8
+{
+"classname" "light"
+"name" "light_1"
+"origin" "-168 -48 0"
+"light_center" "0 0 0"
+"light_radius" "160 144 320"
+}

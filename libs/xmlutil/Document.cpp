@@ -9,7 +9,6 @@
 namespace xml
 {
 
-// Construct a wrapper around the provided xmlDocPtr.
 Document::Document(xmlDocPtr doc):
     _xmlDoc(doc)
 {}
@@ -21,8 +20,7 @@ Document::Document(const std::string& filename) :
 Document::Document(std::istream& stream) :
 	_xmlDoc(nullptr)
 {
-	const std::size_t bufferSize = 4096;
-	static_assert(bufferSize < std::numeric_limits<std::size_t>::max());
+	constexpr std::size_t bufferSize = 4096;
 
 	std::vector<char> buffer(bufferSize);
 
@@ -35,27 +33,36 @@ Document::Document(std::istream& stream) :
 		return;
 	}
 
-	xmlParserCtxtPtr ctxt = xmlCreatePushParserCtxt(nullptr, nullptr, buffer.data(), 1, "stream");
+	auto ctxt = xmlCreatePushParserCtxt(nullptr, nullptr, buffer.data(), 1, "stream");
 
 	while (!stream.eof())
 	{
 		stream.read(buffer.data(), buffer.size());
-		xmlParseChunk(ctxt, buffer.data(), static_cast<int>(stream.gcount()), 0);
+
+        auto error = xmlParseChunk(ctxt, buffer.data(), static_cast<int>(stream.gcount()), 0);
+
+        if (error != 0)
+        {
+            xmlFreeParserCtxt(ctxt);
+            return;
+        }
 	}
 
 	// Terminate the parser
-	xmlParseChunk(ctxt, buffer.data(), 0, 1);
+	auto error = xmlParseChunk(ctxt, buffer.data(), 0, 1);
+
+    if (error != 0)
+    {
+        xmlFreeParserCtxt(ctxt);
+        return;
+    }
 
 	_xmlDoc = ctxt->myDoc;
 
 	xmlFreeParserCtxt(ctxt);
 }
 
-Document::Document(const Document& other) :
-	_xmlDoc(other._xmlDoc)
-{}
-
-Document::~Document() 
+Document::~Document()
 {
 	if (_xmlDoc != nullptr)
 	{
@@ -84,6 +91,8 @@ Document Document::clone(const Document& source)
 		return Document(nullptr);
 	}
 
+    std::lock_guard<std::mutex> lock(source._lock);
+
 	// Create a deep copy of the other doc
 	return Document(xmlCopyDoc(source._xmlDoc, 1));
 }
@@ -94,16 +103,16 @@ Node Document::addTopLevelNode(const std::string& name)
 
 	if (!isValid()) 
 	{
-		return xml::Node(nullptr); // is not Valid, place an assertion here?
+		return Node(this, nullptr); // is not Valid, place an assertion here?
 	}
 
 	xmlChar* nameStr = xmlCharStrdup(name.c_str());
 	xmlChar* emptyStr = xmlCharStrdup("");
 
-	xmlNodePtr root = xmlNewDocNode(_xmlDoc, NULL, nameStr, emptyStr);
+	xmlNodePtr root = xmlNewDocNode(_xmlDoc, nullptr, nameStr, emptyStr);
 	xmlNodePtr oldRoot = xmlDocSetRootElement(_xmlDoc, root);
 
-	if (oldRoot != NULL)
+	if (oldRoot != nullptr)
     {
 		// Old root element, remove it
 		xmlUnlinkNode(oldRoot);
@@ -113,18 +122,20 @@ Node Document::addTopLevelNode(const std::string& name)
 	xmlFree(nameStr);
 	xmlFree(emptyStr);
 
-	return Node(root);
+	return Node(this, root);
 }
 
 Node Document::getTopLevelNode() const
 {
+    std::lock_guard lock(_lock);
+
 	if (!isValid())
 	{
 		// Invalid Document, return a NULL node
-		return Node(NULL);
+		return Node(this, nullptr);
 	}
 
-	return Node(_xmlDoc->children);
+	return Node(this, _xmlDoc->children);
 }
 
 void Document::importDocument(Document& other, Node& importNode)
@@ -132,11 +143,11 @@ void Document::importDocument(Document& other, Node& importNode)
 	std::lock_guard<std::mutex> lock(_lock);
 
 	// Locate the top-level node(s) of the other document
-	xml::NodeList topLevelNodes = other.findXPath("/*");
+	NodeList topLevelNodes = other.findXPath("/*");
 
 	xmlNodePtr targetNode = importNode.getNodePtr();
 
-	if (targetNode->name == NULL)
+	if (!importNode.isValid())
 	{
 		// invalid importnode
 		return;
@@ -164,7 +175,7 @@ void Document::copyNodes(const NodeList& nodeList)
 {
 	std::lock_guard<std::mutex> lock(_lock);
 
-	if (!isValid() || _xmlDoc->children == NULL)
+	if (!isValid() || _xmlDoc->children == nullptr)
 	{
 		return; // is not Valid, place an assertion here?
 	}
@@ -215,7 +226,7 @@ NodeList Document::findXPath(const std::string& path) const
     xmlNodeSetPtr nodeset = result->nodesetval;
 	if (nodeset != NULL) {
 	    for (int i = 0; i < nodeset->nodeNr; i++) {
-	        retval.push_back(Node(nodeset->nodeTab[i]));
+	        retval.emplace_back(this, nodeset->nodeTab[i]);
 	    }
 	}
 
@@ -245,6 +256,11 @@ std::string Document::saveToString() const
 	xmlBufferFree(buffer);
 
 	return output;
+}
+
+std::mutex& Document::getLock() const
+{
+    return _lock;
 }
 
 }

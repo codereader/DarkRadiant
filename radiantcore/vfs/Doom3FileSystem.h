@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "iarchive.h"
 #include "ifilesystem.h"
 
@@ -15,8 +16,8 @@ private:
 	// Our ordered list of paths to search
 	SearchPaths _vfsSearchPaths;
 
-	std::list<std::string> _directories;
-	ExtensionSet _allowedExtensions;
+	std::vector<std::string> _directories;
+    std::set<std::string> _allowedExtensions;
 	std::set<std::string> _allowedExtensionsDir;
 
 	struct ArchiveDescriptor
@@ -26,18 +27,16 @@ private:
 		bool is_pakfile;
 	};
 
-	typedef std::list<ArchiveDescriptor> ArchiveList;
-	ArchiveList _archives;
+    std::list<ArchiveDescriptor> _archives;
 
-	typedef std::set<Observer*> ObserverList;
-	ObserverList _observers;
+    sigc::signal<void> _sigInitialised;
 
 public:
-	void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions) override;
+	void initialise(const SearchPaths& vfsSearchPaths, const std::set<std::string>& allowedExtensions) override;
     bool isInitialised() const override;
 	void shutdown() override;
 
-    const ExtensionSet& getArchiveExtensions() const override;
+    const std::set<std::string>& getArchiveExtensions() const override;
 
 	int getFileCount(const std::string& filename) override;
 	ArchiveFilePtr openFile(const std::string& filename) override;
@@ -65,8 +64,7 @@ public:
 	std::string findFile(const std::string& name) override;
 	std::string findRoot(const std::string& name) override;
 
-	void addObserver(Observer& observer) override;
-	void removeObserver(Observer& observer) override;
+    sigc::signal<void>& signal_Initialised() override;
 
 	const SearchPaths& getVfsSearchPaths() override;
     FileInfo getFileInfo(const std::string& vfsRelativePath) override;

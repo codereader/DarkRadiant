@@ -1,17 +1,17 @@
 #pragma once
 
 #include "imodule.h"
-#include "ModResource.h"
+#include "ideclmanager.h"
+#include "igameresource.h"
 
 #include <vector>
 #include <functional>
-#include <sigc++/signal.h>
 
 // A list of sound files associated to a shader
 typedef std::vector<std::string> SoundFileList;
 
-const float METERS_PER_UNIT = 0.0254f;
-const float UNITS_PER_METER = 1/METERS_PER_UNIT;
+constexpr float METERS_PER_UNIT = 0.0254f;
+constexpr float UNITS_PER_METER = 1/METERS_PER_UNIT;
 
 // The min and max radii of a sound shader
 class SoundRadii {
@@ -59,33 +59,24 @@ class SoundRadii {
 
 /// Representation of a single sound or sound shader.
 class ISoundShader :
-    public ModResource
+    public decl::IDeclaration
 {
 public:
     virtual ~ISoundShader() {}
 
-    /// Get the name of the shader
-    virtual std::string getName() const = 0;
+    using Ptr = std::shared_ptr<ISoundShader>;
 
     /// Get the min and max radii of the shader
-    virtual SoundRadii getRadii() const = 0;
+    virtual SoundRadii getRadii() = 0;
 
     /// Get the list of sound files associated to this shader
-    virtual SoundFileList getSoundFileList() const = 0;
+    virtual SoundFileList getSoundFileList() = 0;
 
 	// angua: get the display folder for sorting the sounds in the sound chooser window
-	virtual const std::string& getDisplayFolder() const = 0;
-
-    // Returns the mod-relative path to the file this shader is defined in
-    virtual std::string getShaderFilePath() const = 0;
-
-    // Returns the raw sound shader definition text
-    virtual std::string getDefinition() const = 0;
-
+	virtual const std::string& getDisplayFolder() = 0;
 };
-typedef std::shared_ptr<ISoundShader> ISoundShaderPtr;
 
-const char* const MODULE_SOUNDMANAGER("SoundManager");
+constexpr const char* const MODULE_SOUNDMANAGER("SoundManager");
 
 /// Sound manager interface.
 class ISoundManager :
@@ -93,12 +84,12 @@ class ISoundManager :
 {
 public:
     /// Invoke a function for each sound shader
-    virtual void forEachShader(std::function<void(const ISoundShader&)>) = 0;
+    virtual void forEachShader(std::function<void(const ISoundShader::Ptr&)>) = 0;
 
     /** greebo: Tries to lookup the SoundShader with the given name,
      *          returns a soundshader with an empty name, if the lookup failed.
      */
-    virtual ISoundShaderPtr getSoundShader(const std::string& shaderName) = 0;
+    virtual ISoundShader::Ptr getSoundShader(const std::string& shaderName) = 0;
 
     /** 
 	 * greebo: Plays the given sound file (defined by its VFS path).
@@ -127,13 +118,9 @@ public:
 
     // Reloads all sound shader definitions from the VFS
     virtual void reloadSounds() = 0;
-
-    // Fired after the sound shaders have been (re-)parsed from disk
-    virtual sigc::signal<void>& signal_soundShadersReloaded() = 0;
 };
 
-// Accessor method
-inline ISoundManager& GlobalSoundManager() 
+inline ISoundManager& GlobalSoundManager()
 {
     static module::InstanceReference<ISoundManager> _reference(MODULE_SOUNDMANAGER);
     return _reference;

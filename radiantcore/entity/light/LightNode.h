@@ -7,6 +7,8 @@
 #include "ilightnode.h"
 #include "registry/CachedKey.h"
 #include "scene/TransformedCopy.h"
+#include "math/Frustum.h"
+#include "editable.h"
 
 #include "dragplanes.h"
 #include "../VertexInstance.h"
@@ -209,6 +211,7 @@ protected:
     void onSelectionStatusChange(bool changeGroupStatus) override;
 
     void onColourKeyChanged(const std::string& value) override;
+    void onRenderStateChanged() override;
 
 private:
     void evaluateTransform();
@@ -261,10 +264,12 @@ private:
 
 public:
     // RendererLight implementation
+    bool isVisible() override;
     const IRenderEntity& getLightEntity() const override;
     Matrix4 getLightTextureTransformation() const override;
     Vector3 getLightOrigin() const override;
     bool isShadowCasting() const override;
+    bool isBlendLight() const override;
     const ShaderPtr& getShader() const override;
 	AABB lightAABB() const override;
 };

@@ -40,7 +40,6 @@
 #include "map/algorithm/MapExporter.h"
 #include "model/export/ModelExporter.h"
 #include "model/export/ModelScalePreserver.h"
-#include "map/algorithm/Skins.h"
 #include "messages/ScopedLongRunningOperation.h"
 #include "messages/FileOverwriteConfirmation.h"
 #include "messages/FileSaveConfirmation.h"
@@ -55,6 +54,8 @@
 #include "messages/NotificationMessage.h"
 
 #include <fmt/format.h>
+
+#include "messages/MapFileOperation.h"
 #include "scene/ChildPrimitives.h"
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
@@ -87,10 +88,11 @@ void Map::clearMapResource()
     setMapName(_(MAP_UNNAMED_STRING));
 }
 
-void Map::connectToUndoSystem()
+void Map::connectToRootNode()
 {
     _modifiedStatusListener.disconnect();
     _undoEventListener.disconnect();
+    _layerHierarchyChangedListener.disconnect();
 
     _modifiedStatusListener = _resource->signal_modifiedStatusChanged().connect(
         [this](bool newStatus) { setModified(newStatus); }
@@ -99,8 +101,18 @@ void Map::connectToUndoSystem()
     if (!_resource->getRootNode()) return;
 
     _undoEventListener = _resource->getRootNode()->getUndoSystem().signal_undoEvent().connect(
-        sigc::mem_fun(this, &Map::onUndoEvent)
+        sigc::mem_fun(*this, &Map::onUndoEvent)
     );
+
+    // This is a workaround - changing layer hierarchies is not an undoable operation
+    // and this by hitting undo or redo the status might be reset to "unmodified" anytime
+    _layerHierarchyChangedListener = _resource->getRootNode()->getLayerManager()
+        .signal_layerHierarchyChanged().connect(sigc::mem_fun(*this, &Map::onLayerHierarchyChanged));
+}
+
+void Map::onLayerHierarchyChanged()
+{
+    setModified(true);
 }
 
 void Map::onUndoEvent(IUndoSystem::EventType type, const std::string& operationName)
@@ -167,7 +179,7 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
         clearMapResource();
     }
 
-    connectToUndoSystem();
+    connectToRootNode();
 
     // Take the new node and insert it as map root
     GlobalSceneGraph().setRoot(_resource->getRootNode());
@@ -183,6 +195,10 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
         GlobalSceneGraph().root()->setRenderSystem(std::dynamic_pointer_cast<RenderSystem>(
             module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
     }
+
+    // Update layer visibility of all nodes
+    scene::UpdateNodeVisibilityWalker updater(_resource->getRootNode()->getLayerManager());
+    _resource->getRootNode()->traverse(updater);
 
     // Map loading finished, emit the signal
     emitMapEvent(MapLoaded);
@@ -394,7 +410,7 @@ void Map::setEditMode(EditMode mode)
     if (_editMode == EditMode::Merge)
     {
         GlobalSelectionSystem().setSelectedAll(false);
-        GlobalSelectionSystem().SetMode(selection::SelectionSystem::eMergeAction);
+        GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::MergeAction);
 
         if (getRoot())
         {
@@ -403,7 +419,7 @@ void Map::setEditMode(EditMode mode)
     }
     else
     {
-        GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
+        GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Primitive);
 
         if (getRoot())
         {
@@ -856,7 +872,7 @@ bool Map::saveAs()
         return false;
     }
 
-    connectToUndoSystem();
+    connectToRootNode();
 
     // Resource save was successful, notify about this name change
     rename(fileInfo.fullPath);
@@ -999,17 +1015,18 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveAutomaticBackup", std::bind(&Map::saveAutomaticMapBackup, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ExportMap", std::bind(&Map::exportMap, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
-	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
     GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
-    GlobalCommandSystem().addCommand("FocusCameraOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
-        { cmd::ARGTYPE_STRING,
-          cmd::ARGTYPE_STRING,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("FocusCameraViewOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<ExportLightsAsObjects>]
+	GlobalCommandSystem().addCommand("ExportSelectedAsModel", algorithm::exportSelectedAsModelCmd,
+        { cmd::ARGTYPE_STRING, // path
+          cmd::ARGTYPE_STRING, // export format
+          cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, // export origin type
+          cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, // origin entity name
+          cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, // custom origin
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, // skip caulk
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, // replace selection with model
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL }); // export lights as objects
 
     // Add undo commands
     GlobalCommandSystem().addCommand("Undo", std::bind(&Map::undoCmd, this, std::placeholders::_1));
@@ -1231,11 +1248,19 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
 
     // Create our main MapExporter walker for traversal
     auto writer = format->getMapWriter();
-    MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
-    exporter.disableProgressMessages();
+    
+    try
+    {
+        MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
+        exporter.disableProgressMessages();
 
-    // Pass the traverseSelected function and start writing selected nodes
-    exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
+        // Pass the traverseSelected function and start writing selected nodes
+        exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
+    }
+    catch (FileOperation::OperationCancelled&)
+    {
+        radiant::NotificationMessage::SendInformation(_("Map export cancelled"));
+    }
 }
 
 void Map::onMergeActionAdded(const scene::merge::IMergeAction::Ptr& action)
@@ -1486,8 +1511,6 @@ const StringSet& Map::getDependencies() const
 
 void Map::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     // Register for the startup event
 	_mapPositionManager.reset(new MapPositionManager);
 

@@ -23,11 +23,12 @@ add_library(radiantcore MODULE
             clipper/ClipPoint.cpp
             clipper/SplitAlgorithm.cpp
             commandsystem/CommandSystem.cpp
+            decl/DeclarationFolderParser.cpp
+            decl/DeclarationManager.cpp
             decl/FavouritesManager.cpp
             eclass/EntityClass.cpp
             eclass/EClassColourManager.cpp
             eclass/EClassManager.cpp
-            eclass/EClassParser.cpp
             entity/AngleKey.cpp
             entity/AttachmentData.cpp
             entity/curve/CurveCatmullRom.cpp
@@ -69,6 +70,9 @@ add_library(radiantcore MODULE
             fonts/FontManager.cpp
             fonts/GlyphInfo.cpp
             fonts/GlyphSet.cpp
+            fx/FxDeclaration.cpp
+            fx/FxAction.cpp
+            fx/FxManager.cpp
             grid/GridManager.cpp
             imagefile/BMPLoader.cpp
             imagefile/dds.cpp
@@ -96,7 +100,6 @@ add_library(radiantcore MODULE
             map/algorithm/MapExporter.cpp
             map/algorithm/MapImporter.cpp
             map/algorithm/Models.cpp
-            map/algorithm/Skins.cpp
             map/autosaver/AutoSaver.cpp
             map/ArchivedMapResource.cpp
             map/CounterManager.cpp
@@ -157,6 +160,7 @@ add_library(radiantcore MODULE
             model/md5/MD5Surface.cpp
             model/ModelCache.cpp
             model/ModelFormatManager.cpp
+            model/ModelNodeBase.cpp
             model/NullModel.cpp
             model/NullModelNode.cpp
             model/import/AseModel.cpp
@@ -195,7 +199,6 @@ add_library(radiantcore MODULE
             modulesystem/ModuleLoader.cpp
             modulesystem/ModuleRegistry.cpp
             particles/ParticleDef.cpp
-            particles/ParticleLoader.cpp
             particles/ParticleNode.cpp
             particles/ParticleParameter.cpp
             particles/ParticlesManager.cpp
@@ -212,6 +215,7 @@ add_library(radiantcore MODULE
             patch/PatchTesselation.cpp
             Radiant.cpp
             rendersystem/backend/GLProgramFactory.cpp
+            rendersystem/backend/glprogram/BlendLightProgram.cpp
             rendersystem/backend/glprogram/CubeMapProgram.cpp
             rendersystem/backend/glprogram/DepthFillAlphaProgram.cpp
             rendersystem/backend/glprogram/GenericVFPProgram.cpp
@@ -219,15 +223,16 @@ add_library(radiantcore MODULE
             rendersystem/backend/glprogram/InteractionProgram.cpp
             rendersystem/backend/glprogram/RegularStageProgram.cpp
             rendersystem/backend/glprogram/ShadowMapProgram.cpp
+            rendersystem/backend/BlendLight.cpp
             rendersystem/backend/BuiltInShader.cpp
             rendersystem/backend/ColourShader.cpp
-            rendersystem/backend/InteractingLight.cpp
             rendersystem/backend/SceneRenderer.cpp
             rendersystem/backend/FullBrightRenderer.cpp
             rendersystem/backend/LightingModeRenderer.cpp
             rendersystem/backend/ObjectRenderer.cpp
             rendersystem/backend/OpenGLShader.cpp
             rendersystem/backend/OpenGLShaderPass.cpp
+            rendersystem/backend/RegularLight.cpp
             rendersystem/backend/DepthFillPass.cpp
             rendersystem/backend/InteractionPass.cpp
             rendersystem/debug/SpacePartitionRenderer.cpp
@@ -255,6 +260,7 @@ add_library(radiantcore MODULE
             selection/group/SelectionGroupManager.cpp
             selection/group/SelectionGroupModule.cpp
             selection/ManipulationPivot.cpp
+            selection/SceneSelectionTesters.cpp
             selection/SceneManipulationPivot.cpp
             selection/manipulators/DragManipulator.cpp
             selection/manipulators/ManipulatorBase.cpp
@@ -292,7 +298,7 @@ add_library(radiantcore MODULE
             shaders/CameraCubeMapDecl.cpp
             shaders/CShader.cpp
             shaders/Doom3ShaderLayer.cpp
-            shaders/Doom3ShaderSystem.cpp
+            shaders/MaterialManager.cpp
             shaders/ExpressionSlots.cpp
             shaders/MapExpression.cpp
             shaders/MaterialSourceGenerator.cpp
@@ -303,6 +309,7 @@ add_library(radiantcore MODULE
             shaders/TextureMatrix.cpp
             shaders/textures/GLTextureManager.cpp
             shaders/textures/TextureManipulator.cpp
+            skins/Doom3ModelSkin.cpp
             skins/Doom3SkinCache.cpp
             undo/UndoSystem.cpp
             undo/UndoSystemFactory.cpp
@@ -310,11 +317,9 @@ add_library(radiantcore MODULE
             vfs/DeflatedInputStream.cpp
             vfs/DirectoryArchive.cpp
             vfs/Doom3FileSystem.cpp
-            vfs/Doom3FileSystemModule.cpp
             vfs/ZipArchive.cpp
             xmlregistry/RegistryTree.cpp
             xmlregistry/XMLRegistry.cpp)
-target_compile_options(radiantcore PUBLIC ${SIGC_CFLAGS})
 target_include_directories(radiantcore PRIVATE .)
 target_link_libraries(radiantcore PUBLIC
                       math xmlutil scenegraph wxutil module

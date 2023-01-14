@@ -1,35 +1,32 @@
 #pragma once
 
-#include "math/Vector2.h"
+#include <array>
 #include <string>
 #include <wx/event.h>
+
+#include "ui/iwindowstate.h"
 
 class wxTopLevelWindow;
 
 /**
  * greebo: A WindowPosition object keeps track of the window's size and position.
  *
- * Use the connect() method to connect a wxFrame to this object.
+ * It implements the IPersistableObject interface to save/restore the window
+ * attributes to the registry.
  *
- * Use the loadFromNode() and saveToNode() methods to save the internal
- * size info into the given xml::Node
- *
- * This is used by the XYWnd classes to save/restore the window state upon restart.
+ * Use the connect() method to connect a wxTopLevelWindow to this object.
  */
 namespace wxutil
 {
 
 class WindowPosition :
-	public wxEvtHandler
+	public wxEvtHandler,
+    public ui::IPersistableObject
 {
-public:
-	typedef BasicVector2<int> Position;
-	typedef BasicVector2<int> Size;
-
 private:
 	// The size and position of this object
-	Position _position;
-	Size _size;
+    std::array<int, 2> _position;
+    std::array<int, 2> _size;
 
 	// The connected window
 	wxTopLevelWindow* _window;
@@ -42,19 +39,23 @@ public:
     void initialise(wxTopLevelWindow* window, const std::string& windowStateKey,
                     float defaultXFraction, float defaultYFraction);
 
+    // All-in-one method to connect a window and load its state from the given path.
+    // Default X/Y fractions will be read from the given key, otherwise a default size will be set.
+    void initialise(wxTopLevelWindow* window, const std::string& windowStateKey);
+
 	// Connect the passed window to this object
 	void connect(wxTopLevelWindow* window);
 	void disconnect(wxTopLevelWindow* window);
 
-	const Position& getPosition() const;
-	const Size& getSize() const;
+    const std::array<int, 2>& getPosition() const;
+    const std::array<int, 2>& getSize() const;
 
 	void setPosition(int x, int y);
 	void setSize(int width, int height);
 
 	// Loads/saves the window position to the given Registry path
-	void saveToPath(const std::string& path);
-	void loadFromPath(const std::string& path);
+	void saveToPath(const std::string& registryKey) override;
+	void loadFromPath(const std::string& registryKey) override;
 
 	// Applies the internally stored size/position info to the GtkWindow
 	// The algorithm was adapted from original GtkRadiant code (window.h)

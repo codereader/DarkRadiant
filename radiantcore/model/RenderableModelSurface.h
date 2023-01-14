@@ -8,13 +8,16 @@ namespace model
 
 // Wraps an IIndexedModelSurface to implement the IRenderableSurface interface
 // required to draw a composite mesh in the scene.
-class RenderableModelSurface final :
+class RenderableModelSurface :
     public render::RenderableSurface
 {
 private:
     const IIndexedModelSurface& _surface;
     const IRenderEntity* _entity;
     const Matrix4& _localToWorld;
+
+    ShaderPtr _wireShader;
+    ShaderPtr _fillShader;
 
 public:
     using Ptr = std::shared_ptr<RenderableModelSurface>;
@@ -29,6 +32,18 @@ public:
 
     RenderableModelSurface(const RenderableModelSurface& other) = delete;
     RenderableModelSurface& operator=(const RenderableModelSurface& other) = delete;
+
+    // By default the Model surface will return the render entity's wire shader
+    virtual ShaderPtr captureWireShader(RenderSystem& renderSystem)
+    {
+        return _entity->getWireShader();
+    }
+
+    // By default the Model surface will use the active material as defined by the surface
+    virtual ShaderPtr captureFillShader(RenderSystem& renderSystem)
+    {
+        return renderSystem.capture(getSurface().getActiveMaterial());
+    }
 
     const IIndexedModelSurface& getSurface() const
     {

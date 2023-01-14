@@ -39,7 +39,7 @@ public:
         _targetManager = GlobalEntityModule().createTargetManager();
         _selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
         _selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
-        _layerManager = GlobalLayerModule().createLayerManager();
+        _layerManager = GlobalLayerModule().createLayerManager(*this);
         _undoSystem = GlobalUndoSystemFactory().createUndoSystem();
     }
 
@@ -107,6 +107,16 @@ public:
     RenderSystemPtr getRenderSystem() const override
     {
         return Node::getRenderSystem();
+    }
+
+    void onFiltersChanged() override
+    {
+        // Recursively notify the whole tree
+        foreachNode([](const INodePtr& node)
+        {
+            node->onFiltersChanged();
+            return true;
+        });
     }
 };
 

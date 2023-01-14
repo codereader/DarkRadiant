@@ -2,14 +2,12 @@
 
 #include "i18n.h"
 #include "ifavourites.h"
-#include "ui/imainframe.h"
 #include "icommandsystem.h"
 #include "iorthoview.h"
 
 #include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>
 #include <wx/checkbox.h>
-#include <wx/frame.h>
 #include <wx/sizer.h>
 
 #include "command/ExecutionFailure.h"
@@ -23,31 +21,30 @@ namespace ui
 
 namespace
 {
-    const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
-    const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
+    constexpr const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
+    constexpr const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 
-    const char* const APPLY_SOUNDSHADER_TEXT = N_("Apply to selection");
-    const char* const APPLY_SOUNDSHADER_ICON = "icon_sound.png";
+    constexpr const char* const APPLY_SOUNDSHADER_TEXT = N_("Apply to selection");
+    constexpr const char* const APPLY_SOUNDSHADER_ICON = "icon_sound.png";
 
-    const char* const ADD_ENTITY_TEXT = N_("Create entity");
-    const char* const ADD_ENTITY_ICON = "cmenu_add_entity.png";
+    constexpr const char* const ADD_ENTITY_TEXT = N_("Create entity");
+    constexpr const char* const ADD_ENTITY_ICON = "cmenu_add_entity.png";
 
-    const char* const ADD_SPEAKER_TEXT = N_("Create speaker");
-    const char* const ADD_SPEAKER_ICON = "icon_sound.png";
+    constexpr const char* const ADD_SPEAKER_TEXT = N_("Create speaker");
+    constexpr const char* const ADD_SPEAKER_ICON = "icon_sound.png";
 
-    const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
+    constexpr const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
 
 FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY),
+    DockablePanel(parent),
     _listView(nullptr),
     _showFullPath(nullptr),
-    _updateNeeded(true)
+    _reloadFavouritesOnIdle(true)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     _listView = new wxListView(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
-    _listView->Bind(wxEVT_PAINT, &FavouritesBrowser::onListCtrlPaint, this);
     _listView->Bind(wxEVT_CONTEXT_MENU, &FavouritesBrowser::onContextMenu, this);
     _listView->Bind(wxEVT_LIST_ITEM_ACTIVATED, &FavouritesBrowser::onItemActivated, this);
 
@@ -68,10 +65,43 @@ FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
 
 FavouritesBrowser::~FavouritesBrowser()
 {
-    for (auto& connection : changedConnections)
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
+}
+
+void FavouritesBrowser::onPanelActivated()
+{
+    connectListeners();
+    queueUpdate();
+}
+
+void FavouritesBrowser::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void FavouritesBrowser::connectListeners()
+{
+    // Subscribe to any favourite changes
+    for (auto& category : _categories)
+    {
+        _changedConnections.emplace_back(
+            GlobalFavouritesManager().getSignalForType(category.typeName).connect(
+                sigc::mem_fun(this, &FavouritesBrowser::onFavouritesChanged)
+        ));
+    }
+}
+
+void FavouritesBrowser::disconnectListeners()
+{
+    for (auto& connection : _changedConnections)
     {
         connection.disconnect();
     }
+
+    _changedConnections.clear();
 }
 
 void FavouritesBrowser::clearItems()
@@ -118,33 +148,25 @@ void FavouritesBrowser::constructPopupMenu()
 void FavouritesBrowser::setupCategories()
 {
     _categories.emplace_back(FavouriteCategory{
-        decl::Type::Material, _("Materials"), "icon_texture.png",
+        decl::getTypeName(decl::Type::Material), _("Materials"), "icon_texture.png",
         _iconList->Add(wxutil::GetLocalBitmap("icon_texture.png")),
         nullptr
     });
     _categories.emplace_back(FavouriteCategory{
-        decl::Type::Model, _("Models"), "model16green.png",
+        "model", _("Models"), "model16green.png",
         _iconList->Add(wxutil::GetLocalBitmap("icon_model.png")),
         nullptr
     });
     _categories.emplace_back(FavouriteCategory{
-        decl::Type::EntityDef, _("EntityDefs"), "cmenu_add_entity.png",
+        decl::getTypeName(decl::Type::EntityDef), _("EntityDefs"), "cmenu_add_entity.png",
         _iconList->Add(wxutil::GetLocalBitmap("cmenu_add_entity.png")),
         nullptr
     });
     _categories.emplace_back(FavouriteCategory{
-        decl::Type::SoundShader, _("Sound Shaders"), "icon_sound.png",
+        decl::getTypeName(decl::Type::SoundShader), _("Sound Shaders"), "icon_sound.png",
         _iconList->Add(wxutil::GetLocalBitmap("icon_sound.png")),
         nullptr
     });
-
-    // Subscribe to any favourite changes
-    for (auto& category : _categories)
-    {
-        changedConnections.emplace_back(GlobalFavouritesManager().getSignalForType(category.type).connect(
-            sigc::mem_fun(this, &FavouritesBrowser::onFavouritesChanged)
-        ));
-    }
 }
 
 wxToolBar* FavouritesBrowser::createRightToolBar()
@@ -185,7 +207,6 @@ wxToolBar* FavouritesBrowser::createLeftToolBar()
 
 void FavouritesBrowser::reloadFavourites()
 {
-    _updateNeeded = false;
     clearItems();
 
     for (const auto& category : _categories)
@@ -195,7 +216,7 @@ void FavouritesBrowser::reloadFavourites()
             continue;
         }
 
-        auto favourites = GlobalFavouritesManager().getFavourites(category.type);
+        auto favourites = GlobalFavouritesManager().getFavourites(category.typeName);
 
         for (const auto& fav : favourites)
         {
@@ -206,7 +227,7 @@ void FavouritesBrowser::reloadFavourites()
             auto index = _listView->InsertItem(_listView->GetItemCount(), displayName, category.iconIndex);
 
             // Keep the item info locally, store a pointer to it in the list item user data
-            _listItems.emplace_back(FavouriteItem{ category.type, fav, leafName });
+            _listItems.emplace_back(FavouriteItem{ category.typeName, fav, leafName });
             _listView->SetItemPtrData(index, reinterpret_cast<wxUIntPtr>(&(_listItems.back())));
         }
     }
@@ -214,27 +235,32 @@ void FavouritesBrowser::reloadFavourites()
 
 void FavouritesBrowser::onCategoryToggled(wxCommandEvent& ev)
 {
-    reloadFavourites();
+    queueUpdate();
 }
 
 void FavouritesBrowser::onShowFullPathToggled(wxCommandEvent& ev)
 {
-    reloadFavourites();
+    queueUpdate();
 }
 
 void FavouritesBrowser::onFavouritesChanged()
 {
-    _updateNeeded = true; // Update next time we get painted
+    queueUpdate();
 }
 
-void FavouritesBrowser::onListCtrlPaint(wxPaintEvent& ev)
+void FavouritesBrowser::queueUpdate()
 {
-    if (_updateNeeded)
+    _reloadFavouritesOnIdle = true;
+    requestIdleCallback();
+}
+
+void FavouritesBrowser::onIdle()
+{
+    if (_reloadFavouritesOnIdle)
     {
+        _reloadFavouritesOnIdle = false;
         reloadFavourites();
     }
-
-    ev.Skip();
 }
 
 void FavouritesBrowser::onContextMenu(wxContextMenuEvent& ev)
@@ -250,15 +276,16 @@ void FavouritesBrowser::onItemActivated(wxListEvent& ev)
 
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
 
-    switch (data->type)
+    if (data->typeName == decl::getTypeName(decl::Type::Material))
     {
-    case decl::Type::Material:
         onApplyTextureToSelection();
-        break;
-    case decl::Type::EntityDef:
+    }
+    else if (data->typeName == decl::getTypeName(decl::Type::EntityDef))
+    {
         onCreateEntity();
-        break;
-    case decl::Type::SoundShader:
+    }
+    else if (data->typeName == decl::getTypeName(decl::Type::SoundShader))
+    {
         if (testCreateSpeaker())
         {
             onCreateSpeaker();
@@ -267,7 +294,6 @@ void FavouritesBrowser::onItemActivated(wxListEvent& ev)
         {
             onApplySoundToSelection();
         }
-        break;
     }
 }
 
@@ -287,14 +313,14 @@ std::vector<long> FavouritesBrowser::getSelectedItems()
     return list;
 }
 
-decl::Type FavouritesBrowser::getSelectedDeclType()
+std::string FavouritesBrowser::getSelectedTypeName()
 {
     auto selection = getSelectedItems();
 
-    if (selection.size() != 1) return decl::Type::None;
+    if (selection.size() != 1) return "";
 
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
-    return data->type;
+    return data->typeName;
 }
 
 void FavouritesBrowser::onRemoveFromFavourite()
@@ -304,7 +330,7 @@ void FavouritesBrowser::onRemoveFromFavourite()
     for (auto itemIndex : selection)
     {
         auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(itemIndex));
-        GlobalFavouritesManager().removeFavourite(data->type, data->fullPath);
+        GlobalFavouritesManager().removeFavourite(data->typeName, data->fullPath);
     }
 
     // A repopulation has already been rescheduled
@@ -323,7 +349,7 @@ void FavouritesBrowser::onApplyTextureToSelection()
 
 bool FavouritesBrowser::testSingleTextureSelected()
 {
-    return getSelectedDeclType() == decl::Type::Material;
+    return getSelectedTypeName() == decl::getTypeName(decl::Type::Material);
 }
 
 void FavouritesBrowser::onApplySoundToSelection()
@@ -346,7 +372,7 @@ bool FavouritesBrowser::testApplySoundToSelection()
 {
     const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-    return info.entityCount > 0 && getSelectedDeclType() == decl::Type::SoundShader;
+    return info.entityCount > 0 && getSelectedTypeName() == decl::getTypeName(decl::Type::SoundShader);
 }
 
 void FavouritesBrowser::onCreateEntity()
@@ -375,7 +401,7 @@ void FavouritesBrowser::onCreateEntity()
 
 bool FavouritesBrowser::testCreateEntity()
 {
-    if (getSelectedDeclType() != decl::Type::EntityDef)
+    if (getSelectedTypeName() != decl::getTypeName(decl::Type::EntityDef))
     {
         return false;
     }
@@ -412,7 +438,7 @@ void FavouritesBrowser::onCreateSpeaker()
 
 bool FavouritesBrowser::testCreateSpeaker()
 {
-    if (getSelectedDeclType() != decl::Type::SoundShader)
+    if (getSelectedTypeName() != decl::getTypeName(decl::Type::SoundShader))
     {
         return false;
     }

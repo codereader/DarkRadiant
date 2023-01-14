@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Project name and version
-project(darkradiant VERSION 3.0.0)
+project(darkradiant VERSION 3.7.0)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -77,6 +77,7 @@ find_package(Python REQUIRED COMPONENTS Development)
 
 # Global includes and flags
 include_directories(libs libs/libfmt include)
+add_compile_options(${SIGC_CFLAGS})
 add_compile_definitions(POSIX
                         WXINTL_NO_GETTEXT_MACRO
                         FMT_HEADER_ONLY
@@ -169,6 +170,15 @@ install(DIRECTORY install/gl DESTINATION ${PKGDATADIR})
 install(DIRECTORY install/ui DESTINATION ${PKGDATADIR}
         FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
 install(DIRECTORY install/resources DESTINATION ${PKGDATADIR})
+
+install(FILES ${PROJECT_SOURCE_DIR}/install/bitmaps/darkradiant_icon_64x64.png
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/64x64/apps
+        RENAME net.darkradiant.DarkRadiant.png)
+install(FILES ${PROJECT_SOURCE_DIR}/install/bitmaps/darkradiant_icon_128x128.png
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/128x128/apps
+        RENAME net.darkradiant.DarkRadiant.png)
+install(FILES ${PROJECT_SOURCE_DIR}/install/net.darkradiant.DarkRadiant.metainfo.xml
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 
 # Install locale data
 if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.14")

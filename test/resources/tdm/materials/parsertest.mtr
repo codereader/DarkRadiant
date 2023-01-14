@@ -1026,3 +1026,75 @@ textures/parsertest/coverage1
 		rgb .5
 	}
 }
+
+// Test coverage of translucent material
+textures/parsertest/coverage2
+{
+    glass
+	qer_editorimage textures/darkmod/carpet/rugs/mat_shaggy_ed
+
+	noShadows
+	translucent
+	diffusemap textures/darkmod/carpet/rugs/mat_shaggy
+	bumpmap textures/darkmod/carpet/rugs/mat_shaggy_local
+}
+
+// Test determining the noshadows flag
+textures/parsertest/noshadowsflag
+{
+    glass
+	noShadows
+	diffusemap _black
+}
+
+textures/parsertest/remoteRenderMap1
+{
+	{
+		red Parm0
+		green Parm1
+		blue Parm2
+		remoteRenderMap 232 232 // width / height of render image, ie resolution of screen
+	}
+}
+
+textures/parsertest/remoteRenderMap2
+{
+	{
+        map textures/common/mirror.tga
+        remoteRenderMap 256 128
+	}
+}
+
+textures/parsertest/mirrorRenderMap1
+{
+	{
+        blend blend
+        mirrorRenderMap 256 128
+	}
+}
+
+textures/parsertest/mirrorRenderMap2
+{
+	{
+        blend blend
+        mirrorRenderMap 256 128
+        map textures/common/mirror.tga
+	}
+}
+
+textures/parsertest/mirrorRenderMap3
+{
+	{
+        blend blend
+        map textures/common/mirror.tga
+        mirrorRenderMap
+	}
+}
+
+textures/parsertest/defaultBlendFunc
+{
+	{
+        // No explicit blend function definition
+        map textures/common/caulk.tga
+	}
+}

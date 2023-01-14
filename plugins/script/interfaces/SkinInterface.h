@@ -11,20 +11,20 @@ namespace script
 // Wrapper class to represent a ModelSkin object in Python
 class ScriptModelSkin
 {
-	ModelSkin& _skin;
+	decl::ISkin::Ptr _skin;
 public:
-	ScriptModelSkin(ModelSkin& skin) :
+	ScriptModelSkin(const decl::ISkin::Ptr& skin) :
 		_skin(skin)
 	{}
 
 	std::string getName()
 	{
-		return _skin.getName();
+		return _skin ? _skin->getDeclName() : std::string();
 	}
 
 	std::string getRemap(const std::string& name)
 	{
-		return _skin.getRemap(name);
+		return _skin ? _skin->getRemap(name) : std::string();
 	}
 };
 

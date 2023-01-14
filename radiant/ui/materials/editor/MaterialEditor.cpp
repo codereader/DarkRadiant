@@ -20,14 +20,17 @@
 #include <wx/statbmp.h>
 #include <wx/clrpicker.h>
 
-#include "wxutil/SourceView.h"
+#include "os/file.h"
+#include "wxutil/sourceview/SourceView.h"
 #include "wxutil/FileChooser.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/EntityClassChooser.h"
 #include "wxutil/Bitmap.h"
+#include "wxutil/decl/DeclFileInfo.h"
 #include "materials/FrobStageSetup.h"
+#include "parser/DefBlockSyntaxParser.h"
 #include <fmt/format.h>
 #include "gamelib.h"
 #include "string/join.h"
@@ -38,6 +41,7 @@
 #include "CheckBoxBinding.h"
 #include "MapExpressionEntry.h"
 #include "TexturePreview.h"
+#include "../MaterialChooser.h"
 
 namespace ui
 {
@@ -46,13 +50,21 @@ namespace
 {
     const char* const DIALOG_TITLE = N_("Material Editor");
 
-    const char* const ICON_STAGE_VISIBLE = "visible.png";
-    const char* const ICON_STAGE_INVISIBLE = "invisible.png";
-    const char* const ICON_GLOBAL_SETTINGS = "icon_texture.png";
+    constexpr const char* const ICON_STAGE_VISIBLE = "visible.png";
+    constexpr const char* const ICON_STAGE_INVISIBLE = "invisible.png";
+    constexpr const char* const ICON_GLOBAL_SETTINGS = "icon_texture.png";
 
     const std::string RKEY_ROOT = "user/ui/materialEditor/";
     const std::string RKEY_SPLIT_POS = RKEY_ROOT + "splitPos";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+
+    const std::string RKEY_LIGHTING_MODE_ENABLED = RKEY_ROOT + "lightModeEnabled";
+    const std::string RKEY_LAST_SELECTED_MATERIAL = RKEY_ROOT + "lastSelectedMaterial";
+    const std::string RKEY_PREVIEW_LIGHT_CLASSNAME = RKEY_ROOT + "previewLightClassname";
+    const std::string RKEY_PREVIEW_ROOM_MATERIAL = RKEY_ROOT + "previewRoomMaterial";
+    const std::string RKEY_PREVIEW_OBJECT_TYPE = RKEY_ROOT + "previewObjectType";
+    const std::string RKEY_PREVIEW_ORIGIN = RKEY_ROOT + "previewViewOrigin";
+    const std::string RKEY_PREVIEW_ANGLES = RKEY_ROOT + "previewViewAngles";
 
     const char* const CUSTOM_BLEND_TYPE = N_("Custom");
 
@@ -102,12 +114,13 @@ namespace
         bool hasBump = false;
         bool hasSpecular = false;
 
-        for (const auto& layer : material->getAllLayers())
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             hasDiffuse |= layer->getType() == IShaderLayer::DIFFUSE;
             hasBump |= layer->getType() == IShaderLayer::BUMP;
             hasSpecular |= layer->getType() == IShaderLayer::SPECULAR;
-        }
+            return true;
+        });
 
         return !hasDiffuse ? IShaderLayer::DIFFUSE :
                !hasBump ? IShaderLayer::BUMP :
@@ -123,7 +136,9 @@ MaterialEditor::MaterialEditor() :
     _stageView(nullptr),
     _stageUpdateInProgress(false),
     _materialUpdateInProgress(false),
-    _lightUpdateInProgress(false)
+    _previewSceneUpdateInProgress(false),
+    _updateFromSourceTextInProgress(false),
+    _sourceTextUpdateInProgress(false)
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
@@ -134,6 +149,10 @@ MaterialEditor::MaterialEditor() :
     // Wire up the buttons
     getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
     getControl<wxButton>("MaterialEditorReloadImagesButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onReloadImages, this);
+
+    auto oldInfoPanel = getControl<wxPanel>("MaterialEditorSaveNotePanel");
+    auto declFileInfo = new wxutil::DeclFileInfo(oldInfoPanel->GetParent(), decl::Type::Material);
+    replaceControl(oldInfoPanel, declFileInfo);
 
     // Add the treeview
     setupMaterialTreeView();
@@ -208,10 +227,14 @@ int MaterialEditor::ShowModal()
 
     if (!_materialToPreselect.empty())
     {
-        _treeView->SetSelectedFullname(_materialToPreselect);
+        _treeView->SetSelectedDeclName(_materialToPreselect);
     }
 
+    loadSettings();
+
     int returnCode = DialogBase::ShowModal();
+
+    saveSettings();
 
     // Tell the position tracker to save the information
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
@@ -233,11 +256,67 @@ int MaterialEditor::ShowModal(const std::string& materialToPreselect)
     return ShowModal();
 }
 
+void MaterialEditor::loadSettings()
+{
+    if (_materialToPreselect.empty())
+    {
+        _materialToPreselect = registry::getValue<std::string>(RKEY_LAST_SELECTED_MATERIAL);
+
+        if (!_materialToPreselect.empty())
+        {
+            _treeView->SetSelectedDeclName(_materialToPreselect);
+        }
+    }
+
+    _preview->setStartupLightingMode(registry::getValue<bool>(RKEY_LIGHTING_MODE_ENABLED));
+
+    auto storedClassname = registry::getValue<std::string>(RKEY_PREVIEW_LIGHT_CLASSNAME);
+
+    if (!storedClassname.empty())
+    {
+        _preview->setLightClassname(storedClassname);
+    }
+
+    auto storedRoomMaterial = registry::getValue<std::string>(RKEY_PREVIEW_ROOM_MATERIAL);
+
+    if (!storedRoomMaterial.empty())
+    {
+        _preview->setRoomMaterial(storedRoomMaterial);
+    }
+
+    auto storedTestModelType = registry::getValue<std::string>(RKEY_PREVIEW_OBJECT_TYPE);
+
+    if (!storedTestModelType.empty())
+    {
+        _preview->setTestModelType(MaterialPreview::GetTestModelType(storedTestModelType));
+    }
+
+    if (!registry::getValue<std::string>(RKEY_PREVIEW_ORIGIN).empty() && 
+        !registry::getValue<std::string>(RKEY_PREVIEW_ANGLES).empty())
+    {
+        _preview->setViewOrigin(registry::getValue<Vector3>(RKEY_PREVIEW_ORIGIN));
+        _preview->setViewAngles(registry::getValue<Vector3>(RKEY_PREVIEW_ANGLES));
+    }
+}
+
+void MaterialEditor::saveSettings()
+{
+    registry::setValue(RKEY_LAST_SELECTED_MATERIAL, _treeView->GetSelectedDeclName());
+    registry::setValue(RKEY_LIGHTING_MODE_ENABLED, _preview->getLightingModeEnabled());
+    registry::setValue(RKEY_PREVIEW_LIGHT_CLASSNAME, _preview->getLightClassname());
+    registry::setValue(RKEY_PREVIEW_ROOM_MATERIAL, _preview->getRoomMaterial());
+    registry::setValue(RKEY_PREVIEW_OBJECT_TYPE, MaterialPreview::GetTestModelTypeName(_preview->getTestModelType()));
+    registry::setValue(RKEY_PREVIEW_ORIGIN, _preview->getViewOrigin());
+    registry::setValue(RKEY_PREVIEW_ANGLES, _preview->getViewAngles());
+}
+
 void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
 {
     auto sourceTextPanel = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Material Source Text"));
     _sourceView = new wxutil::D3MaterialSourceViewCtrl(sourceTextPanel->GetPane());
     _sourceView->SetMinSize(wxSize(-1, 400));
+
+    _sourceView->Bind(wxEVT_STC_MODIFIED, &MaterialEditor::_onSourceTextChanged, this);
 
     sourceTextPanel->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, [=](wxCollapsiblePaneEvent& ev)
     {
@@ -254,9 +333,9 @@ void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
 
 void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
 {
-    auto collapsiblePane = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Light Properties"));
+    auto collapsiblePane = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Preview Scene Properties"));
     
-    auto propertyPanel = getControl<wxPanel>("MaterialPreviewLightPanel");
+    auto propertyPanel = getControl<wxPanel>("MaterialPreviewScenePanel");
     propertyPanel->GetContainingSizer()->Detach(propertyPanel);
     propertyPanel->Reparent(collapsiblePane->GetPane());
     propertyPanel->SetMinSize(wxSize(-1, 100));
@@ -274,11 +353,12 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     previewPanel->GetSizer()->Add(collapsiblePane, 0, wxEXPAND);
 
     // Wire up the signals
-    _preview->signal_LightChanged().connect([this] ()
+    _preview->signal_SceneChanged().connect([this] ()
     {
-        util::ScopedBoolLock lock(_lightUpdateInProgress);
+        util::ScopedBoolLock lock(_previewSceneUpdateInProgress);
 
         getControl<wxTextCtrl>("MaterialPreviewLightClassname")->SetValue(_preview->getLightClassname());
+        getControl<wxTextCtrl>("MaterialPreviewRoomMaterial")->SetValue(_preview->getRoomMaterial());
 
         auto colour = _preview->getLightColour() * 255.0;
         getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->SetColour(
@@ -289,8 +369,14 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
 
     getControl<wxTextCtrl>("MaterialPreviewLightClassname")->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
     {
-        if (_lightUpdateInProgress) return;
+        if (_previewSceneUpdateInProgress) return;
         _preview->setLightClassname(ev.GetString().ToStdString());
+    });
+
+    getControl<wxTextCtrl>("MaterialPreviewRoomMaterial")->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
+    {
+        if (_previewSceneUpdateInProgress) return;
+        _preview->setRoomMaterial(ev.GetString().ToStdString());
     });
 
 #if defined(__WXMSW__) && wxCHECK_VERSION(3,1,3)
@@ -301,7 +387,7 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->Bind(colourEvtType,
     [this](wxColourPickerEvent& ev)
     {
-        if (_lightUpdateInProgress) return;
+        if (_previewSceneUpdateInProgress) return;
         auto colour = ev.GetColour();
         _preview->setLightColour(Vector3(colour.Red() / 255.0, colour.Green() / 255.0, colour.Blue() / 255.0));
     });
@@ -311,12 +397,24 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
         auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewLightClassname");
         auto newClassName = wxutil::EntityClassChooser::ChooseEntityClass(
             wxutil::EntityClassChooser::Purpose::SelectClassname, textCtrl->GetValue().ToStdString());
-        textCtrl->SetValue(newClassName);
+
+        if (!newClassName.empty())
+        {
+            textCtrl->SetValue(newClassName);
+        }
     });
     
     getControl<wxButton>("MaterialPreviewLightResetColourButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
     {
         _preview->resetLightColour();
+    });
+
+    getControl<wxButton>("MaterialPreviewRoomMaterialButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
+    {
+        auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewRoomMaterial");
+        auto selector = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular, textCtrl);
+        selector->ShowModal();
+        selector->Destroy();
     });
 }
 
@@ -325,9 +423,60 @@ void MaterialEditor::_onReloadImages(wxCommandEvent& ev)
     if (!_material) return;
 
     _material->refreshImageMaps();
+    updateBasicImagePreview();
 }
 
-void MaterialEditor::_onClose(wxCommandEvent& ev)
+decl::DeclarationBlockSyntax MaterialEditor::getBlockSyntaxFromSourceView()
+{
+    auto fullText = _sourceView->GetValue().ToStdString();
+
+    parser::DefBlockSyntaxParser<const std::string> parser(fullText);
+
+    auto syntaxTree = parser.parse();
+    auto block = syntaxTree->findFirstBlock([](const parser::DefBlockSyntax::Ptr&) { return true; });
+
+    if (!block) return {};
+
+    // We don't need to fill in every field of the syntax, the contents are important
+    decl::DeclarationBlockSyntax syntax;
+    
+    syntax.name = _material->getName();
+    syntax.typeName = decl::getTypeName(decl::Type::Material);
+    syntax.contents = block->getBlockContents();
+    
+    return syntax;
+}
+
+void MaterialEditor::_onSourceTextChanged(wxStyledTextEvent& ev)
+{
+    if (!_material || _materialUpdateInProgress || _sourceTextUpdateInProgress) return;
+
+    constexpr auto ObservedModificationTypes = wxSTC_MOD_INSERTTEXT | wxSTC_MOD_DELETETEXT |
+        wxSTC_PERFORMED_UNDO | wxSTC_PERFORMED_REDO;
+
+    if ((ev.GetModificationType() & ObservedModificationTypes) == 0)
+    {
+        return;
+    }
+
+    // Block source text updates
+    util::ScopedBoolLock lock(_updateFromSourceTextInProgress);
+
+    auto syntax = getBlockSyntaxFromSourceView();
+
+    if (syntax.name.empty())
+    {
+        return;
+    }
+
+    if (_material->updateFromSourceText(syntax.contents).success)
+    {
+        // Update the controls on success
+        updateControlsFromMaterial();
+    }
+}
+
+bool MaterialEditor::okToCloseDialog()
 {
     // Check all unsaved materials
     std::list<MaterialPtr> modifiedMaterials;
@@ -346,12 +495,27 @@ void MaterialEditor::_onClose(wxCommandEvent& ev)
         // Prompt user to save or discard
         if (!askUserAboutModifiedMaterial())
         {
-            return; // cancel the close event
+            return false; // cancel the close event
         }
     }
 
     // At this point, everything is saved
-    EndModal(wxID_CLOSE);
+    return true;
+}
+
+bool MaterialEditor::_onDeleteEvent()
+{
+    // Return true if preClose() vetoes the close event
+    return !okToCloseDialog();
+}
+
+void MaterialEditor::_onClose(wxCommandEvent& ev)
+{
+    // Check if it's ok to close the dialog
+    if (okToCloseDialog())
+    {
+        EndModal(wxID_CLOSE);
+    }
 }
 
 void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
@@ -392,6 +556,10 @@ void MaterialEditor::setupMaterialTreeView()
     auto saveButton = getControl<wxButton>("MaterialEditorSaveDefButton");
     saveButton->Disable();
     saveButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onSaveMaterial, this);
+
+    auto deleteButton = getControl<wxButton>("MaterialEditorDeleteDefButton");
+    deleteButton->Disable();
+    deleteButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onDeleteMaterial, this);
 
     auto copyButton = getControl<wxButton>("MaterialEditorCopyDefButton");
     copyButton->Disable();
@@ -463,8 +631,8 @@ void MaterialEditor::_onBasicMapEntryChanged(const std::string& entryName, IShad
         stageCreated = true;
     }
 
-    stage->setMapExpressionFromString(textCtrl->GetValue().ToStdString());
-    
+    applyMapExpressionToStage(stage, textCtrl->GetValue().ToStdString());
+
     if (stageCreated)
     {
         updateStageListFromMaterial();
@@ -550,13 +718,45 @@ void MaterialEditor::setupBasicMaterialPage()
     testFrob->Bind(wxEVT_LEFT_UP, &MaterialEditor::_onBasicTestFrobStages, this);
 }
 
+void MaterialEditor::createDecalColourBinding(const std::string& controlName, const std::function<double(const MaterialPtr&)>& loadFunc)
+{
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, MaterialPtr>>(
+        getControl<wxSpinCtrlDouble>(controlName),
+        loadFunc,
+        [this](const MaterialPtr& material, double _)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            assignDecalInfoToMaterial(material, true);
+        },
+        [this]() { onMaterialChanged(); }));
+}
+
 void MaterialEditor::setupMaterialProperties()
 {
     // Convert int-valued spinctrls to double-valued ones
     convertToSpinCtrlDouble(this, "MaterialPolygonOffsetValue", -100, 100, 0.1, 1);
     convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoStaySeconds", 0, 999999, 0.1, 2);
     convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoFadeSeconds", 0, 999999, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartRed", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartGreen", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartBlue", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartAlpha", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndRed", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndGreen", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndBlue", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndAlpha", 0.0, 1.0, 0.1, 2);
     convertToSpinCtrlDouble(this, "MaterialStagePrivatePolygonOffset", -100, 100, 0.1, 1);
+
+#if defined(__WXMSW__)
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartRed")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartGreen")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartBlue")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartAlpha")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndRed")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndGreen")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndBlue")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndAlpha")->SetMaxSize(wxSize(80, -1));
+#endif
 
     // Place map expression controls where needed
     convertTextCtrlToMapExpressionEntry("MaterialStageImageMap");
@@ -649,6 +849,62 @@ void MaterialEditor::setupMaterialProperties()
     {
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(ev.IsChecked());
     });
+
+    auto hasDecalInfo = getControl<wxCheckBox>("MaterialHasDecalInfo");
+    hasDecalInfo->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev)
+    {
+        getControl<wxPanel>("MaterialDecalInfoPanel")->Enable(ev.IsChecked());
+    });
+
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(hasDecalInfo,
+        [](const MaterialPtr& material)
+        {
+            return material->getParseFlags() & Material::PF_HasDecalInfo;
+        },
+        [this](const MaterialPtr& material, bool value)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+
+            // Set the decal info structure from the control contents
+            assignDecalInfoToMaterial(material, value);
+        },
+        [this]() { onMaterialChanged(); }));
+
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, MaterialPtr>>(
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds"),
+        [](const MaterialPtr& material)
+        {
+            return material->getDecalInfo().stayMilliSeconds / 1000.0;
+        },
+        [this](const MaterialPtr& material, double _)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            assignDecalInfoToMaterial(material, true);
+        },
+        [this]() { onMaterialChanged(); }));
+
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, MaterialPtr>>(
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds"),
+        [](const MaterialPtr& material)
+        {
+            return material->getDecalInfo().fadeMilliSeconds / 1000.0;
+        },
+        [this](const MaterialPtr& material, double _)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            assignDecalInfoToMaterial(material, true);
+        },
+            [this]() { onMaterialChanged(); }));
+
+    createDecalColourBinding("MaterialDecalInfoStartRed", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.x(); });
+    createDecalColourBinding("MaterialDecalInfoStartGreen", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.y(); });
+    createDecalColourBinding("MaterialDecalInfoStartBlue", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.z(); });
+    createDecalColourBinding("MaterialDecalInfoStartAlpha", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.w(); });
+
+    createDecalColourBinding("MaterialDecalInfoEndRed", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.x(); });
+    createDecalColourBinding("MaterialDecalInfoEndGreen", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.y(); });
+    createDecalColourBinding("MaterialDecalInfoEndBlue", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.z(); });
+    createDecalColourBinding("MaterialDecalInfoEndAlpha", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.w(); });
 
     // For light fall off images, only cameracubemap and map are allowed
     auto lightFallOffCubeMapType = getControl<wxChoice>("MaterialLightFalloffCubeMapType");
@@ -951,7 +1207,7 @@ void MaterialEditor::setupMaterialStageView()
     wxDataViewItemAttr globalStyle;
     globalStyle.SetColour(wxColor(15, 15, 15));
     globalStyle.SetBold(true);
-    row[STAGE_COLS().name] = globalStyle;
+    row[STAGE_COLS().name].setAttr(globalStyle);
 
     row.SendItemAdded();
 
@@ -1037,6 +1293,29 @@ void MaterialEditor::createSpinCtrlDoubleBinding(const std::string& ctrlName,
         std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 }
 
+void MaterialEditor::applyMapExpressionToStage(const IEditableShaderLayer::Ptr& stage, const std::string& value)
+{
+    // Try to keep an existing frob highlight stage intact
+    bool hadFrobHighlightStage = false;
+
+    if (stage->getType() == IShaderLayer::DIFFUSE)
+    {
+        hadFrobHighlightStage = shaders::FrobStageSetup::IsPresent(_material);
+
+        if (hadFrobHighlightStage)
+        {
+            shaders::FrobStageSetup::RemoveFromMaterial(_material);
+        }
+    }
+
+    stage->setMapExpressionFromString(value);
+
+    if (hadFrobHighlightStage)
+    {
+        shaders::FrobStageSetup::AddToMaterial(_material);
+    }
+}
+
 void MaterialEditor::setupMaterialStageProperties()
 {
     auto stageImageMap = getControl<MapExpressionEntry>("MaterialStageImageMap");
@@ -1049,7 +1328,7 @@ void MaterialEditor::setupMaterialStageProperties()
         [this](const IEditableShaderLayer::Ptr& stage, const std::string& value)
         {
             if (_stageUpdateInProgress) return;
-            stage->setMapExpressionFromString(value);
+            applyMapExpressionToStage(stage, value);
         },
         [this]() { onMaterialChanged(); updateBasicPageFromMaterial(); },
         std::bind(&MaterialEditor::getEditableStageForSelection, this)));
@@ -1361,20 +1640,20 @@ bool MaterialEditor::saveCurrentMaterial()
             // Ask the user where to save it
             wxutil::FileChooser chooser(this, _("Select Material file"), false, "material", "." + mtrExtension);
 
-            fs::path modMaterialsPath = GlobalGameManager().getModPath();
-            modMaterialsPath /= materialsFolderName;
+            fs::path materialsPath = game::current::getWriteableGameResourcePath();
+            materialsPath /= materialsFolderName;
 
-            if (!os::fileOrDirExists(modMaterialsPath.string()))
+            if (!os::fileOrDirExists(materialsPath.string()))
             {
-                rMessage() << "Ensuring mod materials path: " << modMaterialsPath << std::endl;
-                fs::create_directories(modMaterialsPath);
+                rMessage() << "Ensuring materials path: " << materialsPath << std::endl;
+                fs::create_directories(materialsPath);
             }
 
             // Point the file chooser to that new file
-            chooser.setCurrentPath(GlobalGameManager().getModPath() + materialsFolderName);
+            chooser.setCurrentPath(materialsPath.string());
             chooser.askForOverwrite(false);
 
-            std::string result = chooser.display();
+            auto result = chooser.display();
 
             if (result.empty())
             {
@@ -1417,6 +1696,32 @@ bool MaterialEditor::saveCurrentMaterial()
     return true;
 }
 
+void MaterialEditor::deleteCurrentMaterial()
+{
+    auto materialFileInfo = _material->getShaderFileInfo().isEmpty() ?
+        _("") : " " + _material->getShaderFileInfo().fullPath();
+
+    if (wxutil::Messagebox::Show(_("Confirm Removal"),
+        fmt::format(_("The selected material {0} will be removed,\nincluding its source text in the .mtr file{1}.\n"
+            "This action cannot be undone. Are you sure you want to remove this material?"),
+            _material->getName(), materialFileInfo), IDialog::MESSAGE_ASK, this) == IDialog::RESULT_NO)
+    {
+        return;
+    }
+
+    try
+    {
+        GlobalMaterialManager().removeMaterial(_material->getName());
+    }
+    catch (const std::runtime_error& ex)
+    {
+        rError() << "Could not delete the material: " << ex.what() << std::endl;
+        wxutil::Messagebox::ShowError(ex.what(), this);
+    }
+
+    handleMaterialSelectionChange();
+}
+
 void MaterialEditor::revertCurrentMaterial()
 {
     if (!_material) return;
@@ -1437,6 +1742,8 @@ void MaterialEditor::revertCurrentMaterial()
 
 bool MaterialEditor::askUserAboutModifiedMaterial()
 {
+    if (!_material) return true;
+
     // Get the original name
     std::string origName = _material->getName();
 
@@ -1484,7 +1791,7 @@ void MaterialEditor::handleMaterialSelectionChange()
     // Update the preview if a texture is selected
     if (_selectedMaterialItem.IsOk() && !_treeView->IsDirectorySelected())
     {
-        _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
+        _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedDeclName());
 
         _materialChanged = _material->sig_materialChanged().connect([this]()
         {
@@ -1507,7 +1814,10 @@ void MaterialEditor::_onMaterialNameChanged(wxCommandEvent& ev)
     auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
 
     GlobalMaterialManager().renameMaterial(_material->getName(), nameEntry->GetValue().ToStdString());
-    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().fullName);
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().declName);
+
+    // Make sure the item is selected again, it will be de-selected by the rename operation
+    _treeView->Select(item);
     _treeView->EnsureVisible(item);
  
     updateMaterialPropertiesFromMaterial();
@@ -1534,6 +1844,13 @@ void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
     saveCurrentMaterial();
 }
 
+void MaterialEditor::_onDeleteMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    deleteCurrentMaterial();
+}
+
 void MaterialEditor::selectMaterial(const MaterialPtr& material)
 {
     if (!material)
@@ -1543,7 +1860,7 @@ void MaterialEditor::selectMaterial(const MaterialPtr& material)
         return;
     }
 
-    auto newItem = _treeView->GetTreeModel()->FindString(material->getName(), _treeView->Columns().fullName);
+    auto newItem = _treeView->GetTreeModel()->FindString(material->getName(), _treeView->Columns().declName);
 
     if (newItem.IsOk())
     {
@@ -1557,6 +1874,9 @@ void MaterialEditor::selectMaterial(const MaterialPtr& material)
 
 void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
 {
+    // Clear the filter before creating a new material
+    _treeView->ClearFilterText();
+
     auto materialName = "textures/darkmod/map_specific/unnamed";
     auto newMaterial = GlobalMaterialManager().createEmptyMaterial(materialName);
 
@@ -1661,7 +1981,7 @@ void MaterialEditor::updateStageButtonSensitivity()
         auto row = wxutil::TreeModel::Row(item, *_stageList);
         auto index = row[STAGE_COLS().index].getInteger();
         auto isGlobalStage = row[STAGE_COLS().global].getBool();
-        auto layersCount = _material->getAllLayers().size();
+        auto layersCount = _material->getNumLayers();
 
         getControl<wxButton>("MaterialEditorRemoveStageButton")->Enable(!isGlobalStage);
         getControl<wxButton>("MaterialEditorToggleStageButton")->Enable(!isGlobalStage);
@@ -1694,6 +2014,7 @@ void MaterialEditor::updateMaterialControlSensitivity()
 
     getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && 
         _material->isModified() && canBeModified);
+    getControl<wxButton>("MaterialEditorDeleteDefButton")->Enable(_material && canBeModified);
 
     getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(_material != nullptr);
     getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
@@ -1712,20 +2033,29 @@ std::pair<IShaderLayer::Ptr, std::size_t> MaterialEditor::findMaterialStageByTyp
 {
     if (!_material) return std::pair<IShaderLayer::Ptr, std::size_t>();
 
-    const auto& layers = _material->getAllLayers();
-    for (auto i = 0; i < layers.size(); ++i)
-    {
-        if (layers[i]->getType() == type)
-        {
-            return std::make_pair(layers[i], i);
-        }
-    }
+    std::pair<IShaderLayer::Ptr, std::size_t> result;
 
-    return std::pair<IShaderLayer::Ptr, std::size_t>();
+    std::size_t i = 0;
+
+    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+    {
+        if (layer->getType() == type)
+        {
+            result = std::make_pair(layer, i);
+            return false;
+        }
+
+        ++i;
+        return true;
+    });
+
+    return result;
 }
 
 void MaterialEditor::updateBasicPageFromMaterial()
 {
+    util::ScopedBoolLock lock(_materialUpdateInProgress);
+
     auto nameEntry = getControl<wxTextCtrl>("BasicName");
     nameEntry->SetValue(_material ? _material->getName() : "");
     
@@ -1807,6 +2137,10 @@ void MaterialEditor::updateControlsFromMaterial()
     updateMaterialControlSensitivity();
     updateMaterialPropertiesFromMaterial();
     updateStageListFromMaterial();
+    updateSettingsNotebook();
+
+    auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
+    notebook->SetSelection(0); // select the first page
 }
 
 inline std::string getDeformExpressionSafe(const MaterialPtr& material, std::size_t index)
@@ -1910,10 +2244,8 @@ void MaterialEditor::updateStageListFromMaterial()
 
     if (!_material) return;
 
-    const auto& layers = _material->getAllLayers();
-
     int index = 0;
-    for (const auto& layer : layers)
+    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
     {
         auto row = _stageList->AddItem();
 
@@ -1922,14 +2254,20 @@ void MaterialEditor::updateStageListFromMaterial()
         row[STAGE_COLS().index] = index;
         row[STAGE_COLS().name] = getNameForLayer(*layer);
         row[STAGE_COLS().visible] = true;
+        row[STAGE_COLS().global] = false;
 
         row.SendItemAdded();
 
         ++index;
-    }
+        return true;
+    });
 
-    // Pre-select the first stage (it's ok if there are no stages)
-    selectStageByIndex(0);
+    // Pre-select the global settings page
+    auto globalSettings = _stageList->FindItem([&](const wxutil::TreeModel::Row& row)
+    {
+        return row[STAGE_COLS().global].getBool();
+    });
+    _stageView->Select(globalSettings);
 }
 
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
@@ -1967,6 +2305,11 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     if (_material)
     {
         getControl<wxTextCtrl>("MaterialDescription")->SetValue(_material->getDescription());
+
+        auto declFileInfo = getControl<wxutil::DeclFileInfo>("MaterialEditorSaveNotePanel");
+        declFileInfo->Show();
+        declFileInfo->setName(_material->getName());
+        declFileInfo->setPath(_material->getShaderFileInfo().fullPath());
 
         // Type dropdown
         auto* materialTypeDropdown = getControl<wxChoice>("MaterialType");
@@ -2025,14 +2368,6 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(hasDecalInfo);
         getControl<wxPanel>("MaterialDecalInfoPanel")->Enable(hasDecalInfo);
 
-        const auto& decalInfo = _material->getDecalInfo();
-        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->SetValue(decalInfo.stayMilliSeconds / 1000.0f);
-        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->SetValue(decalInfo.fadeMilliSeconds / 1000.0f);
-        getControl<wxTextCtrl>("MaterialDecalInfoStartRgb")->SetValue(fmt::format("({0} {1} {2} {3})", 
-            decalInfo.startColour.x(), decalInfo.startColour.y(), decalInfo.startColour.z(), decalInfo.startColour.w()));
-        getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue(fmt::format("({0} {1} {2} {3})",
-            decalInfo.endColour.x(), decalInfo.endColour.y(), decalInfo.endColour.z(), decalInfo.endColour.w()));
-
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(!_material->getRenderBumpArguments().empty());
         //getControl<wxTextCtrl>("MaterialRenderBumpArguments")->Enable(!_material->getRenderBumpArguments().empty());
         getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue(_material->getRenderBumpArguments());
@@ -2057,6 +2392,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     }
     else
     {
+        getControl<wxPanel>("MaterialEditorSaveNotePanel")->Hide();
         getControl<wxTextCtrl>("MaterialGuiSurfPath")->SetValue("");
 
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(false);
@@ -2068,8 +2404,14 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(false);
         getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->SetValue(0);
         getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->SetValue(0);
-        getControl<wxTextCtrl>("MaterialDecalInfoStartRgb")->SetValue("");
-        getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartRed")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartGreen")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartBlue")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartAlpha")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndRed")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndGreen")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndBlue")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndAlpha")->SetValue("");
 
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(false);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(0);
@@ -2079,6 +2421,10 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
 void MaterialEditor::updateSourceView()
 {
+    if (_updateFromSourceTextInProgress || _sourceTextUpdateInProgress) return; // avoid feedback loops
+
+    util::ScopedBoolLock lock(_sourceTextUpdateInProgress);
+
     if (_material)
     {
         // Surround the definition with curly braces, these are not included
@@ -2115,13 +2461,12 @@ IShaderLayer::Ptr MaterialEditor::getSelectedStage()
 
     if (!selectedStageItem.IsOk() || !_material) return IShaderLayer::Ptr();
 
-    const auto& layers = _material->getAllLayers();
     wxutil::TreeModel::Row stageRow(selectedStageItem, *_stageList);
     int stageIndex = stageRow[STAGE_COLS().index].getInteger();
 
-    if (stageIndex >= 0 && stageIndex < layers.size())
+    if (stageIndex >= 0 && stageIndex < _material->getNumLayers())
     {
-        return layers[stageIndex];
+        return _material->getLayer(stageIndex);
     }
 
     return IShaderLayer::Ptr();
@@ -2136,7 +2481,7 @@ IEditableShaderLayer::Ptr MaterialEditor::getEditableStageForSelection()
     wxutil::TreeModel::Row stageRow(selectedStageItem, *_stageList);
     int stageIndex = stageRow[STAGE_COLS().index].getInteger();
 
-    return _material->getEditableLayer(stageIndex);
+    return stageIndex != -1 ? _material->getEditableLayer(stageIndex) : IEditableShaderLayer::Ptr();
 }
 
 void MaterialEditor::updateStageBlendControls()
@@ -2349,9 +2694,7 @@ void MaterialEditor::updateStageControls()
             soundMapWave->SetValue(false);
         }
 
-        if (selectedStage->getMapType() == IShaderLayer::MapType::RemoteRenderMap ||
-            selectedStage->getMapType() == IShaderLayer::MapType::MirrorRenderMap ||
-            selectedStage->getMapType() == IShaderLayer::MapType::SoundMap)
+        if (selectedStage->getMapType() == IShaderLayer::MapType::SoundMap)
         {
             imageMap->Disable();
         }
@@ -2569,7 +2912,7 @@ void MaterialEditor::_onRemoveStage(wxCommandEvent& ev)
     _material->removeLayer(index);
     updateStageListFromMaterial();
 
-    auto layersCount = _material->getAllLayers().size();
+    auto layersCount = _material->getNumLayers();
 
     while (index > 0)
     {
@@ -2648,7 +2991,7 @@ void MaterialEditor::moveStagePosition(int direction)
 
     int newPosition = index + direction;
 
-    if (newPosition >= 0 && newPosition < _material->getAllLayers().size())
+    if (newPosition >= 0 && newPosition < _material->getNumLayers())
     {
         _material->swapLayerPosition(static_cast<std::size_t>(index), static_cast<std::size_t>(newPosition));
         onMaterialChanged();
@@ -2688,7 +3031,7 @@ void MaterialEditor::updateMaterialTreeItem()
     if (!_material) return;
 
     const auto& columns = _treeView->Columns();
-    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), columns.fullName);
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), columns.declName);
 
     if (!item.IsOk())
     {
@@ -2700,13 +3043,9 @@ void MaterialEditor::updateMaterialTreeItem()
     wxutil::TreeModel::Row row(item, *_treeView->GetModel());
     
     if (!row[columns.isFolder].getBool())
-    {
-        row[columns.iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
-    }
+        row[columns.iconAndName].setAttr(wxutil::TreeViewItemStyle::Modified(isModified));
     else
-    {
-        row[columns.iconAndName] = wxDataViewItemAttr();
-    }
+        row[columns.iconAndName].setAttr(wxDataViewItemAttr());
 
     wxDataViewIconText value = row[columns.iconAndName];
         
@@ -2786,6 +3125,39 @@ void MaterialEditor::_onBasicTestFrobStages(wxMouseEvent& ev)
 {
     _preview->enableFrobHighlight(ev.ButtonDown());
     ev.Skip();
+}
+
+void MaterialEditor::assignDecalInfoToMaterial(const MaterialPtr& material, bool isEnabled)
+{
+    Material::DecalInfo info;
+    bool wasEnabled = material->getParseFlags() & Material::PF_HasDecalInfo;
+
+    if (isEnabled)
+    {
+        info.stayMilliSeconds = static_cast<int>(getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->GetValue() * 1000);
+        info.fadeMilliSeconds = static_cast<int>(getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->GetValue() * 1000);
+
+        info.startColour = Vector4(
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartRed")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartGreen")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartBlue")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartAlpha")->GetValue()
+        );
+
+        info.endColour = Vector4(
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndRed")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndGreen")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndBlue")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndAlpha")->GetValue()
+        );
+
+        if (!wasEnabled && info.stayMilliSeconds == 0)
+        {
+            info.stayMilliSeconds = 1; // make sure the value is > 0 otherwise the flag doesn't get set
+        }
+    }
+
+    material->setDecalInfo(info);
 }
 
 }

@@ -1,15 +1,14 @@
 #include "imodule.h"
 
 #include "i18n.h"
-#include "iradiant.h"
 #include "ui/imenumanager.h"
 #include "iselection.h"
 #include "ui/ientityinspector.h"
 #include "icommandsystem.h"
-#include "itextstream.h"
+#include "ui/iuserinterface.h"
 #include "ui/imainframe.h"
-#include "debugging/debugging.h"
 
+#include "AIEditingControl.h"
 #include "AIHeadPropertyEditor.h"
 #include "AIVocalSetPropertyEditor.h"
 #include "FixupMapDialog.h"
@@ -21,12 +20,13 @@ class EditingModule :
 {
 public:
 	// RegisterableModule implementation
-	virtual const std::string& getName() const {
+	const std::string& getName() const override
+    {
 		static std::string _name("DarkMod Editing");
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const
+	const StringSet& getDependencies() const override
     {
         static StringSet _dependencies
         {
@@ -35,15 +35,14 @@ public:
             MODULE_SELECTIONSYSTEM,
             MODULE_COMMANDSYSTEM,
             MODULE_MAINFRAME,
+            MODULE_USERINTERFACE,
         };
 
 		return _dependencies;
 	}
 
-	virtual void initialiseModule(const IApplicationContext& ctx)
+	void initialiseModule(const IApplicationContext& ctx) override
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		// Associated "def_head" with an empty property editor instance
 		GlobalEntityInspector().registerPropertyEditor(
 			ui::DEF_HEAD_KEY, ui::AIHeadPropertyEditor::CreateNew);
@@ -73,14 +72,21 @@ public:
 			"MissionInfoEditDialog"
 		);
 
-		GlobalMainFrame().signal_MainFrameConstructed().connect(
-			sigc::ptr_fun(ui::AIEditingPanel::onMainFrameConstructed)
-		);	
+		GlobalMainFrame().signal_MainFrameConstructed().connect([this] 
+        {
+            GlobalMainFrame().addControl(ui::AIEditingControl::Name, IMainFrame::ControlSettings
+            {
+                IMainFrame::Location::PropertyPanel,
+                true
+            });
+        });
+
+        GlobalUserInterface().registerControl(std::make_shared<ui::AIEditingControl>());
 	}
 
-	void shutdownModule()
+	void shutdownModule() override
 	{
-		ui::AIEditingPanel::Shutdown();
+        GlobalUserInterface().unregisterControl(ui::AIEditingControl::Name);
 
 		// Remove associated property keys
 		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_VOCAL_SET_KEY);
@@ -90,7 +96,6 @@ public:
         GlobalEntityInspector().unregisterPropertyEditorDialog(ui::DEF_VOCAL_SET_KEY);
 	}
 };
-typedef std::shared_ptr<EditingModule> EditingModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {

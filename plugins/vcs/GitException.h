@@ -28,7 +28,12 @@ public:
 
     static std::string GetLastErrorMessage()
     {
+#if LIBGIT2_VER_MAJOR <= 0 && LIBGIT2_VER_MINOR < 28
+        // git_error_last has not been present before libgit2 0.28
+        auto error = giterr_last();
+#else
         auto error = git_error_last();
+#endif
 
         return error != nullptr ? error->message : "";
     }

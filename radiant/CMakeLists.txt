@@ -1,7 +1,6 @@
 add_executable(darkradiant
                camera/CameraSettings.cpp
                camera/CamWnd.cpp
-               camera/FloatingCamWnd.cpp
                camera/CameraWndManager.cpp
                clipboard/ClipboardModule.cpp
                eventmanager/Accelerator.cpp
@@ -12,7 +11,6 @@ add_executable(darkradiant
                eventmanager/Statement.cpp
                eventmanager/Toggle.cpp
                eventmanager/WidgetToggle.cpp
-               log/Console.cpp
                main.cpp
                map/AutoSaveTimer.cpp
                map/StartupMapLoader.cpp
@@ -25,26 +23,24 @@ add_executable(darkradiant
                settings/Win32Registry.cpp
                textool/tools/TextureToolManipulateMouseTool.cpp
                textool/TexTool.cpp
-               ui/aas/AasControl.cpp
-               ui/aas/AasControlDialog.cpp
+               ui/aas/AasFileControl.cpp
+               ui/aas/AasVisualisationPanel.cpp
                ui/aas/RenderableAasFile.cpp
                ui/about/AboutDialog.cpp
                ui/brush/FindBrush.cpp
                ui/brush/QuerySidesDialog.cpp
                ui/commandlist/CommandList.cpp
                ui/commandlist/ShortcutChooser.cpp
-               ui/common/CommandEntry.cpp
-               ui/common/DefinitionView.cpp
                ui/common/EntityChooser.cpp
                ui/common/ImageFilePopulator.cpp
                ui/common/ImageFileSelector.cpp
                ui/common/MapPreview.cpp
-               ui/common/ShaderChooser.cpp
-               ui/common/ShaderSelector.cpp
-               ui/common/SoundShaderDefinitionView.cpp
                ui/common/TexturePreviewCombo.cpp
+               ui/common/SkinChooser.cpp
                ui/common/SoundChooser.cpp
                ui/common/SoundShaderPreview.cpp
+               ui/console/CommandEntry.cpp
+               ui/console/Console.cpp
                ui/DispatchEvent.cpp
                ui/Documentation.cpp
                ui/eclasstree/EClassTreeBuilder.cpp
@@ -55,13 +51,13 @@ add_executable(darkradiant
                ui/einspector/ClassnamePropertyEditor.cpp
                ui/einspector/ColourPropertyEditor.cpp
                ui/einspector/EntityInspector.cpp
+               ui/einspector/EntityInspectorModule.cpp
                ui/einspector/EntityPropertyEditor.cpp
                ui/einspector/FloatPropertyEditor.cpp
-               ui/einspector/LightTextureChooser.cpp
+               ui/einspector/FxPropertyEditor.cpp
                ui/einspector/ModelPropertyEditor.cpp
                ui/einspector/PropertyEditor.cpp
                ui/einspector/PropertyEditorFactory.cpp
-               ui/einspector/SkinChooser.cpp
                ui/einspector/SkinPropertyEditor.cpp
                ui/einspector/SoundPropertyEditor.cpp
                ui/einspector/TexturePropertyEditor.cpp
@@ -77,38 +73,37 @@ add_executable(darkradiant
                ui/filters/FiltersMainMenu.cpp
                ui/filters/FilterUserInterface.cpp
                ui/findshader/FindShader.cpp
+               ui/fx/FxChooser.cpp
                ui/gl/WxGLWidgetManager.cpp
                ui/grid/GridUserInterface.cpp
                ui/layers/CreateLayerDialog.cpp
                ui/layers/LayerContextMenu.cpp
-               ui/layers/LayerControl.cpp
-               ui/layers/LayerControlDialog.cpp
+               ui/layers/LayerControlPanel.cpp
                ui/layers/LayerOrthoContextMenuItem.cpp
                ui/lightinspector/LightInspector.cpp
                ui/LongRunningOperationHandler.cpp
+               ui/mainframe/AuiManager.cpp
+               ui/mainframe/AuiFloatingFrame.cpp
                ui/mainframe/AuiLayout.cpp
-               ui/mainframe/EmbeddedLayout.cpp
                ui/mainframe/MainFrame.cpp
-               ui/mainframe/MainFrameLayoutManager.cpp
-               ui/mainframe/RegularLayout.cpp
+               ui/mainframe/PropertyNotebook.cpp
                ui/mainframe/ScreenUpdateBlocker.cpp
-               ui/mainframe/SplitPaneLayout.cpp
                ui/mainframe/TopLevelFrame.cpp
+               ui/mainframe/ViewMenu.cpp
                ui/mapselector/MapSelector.cpp
-               ui/materials/MaterialDefinitionView.cpp
                ui/materials/editor/MaterialEditor.cpp
                ui/materials/editor/MaterialEditorModule.cpp
                ui/materials/editor/MaterialPreview.cpp
+               ui/materials/MaterialChooser.cpp
                ui/materials/MaterialPopulator.cpp
+               ui/materials/MaterialSelector.cpp
                ui/materials/MaterialTreeView.cpp
-               ui/merge/MergeControlDialog.cpp
+               ui/merge/MapMergePanel.cpp
                ui/animationpreview/AnimationPreview.cpp
                ui/animationpreview/MD5AnimationChooser.cpp
                ui/animationpreview/MD5AnimationViewer.cpp
                ui/colourscheme/ColourSchemeEditor.cpp
                ui/common/DialogManager.cpp
-               ui/groupdialog/GroupDialog.cpp
-               ui/groupdialog/GroupDialogManager.cpp
                ui/menu/MenuBar.cpp
                ui/menu/MenuElement.cpp
                ui/menu/MenuFolder.cpp
@@ -125,6 +120,7 @@ add_executable(darkradiant
                ui/mapinfo/ShaderInfoTab.cpp
                ui/mediabrowser/MediaBrowser.cpp
                ui/mediabrowser/MediaBrowserTreeView.cpp
+               ui/mediabrowser/MediaBrowserModule.cpp
                ui/modelexport/ConvertModelDialog.cpp
                ui/modelexport/ExportAsModelDialog.cpp
                ui/modelexport/ExportCollisionModelDialog.cpp
@@ -135,7 +131,7 @@ add_executable(darkradiant
                ui/mousetool/ToolMappingDialog.cpp
                ui/ortho/OrthoContextMenu.cpp
                ui/overlay/Overlay.cpp
-               ui/overlay/OverlayDialog.cpp
+               ui/overlay/OrthoBackgroundPanel.cpp
                ui/particles/ParticleEditor.cpp
                ui/particles/ParticleChooserDialog.cpp
                ui/particles/ParticleSelector.cpp
@@ -157,24 +153,27 @@ add_executable(darkradiant
                ui/script/ScriptUserInterfaceModule.cpp
                ui/script/ScriptWindow.cpp
                ui/selectionset/SelectionSetToolmenu.cpp
+               ui/skin/SkinEditor.cpp
+               ui/skin/SkinEditorTreeView.cpp
                ui/splash/Splash.cpp
                ui/statusbar/CommandStatus.cpp
                ui/statusbar/EditingStopwatchStatus.cpp
                ui/statusbar/MapStatistics.cpp
                ui/statusbar/StatusBarManager.cpp
                ui/surfaceinspector/SurfaceInspector.cpp
-               ui/texturebrowser/TextureBrowser.cpp
+               ui/texturebrowser/MapTextureBrowser.cpp
+               ui/texturebrowser/TextureThumbnailBrowser.cpp
+               ui/texturebrowser/TextureBrowserPanel.cpp
                ui/texturebrowser/TextureBrowserManager.cpp
                ui/toolbar/ToolbarManager.cpp
-               ui/transform/TransformDialog.cpp
+               ui/transform/TransformPanel.cpp
                ui/UserInterfaceModule.cpp
-               xyview/FloatingOrthoView.cpp
                xyview/GlobalXYWnd.cpp
                xyview/tools/BrushCreatorTool.cpp
                xyview/tools/ClipperTool.cpp
                xyview/tools/MeasurementTool.cpp
                xyview/XYWnd.cpp)
-target_compile_options(darkradiant PRIVATE ${SIGC_CFLAGS} ${FREETYPE_CFLAGS} ${GLIB_CFLAGS})
+target_compile_options(darkradiant PRIVATE ${FREETYPE_CFLAGS} ${GLIB_CFLAGS})
 target_include_directories(darkradiant PRIVATE .)
 target_link_libraries(darkradiant PRIVATE
                       math xmlutil scenegraph wxutil module

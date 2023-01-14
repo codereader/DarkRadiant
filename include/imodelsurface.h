@@ -3,6 +3,8 @@
 // Math/Vertex classes
 #include "render/MeshVertex.h"
 
+class AABB;
+
 namespace model
 {
 

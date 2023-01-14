@@ -93,28 +93,28 @@ void capPatch(const cmd::ArgumentList& args)
 	}
 }
 
-void insertPatchColumnsAtEnd(const cmd::ArgumentList& args)
+void insertPatchColumnsAtEnd()
 {
 	UndoableCommand undo("patchInsertColumnsAtEnd");
 	// true = insert, true = columns, false = end
 	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(true, true, false); });
 }
 
-void insertPatchColumnsAtBeginning(const cmd::ArgumentList& args)
+void insertPatchColumnsAtBeginning()
 {
 	UndoableCommand undo("patchInsertColumnsAtBeginning");
 	// true = insert, true = columns, true = at beginning
 	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(true, true, true); });
 }
 
-void insertPatchRowsAtEnd(const cmd::ArgumentList& args)
+void insertPatchRowsAtEnd()
 {
 	UndoableCommand undo("patchInsertRowsAtEnd");
 	// true = insert, false = rows, false = at end
 	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(true, false, false); });
 }
 
-void insertPatchRowsAtBeginning(const cmd::ArgumentList& args)
+void insertPatchRowsAtBeginning()
 {
 	UndoableCommand undo("patchInsertRowsAtBeginning");
 	// true = insert, false = rows, true = at beginning

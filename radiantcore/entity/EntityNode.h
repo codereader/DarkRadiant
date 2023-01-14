@@ -24,6 +24,8 @@
 namespace entity
 {
 
+const Vector4 INACTIVE_ENTITY_COLOUR(0.73, 0.73, 0.73, 1);
+
 class EntityNode;
 typedef std::shared_ptr<EntityNode> EntityNodePtr;
 
@@ -86,6 +88,7 @@ protected:
 	ShaderPtr _fillShader; // cam only
 	ShaderPtr _wireShader; // ortho only
 	ShaderPtr _colourShader; // cam+ortho view
+    ShaderPtr _inactiveShader; // inactive rendering
 	ITextRenderer::Ptr _textRenderer; // for name rendering
 
 	sigc::connection _eclassChangedConn;
@@ -204,7 +207,11 @@ public:
     // Returns the current world origin of this entity (also up to date during transformations)
     virtual const Vector3& getWorldPosition() const = 0;
 
+    void setRenderState(RenderState state) override;
+
 protected:
+    const ShaderPtr& getInactiveShader();
+
     virtual void onModelKeyChanged(const std::string& value);
 
     // Invoked when the colour key has changed its value

@@ -31,12 +31,14 @@
     <undo>
       <queueSize value="256" />
     </undo>
+    <exportAsModel>
+      <customOrigin value="0 0 0" />
+    </exportAsModel>
     <stimResponseEditor>
       <window xPosition="80" yPosition="100" width="900" height="560" />
       <showStimTypeIDs value="0" />
     </stimResponseEditor>
     <lightInspector>
-      <window xPosition="100" yPosition="150" width="780" height="400" />
       <instantApply value="1" />
     </lightInspector>
     <ModelSelector>
@@ -65,31 +67,21 @@
     <defaultPivotLocationIgnoresLightVolumes value="1" />
     <selectionEpsilon value="8.0" />
     <dragResizeEntitiesSymmetrically value="1" />
-    <transientComponentSelection value="1" />
     <offsetClonedObjects value="1" />
     <manipulatorFontSize value="14" />
     <manipulatorFontStyle value="Sans" />
-    <transformDialog>
-      <window xPosition="150" yPosition="200" width="260" height="314" />
+    <transformPanel>
       <rotXStep value="45" />
       <rotYStep value="45" />
       <rotZStep value="45" />
       <scaleXStep value="1.1" />
       <scaleYStep value="1.1" />
       <scaleZStep value="1.1" />
-    </transformDialog>
-    <layers>
-      <controlDialog>
-        <window xPosition="57" yPosition="449" width="164" height="299" />
-      </controlDialog>
-    </layers>
-    <mergeControlDialog>
-        <window xPosition="158" yPosition="241" width="400" height="380"/>
-    </mergeControlDialog>
+    </transformPanel>
     <textures>
-      <shaderChooser>
+      <materialChooser>
         <window xPosition="200" yPosition="100" width="550" height="500" />
-      </shaderChooser>
+      </materialChooser>
       <browser>
         <hideUnused value="0" />
         <textureScale value="3" />
@@ -128,26 +120,19 @@
     <mainFrame>
       <windowLayout value="1" />
       <window xPosition="0" yPosition="0" width="800" height="580" state="4" />
-      <regular>
-        <pane name="vertical" position="650" />
-        <pane name="horizontal" position="500" />
-        <pane name="texcam" position="350" />
-      </regular>
-      <splitPane>
-        <pane name="horizontal" position="300" />
-        <pane name="vertical1" position="250" />
-        <pane name="vertical2" position="250" />
-      </splitPane>
-      <floating>
-        <groupDialogVisible value="1" />
-      </floating>
+      <propertyPanel>
+          <lastShownPage value="EntityInspector"/>
+          <pages default="true">
+              <page controlName="EntityInspector"/>
+              <page controlName="AIEditingPanel"/>
+              <page controlName="MediaBrowser"/>
+              <page controlName="FavouritesBrowser"/>
+              <page controlName="Console"/>
+              <page controlName="ScriptPanel"/>
+              <page controlName="TextureBrowser"/>
+          </pages>
+      </propertyPanel>
     </mainFrame>
-    <groupDialog>
-      <window xPosition="50" yPosition="530" width="350" height="200" />
-    </groupDialog>
-    <entityList>
-      <window xPosition="50" yPosition="530" width="250" height="400" />
-    </entityList>
     <multiMonitor>
       <startMonitorNum value="0" />
     </multiMonitor>
@@ -217,6 +202,7 @@
     </renderSystem>
     <camera>
       <toggleFreeMove value="1" />
+      <dragSelectionEnabled value ="1" />
       <enableCubicClipping value="1" />
       <discreteMovement value="1" />
       <invertMouseVerticalAxis value="0" />
@@ -296,13 +282,13 @@
       <toolbutton name="curveremovepoint" action="CurveRemoveControlPoint" tooltip="Removes the selected curve control points" icon="curve_remove_points.png"/>
     </toolbar>
     <toolbar name="texture" align="horizontal">
-      <toolbutton name="flush" action="RefreshShaders" tooltip="Reload Materials" icon="texwindow_flushandreload.png"/>
+      <toolbutton name="flush" action="ReloadDecls" tooltip="Reload Declarations" icon="texwindow_flushandreload.png"/>
       <toggletoolbutton name="showinuse" action="TextureBrowserHideUnused" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
       <toggletoolbutton name="showfavourites" action="TextureBrowserShowFavouritesOnly" tooltip="Show Favourites only" icon="favourite.png"/>
       <toggletoolbutton name="shownames" action="TextureBrowserShowNames" tooltip="Show texture names" icon="icon_text.png"/>
       <toggletoolbutton name="useuniformscale" action="TextureBrowserToggleUniformScale" tooltip="Use Uniform Thumbnail Scale" icon="texwindow_uniformsize.png"/>
       <separator/>
-      <toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
+      <toolbutton name="findandreplace" action="ToggleFindAndReplaceMaterial" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
     </toolbar>
     <toolbar name="textool" align="horizontal">
       <toolbutton name="griddown" action="GridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>
@@ -327,11 +313,22 @@
     </toolbar>
     <userGuideUrl value="https://www.darkradiant.net/userguide" />
     <forumUrl value="https://forums.thedarkmod.com/index.php?/forum/51-darkradiant-feedback-and-development/" />
+    <scriptReferenceUrl value="https://wiki.thedarkmod.com/index.php?title=DarkRadiant_Script_Reference" />
     <vcs>
       <git>
           <autoFetchEnabled value="1" />
           <autoFetchInterval value="10" />
       </git>
     </vcs>
+    <windowStates>
+        <!-- Default Width/Height Fraction defines the proportion of the screen size 
+             this window will take if no size information has been saved so far -->
+        <EntityClassChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
+        <SkinChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
+        <ParticleChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
+        <SoundChooser defaultWidthFraction="0.5" defaultHeightFraction="0.7" />
+        <MaterialChooser defaultWidthFraction="0.4" defaultHeightFraction="0.8" />
+        <FxChooser defaultWidthFraction="0.4" defaultHeightFraction="0.8" />
+    </windowStates>
   </ui>
 </user>

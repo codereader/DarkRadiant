@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1" format="portable">
+  <layers>
+	<layer id="0" name="Default" parentId="-1"/>
+	<layer id="1" name="box" parentId="-1"/>
+	<layer id="2" name="BoardsandStuff" parentId="-1"/>
+	<layer id="3" name="Tst" parentId="9"/>
+	<layer id="4" name="Test2" parentId="2"/>
+	<layer id="5" name="Test3" parentId="3"/>
+	<layer id="6" name="Test4" parentId="3"/>
+	<layer id="7" name="Test6" parentId="3"/>
+	<layer id="8" name="Test7" parentId="4"/>
+	<layer id="9" name="Test8" parentId="2"/>
+  </layers>
+  <selectionGroups/>
+  <selectionSets/>
+  <properties>
+    <property key="EditTimeInSeconds" value="752"/>
+    <property key="LastCameraAngle" value="0 0 0"/>
+    <property key="LastCameraPosition" value="0 0 30"/>
+  </properties>
+  <entity number="0">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
+            <material name=""/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-84.000000"/>
+            <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
+            <material name=""/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-177.000000"/>
+            <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
+            <material name=""/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-64.000000"/>
+            <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
+            <material name=""/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="24.000000"/>
+            <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
+            <material name=""/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="96.000000"/>
+            <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
+            <material name=""/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="worldspawn"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+</map>

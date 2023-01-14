@@ -42,21 +42,23 @@ wxPanel* PropertyEditor::getWidget()
 	return _mainWidget;
 }
 
-std::string PropertyEditor::getKeyValue(const std::string& key)
+std::string PropertyEditor::getKeyValueFromSelection(const std::string& key)
 {
     return _entities.getSharedKeyValue(key, true);
 }
 
-void PropertyEditor::setKeyValue(const std::string& key, const std::string& value)
+void PropertyEditor::setKeyValueOnSelection(const std::string& key, const std::string& value)
 {
     if (_entities.empty()) return;
 
     UndoableCommand cmd("setProperty");
 
-    _entities.foreachEntity([&](Entity* entity)
+    _entities.foreachEntity([&](const IEntityNodePtr& entity)
     {
-        entity->setKeyValue(key, value);
+        entity->getEntity().setKeyValue(key, value);
     });
+
+    signal_keyValueApplied().emit(key, value);
 }
 
 void PropertyEditor::constructBrowseButtonPanel(wxWindow* parent, const std::string& label,
@@ -81,6 +83,11 @@ void PropertyEditor::_onBrowseButtonClick(wxCommandEvent& ev)
 {
 	// Redirect the event to the method overridden by subclasses
 	onBrowseButtonClick();
+}
+
+sigc::signal<void(const std::string&, const std::string&)>& PropertyEditor::signal_keyValueApplied()
+{
+    return _sigKeyValueApplied;
 }
 
 } // namespace ui

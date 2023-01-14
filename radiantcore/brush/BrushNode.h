@@ -15,7 +15,7 @@
 #include "scene/Node.h"
 #include "RenderableBrushVertices.h"
 
-class BrushNode :
+class BrushNode final :
 	public scene::SelectableNode,
 	public scene::Cloneable,
 	public Snappable,
@@ -33,22 +33,21 @@ class BrushNode :
     public scene::IComparableNode
 {
 	// The actual contained brush (NO reference)
-	Brush m_brush;
+	Brush _brush;
 
-	FaceInstances m_faceInstances;
+	FaceInstances _faceInstances;
 
-	typedef std::vector<EdgeInstance> EdgeInstances;
-	EdgeInstances m_edgeInstances;
-	typedef std::vector<brush::VertexInstance> VertexInstances;
-	VertexInstances m_vertexInstances;
+    std::vector<EdgeInstance> _edgeInstances;
+    std::vector<brush::VertexInstance> _vertexInstances;
 
     // All selectable points (corner vertices / edge or face centroids)
 	std::vector<Vector3> _selectedPoints;
 
-	mutable AABB m_aabb_component;
-	BrushClipPlane m_clipPlane;
+	mutable AABB _aabb_component;
+	BrushClipPlane _clipPlane;
 
 	ShaderPtr _pointShader;
+    ShaderPtr _inactiveWireShader;
 
 	// TRUE if any of the FaceInstance's component selection got changed or transformed
 	bool _renderableComponentsNeedUpdate;
@@ -64,17 +63,16 @@ class BrushNode :
     bool _facesNeedRenderableUpdate;
 
 public:
-	// Constructor
 	BrushNode();
 
 	// Copy Constructor
 	BrushNode(const BrushNode& other);
 
-	virtual ~BrushNode();
+	~BrushNode() override;
 
 	// IBrushNode implementation
-	virtual Brush& getBrush() override;
-	virtual IBrush& getIBrush() override;
+	Brush& getBrush() override;
+	IBrush& getIBrush() override;
 
 	std::string name() const  override
     {
@@ -87,10 +85,10 @@ public:
     std::string getFingerprint() override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const override;
+	const AABB& localAABB() const override;
 
 	// SelectionTestable implementation
-	virtual void testSelect(Selector& selector, SelectionTest& test) override;
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	// ComponentSelectionTestable
 	bool isSelectedComponents() const override;
@@ -99,8 +97,8 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
-    virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
-    virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ComponentEditable implementation
 	const AABB& getSelectedComponentsBounds() const override;
@@ -112,13 +110,13 @@ public:
 	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) override;
 
 	// Snappable implementation
-	virtual void snapto(float snap) override;
+	void snapto(float snap) override;
 
 	// ComponentSnappable implementation
 	void snapComponents(float snap) override;
 
 	// Translatable implementation
-	virtual void translate(const Vector3& translation) override;
+	void translate(const Vector3& translation) override;
 
 	// Allocates a new node on the heap (via copy construction)
 	scene::INodePtr clone() const override;
@@ -167,7 +165,7 @@ public:
     void onPostRedo() override;
 
 protected:
-    virtual void onVisibilityChanged(bool isVisibleNow) override;
+    void onVisibilityChanged(bool isVisibleNow) override;
 
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
@@ -178,6 +176,8 @@ protected:
     void _applyTransformation() override;
 
     void onSelectionStatusChange(bool changeGroupStatus) override;
+
+    void onRenderStateChanged() override;
 
 private:
 	void transformComponents(const Matrix4& matrix);

@@ -47,7 +47,6 @@ const StringSet& WxGLWidgetManager::getDependencies() const
 
 void WxGLWidgetManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 void WxGLWidgetManager::shutdownModule()

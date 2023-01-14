@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ui/iwindowstate.h"
 #include <wx/event.h>
 #include <wx/weakref.h>
 
@@ -15,16 +16,19 @@ namespace wxutil
  *
  * Use the connect() method to connect a wxSplitterWindow to this object.
  *
- * Use the loadFromNode() and saveToNode() methods to save the internal
- * size info into the given xml::Node
+ * Register this instance to a wxutil::WindowState helper to let the
+ * divider position be saved to the registry on dialog close.
  *
  * This is used in various places (mainframe, entity inspector) to store 
  * the size/position of the paned views on shutdown.
  */
 class PanedPosition :
-	public wxEvtHandler
+	public wxEvtHandler,
+    public ui::IPersistableObject
 {
 private:
+    std::string _name;
+
 	// The position of this object
 	int _position;
 
@@ -32,7 +36,7 @@ private:
 	wxWeakRef<wxSplitterWindow> _paned;
 
 public:
-	PanedPosition();
+	PanedPosition(const std::string& name = "splitter");
 
 	~PanedPosition();
 
@@ -42,8 +46,8 @@ public:
 
 	void setPosition(int position);
 
-	void saveToPath(const std::string& path);
-	void loadFromPath(const std::string& path);
+	void saveToPath(const std::string& path) override;
+	void loadFromPath(const std::string& path) override;
 
 private:
 	// The callback that gets invoked on position change

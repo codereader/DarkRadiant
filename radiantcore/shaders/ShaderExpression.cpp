@@ -3,7 +3,7 @@
 #include "itextstream.h"
 
 #include "string/convert.h"
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 
 #include <stack>
 #include <list>
@@ -224,8 +224,6 @@ public:
 		
 		auto rv = operands.top();
 		operands.pop();
-
-		assert(operands.empty()); // there should be nothing left on the stack
 
 		return rv;
 	}

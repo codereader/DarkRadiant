@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iselection.h"
 #include "render/VertexCb.h"
 #include "render/RenderableGeometry.h"
 
@@ -28,6 +29,7 @@ public:
     RenderableBrushVertices(Brush& brush, const std::vector<Vector3>& selectedVertices) :
         _brush(brush),
         _selectedVertices(selectedVertices),
+        _mode(selection::ComponentSelectionMode::Default),
         _updateNeeded(true)
     {}
 

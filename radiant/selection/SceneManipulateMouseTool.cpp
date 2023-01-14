@@ -31,7 +31,7 @@ bool SceneManipulateMouseTool::manipulationIsPossible()
     assert(activeManipulator);
 
     bool dragComponentMode = activeManipulator->getType() == selection::IManipulator::Drag &&
-        GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent;
+        GlobalSelectionSystem().getSelectionMode() == selection::SelectionMode::Component;
 
     return dragComponentMode || !nothingSelected();
 }
@@ -68,14 +68,14 @@ bool SceneManipulateMouseTool::gridIsEnabled()
 
 bool SceneManipulateMouseTool::nothingSelected() const
 {
-    switch (GlobalSelectionSystem().Mode())
+    switch (GlobalSelectionSystem().getSelectionMode())
     {
-    case selection::SelectionSystem::eComponent:
+    case selection::SelectionMode::Component:
         return GlobalSelectionSystem().countSelectedComponents() == 0;
 
-    case selection::SelectionSystem::eGroupPart:
-    case selection::SelectionSystem::ePrimitive:
-    case selection::SelectionSystem::eEntity:
+    case selection::SelectionMode::GroupPart:
+    case selection::SelectionMode::Primitive:
+    case selection::SelectionMode::Entity:
         return GlobalSelectionSystem().countSelected() == 0;
 
     default:

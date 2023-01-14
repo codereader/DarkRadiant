@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include "imap.h"
 #include "iundo.h"
 #include "iselection.h"
@@ -34,8 +35,8 @@ inline void checkGroupSelectedAvailable()
 		throw cmd::ExecutionNotPossible(_("No map loaded"));
 	}
 
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
-		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
+	if (GlobalSelectionSystem().getSelectionMode() != SelectionMode::Primitive &&
+		GlobalSelectionSystem().getSelectionMode() != SelectionMode::GroupPart)
 	{
 		throw cmd::ExecutionNotPossible(_("Groups can be formed in Primitive and Group Part selection mode only"));
 	}
@@ -109,8 +110,8 @@ inline void checkUngroupSelectedAvailable()
 		throw cmd::ExecutionNotPossible(_("No map loaded"));
 	}
 
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
-		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
+	if (GlobalSelectionSystem().getSelectionMode() != SelectionMode::Primitive &&
+		GlobalSelectionSystem().getSelectionMode() != SelectionMode::GroupPart)
 	{
 		throw cmd::ExecutionNotPossible(_("Groups can be dissolved in Primitive and Group Part selection mode only"));
 	}

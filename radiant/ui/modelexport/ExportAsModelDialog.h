@@ -2,6 +2,7 @@
 
 #include "icommandsystem.h"
 
+#include "ModelExportOptions.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
@@ -13,7 +14,6 @@ class ExportAsModelDialog :
 	private wxutil::XmlResourceBasedWidget
 {
 public:
-	// Constructor
 	ExportAsModelDialog(wxWindow* parent = nullptr);
 
 	static void ShowDialog(const cmd::ArgumentList& args);
@@ -30,6 +30,10 @@ private:
 
 	void saveOptionsToRegistry();
 	void handleFormatSelectionChange();
+
+    Vector3 getExportOrigin();
+    model::ModelExportOrigin getSelectedExportOrigin();
+    void setSelectedExportOrigin(model::ModelExportOrigin exportOrigin);
 };
 
 }

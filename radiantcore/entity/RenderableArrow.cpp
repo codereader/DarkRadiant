@@ -22,9 +22,13 @@ void RenderableArrow::updateGeometry()
     _needsUpdate = false;
 
     static Vector3 Up(0, 0, 1);
-    const auto& origin = _node.worldAABB().getOrigin();
+    
+    // The starting point of the arrow is at the center of the entity's visible bounding box
+    auto origin = _node.getWorldPosition() + _node.localAABB().getOrigin();
+
     const auto& direction = _node.getDirection();
-    auto colour = _node.getEntityColour();
+    auto colour = _node.getRenderState() == scene::INode::RenderState::Active ?
+        _node.getEntityColour() : INACTIVE_ENTITY_COLOUR;
 
     Vector3 left(-direction.y(), direction.x(), 0);
 

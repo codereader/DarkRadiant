@@ -3,13 +3,13 @@
 	<subMenu name="file" caption="&amp;File">
 		<menuItem name="new" caption="&amp;New Map" command="NewMap" />
 		<menuSeparator />
-		<menuItem name="open" caption="&amp;Open..." command="OpenMap" />
+		<menuItem name="open" caption="&amp;Open..." command="OpenMap" icon="file_open.png" />
 		<menuItem name="openMapFromProject" caption="&amp;Open Map from Project..." command="OpenMapFromProject" />
 		<menuItem name="import" caption="&amp;Import Map..." command="ImportMap" />
-		<menuItem name="mergeMap" caption="&amp;Merge Map..." command="MergeControlDialog" />
+		<menuItem name="mergeMap" caption="&amp;Merge Map..." command="ToggleMapMergePanel" />
 		<menuItem name="loadprefab" caption="Import &amp;Prefab..." command="LoadPrefab" />
 		<menuSeparator />
-		<menuItem name="save" caption="&amp;Save" command="SaveMap" />
+		<menuItem name="save" caption="&amp;Save" command="SaveMap" icon="file_save.png" />
 		<menuItem name="saveas" caption="Save &amp;as..." command="SaveMapAs" />
 		<menuItem name="saveCopyAs" caption="Save &amp;copy as..." command="SaveMapCopyAs" />
 		<menuSeparator />
@@ -22,13 +22,10 @@
 		<menuSeparator />
 		<menuItem name="ConvertModel" caption="Import/Convert Model..." command="ConvertModelDialog" />
 		<menuSeparator />
-		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
-		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16red.png" />
-		<menuItem name="reloadSkins" caption="Reload S&amp;kins" command="ReloadSkins" icon="skin16.png" />
-		<menuItem name="refreshShaders" caption="Reload Materials" command="RefreshShaders" icon="texwindow_flushandreload.png" />
-		<menuItem name="reloadDefs" caption="Reload Defs" command="ReloadDefs" />
-		<menuItem name="reloadParticles" caption="Reload Particles" command="ReloadParticles" icon="particle16.png" />
-		<menuItem name="reloadSounds" caption="Reload Sounds" command="ReloadSounds" icon="icon_sound.png" />
+		<menuItem name="reloadDecls" caption="Reload Declarations" command="ReloadDecls" icon="decl.png" />
+		<menuItem name="reloadImages" caption="Reload Images" command="ReloadImages" icon="icon_texture.png" />
+		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16green.png" />
+		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16green.png" />
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="&amp;Game/Project Setup..." command="ProjectSettings" />
 		<menuSeparator />
@@ -78,20 +75,8 @@
 
 	<subMenu name="view" caption="V&amp;iew">
 		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
-		<menuItem name="cameraview" caption="Camera View" command="ToggleCamera" />
-		<menuItem name="layercontrols" caption="Layers" command="ToggleLayerControlDialog" />
-		<menuItem name="consoleView" caption="Console View" command="ToggleConsole" />
-		<menuItem name="textureBrowser" caption="Texture Browser" command="ViewTextures" />
-		<menuItem name="mediabrowser" caption="Media Browser" command="ToggleMediaBrowser" />
-		<menuItem name="entityInspector" caption="Entity Inspector" command="ToggleEntityInspector" />
-		<menuItem name="lightInspector" caption="&amp;Light Inspector" command="ToggleLightInspector" />
-		<menuItem name="surfaceInspector" caption="&amp;Surface Inspector" command="SurfaceInspector" />
-		<menuItem name="patchinspector" caption="&amp;Patch Inspector" command="PatchInspector" />
-		<menuItem name="texturetool" caption="&amp;Texture Tool" command="TextureTool" />
-		<menuItem name="entityList" caption="Entity List" command="EntityList" />
-    <menuItem name="aasDialog" caption="AAS Area Viewer" command="ToggleAasControlDialog" />
-		<menuSeparator />
-
+		<menuItem name="newcamview" caption="New Camera view" command="NewCameraView" />
+    <menuSeparator name="controlSeparatorBottom" />
 		<subMenu name="camera" caption="Camera">
 			<menuItem name="cameraCenter" caption="&amp;Center" command="CenterView" />
 			<menuItem name="cameraUpFloor" caption="&amp;Up Floor" command="UpFloor" />
@@ -145,7 +130,7 @@
 
 		<menuSeparator />
 		<menuItem name="colours" caption="Colours..." command="EditColourScheme" icon="editcolour16.png" />
-		<menuItem name="backgroundimage" caption="Background Image..." command="OverlayDialog" icon="bgimage16.png" />
+		<menuItem name="backgroundimage" caption="Background Image..." command="ToggleOrthoBackgroundPanel" icon="bgimage16.png" />
 	</subMenu>
 
 	<subMenu name="modify" caption="Mo&amp;dify">
@@ -183,7 +168,7 @@
 		<menuItem name="toggleFreeRotation" caption="Rotate Objects independently" command="ToggleFreeObjectRotation" />
 
 		<menuSeparator />
-		<menuItem name="transformDialog" caption="Rotate and scale..." command="TransformDialog" />
+		<menuItem name="transformDialog" caption="Rotate and scale..." command="ToggleTransformPanel" />
 
 	</subMenu>
 
@@ -206,8 +191,9 @@
 
 	<subMenu name="map" caption="M&amp;ap">
 		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
-    <menuItem name="findReplaceTextures" caption="Find and replace textures..." icon="texwindow_findandreplace.png" command="FindReplaceTextures" />
+    <menuItem name="findReplaceTextures" caption="Find and replace textures..." icon="texwindow_findandreplace.png" command="ToggleFindAndReplaceMaterial" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />
+		<menuItem name="skinEditor" caption="Skin Editor..." command="SkinEditor" icon="icon_skin.png" />
 	</subMenu>
 
 	<subMenu name="entity" caption="E&amp;ntity">
@@ -247,12 +233,12 @@
 		<menuItem name="makevisportal" caption="Make Visportal" command="MakeVisportal" icon="make_visportal.png"  />
 
 		<menuSeparator />
-		<menuItem name="brushmakedetail" caption="Make Detail" command="BrushMakeDetail" />
-		<menuItem name="brushmakestructural" caption="Make Structural" command="BrushMakeStructural" />
+		<menuItem name="brushmakedetail" caption="Make Detail" command="BrushMakeDetail" gamefeature="detail_brushes" />
+		<menuItem name="brushmakestructural" caption="Make Structural" command="BrushMakeStructural" gamefeature="detail_brushes" />
 	</subMenu>
 
 	<subMenu name="patch" caption="&amp;Patch">
-		<menuItem name="simplePatch" caption="Create Simple Patch Mesh" command="CreateSimplePatchDialog" />
+		<menuItem name="simplePatch" caption="Create Simple Patch..." command="CreateSimplePatchDialog" />
 		<menuSeparator />
 		<menuItem name="endcap" caption="Create End cap" command="PatchEndCap" />
 		<menuItem name="bevel" caption="Create Bevel" command="PatchBevel" />
@@ -270,19 +256,19 @@
 		<menuSeparator />
 
 		<subMenu name="insertSubdivisions" caption="Insert">
-			<menuItem name="insertColsBegin" caption="Insert 2 Columns at the beginning" command="PatchInsertColumnBeginning" />
-			<menuItem name="insertColsEnd" caption="Insert 2 Columns at the end" command="PatchInsertColumnEnd" />
+			<menuItem name="insertColsBegin" caption="Insert 2 columns at the beginning" command="PatchInsertColumnBeginning" />
+			<menuItem name="insertColsEnd" caption="Insert 2 columns at the end" command="PatchInsertColumnEnd" />
 			<menuSeparator />
-			<menuItem name="insertRowsBegin" caption="Insert 2 Rows at the beginning" command="PatchInsertRowBeginning" />
-			<menuItem name="insertRowsEnd" caption="Insert 2 Rows at the end" command="PatchInsertRowEnd" />
+			<menuItem name="insertRowsBegin" caption="Insert 2 rows at the beginning" command="PatchInsertRowBeginning" />
+			<menuItem name="insertRowsEnd" caption="Insert 2 rows at the end" command="PatchInsertRowEnd" />
 		</subMenu>
 
-		<subMenu name="appendSubdivisions" caption="Append">
-			<menuItem name="appendFirstcolumns" caption="Append 2 columns at the beginning" command="PatchAppendColumnBeginning" />
-			<menuItem name="appendLastcolumns" caption="Append 2 columns at the end" command="PatchAppendColumnEnd" />
+		<subMenu name="appendSubdivisions" caption="Extend">
+			<menuItem name="appendFirstcolumns" caption="Extend by 2 columns at the beginning" command="PatchAppendColumnBeginning" />
+			<menuItem name="appendLastcolumns" caption="Extend by 2 columns at the end" command="PatchAppendColumnEnd" />
 			<menuSeparator />
-			<menuItem name="appendFirstrows" caption="Append 2 rows at the beginning" command="PatchAppendRowBeginning" />
-			<menuItem name="appendLastrows" caption="Append 2 rows at the end" command="PatchAppendRowEnd" />
+			<menuItem name="appendFirstrows" caption="Extend by 2 rows at the beginning" command="PatchAppendRowBeginning" />
+			<menuItem name="appendLastrows" caption="Extend by 2 rows at the end" command="PatchAppendRowEnd" />
 		</subMenu>
 
 		<subMenu name="deleteSubdivisions" caption="Delete">
@@ -307,8 +293,8 @@
 		</subMenu>
 
 		<menuSeparator />
-		<menuItem name="thickenPatches" caption="Thicken Selected Patches..." command="ThickenPatchDialog" />
-		<menuItem name="capselection" caption="Cap Selection..." command="PatchCapDialog" icon="curve_cap.png" />
+		<menuItem name="thickenPatches" caption="Thicken..." command="ThickenPatchDialog" />
+		<menuItem name="capselection" caption="Cap..." command="PatchCapDialog" icon="curve_cap.png" />
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
         <menuItem name="bulgePatch" caption="Bulge Patch..." command="BulgePatchDialog" />
@@ -329,6 +315,7 @@
 	<subMenu name="help" caption="&amp;Help">
 		<menuItem name="about" caption="&amp;About" command="About" />
         <menuItem name="openForumLink" caption="&amp;Community Forum" command="OpenForumUrl" />
+        <menuItem name="openScriptRef" caption="&amp;Script Reference Wiki Article" command="OpenScriptReference" />
 		<menuItem name="userGuide" caption="&amp;User Guide (Online)" command="ShowUserGuide" />
 		<menuItem name="userGuideLocal" caption="&amp;User Guide (Local)" command="ShowOfflineUserGuide" />
 	</subMenu>

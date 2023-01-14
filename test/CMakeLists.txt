@@ -4,12 +4,23 @@ add_executable(drtest
                Basic.cpp
                Brush.cpp
                Camera.cpp
+               Clipboard.cpp
+               CodeTokeniser.cpp
                ColourSchemes.cpp
+               CommandSystem.cpp
                ContinuousBuffer.cpp
                CSG.cpp
+               Curves.cpp
+               DeclManager.cpp
+               DefBlockSyntaxParser.cpp
+               DefTokenisers.cpp
                Entity.cpp
+               EntityClass.cpp
                Favourites.cpp
                FileTypes.cpp
+               Filters.cpp
+               Fx.cpp
+               Game.cpp
                GeometryStore.cpp
                Grid.cpp
                HeadlessOpenGLContext.cpp
@@ -37,19 +48,20 @@ add_executable(drtest
                Prefabs.cpp
                Renderer.cpp
                SceneNode.cpp
+               SceneStatistics.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
                Settings.cpp
+               SoundManager.cpp
                TextureManipulation.cpp
                TextureTool.cpp
                Transformation.cpp
                UndoRedo.cpp
                VFS.cpp
-               WorldspawnColour.cpp)
+               WorldspawnColour.cpp
+               XmlUtil.cpp)
 
 find_package(Threads REQUIRED)
-
-target_compile_options(drtest PUBLIC ${SIGC_CFLAGS})
 
 # Set up the paths such that the drtest executable can find the test resources
 # and the core binary in the build workspace (in install/ and test/resources/)

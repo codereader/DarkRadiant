@@ -23,8 +23,6 @@ public:
 	// A list of iterators, used for communication with the CurveEditInstance
 	typedef std::vector<ControlPoints::iterator> IteratorList;
 
-	typedef std::function<void()> CurveChangedCallback;
-
 protected:
 	ControlPoints _controlPoints;
 	ControlPoints _controlPointsTransformed;
@@ -45,7 +43,7 @@ public:
 	const AABB& getBounds() const;
 
     /// Signal emitted when curve changes
-    sigc::signal<void> signal_curveChanged()
+    sigc::signal<void>& signal_curveChanged()
     {
         return _sigCurveChanged;
     }

@@ -5,9 +5,11 @@
 #include "imap.h"
 #include "ieclass.h"
 #include "ientity.h"
+#include "ModelExportOptions.h"
 #include "algorithm/Primitives.h"
 #include "algorithm/Scene.h"
 #include "scenelib.h"
+#include "os/file.h"
 #include "os/path.h"
 #include "string/case_conv.h"
 
@@ -38,12 +40,14 @@ TEST_F(ModelExportTest, ExportPatchMesh)
 
     cmd::ArgumentList argList;
 
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
     argList.push_back(outputFilename.string());
     argList.push_back(std::string("lwo"));
-    argList.push_back(true); // centerObjects
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::SelectionCenter)); // centerObjects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
     argList.push_back(true); // skipCaulk
     argList.push_back(false); // replaceSelectionWithModel
-    argList.push_back(false); // useEntityOrigin
     argList.push_back(false); // exportLightsAsObjects
 
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
@@ -351,13 +355,13 @@ TEST_F(ModelExportTest, ConvertAseToLwo)
 // #5659: Exporting a model should be reloaded automatically
 TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
 {
-    auto modelMaterial1 = "textures/numbers/1";
-    auto modelMaterial2 = "textures/numbers/2";
+    auto originalModelMaterial = "textures/numbers/1";
+    auto changedModelMaterial = "textures/numbers/2";
     auto modRelativePath = "models/refresh_test.ase";
     auto aseOutputPath = _context.getTestProjectPath() + modRelativePath;
 
     auto brush = algorithm::createCubicBrush(
-        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), modelMaterial1);
+        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), originalModelMaterial);
 
     GlobalSelectionSystem().setSelectedAll(false);
     Node_setSelected(brush, true);
@@ -365,21 +369,27 @@ TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
     // Export this model to the mod-relative location
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", { aseOutputPath, cmd::Argument("ase") });
 
-    // Create an entity referencing this new model
+    // Create two entities referencing this new model
     auto eclass = GlobalEntityClassManager().findClass("func_static");
-    auto entity = GlobalEntityModule().createEntity(eclass);
+    auto entity1 = GlobalEntityModule().createEntity(eclass);
+    auto entity2 = GlobalEntityModule().createEntity(eclass);
 
-    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+    scene::addNodeToContainer(entity1, GlobalMapModule().getRoot());
+    scene::addNodeToContainer(entity2, GlobalMapModule().getRoot());
 
     // This should assign the model node to the entity
-    Node_getEntity(entity)->setKeyValue("model", modRelativePath);
-    model::ModelNodePtr model = getChildModelNode(entity);
+    Node_getEntity(entity1)->setKeyValue("model", modRelativePath);
+    Node_getEntity(entity2)->setKeyValue("model", modRelativePath);
+    model::ModelNodePtr model1 = getChildModelNode(entity1);
+    model::ModelNodePtr model2 = getChildModelNode(entity2);
 
-    EXPECT_TRUE(model) << "Could not locate the model node of the entity";
-    EXPECT_EQ(model->getIModel().getSurface(0).getDefaultMaterial(), modelMaterial1);
+    EXPECT_TRUE(model1) << "Could not locate the model node of the entity";
+    EXPECT_TRUE(model2) << "Could not locate the model node of the entity";
+    EXPECT_EQ(model1->getIModel().getSurface(0).getDefaultMaterial(), originalModelMaterial);
+    EXPECT_EQ(model2->getIModel().getSurface(0).getDefaultMaterial(), originalModelMaterial);
 
     // Now change the brush texture and re-export the model
-    Node_getIBrush(brush)->setShader(modelMaterial2);
+    Node_getIBrush(brush)->setShader(changedModelMaterial);
 
     GlobalSelectionSystem().setSelectedAll(false);
     Node_setSelected(brush, true);
@@ -388,10 +398,13 @@ TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", { aseOutputPath, cmd::Argument("ase") });
 
     // If all went well, the entity has automatically refreshed its model
-    model = getChildModelNode(entity);
+    model1 = getChildModelNode(entity1);
+    model2 = getChildModelNode(entity2);
 
-    EXPECT_TRUE(model) << "Could not locate the model node of the entity";
-    EXPECT_EQ(model->getIModel().getSurface(0).getDefaultMaterial(), modelMaterial2);
+    EXPECT_TRUE(model1) << "Could not locate the model node of the entity";
+    EXPECT_TRUE(model2) << "Could not locate the model node of the entity";
+    EXPECT_EQ(model1->getIModel().getSurface(0).getDefaultMaterial(), changedModelMaterial);
+    EXPECT_EQ(model2->getIModel().getSurface(0).getDefaultMaterial(), changedModelMaterial);
 
     fs::remove(aseOutputPath);
 }
@@ -435,14 +448,17 @@ TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
 
     // Export this model to a mod-relative location
 
-    // ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
     cmd::ArgumentList argList;
 
-    argList.emplace_back(fullModelPath);
-    argList.emplace_back(os::getExtension(exportedModelPath)); // lwo
-    argList.emplace_back(false); // center objects
-    argList.emplace_back(false); // skip caulk
-    argList.emplace_back(true); // replace selection
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
+    argList.push_back(fullModelPath);
+    argList.push_back(os::getExtension(exportedModelPath)); // lwo
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::MapOrigin)); // don't center objects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
+    argList.push_back(false); // skipCaulk
+    argList.push_back(true); // replaceSelectionWithModel
+    argList.push_back(false); // exportLightsAsObjects
 
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
 
@@ -465,7 +481,7 @@ TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
     EXPECT_EQ(newEntity->getKeyValue("dummy1"), "value1");
     EXPECT_EQ(newEntity->getKeyValue("dummy2"), "value2");
     EXPECT_EQ(newEntity->getKeyValue("classname"), "atdm:mover_door");
-    EXPECT_EQ(newEntity->getEntityClass()->getName(), "atdm:mover_door");
+    EXPECT_EQ(newEntity->getEntityClass()->getDeclName(), "atdm:mover_door");
 
     // This one should not have been inherited, it was belonging to the other entity
     EXPECT_EQ(newEntity->getKeyValue("henrys_key"), "");
@@ -515,14 +531,17 @@ TEST_F(ModelExportTest, ExportedModelInheritsLayers)
 
     // Export this model to a mod-relative location
 
-    // ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
     cmd::ArgumentList argList;
 
-    argList.emplace_back(fullModelPath);
-    argList.emplace_back(os::getExtension(exportedModelPath)); // lwo
-    argList.emplace_back(false); // center objects
-    argList.emplace_back(false); // skip caulk
-    argList.emplace_back(true); // replace selection
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
+    argList.push_back(fullModelPath);
+    argList.push_back(os::getExtension(exportedModelPath)); // lwo
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::MapOrigin)); // don't center objects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
+    argList.push_back(false); // skipCaulk
+    argList.push_back(true); // replaceSelectionWithModel
+    argList.push_back(false); // exportLightsAsObjects
 
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
 
@@ -545,6 +564,146 @@ TEST_F(ModelExportTest, ExportedModelInheritsLayers)
     EXPECT_EQ(layers.count(layer3), 1) << "New model should be part of Layer 3";
 
     fs::remove(fullModelPath);
+}
+
+TEST_F(ModelExportTest, ExportUsingEntityOrigin)
+{
+    auto modelPath = "models/torch.lwo";
+    auto exportedModelPath = "models/export_test.lwo";
+    auto fullModelPath = _context.getTestProjectPath() + exportedModelPath;
+
+    // Create an entity referencing this new model
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // This should assign the model node to the entity
+    Node_getEntity(entity)->setKeyValue("model", modelPath);
+    // Offset this entity from the origin
+    Node_getEntity(entity)->setKeyValue("origin", "300 400 50");
+
+    Node_setSelected(entity, true);
+
+    // Choose a file in our temp data folder
+    std::string modRelativePath = "models/temp/temp_model_keeping_origin.lwo";
+
+    fs::path outputFilename = _context.getTestProjectPath();
+    outputFilename /= modRelativePath;
+    os::makeDirectory(outputFilename.parent_path().string());
+
+    auto exporter = GlobalModelFormatManager().getExporter("lwo");
+
+    cmd::ArgumentList argList;
+
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
+    argList.push_back(outputFilename.string());
+    argList.push_back(std::string("lwo"));
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::EntityOrigin)); // center objects
+    argList.push_back(Node_getEntity(entity)->getKeyValue("name")); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
+    argList.push_back(true); // skipCaulk
+    argList.push_back(false); // replaceSelectionWithModel
+    argList.push_back(false); // exportLightsAsObjects
+
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
+
+    auto model = GlobalModelCache().getModel(modRelativePath);
+    EXPECT_TRUE(model);
+
+    // Model should be centered around the entity's origin
+    auto entityOrigin = string::convert<Vector3>(entity->getEntity().getKeyValue("origin"));
+    EXPECT_TRUE(math::isNear(model->localAABB().getOrigin(), entity->worldAABB().getOrigin() - entityOrigin, 0.01));
+    EXPECT_TRUE(math::isNear(model->localAABB().getExtents(), entity->worldAABB().getExtents(), 0.01));
+
+    // Clean up the file
+    fs::remove(outputFilename);
+}
+
+TEST_F(ModelExportTest, ExportUsingCustomOrigin)
+{
+    auto modelPath = "models/torch.lwo";
+    auto exportedModelPath = "models/export_test.lwo";
+    auto fullModelPath = _context.getTestProjectPath() + exportedModelPath;
+
+    // Create an entity referencing this new model
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // This should assign the model node to the entity
+    Node_getEntity(entity)->setKeyValue("model", modelPath);
+    // Offset this entity from the origin
+    Node_getEntity(entity)->setKeyValue("origin", "300 400 50");
+
+    Node_setSelected(entity, true);
+
+    // Choose a file in our temp data folder
+    std::string modRelativePath = "models/temp/temp_model_keeping_origin.lwo";
+
+    fs::path outputFilename = _context.getTestProjectPath();
+    outputFilename /= modRelativePath;
+    os::makeDirectory(outputFilename.parent_path().string());
+
+    auto exporter = GlobalModelFormatManager().getExporter("lwo");
+
+    Vector3 customOrigin(70, -17, 600);
+    cmd::ArgumentList argList;
+
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
+    argList.push_back(outputFilename.string());
+    argList.push_back(std::string("lwo"));
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::CustomOrigin)); // center objects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(customOrigin); // CustomOrigin
+    argList.push_back(true); // skipCaulk
+    argList.push_back(false); // replaceSelectionWithModel
+    argList.push_back(false); // exportLightsAsObjects
+
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
+
+    auto model = GlobalModelCache().getModel(modRelativePath);
+    EXPECT_TRUE(model);
+
+    // Model should be centered around the custom origin
+    EXPECT_TRUE(math::isNear(model->localAABB().getOrigin(), entity->worldAABB().getOrigin() - customOrigin, 0.01));
+    EXPECT_TRUE(math::isNear(model->localAABB().getExtents(), entity->worldAABB().getExtents(), 0.01));
+
+    // Clean up the file
+    fs::remove(outputFilename);
+}
+
+// #5997: ExportSelectedAsCollisionModel should auto-create any necessary folders
+TEST_F(ModelExportTest, ExportSelectedAsCollisionModelCreatesFolder)
+{
+    // Create a func_static
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    auto brush = algorithm::createCubicBrush(entity, Vector3(50, 50, 50));
+
+    // Select just the entity
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(entity, true);
+
+    auto relativeModelPath = "models/some_folder_not_existing_outside_pk4s/testcube.ase";
+    auto expectedPhysicalPath = _context.getTestProjectPath() + relativeModelPath;
+    expectedPhysicalPath = os::replaceExtension(expectedPhysicalPath, "cm");
+
+    // Make sure the folder is not there
+    fs::remove_all(os::getDirectory(expectedPhysicalPath));
+    EXPECT_FALSE(os::fileOrDirExists(os::getDirectory(expectedPhysicalPath))) << "Folder should not exist yet";
+    EXPECT_FALSE(os::fileOrDirExists(expectedPhysicalPath)) << "Export CM should not exist yet";
+
+    // Export the selection as collision mesh for the torch model
+    GlobalCommandSystem().executeCommand("ExportSelectedAsCollisionModel", { relativeModelPath });
+
+    // Both file and folder need to exist, just check the file
+    EXPECT_TRUE(os::fileOrDirExists(expectedPhysicalPath)) << "Folder should have been created by ExportSelectedAsCollisionModel";
+
+    // Remove the folder after the test is done
+    fs::remove_all(os::getDirectory(expectedPhysicalPath));
 }
 
 }

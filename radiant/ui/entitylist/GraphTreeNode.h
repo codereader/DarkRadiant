@@ -1,15 +1,14 @@
 #pragma once
 
-#include "wxutil/dataview/TreeModel.h"
+#include "inode.h"
+#include <wx/dataview.h>
 
 namespace ui
 {
 
 /**
- * greebo: This structure contains information about the
- *         scene::INode displayed in the EntityList.
- *
- * This includes a valid instance and a valid Gtk::TreeModel::iterator.
+ * A structure representing a single scene node in the EntityList.
+ * Holds a reference to the tree model's wxDataViewItem.
  */
 class GraphTreeNode
 {
@@ -20,9 +19,12 @@ private:
 	// The iterator pointing to the row in a wxutil::TreeModel
 	wxDataViewItem _iter;
 public:
-	GraphTreeNode(const scene::INodePtr& node) :
-		_node(node)
-	{}
+    using Ptr = std::shared_ptr<GraphTreeNode>;
+
+    GraphTreeNode(const scene::INodePtr& node, const wxDataViewItem& iter) :
+        _node(node),
+        _iter(iter)
+    {}
 
 	// Convenience accessor for methods
 	wxDataViewItem& getIter()
@@ -35,7 +37,5 @@ public:
 		return _node;
 	}
 };
-typedef std::shared_ptr<GraphTreeNode> GraphTreeNodePtr;
 
-} // namespace ui
-
+} // namespace

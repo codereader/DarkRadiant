@@ -15,7 +15,6 @@ add_library(dm_stimresponse MODULE
             StimResponse.cpp
             StimResponseEditor.cpp
             StimTypes.cpp)
-target_compile_options(dm_stimresponse PUBLIC ${SIGC_CFLAGS})
 target_link_libraries(dm_stimresponse PUBLIC wxutil)
 
 # Enable precompiled header for dm_stimresponse

@@ -34,7 +34,6 @@ public:
 	}
 
 	virtual void initialiseModule(const IApplicationContext& ctx) {
-		rMessage() << getName() << "::initialiseModule called.\n";
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand("ConversationEditor", ui::ConversationDialog::ShowDialog);

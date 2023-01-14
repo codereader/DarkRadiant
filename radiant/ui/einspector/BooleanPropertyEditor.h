@@ -21,7 +21,7 @@ private:
 	wxCheckBox* _checkBox;
 
 	// Key to edit
-	std::string _key;
+    ITargetKey::Ptr _key;
 
 private:
 
@@ -30,15 +30,14 @@ private:
 public:
 
 	// Construct a BooleanPropertyEditor with a key to edit
-	BooleanPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
+	BooleanPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
 	void updateFromEntity();
 
 	// Create a new BooleanPropertyEditor
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<BooleanPropertyEditor>(parent, entities, name);
+        return std::make_shared<BooleanPropertyEditor>(parent, entities, key);
     }
 };
 

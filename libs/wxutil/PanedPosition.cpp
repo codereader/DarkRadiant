@@ -1,18 +1,21 @@
 #include "PanedPosition.h"
 
 #include "string/convert.h"
-#include "iregistry.h"
+#include "registry/registry.h"
 #include <wx/splitter.h>
+
+#include "string/predicate.h"
 
 namespace
 {
-    const int DEFAULT_POSITION = 200;
+    constexpr int DEFAULT_POSITION = 200;
 }
 
 namespace wxutil
 {
 
-PanedPosition::PanedPosition() :
+PanedPosition::PanedPosition(const std::string& name) :
+    _name(name),
     _position(DEFAULT_POSITION)
 {}
 
@@ -23,20 +26,21 @@ PanedPosition::~PanedPosition()
 
 void PanedPosition::connect(wxSplitterWindow* paned)
 {
-    wxASSERT(_paned == NULL); // detect weirdness
+    if (_paned != nullptr)
+    {
+        disconnect();
+    }
 
     _paned = paned;
 
-    _paned->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED,
-                 &PanedPosition::onPositionChange, this);
+    _paned->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED, &PanedPosition::onPositionChange, this);
 }
 
 void PanedPosition::disconnect()
 {
     if (_paned)
     {
-        _paned->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGED,
-                       &PanedPosition::onPositionChange, this);
+        _paned->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGED, &PanedPosition::onPositionChange, this);
 
         _paned.Release();
     }
@@ -54,14 +58,12 @@ void PanedPosition::setPosition(int position)
 
 void PanedPosition::saveToPath(const std::string& path)
 {
-    GlobalRegistry().setAttribute(path, "position", string::to_string(_position));
+    GlobalRegistry().setAttribute(registry::combinePath(path, _name), "position", string::to_string(_position));
 }
 
 void PanedPosition::loadFromPath(const std::string& path)
 {
-    setPosition(
-        string::convert<int>(GlobalRegistry().getAttribute(path, "position"))
-    );
+    setPosition(string::convert<int>(GlobalRegistry().getAttribute(registry::combinePath(path, _name), "position")));
 }
 
 void PanedPosition::onPositionChange(wxSplitterEvent& ev)

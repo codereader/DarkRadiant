@@ -104,7 +104,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     }
 }
 
-void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions)
+void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const std::set<std::string>& allowedExtensions)
 {
     // Check if the new configuration is any different then the current one
     if (!vfsSearchPaths.empty() && vfsSearchPaths == _vfsSearchPaths && allowedExtensions == _allowedExtensions)
@@ -139,10 +139,7 @@ void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const Extens
         initDirectory(path);
     }
 
-    for (Observer* observer : _observers)
-    {
-        observer->onFileSystemInitialise();
-    }
+    signal_Initialised().emit();
 }
 
 bool Doom3FileSystem::isInitialised() const
@@ -152,11 +149,6 @@ bool Doom3FileSystem::isInitialised() const
 
 void Doom3FileSystem::shutdown()
 {
-    for (Observer* observer : _observers)
-    {
-        observer->onFileSystemShutdown();
-    }
-
     _archives.clear();
     _directories.clear();
     _vfsSearchPaths.clear();
@@ -166,19 +158,9 @@ void Doom3FileSystem::shutdown()
     rMessage() << "Filesystem shut down" << std::endl;
 }
 
-const VirtualFileSystem::ExtensionSet& Doom3FileSystem::getArchiveExtensions() const
+const std::set<std::string>& Doom3FileSystem::getArchiveExtensions() const
 {
     return _allowedExtensions;
-}
-
-void Doom3FileSystem::addObserver(Observer& observer)
-{
-    _observers.insert(&observer);
-}
-
-void Doom3FileSystem::removeObserver(Observer& observer)
-{
-    _observers.erase(&observer);
 }
 
 int Doom3FileSystem::getFileCount(const std::string& filename)
@@ -199,7 +181,7 @@ int Doom3FileSystem::getFileCount(const std::string& filename)
 
 FileInfo Doom3FileSystem::getFileInfo(const std::string& vfsRelativePath)
 {
-    for (const ArchiveDescriptor& descriptor : _archives)
+    for (const auto& descriptor : _archives)
     {
         if (!descriptor.archive->containsFile(vfsRelativePath))
         {
@@ -233,9 +215,9 @@ ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename)
         return ArchiveFilePtr();
     }
 
-    for (const ArchiveDescriptor& descriptor : _archives)
+    for (const auto& descriptor : _archives)
     {
-        ArchiveFilePtr file = descriptor.archive->openFile(filename);
+        auto file = descriptor.archive->openFile(filename);
 
         if (file)
         {
@@ -249,8 +231,7 @@ ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename)
 
 ArchiveFilePtr Doom3FileSystem::openFileInAbsolutePath(const std::string& filename)
 {
-    std::shared_ptr<archive::DirectoryArchiveFile> file =
-        std::make_shared<archive::DirectoryArchiveFile>(filename, filename);
+    auto file = std::make_shared<archive::DirectoryArchiveFile>(filename, filename);
 
     if (!file->failed())
     {
@@ -262,9 +243,9 @@ ArchiveFilePtr Doom3FileSystem::openFileInAbsolutePath(const std::string& filena
 
 ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename)
 {
-    for (const ArchiveDescriptor& descriptor : _archives)
+    for (const auto& descriptor : _archives)
     {
-        ArchiveTextFilePtr file = descriptor.archive->openTextFile(filename);
+        auto file = descriptor.archive->openTextFile(filename);
 
         if (file)
         {
@@ -277,8 +258,7 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename)
 
 ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string& filename)
 {
-    std::shared_ptr<archive::DirectoryArchiveTextFile> file =
-        std::make_shared<archive::DirectoryArchiveTextFile>(filename, filename, filename);
+    auto file = std::make_shared<archive::DirectoryArchiveTextFile>(filename, filename, filename);
 
     if (!file->failed())
     {
@@ -304,7 +284,7 @@ std::shared_ptr<AssetsList> Doom3FileSystem::findAssetsList(const std::string& t
     // Look for an assets.lst in the top-level dir (can be an empty empty)
     std::string assetsLstName = topLevelDir + AssetsList::FILENAME;
 
-    ArchiveTextFilePtr assetsLstFile = openTextFile(assetsLstName);
+    auto assetsLstFile = openTextFile(assetsLstName);
     return std::make_shared<AssetsList>(assetsLstFile);
 }
 
@@ -324,7 +304,7 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.
-    for (const ArchiveDescriptor& descriptor : _archives)
+    for (const auto& descriptor : _archives)
     {
         descriptor.archive->traverse(fileVisitor, dirWithSlash);
     }
@@ -360,7 +340,7 @@ void Doom3FileSystem::forEachFileInArchive(const std::string& absoluteArchivePat
 
 std::string Doom3FileSystem::findFile(const std::string& name)
 {
-    for (const ArchiveDescriptor& descriptor : _archives)
+    for (const auto& descriptor : _archives)
     {
         if (!descriptor.is_pakfile && descriptor.archive->containsFile(name))
         {
@@ -373,7 +353,7 @@ std::string Doom3FileSystem::findFile(const std::string& name)
 
 std::string Doom3FileSystem::findRoot(const std::string& name)
 {
-    for (const ArchiveDescriptor& descriptor : _archives)
+    for (const auto& descriptor : _archives)
     {
         if (!descriptor.is_pakfile && path_equal_n(name.c_str(), descriptor.name.c_str(), descriptor.name.size()))
         {
@@ -415,6 +395,11 @@ void Doom3FileSystem::initPakFile(const std::string& filename)
     }
 }
 
+sigc::signal<void>& Doom3FileSystem::signal_Initialised()
+{
+    return _sigInitialised;
+}
+
 const SearchPaths& Doom3FileSystem::getVfsSearchPaths()
 {
     // Should not be called before the list is initialised
@@ -441,12 +426,14 @@ const StringSet& Doom3FileSystem::getDependencies() const
 
 void Doom3FileSystem::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called" << std::endl;
 }
 
 void Doom3FileSystem::shutdownModule()
 {
     shutdown();
 }
+
+// Static module instance
+module::StaticModuleRegistration<Doom3FileSystem> fileSystemModule;
 
 }

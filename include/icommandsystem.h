@@ -25,7 +25,13 @@ enum ArgumentTypeFlags
 	ARGTYPE_OPTIONAL	= 1 << 16,
 };
 
-// One command argument, provides several getter methods
+/**
+ * @brief A single command argument which may be of several different types.
+ *
+ * The argument maintains a list of type flags which indicate which types this argument may be
+ * interpreted as. For example, an argument constructed from an integer may also be interpreted as
+ * a double, so will have both ARGTYPE_INT and ARGTYPE_DOUBLE.
+ */
 class Argument
 {
 	std::string _strValue;
@@ -119,7 +125,7 @@ public:
 		return _type;
 	}
 
-	std::string getString() const 
+	std::string getString() const
 	{
 		return _strValue;
 	}
@@ -160,7 +166,7 @@ private:
 		}
 		catch (std::logic_error&) {}
 
-		try 
+		try
 		{
 			_doubleValue = std::stod(_strValue);
 			// cast succeeded
@@ -207,6 +213,18 @@ typedef std::vector<Argument> ArgumentList;
  */
 typedef std::function<void (const ArgumentList&)> Function;
 
+/// Convert a zero-argument function into a Function by discarding the ArgumentList
+template <typename F> Function noArgs(F f)
+{
+    return [f](const ArgumentList&) { f(); };
+}
+
+/**
+ * @brief Signature for a function which can test if a particular command should
+ * be enabled.
+ */
+using CheckFunction = std::function<bool()>;
+
 // A command signature consists just of arguments, return type is always void
 typedef std::vector<std::size_t> Signature;
 
@@ -224,8 +242,21 @@ struct AutoCompletionInfo
 	Candidates candidates;
 };
 
-class ICommandSystem :
-	public RegisterableModule
+/**
+ * @brief Interface for the CommandSystem module.
+ *
+ * Commands are self-contained blocks of code (function calls or lambdas) which
+ * can be invoked from menu items or from typing string commands in the
+ * DarkRadiant console. They can also be called from Python.
+ *
+ * Commands can be invoked programmatically via the executeCommand() method,
+ * which is sometimes useful if the implementing function isn't exposed via a
+ * suitable module interface. Note however that neither the name of the command
+ * (an arbitrary string) or the types of its arguments are checked at
+ * compile-time, so calling C++ methods directly is generally preferable where
+ * possible.
+ */
+class ICommandSystem: public RegisterableModule
 {
 public:
 
@@ -241,8 +272,40 @@ public:
 	virtual void addCommand(const std::string& name, Function func,
 							const Signature& signature = Signature()) = 0;
 
-	// Returns true if the named command exists
-	virtual bool commandExists(const std::string& name) = 0;
+    /**
+     * @brief Add a new command with a check function which can test if the
+     * command is currently runnable.
+     *
+     * This is aimed at commands which are not always available, e.g. because
+     * they require one or more objects to be selected. If the command is not
+     * currently available, the UI might choose to disable the button or menu
+     * item which invokes it.
+     *
+     * @param name
+     * Name of the command.
+     *
+     * @param func
+     * Function to call when the command is invoked.
+     *
+     * @param check
+     * Function to check whether the command should be enabled based on current
+     * application state.
+     */
+    virtual void addWithCheck(const std::string& name, Function func, CheckFunction check,
+                              const Signature& = {}) = 0;
+
+    /// Returns true if the named command exists
+    virtual bool commandExists(const std::string& name) = 0;
+
+    /**
+     * @brief Check if the named command is currently runnable.
+     *
+     * This is just a signal to the UI that a command should be disabled; the
+     * command system does NOT guarantee that a command for which canExecute()
+     * returns false won't actually be invoked by a subsequent call to
+     * executeCommand().
+     */
+    virtual bool canExecute(const std::string& name) const = 0;
 
 	/**
 	 * Remove a named command.
@@ -293,19 +356,22 @@ public:
 	 */
 	virtual void execute(const std::string& input) = 0;
 
-	/**
-	 * Execute the named command with the given arguments.
-	 */
-	virtual void executeCommand(const std::string& name) = 0;
-	virtual void executeCommand(const std::string& name, const Argument& arg1) = 0;
-	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2) = 0;
-	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3) = 0;
+    /// Execute the named command with the given list of arguments
+    virtual void executeCommand(const std::string& name, const ArgumentList& args = {}) = 0;
 
-	// For more than 3 arguments, use this method to pass a vector of arguments
-	virtual void executeCommand(const std::string& name,
-								 const ArgumentList& args) = 0;
+    /// Convenience method to execute a command with 1 argument
+    void executeCommand(const std::string& name, const Argument& arg1)
+    {
+        executeCommand(name, ArgumentList{arg1});
+    }
 
-	/**
+    /// Convenience method to execute a command with 2 arguments
+    void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2)
+    {
+        executeCommand(name, {arg1, arg2});
+    }
+
+    /**
 	 * greebo: Returns autocompletion info for the given prefix.
 	 */
 	virtual AutoCompletionInfo getAutoCompletionInfo(const std::string& prefix) = 0;

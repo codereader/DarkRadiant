@@ -160,7 +160,7 @@ void createCMFromSelection(const cmd::ArgumentList& args)
 			cm->addBrush(brushes[i]->getBrush());
 		}
 
-		std::string basePath = GlobalGameManager().getModPath();
+		std::string basePath = game::current::getWriteableGameResourcePath();
 
 		std::string modelPath = basePath + model;
 
@@ -171,7 +171,10 @@ void createCMFromSelection(const cmd::ArgumentList& args)
 
 		try
 		{
-			// create the new autosave filename by changing the extension
+            // Make sure the output folder exists
+            fs::create_directories(os::getDirectory(modelPath));
+
+			// create the new filename by changing the extension
 			fs::path cmPath = os::replaceExtension(modelPath, newExtension);
 
 			// Open the stream to the output file
@@ -347,7 +350,7 @@ public:
 	}
 };
 
-void createDecalsForSelectedFaces(const cmd::ArgumentList& args)
+void createDecalsForSelectedFaces()
 {
 	// Sanity check
 	if (FaceInstance::Selection().empty())
@@ -379,7 +382,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args)
 	}
 }
 
-void makeVisportal(const cmd::ArgumentList& args)
+void makeVisportal()
 {
 	BrushPtrVector brushes = getSelectedBrushes();
 

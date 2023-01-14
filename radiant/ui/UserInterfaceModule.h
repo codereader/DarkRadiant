@@ -24,6 +24,7 @@
 #include "messages/NotificationMessage.h"
 #include "ui/mru/MRUMenu.h"
 #include "DispatchEvent.h"
+#include "mainframe/ViewMenu.h"
 #include "map/AutoSaveTimer.h"
 #include "textool/TexToolModeToggles.h"
 
@@ -42,6 +43,8 @@ class UserInterfaceModule :
 	public IUserInterfaceModule
 {
 private:
+    std::map<std::string, IUserControl::Ptr> _userControls;
+
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;
@@ -59,6 +62,7 @@ private:
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;
     sigc::connection _mapEditModeChangedConn;
+    sigc::connection _reloadMaterialsConn;
 
 	std::size_t _execFailedListener;
 	std::size_t _notificationListener;
@@ -66,6 +70,8 @@ private:
 	std::unique_ptr<MRUMenu> _mruMenu;
 
 	std::unique_ptr<map::AutoSaveTimer> _autosaveTimer;
+
+    std::unique_ptr<ViewMenu> _viewMenu;
 
 public:
 	// RegisterableModule
@@ -79,13 +85,17 @@ public:
 	// This method is safe to be called from any thread.
 	void dispatch(const std::function<void()>& action) override;
 
+    void registerControl(const IUserControl::Ptr& control) override;
+    IUserControl::Ptr findControl(const std::string& name) override;
+    void unregisterControl(const std::string& controlName) override;
+    void foreachControl(const std::function<void(const std::string&)>& functor) override;
+
 private:
 	void registerUICommands();
 	void initialiseEntitySettings();
 	void applyEntityVertexColours();
 	void applyBrushVertexColours();
 	void applyPatchVertexColours();
-	void refreshShadersCmd(const cmd::ArgumentList& args);
 
 	void handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg);
 	static void HandleNotificationMessage(radiant::NotificationMessage& msg);

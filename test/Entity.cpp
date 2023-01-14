@@ -6,18 +6,15 @@
 #include "iselectable.h"
 #include "iselection.h"
 #include "ifilesystem.h"
+#include "isound.h"
 #include "iundo.h"
 #include "ishaders.h"
-#include "icolourscheme.h"
-#include "ieclasscolours.h"
 #include "render/RenderableCollectionWalker.h"
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
 #include "transformlib.h"
 #include "registry/registry.h"
-#include "eclass.h"
-#include "string/join.h"
 #include "scenelib.h"
 #include "algorithm/Entity.h"
 #include "algorithm/Scene.h"
@@ -70,151 +67,6 @@ std::list<Entity::Attachment> getAttachments(const IEntityNodePtr& node)
 }
 
 using StringMap = std::map<std::string, std::string>;
-
-TEST_F(EntityTest, LookupEntityClass)
-{
-    // Nonexistent class should return null (but not throw or crash)
-    auto cls = GlobalEntityClassManager().findClass("notAnEntityClass");
-    EXPECT_FALSE(cls);
-
-    // Real entity class should return a valid pointer
-    auto lightCls = GlobalEntityClassManager().findClass("light");
-    EXPECT_TRUE(lightCls);
-}
-
-TEST_F(EntityTest, LightEntitiesRecognisedAsLights)
-{
-    // The 'light' class should be recognised as an actual light
-    auto lightCls = GlobalEntityClassManager().findClass("light");
-    EXPECT_TRUE(lightCls->isLight());
-
-    // Things which are not lights should also be correctly identified
-    auto notLightCls = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");
-    EXPECT_TRUE(notLightCls);
-    EXPECT_FALSE(notLightCls->isLight());
-
-    // Anything deriving from the light class should also be a light
-    auto derived1 = GlobalEntityClassManager().findClass("atdm:light_base");
-    EXPECT_TRUE(derived1->isLight());
-
-    // Second level derivations too
-    auto derived2 = GlobalEntityClassManager().findClass("light_extinguishable");
-    EXPECT_TRUE(derived2->isLight());
-
-    // torch_brazier is not a light itself, but has a light attached, so it
-    // should not have isLight() == true
-    auto brazier = GlobalEntityClassManager().findClass("atdm:torch_brazier");
-    EXPECT_FALSE(brazier->isLight());
-}
-
-TEST_F(EntityTest, EntityClassInheritsAttributes)
-{
-    auto cls = GlobalEntityClassManager().findClass("light_extinguishable");
-    ASSERT_TRUE(cls);
-
-    // Inherited from 'light'
-    EXPECT_EQ(cls->getAttributeValue("editor_color"), "0 1 0");
-    EXPECT_EQ(cls->getAttributeValue("spawnclass"), "idLight");
-
-    // Inherited from 'atdm:light_base'
-    EXPECT_EQ(cls->getAttributeValue("AIUse"), "AIUSE_LIGHTSOURCE");
-    EXPECT_EQ(cls->getAttributeValue("shouldBeOn"), "0");
-
-    // Inherited but overridden on 'light_extinguishable' itself
-    EXPECT_EQ(cls->getAttributeValue("editor_displayFolder"),
-              "Lights/Base Entities, DoNotUse");
-
-    // Lookup without considering inheritance
-    EXPECT_EQ(cls->getAttributeValue("editor_color", false), "");
-    EXPECT_EQ(cls->getAttributeValue("spawnclass", false), "");
-}
-
-TEST_F(EntityTest, VisitInheritedClassAttributes)
-{
-    auto cls = GlobalEntityClassManager().findClass("light_extinguishable");
-    ASSERT_TRUE(cls);
-
-    // Map of attribute names to inherited flag
-    std::map<std::string, bool> attributes;
-
-    // Visit all attributes and store in the map
-    cls->forEachAttribute(
-        [&attributes](const EntityClassAttribute& a, bool inherited) {
-            attributes.insert({a.getName(), inherited});
-        },
-        true /* editorKeys */
-    );
-
-    // Confirm inherited flags set correctly
-    EXPECT_EQ(attributes.at("spawnclass"), true);
-    EXPECT_EQ(attributes.at("AIUse"), true);
-    EXPECT_EQ(attributes.at("maxs"), false);
-    EXPECT_EQ(attributes.at("clipmodel_contents"), false);
-    EXPECT_EQ(attributes.at("editor_displayFolder"), false);
-}
-
-// #5621: When the classname key is selected in the entity inspector, the description of that
-// attribute should deliver the text that is stored in the editor_usage attributes
-TEST_F(EntityTest, MultiLineEditorUsage)
-{
-    auto eclass = GlobalEntityClassManager().findClass("eclass_with_usage_attribute");
-    ASSERT_TRUE(eclass);
-
-    // Assume we have non-empty editor_usage/1/2 attributes
-    EXPECT_NE(eclass->getAttributeValue("editor_usage"), "");
-    EXPECT_NE(eclass->getAttributeValue("editor_usage1"), "");
-    EXPECT_NE(eclass->getAttributeValue("editor_usage2"), "");
-
-    auto editor_usage = eclass::getUsage(*eclass);
-
-    std::vector<std::string> singleAttributes =
-    {
-        eclass->getAttributeValue("editor_usage"),
-        eclass->getAttributeValue("editor_usage1"),
-        eclass->getAttributeValue("editor_usage2")
-    };
-
-    EXPECT_EQ(editor_usage, string::join(singleAttributes, "\n"));
-}
-
-void checkBucketEntityDef(const IEntityClassPtr& eclass)
-{
-    // These spawnargs are all defined directly on bucket_metal
-    EXPECT_EQ(eclass->getAttributeValue("editor_usage"), "So you can kick the bucket.");
-    EXPECT_EQ(eclass->getAttributeValue("editor_displayFolder"), "Moveables/Containers");
-    EXPECT_EQ(eclass->getAttributeValue("mass"), "8");
-    EXPECT_EQ(eclass->getAttributeValue("inherit"), "bucket_base");
-    EXPECT_EQ(eclass->getAttributeValue("model"), "models/darkmod/containers/bucket.lwo");
-    EXPECT_EQ(eclass->getAttributeValue("friction"), "0.2");
-    EXPECT_EQ(eclass->getAttributeValue("clipmodel"), "models/darkmod/misc/clipmodels/bucket_cm.lwo");
-    EXPECT_EQ(eclass->getAttributeValue("bouncyness"), "0.5");
-    EXPECT_EQ(eclass->getAttributeValue("snd_bounce"), "tdm_impact_metal_bucket");
-    EXPECT_EQ(eclass->getAttributeValue("snd_bounce_carpet"), "tdm_impact_metal_bucket_on_soft");
-    EXPECT_EQ(eclass->getAttributeValue("snd_bounce_cloth"), "tdm_impact_metal_bucket_on_soft");
-    EXPECT_EQ(eclass->getAttributeValue("snd_bounce_grass"), "tdm_impact_metal_bucket_on_soft");
-    EXPECT_EQ(eclass->getAttributeValue("snd_bounce_dirt"), "tdm_impact_metal_bucket_on_soft");
-
-    // This is defined in the parent entityDef:
-    EXPECT_EQ(eclass->getAttributeValue("snd_bounce_snow"), "tdm_impact_dirt");
-}
-
-// #5652: Reloading DEFs must not mess up the eclass attributes
-TEST_F(EntityTest, ReloadDefsOnUnchangedFiles)
-{
-    auto eclass = GlobalEntityClassManager().findClass("bucket_metal");
-    auto parent = eclass->getParent();
-
-    // Check the parent, it defines an editor_usage which will mess up the child (when the #5652 problem was unfixed)
-    EXPECT_TRUE(parent != nullptr);
-    EXPECT_EQ(parent->getAttributeValue("editor_usage"), "Don't use. Base class for all TDM moveables.");
-
-    checkBucketEntityDef(eclass);
-
-    // Reload the defs and re-use the same eclass reference we got above, it ought to be still valid
-    GlobalEntityClassManager().reloadDefs();
-
-    checkBucketEntityDef(eclass);
-}
 
 TEST_F(EntityTest, CannotCreateEntityWithoutClass)
 {
@@ -513,31 +365,6 @@ namespace
     };
 }
 
-TEST_F(EntityTest, ModifyEntityClass)
-{
-    auto cls = GlobalEntityClassManager().findClass("light");
-    auto light = GlobalEntityModule().createEntity(cls);
-    auto& spawnArgs = light->getEntity();
-
-    // Light doesn't initially have a colour set
-    RenderFixture rf;
-    light->setRenderSystem(rf.backend);
-    const ShaderPtr origWireShader = light->getWireShader();
-    ASSERT_TRUE(origWireShader);
-
-    // The shader shouldn't just change by itself (this would invalidate the
-    // test)
-    EXPECT_EQ(light->getWireShader(), origWireShader);
-
-    // Set a new colour value on the entity *class* (not the entity)
-    cls->setColour(Vector3(0.5, 0.24, 0.87));
-
-    // Shader should have changed due to the entity class update (although there
-    // aren't currently any public Shader properties that we can examine to
-    // confirm its contents)
-    EXPECT_NE(light->getWireShader(), origWireShader);
-}
-
 TEST_F(EntityTest, LightLocalToWorldFromOrigin)
 {
     auto light = algorithm::createEntityByClassName("light");
@@ -663,52 +490,10 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
 }
 #endif
 
-TEST_F(EntityTest, OverrideEClassColour)
-{
-    auto light = algorithm::createEntityByClassName("light");
-    auto torch = algorithm::createEntityByClassName("light_torchflame_small");
-    auto lightCls = light->getEntity().getEntityClass();
-    auto torchCls = torch->getEntity().getEntityClass();
-
-    static const Vector4 GREEN(0, 1, 0, 1);
-    static const Vector4 YELLOW(1, 0, 1, 1);
-
-    // Light has an explicit green editor_color
-    EXPECT_EQ(lightCls->getColour(), GREEN);
-
-    // This class does not have an explicit editor_color value, but should
-    // inherit the one from 'light'.
-    EXPECT_EQ(torchCls->getColour(), GREEN);
-
-    // Set an override for the 'light' class
-    GlobalEclassColourManager().addOverrideColour("light", YELLOW);
-
-    // Both 'light' and its subclasses should have the new colour
-    EXPECT_EQ(lightCls->getColour(), YELLOW);
-    EXPECT_EQ(torchCls->getColour(), YELLOW);
-}
-
-TEST_F(EntityTest, DefaultEclassColourIsValid)
-{
-    auto eclass = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");
-
-    EXPECT_FALSE(eclass->getParent()) << "Entity Class is not supposed to have a parent, please adjust the test data";
-    EXPECT_EQ(eclass->getAttributeValue("editor_color", true), "") << "Entity Class shouldn't have an editor_color in this test";
-
-    EXPECT_EQ(eclass->getColour(), Vector4(0.3, 0.3, 1, 1)) << "The entity class should have the same value as in EntityClass.cpp:DefaultEntityColour";
-}
-
-TEST_F(EntityTest, MissingEclassColourIsValid)
-{
-    auto eclass = GlobalEntityClassManager().findOrInsert("___nonexistingeclass___", true);
-
-    EXPECT_EQ(eclass->getAttributeValue("editor_color", true), "") << "Entity Class shouldn't have an editor_color in this test";
-    EXPECT_EQ(eclass->getColour(), Vector4(0.3, 0.3, 1, 1)) << "The entity class should have the same value as in EntityClass.cpp:DefaultEntityColour";
-}
-
 TEST_F(EntityTest, FuncStaticLocalToWorld)
 {
     auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", "models/torch.lwo");
     auto& spawnArgs = funcStatic->getEntity();
     spawnArgs.setKeyValue("origin", "0 0 0");
 
@@ -902,6 +687,7 @@ TEST_F(EntityTest, LightTransformedByParent)
     // inherit the transformation of its parent).
     auto light = algorithm::createEntityByClassName("light");
     auto parentModel = algorithm::createEntityByClassName("func_static");
+    parentModel->getEntity().setKeyValue("model", "models/torch.lwo");
     scene::addNodeToContainer(light, parentModel);
     scene::addNodeToContainer(parentModel, GlobalMapModule().getRoot());
 
@@ -1122,8 +908,9 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
 
     // Examine the properties of the single attachment
     Entity::Attachment attachment = attachments.front();
-    EXPECT_EQ(attachment.eclass, "light_cageflame_small");
+    EXPECT_EQ(attachment.eclass, spawnArgs.getKeyValue("def_attach"));
     EXPECT_EQ(attachment.offset, Vector3(0, 0, 10));
+    EXPECT_EQ(attachment.name, spawnArgs.getKeyValue("name_attach"));
 }
 
 TEST_F(EntityTest, RenderAttachedLightEntity)
@@ -1928,15 +1715,15 @@ TEST_F(EntityTest, EntityNodeObserveKeyAutoDisconnect)
     spawnArgs->setKeyValue(TEST_KEY, "whatever");
 }
 
-inline Entity* findPlayerStartEntity()
+inline IEntityNodePtr findPlayerStartEntity()
 {
-    Entity* found = nullptr;
+    IEntityNodePtr found;
 
-    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](IEntityNode& entityNode)
+    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](const IEntityNodePtr& entity)
     {
-        if (entityNode.getEntity().getEntityClass()->getName() == "info_player_start")
+        if (entity->getEntity().getEntityClass()->getDeclName() == "info_player_start")
         {
-            found = &entityNode.getEntity();
+            found = entity;
         }
 
         return found == nullptr;
@@ -1956,7 +1743,9 @@ TEST_F(EntityTest, AddPlayerStart)
     auto playerStart = findPlayerStartEntity();
     EXPECT_TRUE(playerStart) << "Couldn't find the player start entity after placing it";
 
-    EXPECT_EQ(playerStart->getKeyValue("origin"), string::to_string(position)) << "Origin has the wrong value";
+    EXPECT_EQ(playerStart->getEntity().getKeyValue("origin"), string::to_string(position)) << "Origin has the wrong value";
+
+    EXPECT_TRUE(Node_isSelected(playerStart)) << "Player start should be selected after placement";
 
     // Ensure this action is undoable
     GlobalUndoSystem().undo();
@@ -1977,126 +1766,76 @@ TEST_F(EntityTest, MovePlayerStart)
     GlobalCommandSystem().executeCommand("PlacePlayerStart", cmd::Argument(position));
     EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), string::to_string(position)) << "Origin didn't get updated";
 
+    EXPECT_TRUE(Node_isSelected(playerStart)) << "Player start should be selected after placement";
+
     // Ensure this action is undoable
     GlobalUndoSystem().undo();
     EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), originalPosition) << "Origin change didn't get undone";
 }
 
-TEST_F(EntityTest, GetEClassVisibility)
+TEST_F(EntityTest, CreateSpeaker)
 {
-    // Normal entity with NORMAL visibility
-    auto playerStart = GlobalEntityClassManager().findClass("info_player_start");
-    ASSERT_TRUE(playerStart);
-    EXPECT_EQ(playerStart->getVisibility(), vfs::Visibility::NORMAL);
+    std::string originalPosition = "50 30 47";
 
-    // Hidden entity
-    auto entityBase = GlobalEntityClassManager().findClass("atdm:entity_base");
-    ASSERT_TRUE(entityBase);
-    EXPECT_EQ(entityBase->getAttributeValue("editor_visibility"), "hidden");
-    EXPECT_EQ(entityBase->getVisibility(), vfs::Visibility::HIDDEN);
+    GlobalCommandSystem().executeCommand("CreateSpeaker", {
+        cmd::Argument("test/jorge"), cmd::Argument(originalPosition)
+    });
+
+    // The speaker should be in the map now
+    auto speaker = std::dynamic_pointer_cast<IEntityNode>(
+        algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    {
+        return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
+    }));
+
+    EXPECT_TRUE(speaker) << "Could not locate the speaker in the map";
+
+    // Should be at the correct position
+    EXPECT_EQ(speaker->worldAABB().getOrigin(), string::convert<Vector3>(originalPosition));
+    EXPECT_EQ(speaker->getEntity().getKeyValue("origin"), originalPosition);
+
+    // Should carry the s_min/s_max/s_shader key values
+    EXPECT_EQ(speaker->getEntity().getKeyValue("s_shader"), "test/jorge");
+
+    auto soundShader = GlobalSoundManager().getSoundShader("test/jorge");
+    EXPECT_TRUE(soundShader) << "Could not locate the jorge sound shader";
+    EXPECT_EQ(speaker->getEntity().getKeyValue("s_mindistance"), string::to_string(soundShader->getRadii().getMin(true)));
+    EXPECT_EQ(speaker->getEntity().getKeyValue("s_maxdistance"), string::to_string(soundShader->getRadii().getMax(true)));
+
+    // The speaker should be selected
+    EXPECT_TRUE(Node_isSelected(speaker)) << "Speaker should be selected";
 }
 
-TEST_F(EntityTest, EClassVisibilityIsNotInherited)
+// #6062: Moving a speaker should no longer remove the s_mindistance/s_maxdistance key values on the entity
+// even if they are matching the values defined in the sound shader declaration
+TEST_F(EntityTest, MovingSpeakerNotRemovingDistanceArgs)
 {
-    // func_static derives from the hidden atdm:entity_base, but should not in itself be hidden
-    auto funcStatic = GlobalEntityClassManager().findClass("func_static");
-    ASSERT_TRUE(funcStatic);
-    EXPECT_EQ(funcStatic->getVisibility(), vfs::Visibility::NORMAL);
-}
+    // Empty map, check prerequisites
+    GlobalCommandSystem().executeCommand("CreateSpeaker", {
+        cmd::Argument("test/jorge"), cmd::Argument("50 30 47")
+    });
 
-TEST_F(EntityTest, GetAttributeValue)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+    auto node = algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    {
+        return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
+    });
+    auto speaker = std::dynamic_pointer_cast<IEntityNode>(node);
 
-    // Missing attribute is an empty string
-    EXPECT_EQ(eclass->getAttributeValue("non_existent"), "");
+    EXPECT_TRUE(speaker);
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_mindistance"), "");
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_maxdistance"), "");
 
-    // Defined on the actual class
-    EXPECT_EQ(eclass->getAttributeValue("ordinary_key"), "Test");
+    // Move the speaker
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(speaker, true);
 
-    // Inherited attributes should only appear if the includeInherited bool is set
-    EXPECT_EQ(eclass->getAttributeValue("base_defined_bool", false), "");
-    EXPECT_EQ(eclass->getAttributeValue("base_defined_bool", true), "1");
-}
+    auto transformable = scene::node_cast<ITransformable>(speaker);
+    transformable->setType(TRANSFORM_PRIMITIVE);
+    transformable->setTranslation({ -64, 0, 0 });
+    transformable->freezeTransform();
 
-TEST_F(EntityTest, GetDefaultAttributeType)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-
-    // The default type is empty
-    EXPECT_EQ(eclass->getAttributeType("ordinary_key"), "");
-}
-
-TEST_F(EntityTest, GetDefaultAttributeDescription)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-
-    // The default description is empty
-    EXPECT_EQ(eclass->getAttributeDescription("ordinary_key"), "");
-}
-
-TEST_F(EntityTest, GetNonInheritedAttributeType)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-
-    // The "defined_bool" is defined on the eclass, next to its editor_bool descriptor
-    EXPECT_EQ(eclass->getAttributeType("defined_bool"), "bool");
-
-    // The "undefined_bool" is not directly set on the eclass
-    EXPECT_EQ(eclass->getAttributeType("undefined_bool"), "bool");
-}
-
-TEST_F(EntityTest, GetInheritedAttributeType)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-
-    // The "base_defined_bool" is described in the base, as is the key
-    EXPECT_EQ(eclass->getAttributeType("base_defined_bool"), "bool");
-
-    // The "bool_not_defined_in_base" is set on the subclass, the description is in base
-    EXPECT_EQ(eclass->getAttributeType("bool_not_defined_in_base"), "bool");
-
-    // The "bool_not_defined_anywhere" is not set anywhere, only the description is there
-    EXPECT_EQ(eclass->getAttributeType("bool_not_defined_anywhere"), "bool");
-}
-
-TEST_F(EntityTest, GetNonInheritedAttributeDescription)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-
-    // The "defined_bool" is defined on the eclass, next to its editor_bool descriptor
-    EXPECT_EQ(eclass->getAttributeDescription("defined_bool"), "Some bool description 2");
-
-    // The "undefined_bool" is not directly set on the eclass
-    EXPECT_EQ(eclass->getAttributeDescription("undefined_bool"), "Some bool description 1");
-}
-
-TEST_F(EntityTest, GetInheritedAttributeDescription)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-
-    // The "base_defined_bool" is described in the base, as is the key
-    EXPECT_EQ(eclass->getAttributeDescription("base_defined_bool"), "Some bool description");
-
-    // The "bool_not_defined_in_base" is set on the subclass, the description is in base
-    EXPECT_EQ(eclass->getAttributeDescription("bool_not_defined_in_base"), "Some bool description 12");
-
-    // The "bool_not_defined_anywhere" is not set anywhere, only the description is there
-    EXPECT_EQ(eclass->getAttributeDescription("bool_not_defined_anywhere"), "Some bool description 23");
-}
-
-TEST_F(EntityTest, GetVariousAttributeTypes)
-{
-    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-
-    // editor_var and editor_string will be converted to "text"
-    EXPECT_EQ(eclass->getAttributeType("a_var"), "text");
-    EXPECT_EQ(eclass->getAttributeType("a_string"), "text");
-
-    // Some definitions: the suffix after "editor_" should be accepted as type
-    EXPECT_EQ(eclass->getAttributeType("a_text"), "text");
-    EXPECT_EQ(eclass->getAttributeType("a_vector"), "vector");
-    EXPECT_EQ(eclass->getAttributeType("a_hurk"), "hurk");
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_mindistance"), "") << "Key value has been lost in translation";
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_maxdistance"), "") << "Key value has been lost in translation";
 }
 
 }

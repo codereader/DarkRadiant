@@ -108,17 +108,20 @@ model::StringList ScriptModelNode::getActiveMaterials()
 		// This is a skinned model, get the surface remap
 		std::string curSkin = skinnedModel->getSkin();
 
-		ModelSkin& skinInfo = GlobalModelSkinCache().capture(curSkin);
+		auto skin = GlobalModelSkinCache().findSkin(curSkin);
 
-		for (model::StringList::iterator i = materials.begin(); i != materials.end(); ++i)
-		{
-			std::string remap = skinInfo.getRemap(*i);
+        if (skin)
+        {
+            for (auto& material : materials)
+            {
+                std::string remap = skin->getRemap(material);
 
-			if (remap.empty()) continue;
+                if (remap.empty()) continue;
 
-			// Remapping found, use this material instead of the default material
-			*i = remap;
-		}
+                // Remapping found, use this material instead of the default material
+                material = remap;
+            }
+        }
 	}
 
 	return materials;

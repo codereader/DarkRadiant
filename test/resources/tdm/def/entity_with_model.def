@@ -1,10 +1,66 @@
+model flag_pirate01
+{
+    mesh                        models/md5/flag01.md5mesh
+}
+
+model reload_decl_test_model
+{
+    mesh                        reload_decl_test_nonexisting_md5.md5mesh
+}
+
 model just_a_model
 {
-	mesh                       just_an_md5.md5mesh
+    mesh                       just_an_md5.md5mesh
+    channel torso              ( *Spine_Dummy)
+    channel legs               ( origin Pelvis Pelvis2 *Hips)
+
+    anim af_pose               models/md5/af_pose.md5anim
+    anim idle                  models/md5/idle.md5anim
 }
 
 entityDef dr:entity_using_modeldef
 {
 	"model"			"just_a_model"
 	"random"		"1"
+}
+
+// Inheritance tests
+model some_other_model
+{
+    inherit                    just_a_model
+
+    // inherit the mesh from just_a_model
+
+    anim af_pose               models/md5/some_other_af_pose.md5anim
+    anim new_anim              models/md5/new_anim.md5anim
+}
+
+model a_cooler_model
+{
+    inherit                    some_other_model
+
+    // Define a custom mesh
+    mesh                       an_overridden_mesh.md5mesh
+
+    // Override the idle anim, the rest is inherited
+    anim idle                  models/md5/a_cooler_idle.md5anim
+}
+
+// These three modelDefs form a cyclic graph  the code needs to deal with that
+model recursive_inheritance
+{
+    inherit                     recursive_inheritance3
+    mesh                        bla.md5mesh
+}
+
+model recursive_inheritance2
+{
+    inherit                     recursive_inheritance
+    mesh                        bla2.md5mesh
+}
+
+model recursive_inheritance3
+{
+    inherit                     recursive_inheritance2
+    mesh                        bla3.md5mesh
 }

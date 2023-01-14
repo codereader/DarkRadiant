@@ -198,7 +198,7 @@ private:
 		double remainingWidth = _lineWidth - _charWidth;
 		double charWidth = ch.getWidth();
 
-		if (!noclip && charWidth > remainingWidth)
+		if (!noclip && charWidth > remainingWidth + 1e-3)
 		{
 			return false;
 		}
@@ -221,7 +221,16 @@ private:
 		double remainingWidth = _lineWidth - _charWidth;
 		double wordWidth = word.getWidth();
 
-		if (!noclip && wordWidth > remainingWidth)
+		// stgatilov: bug compatibility against Doom 3 engine
+		// it ignores the last character when checking whether a word fits the line
+		// see also: #5914 and https://forums.thedarkmod.com/index.php?/topic/21710-implicit-linebreaks-in-text/
+		double wordWidthFit = wordWidth;
+		if (!word.empty())
+		{
+			wordWidthFit -= word.back().getWidth();
+		}
+
+		if (!noclip && wordWidthFit > remainingWidth + 1e-3)
 		{
 			return false;
 		}

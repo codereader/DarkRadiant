@@ -98,7 +98,9 @@ public:
 
 }
 
-const char* const MODULE_CAMERA_MANAGER("CameraManager");
+constexpr const char* const MODULE_CAMERA_MANAGER("CameraManager");
+
+constexpr const char* const RKEY_CAMERA_DRAG_SELECTION_ENABLED = "user/ui/camera/dragSelectionEnabled";
 
 // Module accessor
 inline camera::ICameraViewManager& GlobalCameraManager()

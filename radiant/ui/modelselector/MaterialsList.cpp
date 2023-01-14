@@ -3,9 +3,7 @@
 #include "i18n.h"
 #include "irender.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "ui/materials/MaterialDefinitionView.h"
-
-#include <iostream>
+#include "wxutil/sourceview/DeclarationSourceView.h"
 
 namespace ui
 {
@@ -55,6 +53,10 @@ MaterialsList::MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSyst
 
 	Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &MaterialsList::onShaderToggled, this);
 	Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &MaterialsList::onContextMenu, this);
+
+    // Block all double-click events originating from this view, to not confuse
+    // parent widgets with double-click events
+    Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [](wxDataViewEvent& ev) { ev.StopPropagation(); });
 
     // Construct the context menu
     _contextMenu->addItem(
@@ -108,7 +110,9 @@ void MaterialsList::onContextMenu(wxDataViewEvent& ev)
 void MaterialsList::onShowShaderDefinition()
 {
     // Construct a definition view and pass the material name
-    auto view = new MaterialDefinitionView(getSelectedMaterial());
+    auto view = new wxutil::DeclarationSourceView(this);
+    
+    view->setDeclaration(decl::Type::Material, getSelectedMaterial());
     view->ShowModal();
     view->Destroy();
 }

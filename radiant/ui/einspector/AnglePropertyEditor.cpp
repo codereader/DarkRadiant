@@ -13,7 +13,7 @@ namespace ui
 {
 
 // Constructor
-AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key)
+AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
   _key(key)
 {
@@ -37,7 +37,7 @@ wxBitmapButton* AnglePropertyEditor::constructAngleButton(wxPanel* parent, const
 	wxBitmapButton* button = new wxBitmapButton(parent, wxID_ANY, 
 		wxutil::GetLocalBitmap(icon));
 
-	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(AnglePropertyEditor::_onButtonClick), NULL, this);
+	button->Bind(wxEVT_BUTTON, &AnglePropertyEditor::_onButtonClick, this);
 
 	// Store the angle value in the map for later use
 	_buttons[button] = angleValue;
@@ -67,7 +67,7 @@ void AnglePropertyEditor::_onButtonClick(wxCommandEvent& ev)
 	{
 		if (i->first->GetId() == ev.GetId())
 		{
-			setKeyValue(_key, string::to_string(i->second));
+            setKeyValueOnSelection(_key->getFullKey(), string::to_string(i->second));
 			break;
 		}
 	}

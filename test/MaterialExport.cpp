@@ -6,6 +6,7 @@
 #include "string/trim.h"
 #include "string/replace.h"
 #include "materials/ParseLib.h"
+#include "algorithm/FileUtils.h"
 #include <fmt/format.h>
 
 namespace test
@@ -275,7 +276,7 @@ TEST_F(MaterialExportTest, Deform)
     expectDefinitionContains(material, "deform particle2 testparticle");
 }
 
-TEST_F(MaterialExportTest, DecalInfo)
+TEST_F(MaterialExportTest, DecalInfoPreservation)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/decalinfo");
     expectDefinitionContains(material, "decalinfo");
@@ -284,6 +285,103 @@ TEST_F(MaterialExportTest, DecalInfo)
     material->setDescription("-");
 
     expectDefinitionContains(material, "decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) ( 0.5 0.5 0.4 0.3 )");
+}
+
+TEST_F(MaterialExportTest, DecalInfoManipulation)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+    expectDefinitionDoesNotContain(material, "decalinfo");
+
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Empty material shouldn't the decal info flag set";
+
+    // Setting a default decalInfo structure shouldn't do anything
+    Material::DecalInfo info;
+    material->setDecalInfo(info);
+
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Default decalInfo shouldn't cause the flag to be set";
+
+    info.stayMilliSeconds = 10;
+    material->setDecalInfo(info);
+
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Flag should be set now";
+    EXPECT_EQ(material->getDecalInfo().stayMilliSeconds, info.stayMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().fadeMilliSeconds, info.fadeMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().startColour, info.startColour);
+    EXPECT_EQ(material->getDecalInfo().endColour, info.endColour);
+
+    // Definition time unit is seconds
+    expectDefinitionContains(material, "decalinfo 0.01 0 ( 0 0 0 0 ) ( 0 0 0 0 )");
+
+    info.stayMilliSeconds = 40000;
+    info.fadeMilliSeconds = 10000;
+    info.startColour = Vector4(0.5, 0.6, 0.8, 1.0);
+    info.endColour = Vector4(0.1, 0.2, 0.3, 0.0);
+    material->setDecalInfo(info);
+
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Flag should be set now";
+    EXPECT_EQ(material->getDecalInfo().stayMilliSeconds, info.stayMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().fadeMilliSeconds, info.fadeMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().startColour, info.startColour);
+    EXPECT_EQ(material->getDecalInfo().endColour, info.endColour);
+
+    expectDefinitionContains(material, "decalinfo 40 10 ( 0.5 0.6 0.8 1 ) ( 0.1 0.2 0.3 0 )");
+
+    // Clear the structure again
+    Material::DecalInfo emptyInfo;
+    material->setDecalInfo(emptyInfo);
+
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Flag should be cleared again";
+
+    expectDefinitionDoesNotContain(material, "decalinfo");
+    expectDefinitionDoesNotContain(material, "decalInfo");
+}
+
+// Check that DECAL_MACRO is used where applicable
+TEST_F(MaterialExportTest, DecalMacroUsage)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    // Set the 4 decal macro properties one after the other, the last one should cut it
+    // polygonOffset 1 | discrete | sort decal | noShadows
+
+    // Clear the noshadows flag, an empty material is translucent and implicitly set to noshadows
+    material->clearMaterialFlag(Material::FLAG_NOSHADOWS);
+
+    material->setPolygonOffset(1.0f);
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
+
+    material->setSurfaceFlag(Material::SURF_DISCRETE);
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
+
+    material->setSortRequest(Material::SORT_DECAL);
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
+
+    material->setMaterialFlag(Material::FLAG_NOSHADOWS);
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalMacro);
+    expectDefinitionContains(material, "DECAL_MACRO");
+
+    // The implied keywords should be gone from the definition
+    expectDefinitionDoesNotContainAnyOf(material, { "discrete", "noShadows", "polygonOffset 1", "sort decal" });
+
+    // Setting decalInfo doesn't influence DECAL_MACRO
+    Material::DecalInfo info;
+    info.stayMilliSeconds = 5000;
+    info.fadeMilliSeconds = 1000;
+    info.startColour = Vector4(1, 1, 1, 1);
+    info.endColour = Vector4(0, 0, 0, 1);
+    material->setDecalInfo(info);
+
+    expectDefinitionContains(material, "DECAL_MACRO");
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalMacro);
+
+    // Set the polygonOffset to a mismatching value, this breaks the spell
+    material->setPolygonOffset(1.1f);
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
 }
 
 TEST_F(MaterialExportTest, RenderBump)
@@ -470,6 +568,28 @@ TEST_F(MaterialExportTest, StageBlendTypes)
     }
 }
 
+// Checks that the default blend func GL_ONE, GL_ZERO is not explicitly written to the stage def
+TEST_F(MaterialExportTest, StageDefaultBlendFunc)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+
+    // Set it to something non-trivial
+    layer->setBlendFuncStrings({ "gl_one", "gl_one" });
+
+    expectDefinitionContains(material, "blend gl_one, gl_one");
+
+    // Now set it back to the defaults
+    layer->setBlendFuncStrings({ "gl_one", "gl_zero" });
+
+    expectDefinitionDoesNotContain(material, "blend gl_one, gl_one"); // old blend func should be gone
+    expectDefinitionDoesNotContain(material, "blend gl_one, gl_zero"); // this one should not be written
+    expectDefinitionDoesNotContain(material, "blend"); // basically we don't want any blend at all
+}
+
 TEST_F(MaterialExportTest, StageMaps)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
@@ -493,14 +613,43 @@ TEST_F(MaterialExportTest, StageMaps)
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
     layer->setRenderMapSize(Vector2(512, 256));
-    expectDefinitionContains(material, "mirrorRenderMap 512, 256");
+    expectDefinitionContains(material, "mirrorRenderMap 512 256");
+
+    material->revertModifications();
+
+    // Mirror Render Map with extra map expression
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+    layer->setMapExpressionFromString("textures/common/mirror.tga");
+    layer->setRenderMapSize(Vector2(512, 256));
+    expectDefinitionContains(material, "mirrorRenderMap 512 256");
+    expectDefinitionContains(material, "map textures/common/mirror.tga");
+
+    material->revertModifications();
+
+    // Mirror Render Map with 0,0 dimensions
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+    layer->setRenderMapSize(Vector2(0, 0));
+    expectDefinitionContains(material, "mirrorRenderMap");
+    expectDefinitionDoesNotContain(material, "mirrorRenderMap 0 0"); // should be dimensionless
 
     material->revertModifications();
 
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
     layer->setRenderMapSize(Vector2(512, 256));
-    expectDefinitionContains(material, "remoteRenderMap 512, 256");
+    expectDefinitionContains(material, "remoteRenderMap 512 256");
+
+    material->revertModifications();
+
+    // Remote Render Map with extra map expression
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
+    layer->setRenderMapSize(Vector2(512, 256));
+    layer->setMapExpressionFromString("textures/remoteRender.tga");
+    expectDefinitionContains(material, "remoteRenderMap 512 256");
+    expectDefinitionContains(material, "map textures/remoteRender.tga");
 
     material->revertModifications();
 
@@ -936,7 +1085,7 @@ TEST_F(MaterialExportTest, StageCondition)
 TEST_F(MaterialExportTest, VertexPrograms)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram1");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
 
     // Mark the definition as modified by setting the description
     material->setDescription("-");
@@ -945,28 +1094,28 @@ TEST_F(MaterialExportTest, VertexPrograms)
     expectDefinitionContains(material, "vertexParm 0 time");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram2");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
     expectDefinitionContains(material, "vertexParm 0 time, 3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram3");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
     expectDefinitionContains(material, "vertexParm 0 time, 3, global3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram4");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
     expectDefinitionContains(material, "vertexParm 0 time, 3, global3, time * 2");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram5");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
@@ -975,12 +1124,12 @@ TEST_F(MaterialExportTest, VertexPrograms)
     expectDefinitionContains(material, "vertexParm 2 5, 6, 7, 8");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram6");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     // Vertex Parm 1 is empty
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[0]);
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[1]);
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[2]);
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[3]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[0]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[1]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[2]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[3]);
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
@@ -992,7 +1141,7 @@ TEST_F(MaterialExportTest, VertexPrograms)
 TEST_F(MaterialExportTest, FragmentPrograms)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram1");
-    EXPECT_EQ(material->getAllLayers().at(0)->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getFragmentProgram(), "glprogs/test.vfp");
 
     // Mark the definition as modified by setting the description
     material->setDescription("-");
@@ -1002,7 +1151,7 @@ TEST_F(MaterialExportTest, FragmentPrograms)
     expectDefinitionContains(material, "fragmentMap 2 cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip temp/optionsftw");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram2");
-    EXPECT_EQ(material->getAllLayers().at(0)->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getFragmentProgram(), "glprogs/test.vfp");
 
     // Mark the definition as modified by setting the description
     material->setDescription("-");
@@ -1023,6 +1172,56 @@ TEST_F(MaterialExportTest, EditorImage)
 
     material->setEditorImageExpressionFromString("");
     expectDefinitionDoesNotContain(material, "qer_editorimage");
+}
+
+TEST_F(MaterialExportTest, FrobStageKeywords)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(material->getFrobStageType(), Material::FrobStageType::Default);
+
+    // None
+    material->setFrobStageType(Material::FrobStageType::NoFrobStage);
+    EXPECT_TRUE(material->isModified());
+    expectDefinitionContains(material, "frobstage_none");
+
+    // Diffuse
+    material->setFrobStageType(Material::FrobStageType::Diffuse);
+    material->setFrobStageParameter(0, 0.2);
+    material->setFrobStageParameter(1, 0.5);
+    expectDefinitionContains(material, "frobstage_diffuse 0.2 0.5");
+
+    material->setFrobStageRgbParameter(1, Vector3(0.1, 0.3, 0.5));
+    expectDefinitionContains(material, "frobstage_diffuse 0.2 (0.1 0.3 0.5)");
+
+    material->setFrobStageRgbParameter(0, Vector3(0.7, 0.8, 0.6));
+    expectDefinitionContains(material, "frobstage_diffuse (0.7 0.8 0.6) (0.1 0.3 0.5)");
+
+    // Texture
+    material->setFrobStageType(Material::FrobStageType::Texture);
+
+    // Still contains the RGB values from the diffuse test above, but with the default _white
+    expectDefinitionContains(material, "frobstage_texture _white (0.7 0.8 0.6) (0.1 0.3 0.5)");
+
+    material->setFrobStageParameter(0, 0.2);
+    material->setFrobStageParameter(1, 0.5);
+    expectDefinitionContains(material, "frobstage_texture _white 0.2 0.5");
+
+    material->setFrobStageMapExpressionFromString("textures/just/something");
+    expectDefinitionContains(material, "frobstage_texture textures/just/something 0.2 0.5");
+
+    material->setFrobStageRgbParameter(0, Vector3(0.7, 0.8, 0.6));
+    expectDefinitionContains(material, "frobstage_texture textures/just/something (0.7 0.8 0.6) 0.5");
+
+    material->setFrobStageRgbParameter(1, Vector3(0.1, 0.3, 0.5));
+    expectDefinitionContains(material, "frobstage_texture textures/just/something (0.7 0.8 0.6) (0.1 0.3 0.5)");
+
+    // Back to default
+    material->setFrobStageType(Material::FrobStageType::Default);
+    EXPECT_TRUE(material->isModified());
+
+    expectDefinitionDoesNotContainAnyOf(material, { "frobstage_none", "frobstage_diffuse",
+        "frobstage_texture", "textures/just/something", "(0.7 0.8 0.6)" });
 }
 
 TEST_F(MaterialExportTest, AmbientRimColour)
@@ -1074,45 +1273,6 @@ TEST_F(MaterialExportTest, BlendShortcuts)
     material->revertModifications();
 }
 
-bool fileContainsText(const fs::path& path, const std::string& textToFind)
-{
-    std::stringstream contentStream;
-    std::ifstream input(path);
-
-    contentStream << input.rdbuf();
-
-    std::string contents = string::replace_all_copy(contentStream.str(), "\r\n", "\n");
-
-    return contents.find(textToFind) != std::string::npos;
-}
-
-class BackupCopy
-{
-private:
-    fs::path _originalFile;
-    fs::path _backupFile;
-public:
-    BackupCopy(const fs::path& originalFile) :
-        _originalFile(originalFile)
-    {
-        _backupFile = _originalFile;
-        _backupFile.replace_extension("bak");
-
-        if (fs::exists(_backupFile))
-        {
-            fs::remove(_backupFile);
-        }
-
-        fs::copy(_originalFile, _backupFile);
-    }
-
-    ~BackupCopy()
-    {
-        fs::remove(_originalFile);
-        fs::rename(_backupFile, _originalFile);
-    }
-};
-
 TEST_F(MaterialExportTest, MaterialDefDetectionRegex)
 {
     std::smatch matches;
@@ -1150,16 +1310,16 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
     auto originalDefinition = "textures/exporttest/renderBump1 { // Opening brace in the same line as the name (DON'T REMOVE THIS)\n"
         "    renderBump textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump1");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + " {" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition)) 
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition)) 
         << "Original definition still in file";
 
     // RenderBump2
@@ -1167,16 +1327,18 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
         "{\n"
         "    renderBump -size 100 200 textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump2");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    // Saving doesn't alter any whitespace or comments around the curly braces
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, 
+        "textures/exporttest/renderBump2  // Comment in the same line as the name (DON'T REMOVE THIS)\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
 
     // RenderBump3
@@ -1185,32 +1347,35 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
         "{\n"
         "    renderBump -aa 2 textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump3");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, 
+        "textures/exporttest/renderBump3\n"
+        " // Comment in between the name and the definition (DON'T REMOVE THIS)\n"
+        "{" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
 
     // RenderBump4
     originalDefinition = "textures/exporttest/renderBump4 {\n"
         "    renderBump -aa 2 -size 10 10 textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump4");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + " {" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
 
     // Create a new material, which is definitely not present in the file
@@ -1223,14 +1388,35 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
     newMaterial->setShaderFileName(exportTestFile.string());
     EXPECT_TRUE(newMaterial->isModified());
 
-    EXPECT_FALSE(fileContainsText(exportTestFile, newMaterial->getName()));
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, newMaterial->getName()));
 
     GlobalMaterialManager().saveMaterial(newMaterial->getName());
 
     // After saving the material should no longer be "modified"
     EXPECT_FALSE(newMaterial->isModified());
-    EXPECT_TRUE(fileContainsText(exportTestFile, newMaterial->getName() + "\n{" + newMaterial->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, newMaterial->getName() + "\n{" + newMaterial->getDefinition() + "}"))
         << "New definition not found in file";
+}
+
+TEST_F(MaterialExportTest, SavedMaterialCanBeModified)
+{
+    // Create a backup copy of the material file we're going to manipulate
+    fs::path exportTestFile = _context.getTestProjectPath() + "materials/exporttest.mtr";
+    BackupCopy backup(exportTestFile);
+
+    std::string description = "Newly Generated Block";
+
+    auto material = GlobalMaterialManager().createEmptyMaterial("textures/exporttest/modifytest");
+    material->setDescription(description);
+    material->setShaderFileName("materials/exporttest.mtr");
+
+    GlobalMaterialManager().saveMaterial(material->getName());
+
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+        << "New definition not found in file";
+
+    EXPECT_TRUE(GlobalMaterialManager().materialCanBeModified(material->getName()))
+        << "Material reports as read-only after saving";
 }
 
 TEST_F(MaterialExportTest, SetShaderFilePath)
@@ -1308,6 +1494,22 @@ TEST_F(MaterialExportTest_TdmMissionSetup, ShaderFilePathValidation)
 
     // Wrong mission name
     EXPECT_THROW(newMaterial->setShaderFileName(wrongMissionPath + "materials/exporttest.mtr"), std::invalid_argument);
+}
+
+TEST_F(MaterialExportTest, GetWriteableOutputPath)
+{
+    auto path = game::current::getWriteableGameResourcePath();
+
+    EXPECT_TRUE(string::ends_with(path, "/")) << "Game resource path should end with a trailing slash";
+    EXPECT_EQ(path, _context.getTestProjectPath()) << "Output folder should point at the TDM project folder";
+}
+
+TEST_F(MaterialExportTest_TdmMissionSetup, GetWriteableOutputPath)
+{
+    auto path = game::current::getWriteableGameResourcePath();
+
+    EXPECT_TRUE(string::ends_with(path, "/")) << "Game resource path should end with a trailing slash";
+    EXPECT_EQ(path, getTestMissionPath()) << "Output folder should point at the current FM folder";
 }
 
 }

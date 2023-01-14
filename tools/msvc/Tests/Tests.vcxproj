@@ -61,8 +61,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
     <ClInclude Include="..\..\..\test\algorithm\Entity.h" />
+    <ClInclude Include="..\..\..\test\algorithm\FileUtils.h" />
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
+    <ClInclude Include="..\..\..\test\algorithm\Selection.h" />
     <ClInclude Include="..\..\..\test\algorithm\View.h" />
     <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h" />
     <ClInclude Include="..\..\..\test\FakeClipboardModule.h" />
@@ -73,24 +75,38 @@
     <ClInclude Include="..\..\..\test\TestContext.h" />
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
     <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h" />
+    <ClInclude Include="..\..\..\test\testutil\FileSaveConfirmationHelper.h" />
     <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h" />
     <ClInclude Include="..\..\..\test\testutil\RenderUtils.h" />
+    <ClInclude Include="..\..\..\test\testutil\TemporaryFile.h" />
     <ClInclude Include="..\..\..\test\testutil\TestBufferObjectProvider.h" />
     <ClInclude Include="..\..\..\test\testutil\FileSelectionHelper.h" />
     <ClInclude Include="..\..\..\test\testutil\TestObjectRenderer.h" />
     <ClInclude Include="..\..\..\test\testutil\TestSyncObjectProvider.h" />
+    <ClInclude Include="..\..\..\test\testutil\ThreadUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\Basic.cpp" />
     <ClCompile Include="..\..\..\test\Brush.cpp" />
     <ClCompile Include="..\..\..\test\Camera.cpp" />
+    <ClCompile Include="..\..\..\test\Clipboard.cpp" />
+    <ClCompile Include="..\..\..\test\CodeTokeniser.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
+    <ClCompile Include="..\..\..\test\CommandSystem.cpp" />
     <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />
+    <ClCompile Include="..\..\..\test\Curves.cpp" />
+    <ClCompile Include="..\..\..\test\DeclManager.cpp" />
+    <ClCompile Include="..\..\..\test\DefBlockSyntaxParser.cpp" />
+    <ClCompile Include="..\..\..\test\DefTokenisers.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
+    <ClCompile Include="..\..\..\test\EntityClass.cpp" />
     <ClCompile Include="..\..\..\test\EntityInspector.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
+    <ClCompile Include="..\..\..\test\Filters.cpp" />
+    <ClCompile Include="..\..\..\test\Fx.cpp" />
+    <ClCompile Include="..\..\..\test\Game.cpp" />
     <ClCompile Include="..\..\..\test\GeometryStore.cpp" />
     <ClCompile Include="..\..\..\test\Grid.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
@@ -110,7 +126,6 @@
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
-    <ClCompile Include="..\..\..\test\Parsing.cpp" />
     <ClCompile Include="..\..\..\test\Particles.cpp" />
     <ClCompile Include="..\..\..\test\Patch.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
@@ -119,9 +134,12 @@
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
     <ClCompile Include="..\..\..\test\Renderer.cpp" />
     <ClCompile Include="..\..\..\test\SceneNode.cpp" />
+    <ClCompile Include="..\..\..\test\SceneStatistics.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\Settings.cpp" />
+    <ClCompile Include="..\..\..\test\Skin.cpp" />
+    <ClCompile Include="..\..\..\test\SoundManager.cpp" />
     <ClCompile Include="..\..\..\test\TextureManipulation.cpp" />
     <ClCompile Include="..\..\..\test\TextureTool.cpp" />
     <ClCompile Include="..\..\..\test\Transformation.cpp" />
@@ -129,6 +147,7 @@
     <ClCompile Include="..\..\..\test\VFS.cpp" />
     <ClCompile Include="..\..\..\test\WindingRendering.cpp" />
     <ClCompile Include="..\..\..\test\WorldspawnColour.cpp" />
+    <ClCompile Include="..\..\..\test\XmlUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

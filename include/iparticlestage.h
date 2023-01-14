@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
@@ -57,6 +58,7 @@ public:
 class IStageDef
 {
 public:
+    using Ptr = std::shared_ptr<IStageDef>;
 
 	// Particle orientation
 	enum OrientationType
@@ -407,15 +409,14 @@ public:
 	virtual const IParticleParameter& getRotationSpeed() const = 0;
 	virtual IParticleParameter& getRotationSpeed() = 0;
 
-	// Comparison operators - particle stages are considered equal 
+	// Comparison operator - particle stages are considered equal 
 	// if all properties are equal
-	virtual bool operator==(const IStageDef& other) const = 0;
-	virtual bool operator!=(const IStageDef& other) const = 0;
+    virtual bool isEqualTo(const Ptr& other) = 0;
 
 	/**
 	 * Copy operator, copies all properties from the other stage into this one.
 	 */
-	virtual void copyFrom(const IStageDef& other) = 0;
+	virtual void copyFrom(const Ptr& other) = 0;
 
 	/**
 	 * Returns the stage visibility. This flag is used in the Particle Editor context only,

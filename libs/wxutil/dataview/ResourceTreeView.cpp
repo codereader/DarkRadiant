@@ -20,7 +20,9 @@ namespace
 // Event implementation
 ResourceTreeView::PopulationFinishedEvent::PopulationFinishedEvent(int id) :
     wxEvent(id, EV_TREEVIEW_POPULATION_FINISHED)
-{}
+{
+    m_propagationLevel = wxEVENT_PROPAGATE_MAX;
+}
 
 ResourceTreeView::PopulationFinishedEvent::PopulationFinishedEvent(const PopulationFinishedEvent& event) :
     wxEvent(event)
@@ -43,10 +45,12 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     TreeView(parent, nullptr, style), // associate the model later
     _columns(columns),
     _mode(TreeMode::ShowAll),
+    _progressIcon(GetLocalBitmap(ICON_LOADING)),
     _expandTopLevelItemsAfterPopulation(false),
     _columnToSelectAfterPopulation(nullptr),
-    _declType(decl::Type::None),
-    _declPathColumn(_columns.fullName)
+    _setFavouritesRecursively(true),
+    _declPathColumn(_columns.fullName),
+    _favouriteKeyColumn(_columns.fullName)
 {
     _treeStore = model;
 
@@ -61,8 +65,6 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &ResourceTreeView::_onContextMenu, this);
     Bind(EV_TREEMODEL_POPULATION_FINISHED, &ResourceTreeView::_onTreeStorePopulationFinished, this);
     Bind(EV_TREEMODEL_POPULATION_PROGRESS, &ResourceTreeView::_onTreeStorePopulationProgress, this);
-
-    _progressIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ICON_LOADING));
 }
 
 ResourceTreeView::~ResourceTreeView()
@@ -126,9 +128,7 @@ void ResourceTreeView::SetupTreeModelFilter()
                 wxutil::TreeModel::Row row = _treeStore->AddItem();
                 _emptyFavouritesLabel = row.getItem();
 
-                wxIcon icon;
-                icon.CopyFromBitmap(wxutil::GetLocalBitmap(ICON_LOADING));
-                row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("No favourites added so far"), icon));
+                row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("No favourites added so far"), _progressIcon));
                 row[_columns.isFavourite] = true;
                 row[_columns.isFolder] = false;
 
@@ -186,14 +186,14 @@ void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
         new StockIconTextMenuItem(_(ADD_TO_FAVOURITES), wxART_ADD_BOOKMARK),
         std::bind(&ResourceTreeView::_onSetFavourite, this, true),
         std::bind(&ResourceTreeView::_testAddToFavourites, this),
-        [this]() { return _declType != decl::Type::None; }
+        [this]() { return !_favouriteTypeName.empty(); }
     );
 
     popupMenu.addItem(
         new StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
         std::bind(&ResourceTreeView::_onSetFavourite, this, false),
         std::bind(&ResourceTreeView::_testRemoveFromFavourites, this),
-        [this]() { return _declType != decl::Type::None; }
+        [this]() { return !_favouriteTypeName.empty(); }
     );
 
     popupMenu.addSeparator();
@@ -378,14 +378,14 @@ void ResourceTreeView::Clear()
     _emptyFavouritesLabel = wxDataViewItem();
 }
 
-void ResourceTreeView::EnableFavouriteManagement(decl::Type declType)
+void ResourceTreeView::EnableFavouriteManagement(const std::string& typeName)
 {
-    _declType = declType;
+    _favouriteTypeName = typeName;
 }
 
 void ResourceTreeView::DisableFavouriteManagement()
 {
-    _declType = decl::Type::None;
+    _favouriteTypeName.clear();
     SetTreeMode(TreeMode::ShowAll);
 }
 
@@ -507,20 +507,30 @@ void ResourceTreeView::SetFavouriteRecursively(TreeModel::Row& row, bool isFavou
     }
 
     // Not a folder, set the desired status on this item
+    SetFavourite(row, isFavourite);
+}
+
+void ResourceTreeView::SetFavourite(TreeModel::Row& row, bool isFavourite)
+{
     row[_columns.isFavourite] = isFavourite;
-    row[_columns.iconAndName] = TreeViewItemStyle::Declaration(isFavourite);
+    row[_columns.iconAndName].setAttr(TreeViewItemStyle::Declaration(isFavourite));
 
     // Keep track of this choice
     if (isFavourite)
     {
-        GlobalFavouritesManager().addFavourite(_declType, row[_columns.fullName]);
+        GlobalFavouritesManager().addFavourite(_favouriteTypeName, row[_favouriteKeyColumn]);
     }
     else
     {
-        GlobalFavouritesManager().removeFavourite(_declType, row[_columns.fullName]);
+        GlobalFavouritesManager().removeFavourite(_favouriteTypeName, row[_favouriteKeyColumn]);
     }
 
     row.SendItemChanged();
+}
+
+void ResourceTreeView::SetFavouriteKeyColumn(const TreeModel::Column& column)
+{
+    _favouriteKeyColumn = column;
 }
 
 void ResourceTreeView::_onSetFavourite(bool isFavourite)
@@ -532,7 +542,19 @@ void ResourceTreeView::_onSetFavourite(bool isFavourite)
     // Grab this item and enter recursion, propagating the favourite status
     TreeModel::Row row(item, *GetModel());
 
-    SetFavouriteRecursively(row, isFavourite);
+    if (_setFavouritesRecursively)
+    {
+        SetFavouriteRecursively(row, isFavourite);
+    }
+    else
+    {
+        SetFavourite(row, isFavourite);
+    }
+}
+
+void ResourceTreeView::EnableSetFavouritesRecursively(bool enabled)
+{
+    _setFavouritesRecursively = enabled;
 }
 
 std::string ResourceTreeView::GetResourcePath(const TreeModel::Row& row)

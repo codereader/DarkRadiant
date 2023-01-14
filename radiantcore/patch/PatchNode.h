@@ -39,6 +39,7 @@ class PatchNode final :
 
 	ShaderPtr _ctrlPointShader;
     ShaderPtr _ctrlLatticeShader;
+    ShaderPtr _inactiveShader;
 
     // For pivoted rotations, we need a copy of this lying around
     Vector3 _untransformedOrigin;
@@ -149,6 +150,7 @@ protected:
     void _applyTransformation() override;
 
     void onVisibilityChanged(bool isVisibleNow) override;
+    void onRenderStateChanged() override;
 
 private:
 	// Transforms the patch components with the given transformation matrix

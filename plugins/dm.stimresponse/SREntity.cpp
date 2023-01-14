@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include "wxutil/Bitmap.h"
+#include "wxutil/Icon.h"
 
 namespace
 {
@@ -230,9 +231,7 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	classIcon += (sr.get("state") != "1") ? SUFFIX_INACTIVE : "";
 	classIcon += SUFFIX_EXTENSION;
 
-	wxBitmap iconBmp = wxutil::GetLocalBitmap(stimType.icon);
-	wxIcon icon;
-	icon.CopyFromBitmap(iconBmp);
+	wxutil::Icon icon(wxutil::GetLocalBitmap(stimType.icon));
 
 	wxDataViewItemAttr colour;
 	colour.SetColour(sr.inherited() ? wxColor(112,112,112) : wxColor(0,0,0));
@@ -240,10 +239,10 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	const SRListColumns& cols = getColumns();
 
 	row[cols.index] = sr.getIndex();
-	row[cols.index] = colour;
+	row[cols.index].setAttr(colour);
 	row[cols.srClass] = wxVariant(wxutil::GetLocalBitmap(classIcon));
 	row[cols.caption] = wxVariant(wxDataViewIconText(stimTypeStr, icon));
-	row[cols.caption] = colour;
+	row[cols.caption].setAttr(colour);
 	row[cols.inherited] = sr.inherited();
 }
 

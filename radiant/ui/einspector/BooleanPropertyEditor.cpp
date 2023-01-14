@@ -10,11 +10,10 @@ namespace ui
 {
 
 // Constructor. Create the widgets here
-BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-											 const std::string& name)
+BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
   _checkBox(nullptr),
-  _key(name)
+  _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
@@ -25,7 +24,7 @@ BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, IEntitySelection&
 
 	// Create the checkbox with correct initial state, and connect up the
 	// toggle callback
-	_checkBox = new wxCheckBox(mainVBox, wxID_ANY, name);
+	_checkBox = new wxCheckBox(mainVBox, wxID_ANY, key->getFullKey());
 
 	updateFromEntity();
 
@@ -36,13 +35,13 @@ BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, IEntitySelection&
 
 void BooleanPropertyEditor::updateFromEntity()
 {
-	_checkBox->SetValue(_entities.getSharedKeyValue(_key, false) == "1");
+	_checkBox->SetValue(_entities.getSharedKeyValue(_key->getFullKey(), false) == "1");
 }
 
 void BooleanPropertyEditor::_onToggle(wxCommandEvent& ev)
 {
 	// Set the key based on the checkbutton state
-	setKeyValue(_key, _checkBox->IsChecked() ? "1" : "0");
+    setKeyValueOnSelection(_key->getFullKey(), _checkBox->IsChecked() ? "1" : "0");
 }
 
 } // namespace

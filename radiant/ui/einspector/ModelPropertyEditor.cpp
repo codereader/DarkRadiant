@@ -6,7 +6,6 @@
 
 #include "i18n.h"
 #include "ientity.h"
-#include "iselection.h"
 #include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"
 
@@ -15,17 +14,15 @@
 #include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 
-#include "SkinChooser.h"
+#include "ui/common/SkinChooser.h"
 
 namespace ui
 {
 
 // Main constructor
-ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-									     const std::string& name,
-									     const std::string& options)
+ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _key(name)
+  _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
@@ -58,29 +55,34 @@ ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, IEntitySelection& ent
 void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 {
 	// Use the ModelSelector to choose a model
-	ModelSelectorResult result = ModelSelector::chooseModel(
-		_entities.getSharedKeyValue(_key, true), false, false // pass the current model, don't show options or skins
+	auto result = ModelSelector::chooseModel(
+		_entities.getSharedKeyValue(_key->getFullKey(), true), false, false // pass the current model, don't show options or skins
 	);
+
+    if (result.objectKind != ModelSelector::Result::ObjectKind::Model)
+    {
+        return;
+    }
 
     UndoableCommand cmd("setModelProperty");
 
-    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    _entities.foreachEntity([&](const IEntityNodePtr& node)
     {
-        Entity* entity = Node_getEntity(node);
-        std::string prevModel = entity->getKeyValue(_key);
-        std::string name = entity->getKeyValue("name");
+        auto& entity = node->getEntity();
+        std::string prevModel = entity.getKeyValue(_key->getFullKey());
+        std::string name = entity.getKeyValue("name");
 
         bool wasBrushBasedModel = prevModel == name;
 
-        if (!result.model.empty())
+        if (!result.name.empty())
         {
-            bool willBeBrushBasedModel = result.model == name;
+            bool willBeBrushBasedModel = result.name == name;
 
             // Check if any brushes should be removed, but inform the user about this
             if (!willBeBrushBasedModel && wasBrushBasedModel && hasChildPrimitives(node))
             {
                 // Warn the user and proceed
-                wxutil::Messagebox::Show(_("Warning: "),
+                wxutil::Messagebox::Show(_("Warning"),
                     _("Changing this entity's model to the selected value will\nremove all child primitives from it:\n") + name,
                     IDialog::MessageType::MESSAGE_WARNING);
 
@@ -89,7 +91,9 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
             }
 
             // Save the model key now
-            entity->setKeyValue(_key, result.model);
+            entity.setKeyValue(_key->getFullKey(), result.name);
+
+            signal_keyValueApplied().emit(_key->getFullKey(), result.name);
         }
     });
 }
@@ -97,24 +101,24 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 {
 	// Invoke ParticlesChooser
-    std::string currentSelection = _entities.getSharedKeyValue(_key, true);
+    std::string currentSelection = getKeyValueFromSelection(_key->getFullKey());
 	std::string particle = ParticleChooserDialog::ChooseParticle(currentSelection);
 
 	if (!particle.empty())
 	{
-		setKeyValue(_key, particle);
+        setKeyValueOnSelection(_key->getFullKey(), particle);
 	}
 }
 
 void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
 {
     // Check the key this model property editor is attached to first
-    auto model = _entities.getSharedKeyValue(_key, true);
+    auto model = getKeyValueFromSelection(_key->getFullKey());
 
     // Fall back to "model" if nothing found
     if (model.empty())
     {
-        model = _entities.getSharedKeyValue("model", true);
+        model = getKeyValueFromSelection("model");
     }
 
     if (model.empty())
@@ -124,13 +128,17 @@ void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
         return;
     }
 
-	std::string prevSkin = _entities.getSharedKeyValue("skin", true);
-	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
+    // Target the "skin" property
+    auto skinKey = _key->clone();
+    skinKey->setAffectedKey("skin");
+
+	std::string prevSkin = getKeyValueFromSelection(skinKey->getFullKey());
+	std::string skin = SkinChooser::ChooseSkin(model, prevSkin);
 
 	if (skin != prevSkin)
 	{
 		// Apply the key to the entity
-		setKeyValue("skin", skin);
+        setKeyValueOnSelection(skinKey->getFullKey(), skin);
 	}
 }
 

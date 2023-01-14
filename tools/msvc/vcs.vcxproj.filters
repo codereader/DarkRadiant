@@ -68,5 +68,8 @@
     <ClInclude Include="..\..\plugins\vcs\CommitMetadata.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Signature.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -63,6 +63,8 @@ private:
 	// The list of layers this object is associated to
 	LayerList _layers;
 
+    RenderState _renderState;
+
 protected:
 	// If this node is attached to a parent entity, this is the reference to it
     IRenderEntity* _renderEntity;
@@ -100,34 +102,34 @@ public:
 	bool excluded() const override;
 
 	// Layered implementation
-	virtual void addToLayer(int layerId) override;
-    virtual void removeFromLayer(int layerId) override;
-	virtual void moveToLayer(int layerId) override;
-    virtual const LayerList& getLayers() const override;
-	virtual void assignToLayers(const LayerList& newLayers) override;
+	void addToLayer(int layerId) override;
+    void removeFromLayer(int layerId) override;
+	void moveToLayer(int layerId) override;
+    const LayerList& getLayers() const override;
+	void assignToLayers(const LayerList& newLayers) override;
 
-	virtual void addChildNode(const INodePtr& node) override;
-	virtual void addChildNodeToFront(const INodePtr& node) override;
-	virtual void removeChildNode(const INodePtr& node) override;
-	virtual bool hasChildNodes() const override;
+	void addChildNode(const INodePtr& node) override;
+	void addChildNodeToFront(const INodePtr& node) override;
+	void removeChildNode(const INodePtr& node) override;
+	bool hasChildNodes() const override;
 
-	virtual void traverse(NodeVisitor& visitor) override;
-	virtual void traverseChildren(NodeVisitor& visitor) const override;
-	virtual bool foreachNode(const VisitorFunc& functor) const override;
+	void traverse(NodeVisitor& visitor) override;
+	void traverseChildren(NodeVisitor& visitor) const override;
+	bool foreachNode(const VisitorFunc& functor) const override;
 
-	virtual void setParent(const INodePtr& parent) override;
-	virtual scene::INodePtr getParent() const override;
+	void setParent(const INodePtr& parent) override;
+	INodePtr getParent() const override;
 
 	const AABB& worldAABB() const override;
 
 	const AABB& childBounds() const;
 
-	virtual void boundsChanged() override;
+	void boundsChanged() override;
 
 	/**
 	 * Return the filtered status of this Instance.
 	 */
-	virtual bool isFiltered() const override
+	bool isFiltered() const override
     {
 		return (_state & eFiltered) != 0;
 	}
@@ -136,7 +138,7 @@ public:
 	 * Set the filtered status of this Node. Setting filtered to true will
 	 * prevent the node from being rendered.
 	 */
-	virtual void setFiltered(bool filtered) override
+	void setFiltered(bool filtered) override
     {
 		if (filtered)
         {
@@ -150,7 +152,7 @@ public:
 
 	const Matrix4& localToWorld() const override;
 
-	virtual void transformChangedLocal() override;
+	void transformChangedLocal() override;
 
 	void transformChanged() override;
 
@@ -160,8 +162,8 @@ public:
 	virtual void onChildRemoved(const INodePtr& child);
 
 	// Gets called when this node is inserted into a scene graph
-	virtual void onInsertIntoScene(IMapRootNode& root) override;
-	virtual void onRemoveFromScene(IMapRootNode& root) override;
+	void onInsertIntoScene(IMapRootNode& root) override;
+	void onRemoveFromScene(IMapRootNode& root) override;
 
 	// Returns TRUE if this node is inserted in the scene, FALSE otherwise
 	bool inScene() const override
@@ -194,7 +196,17 @@ public:
 	virtual RenderSystemPtr getRenderSystem() const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
+    // The default implementation doesn't react to this call
+    void onFiltersChanged() override
+    {}
+
+    RenderState getRenderState() const override;
+    void setRenderState(RenderState state) override;
+
 protected:
+    virtual void onRenderStateChanged()
+    {}
+
     // Set the "forced visible" flag, only to be used internally by subclasses
 	virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;
 

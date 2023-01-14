@@ -122,8 +122,6 @@ void WavefrontExporter::writeMaterialLib(std::ostream& stream)
 
         auto material = GlobalMaterialManager().getMaterial(surface.materialName);
 
-        const auto layers = material->getAllLayers();
-
         stream << "newmtl " << surface.materialName << std::endl;
         stream << "Ns 0.0" << std::endl; // shininess
         stream << "Ka 1.000000 1.000000 1.000000" << std::endl; // ambient colour
@@ -135,7 +133,7 @@ void WavefrontExporter::writeMaterialLib(std::ostream& stream)
         std::string specularFilename;
         std::string bumpFilename;
 
-        for (const auto& layer : layers)
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             if (layer->getType() == IShaderLayer::DIFFUSE)
             {
@@ -149,7 +147,8 @@ void WavefrontExporter::writeMaterialLib(std::ostream& stream)
             {
                 specularFilename = layer->getMapImageFilename();
             }
-        }
+            return true;
+        });
 
         if (!diffuseFilename.empty())
         {

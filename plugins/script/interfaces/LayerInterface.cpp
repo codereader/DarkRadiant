@@ -166,7 +166,7 @@ bool LayerInterface::layerIsVisible(const std::string &layerName)
 {
 	try
 	{
-		return getMapLayerManager().layerIsVisible(layerName);
+		return getMapLayerManager().layerIsVisible(getLayerID(layerName));
 	}
 	catch (const std::runtime_error& ex)
 	{
@@ -192,7 +192,7 @@ void LayerInterface::setLayerVisibility(const std::string &layerName, bool visib
 {
 	try
 	{
-		getMapLayerManager().setLayerVisibility(layerName, visible);
+		getMapLayerManager().setLayerVisibility(getLayerID(layerName), visible);
 	}
 	catch (const std::runtime_error& ex)
 	{
@@ -216,7 +216,7 @@ void LayerInterface::addSelectionToLayer(const std::string &layerName)
 {
 	try
 	{
-		getMapLayerManager().addSelectionToLayer(layerName);
+		getMapLayerManager().addSelectionToLayer(getLayerID(layerName));
 	}
 	catch (const std::runtime_error& ex)
 	{
@@ -240,7 +240,7 @@ void LayerInterface::moveSelectionToLayer(const std::string &layerName)
 {
 	try
 	{
-		getMapLayerManager().moveSelectionToLayer(layerName);
+		getMapLayerManager().moveSelectionToLayer(getLayerID(layerName));
 	}
 	catch (const std::runtime_error& ex)
 	{
@@ -264,7 +264,7 @@ void LayerInterface::removeSelectionFromLayer(const std::string &layerName)
 {
 	try
 	{
-		getMapLayerManager().removeSelectionFromLayer(layerName);
+		getMapLayerManager().removeSelectionFromLayer(getLayerID(layerName));
 	}
 	catch (const std::runtime_error& ex)
 	{
@@ -289,6 +289,31 @@ void LayerInterface::setSelected(int layerID, bool selected)
 	try
 	{
 		getMapLayerManager().setSelected(layerID, selected);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
+}
+
+int LayerInterface::getParentLayer(int layerId)
+{
+	try
+	{
+		return getMapLayerManager().getParentLayer(layerId);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+        return -1;
+	}
+}
+
+void LayerInterface::setParentLayer(int childlayerId, int parentLayerId)
+{
+	try
+	{
+		getMapLayerManager().setParentLayer(childlayerId, parentLayerId);
 	}
 	catch (const std::runtime_error& ex)
 	{
@@ -329,6 +354,8 @@ void LayerInterface::registerInterface(py::module& scope, py::dict& globals)
 	layerManager.def("removeSelectionFromLayer", py::overload_cast<const std::string&>(&LayerInterface::removeSelectionFromLayer));
 	layerManager.def("removeSelectionFromLayer", py::overload_cast<int>(&LayerInterface::removeSelectionFromLayer));
 	layerManager.def("setSelected", &LayerInterface::setSelected);
+	layerManager.def("getParentLayer", &LayerInterface::getParentLayer);
+	layerManager.def("setParentLayer", &LayerInterface::setParentLayer);
 
 	// Now point the Python variable "GlobalLayerManager" to this instance
 	globals["GlobalLayerManager"] = this;

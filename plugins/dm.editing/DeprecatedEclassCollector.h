@@ -22,7 +22,7 @@ public:
 			return;
 
 		// Non-empty editor_replacement, add fixup code
-		_fixupCode += ENTITYDEF_PREFIX + eclass->getName() + " => " + attr + "\n";
+		_fixupCode += ENTITYDEF_PREFIX + eclass->getDeclName() + " => " + attr + "\n";
 	}
 
 	const std::string& getFixupCode() const

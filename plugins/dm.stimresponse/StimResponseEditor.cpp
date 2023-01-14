@@ -186,7 +186,7 @@ bool StimResponseEditor::Destroy()
 }
 
 // Static command target
-void StimResponseEditor::ShowDialog(const cmd::ArgumentList& args)
+void StimResponseEditor::ShowDialog()
 {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 

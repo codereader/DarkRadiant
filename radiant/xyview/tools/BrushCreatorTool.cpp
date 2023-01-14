@@ -4,11 +4,11 @@
 #include "igrid.h"
 #include "iclipper.h"
 #include "scenelib.h"
-#include "itextstream.h"
 #include "selectionlib.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "command/ExecutionNotPossible.h"
 #include "XYMouseToolEvent.h"
+#include "ui/texturebrowser/TextureBrowserPanel.h"
+#include "ui/texturebrowser/TextureBrowserManager.h"
 
 namespace ui
 {
@@ -117,8 +117,10 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
         }
 
         // Dispatch the command
-        GlobalCommandSystem().executeCommand("ResizeSelectedBrushesToBounds", 
-            startPos, endPos, GlobalTextureBrowser().getSelectedShader());
+        GlobalCommandSystem().executeCommand(
+            "ResizeSelectedBrushesToBounds",
+            {startPos, endPos, GlobalTextureBrowser().getSelectedShader()}
+        );
     }
     catch (cmd::ExecutionNotPossible&)
     {

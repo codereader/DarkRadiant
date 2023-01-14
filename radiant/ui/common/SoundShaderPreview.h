@@ -3,12 +3,13 @@
 #include <string>
 #include <mutex>
 #include <map>
-#include <memory>
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/TreeView.h"
 #include "SequentialTaskQueue.h"
 
 #include <wx/panel.h>
+
+#include "ui/ideclpreview.h"
 
 class wxButton;
 class wxStaticText;
@@ -22,7 +23,8 @@ namespace ui
  * sound shader with playback option.
  */
 class SoundShaderPreview :
-	public wxPanel
+	public wxPanel,
+    public IDeclarationPreview
 {
 private:
 	// Tree store and view for available sound files, and the tree selection
@@ -34,10 +36,6 @@ private:
 	wxButton* _playLoopedButton;
 	wxButton* _stopButton;
 	wxStaticText* _statusLabel;
-
-	wxSizer* _shaderDescriptionSizer;
-	wxStaticText* _shaderNameLabel;
-	wxStaticText* _shaderFileLabel;
 
 	// The currently "previewed" soundshader
 	std::string _soundShader;
@@ -70,12 +68,19 @@ private:
 public:
 	SoundShaderPreview(wxWindow* parent);
 
-    ~SoundShaderPreview();
+    ~SoundShaderPreview() override;
 
-	/** greebo: Sets the soundshader to preview.
-	 * 			This updates the preview liststore and treeview.
+    wxWindow* GetPreviewWidget() override
+    {
+        return this;
+    }
+
+    void ClearPreview() override;
+
+	/**
+	 * Sets the soundshader to preview. This updates the preview liststore and treeview.
 	 */
-	void setSoundShader(const std::string& soundShader);
+    void SetPreviewDeclName(const std::string& declName) override;
 
 	/**
 	 * Provided a sound shader is assigned, this will pick

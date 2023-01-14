@@ -128,8 +128,8 @@ void FilterDialog::update()
 		row[_columns.name] = i->first;
 		row[_columns.state] = filter.state ? std::string(_("enabled")) : std::string(_("disabled"));
 
-		row[_columns.name] = filter.readOnly ? grey : black;
-		row[_columns.state] = filter.readOnly ? grey : black;
+		row[_columns.name].setAttr(filter.readOnly ? grey : black);
+		row[_columns.state].setAttr(filter.readOnly ? grey : black);
 
 		row[_columns.readonly] = filter.readOnly;
 

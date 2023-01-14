@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testDocument>
+  <colourscheme name="Black &amp; Green" version="1.0" readonly="1">
+    <colour name="active_view_name" value="0.7 0.7 0"/>
+    <colour name="axis_x" value="1 0 0"/>
+    <colour name="axis_y" value="0 1 0"/>
+    <colour name="axis_z" value="0 0 1"/>
+    <colour name="brush_size_info" value="0.65 0 0"/>
+    <colour name="brush_vertices" value="0 1 0"/>
+    <colour name="camera_background" value="0 0 0"/>
+    <colour name="camera_icon" value="0 0 1"/>
+    <colour name="clipper" value="0 0 1"/>
+    <colour name="default_brush" value="1 1 1"/>
+    <colour name="default_entity" value="1 0.5 0"/>
+    <colour name="drag_selection" value="1 0 0"/>
+    <colour name="grid_background" value="0 0 0"/>
+    <colour name="grid_block" value="0 0 1"/>
+    <colour name="grid_major" value="0.3 0.5 0.5"/>
+    <colour name="grid_minor" value="0.2 0.2 0.2"/>
+    <colour name="grid_text" value="1 1 1"/>
+    <colour name="light_startend_deselected" value="0 1 1"/>
+    <colour name="light_startend_selected" value="0 0 1"/>
+    <colour name="light_vertex_deselected" value="0 1 0"/>
+    <colour name="light_vertex_normal" value="1 0 0"/>
+    <colour name="light_vertex_selected" value="0 0 1"/>
+    <colour name="light_volumes" value="0 1 0"/>
+    <colour name="patch_vertex_corner" value="1 0 1"/>
+    <colour name="patch_vertex_inside" value="0 1 0"/>
+    <colour name="selected_brush" value="1 0 0"/>
+    <colour name="selected_brush_camera" value="1 0 0"/>
+    <colour name="selected_group_items" value="0 0.4 0.8"/>
+    <colour name="texture_background" value="0.25 0.25 0.25"/>
+    <colour name="workzone" value="1 0 0"/>
+    <colour name="xyview_crosshairs" value="0.2 0.9 0.2"/>
+  </colourscheme>
+  <colourscheme name="DarkRadiant Default" version="1.0">
+    <colour name="active_view_name" value="0.5 0 0.75"/>
+    <colour name="axis_x" value="1 0 0"/>
+    <colour name="axis_y" value="0 1 0"/>
+    <colour name="axis_z" value="0 0 1"/>
+    <colour name="brush_size_info" value="0.65 0 0"/>
+    <colour name="brush_vertices" value="0 1 0"/>
+    <colour name="camera_background" value="0.25 0.25 0.25"/>
+    <colour name="camera_icon" value="0 0 1"/>
+    <colour name="clipper" value="0 0 1"/>
+    <colour name="default_brush" value="0 0 0"/>
+    <colour name="default_entity" value="1 0.5 0"/>
+    <colour name="drag_selection" value="0.65 0 0"/>
+    <colour name="grid_background" value="1 1 1"/>
+    <colour name="grid_block" value="0 0 1"/>
+    <colour name="grid_major" value="0.5 0.5 0.5"/>
+    <colour name="grid_minor" value="0.75 0.75 0.75"/>
+    <colour name="grid_text" value="0 0 0"/>
+    <colour name="light_startend_deselected" value="0 1 1"/>
+    <colour name="light_startend_selected" value="0 0 1"/>
+    <colour name="light_vertex_deselected" value="0 1 0"/>
+    <colour name="light_vertex_normal" value="1 0 0"/>
+    <colour name="light_vertex_selected" value="0 0 1"/>
+    <colour name="light_volumes" value="0 1 0"/>
+    <colour name="patch_vertex_corner" value="1 0 1"/>
+    <colour name="patch_vertex_inside" value="0 1 0"/>
+    <colour name="selected_brush" value="1 0 0"/>
+    <colour name="selected_brush_camera" value="1 0 0"/>
+    <colour name="selected_group_items" value="0 0.4 0.8"/>
+    <colour name="texture_background" value="0.25 0.25 0.25"/>
+    <colour name="workzone" value="1 0 0"/>
+    <colour name="xyview_crosshairs" value="0.2 0.9 0.2"/>
+    <specialNodeWithWhitespace name="withWhitespacedContent">
+        Some special content including leading and trailing whitespace
+    </specialNodeWithWhitespace>
+    <specialNode name="withContent">Some special content</specialNode>
+  </colourscheme>
+</testDocument>

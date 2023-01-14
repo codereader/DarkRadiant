@@ -24,6 +24,7 @@ class CodeTokeniserFunc
 	{
         SEARCHING,        // haven't found anything yet
         TOKEN_STARTED,    // found the start of a possible multi-char token
+        OPERATOR,         // found the start of an operator
 		AFTER_DEFINE,	  // after parsing a #define command
 		AFTER_DEFINE_BACKSLASH,		// after a #define token, encountering a backslash
 		AFTER_DEFINE_SEARCHING_FOR_EOL,	// after a #define token, after encountering a backslash
@@ -43,8 +44,12 @@ class CodeTokeniserFunc
     // List of delimiters to keep
     const char* _keptDelims;
 
+    // List of recognised operator tokens
+    const std::vector<std::string>& _operators;
+
     // Test if a character is a delimiter
-    bool isDelim(char c) {
+    bool isDelim(char c) const
+    {
         const char* curDelim = _delims;
         while (*curDelim != 0) {
             if (*(curDelim++) == c) {
@@ -55,7 +60,8 @@ class CodeTokeniserFunc
     }
 
     // Test if a character is a kept delimiter
-    bool isKeptDelim(char c) {
+    bool isKeptDelim(char c) const
+    {
         const char* curDelim = _keptDelims;
         while (*curDelim != 0) {
             if (*(curDelim++) == c) {
@@ -65,14 +71,27 @@ class CodeTokeniserFunc
         return false;
     }
 
+    bool isMatchingOperatorByFirstCharacter(char c) const
+    {
+        for (const auto& op : _operators)
+        {
+            if (op.at(0) == c)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 public:
 
-    // Constructor
-    CodeTokeniserFunc(const char* delims, const char* keptDelims) :
+    CodeTokeniserFunc(const char* delims, const char* keptDelims, const std::vector<std::string>& operators) :
 		_state(SEARCHING),
 		_delims(delims),
-		_keptDelims(keptDelims)
+		_keptDelims(keptDelims),
+        _operators(operators)
     {}
 
     /* REQUIRED. Operator() is called by the Tokeniser. This function
@@ -81,13 +100,13 @@ public:
      * parsing on the next call, and return true.
      */
     template<typename InputIterator, typename Token>
-    bool operator() (InputIterator& next, InputIterator end, Token& tok) {
-
+    bool operator() (InputIterator& next, InputIterator end, Token& tok)
+    {
         // Initialise state, no persistence between calls
         _state = SEARCHING;
 
         // Clear out the token, no guarantee that it is empty
-        tok = "";
+        tok.clear();
 
 		enum class QuoteType
 		{
@@ -95,7 +114,7 @@ public:
 			Double = 1,
 		};
 
-		QuoteType quoteType = QuoteType::Single;
+		auto quoteType = QuoteType::Single;
 
         while (next != end)
 		{
@@ -109,10 +128,25 @@ public:
                         continue;
                     }
 
+                    if (*next == '/')
+                    {
+                        _state = FORWARDSLASH;
+                        ++next;
+                        continue; // skip slash, will need to add it back if this is not a comment)
+                    }
+
                     // If we have a KEPT delimiter, this is the token to return.
                     if (isKeptDelim(*next)) {
-                        tok = *(next++);
+                        tok = *next++;
                         return true;
+                    }
+
+                    if (isMatchingOperatorByFirstCharacter(*next))
+                    {
+                        // Found the first character of one of our supported operators
+                        tok = *next++;
+                        _state = OPERATOR;
+                        continue;
                     }
 
                     // Otherwise fall through into TOKEN_STARTED, saving the state for the
@@ -134,6 +168,13 @@ public:
                         return true;
                     }
 
+                    // Check for operators, they basically act as delimiters
+                    if (isMatchingOperatorByFirstCharacter(*next))
+                    {
+                        // Return what we have so far, we'll deal with the operator next round
+                        return true;
+                    }
+
                     // Now next is pointing at a non-delimiter. Switch on this
                     // character.
                     switch (*next) 
@@ -142,26 +183,20 @@ public:
                         // current token if we are in the process of building
                         // one.
                         case '\"':
-                            if (tok != "") {
-                                return true;
-                            }
-                            else {
-								quoteType = QuoteType::Double;
-                                _state = QUOTED;
-                                ++next;
-                                continue; // skip the quote
-                            }
+                            if (!tok.empty()) return true;
+                            
+                            quoteType = QuoteType::Double;
+                            _state = QUOTED;
+                            ++next;
+                            continue; // skip the quote
 
 						case '\'':
-							if (tok != "") {
-								return true;
-							}
-							else {
-								quoteType = QuoteType::Single;
-								_state = QUOTED;
-								++next;
-								continue; // skip the quote
-							}
+                            if (!tok.empty()) return true;
+
+							quoteType = QuoteType::Single;
+							_state = QUOTED;
+							++next;
+							continue; // skip the quote
 
                         // Found a slash, possibly start of comment
                         case '/':
@@ -171,9 +206,44 @@ public:
 
                         // General case. Token lasts until next delimiter.
                         default:
-                            tok += *next;
-                            ++next;
+                            tok += *next++;
                             continue;
+                    }
+
+                    case OPERATOR:
+                    // We already matched the first character of one of our operators
+                    // Check if we can match a second character
+                    {
+                        const std::string* singleCharacterOperator = nullptr;
+                        auto lastChar = tok.at(tok.length() - 1);
+
+                        for (const auto& op : _operators)
+                        {
+                            if (op.length() == 2 && op.at(0) == lastChar && op.at(1) == *next)
+                            {
+                                // Exact two-char operator match, exhaust character and return
+                                tok += *next++;
+                                return true;
+                            }
+
+                            // Check if a single-character operator is matching
+                            // We will resort to this one if nothing else matches
+                            if (op.length() == 1 && op.at(0) == lastChar)
+                            {
+                                singleCharacterOperator = &op;
+                            }
+                        }
+
+                        // No two-character operator matched, did we find a single-character operator?
+                        if (singleCharacterOperator != nullptr)
+                        {
+                            // Don't exhaust the second character, return the operator as token
+                            return true;
+                        }
+
+                        // No operator found, switch back to token mode and re-check (don't exhaust)
+                        _state = TOKEN_STARTED;
+                        continue;
                     }
 
 				case AFTER_DEFINE:
@@ -261,7 +331,7 @@ public:
 
                     // In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
-                    if ((*next == '\"' && quoteType == QuoteType::Double) ||
+                    if ((*next == '"' && quoteType == QuoteType::Double) ||
 						(*next == '\'' && quoteType == QuoteType::Single))
 					{
                         ++next;
@@ -292,7 +362,7 @@ public:
 							}
 							else if (*next == '\'' && quoteType == QuoteType::Single) // Escaped Single Quote
 							{
-								tok += '"';
+								tok += '\'';
 							}
 							else
 							{
@@ -364,24 +434,27 @@ public:
                     // If we have a forward slash we may be entering a comment. The forward slash
                     // will NOT YET have been added to the token, so we must add it manually if
                     // this proves not to be a comment.
+                    switch (*next)
+                    {
+                    case '*':
+                        _state = COMMENT_DELIM;
+                        ++next;
+                        continue;
 
-                    switch (*next) {
+                    case '/':
+                        _state = COMMENT_EOL;
+                        ++next;
+                        continue;
 
-                        case '*':
-                            _state = COMMENT_DELIM;
-                            ++next;
-                            continue;
+                    default:
+                        // Not a comment, add to token nonetheless
+                        // Do not increment next, we're already past the slash
+                        tok += "/";
 
-                        case '/':
-                            _state = COMMENT_EOL;
-                            ++next;
-                            continue;
-
-                        default: // false alarm, add the slash and carry on
-                            _state = SEARCHING;
-                            tok += "/";
-                            // Do not increment next here
-                            continue;
+                        // Check if the slash is a starting character of any operator,
+                        // if yes we switch to OPERATOR mode
+                        _state = isMatchingOperatorByFirstCharacter('/') ? OPERATOR : SEARCHING;
+                        continue;
                     }
 
                 case COMMENT_DELIM:
@@ -452,10 +525,7 @@ public:
         } // end of for loop
 
         // Return true if we have added anything to the token
-        if (tok != "")
-            return true;
-        else
-            return false;
+        return !tok.empty();
     }
 };
 
@@ -518,15 +588,19 @@ public:
      * @param keptDelims
      * String of characters to treat as delimiters but return as tokens in their
      * own right.
+     *
+     * @param operators
+     * List of recognised operator tokens, like "+=", "/" and "?"
      */
     SingleCodeFileTokeniser(std::istream& str,
-                      const char* delims = WHITESPACE,
-                      const char* keptDelims = "{}(),")
+                      const char* delims,
+                      const char* keptDelims,
+                      const std::vector<std::string>& operators)
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
-           CodeTokeniserFunc(delims, keptDelims)),
+           CodeTokeniserFunc(delims, keptDelims, operators)),
       _tokIter(_tok.getIterator())
-    { }
+    {}
 
     /**
      * Test if this StringTokeniser has more tokens to return.
@@ -586,34 +660,33 @@ private:
 
 	struct ParseNode
 	{
+        using Ptr = std::shared_ptr<ParseNode>;
+
 		ArchiveTextFilePtr archive;
 		std::istream inputStream;
 		SingleCodeFileTokeniser tokeniser;
 
 		ParseNode(const ArchiveTextFilePtr& archive_,
-				const char* delims, const char* keptDelims) :
+				const char* delims, const char* keptDelims, const std::vector<std::string>& operators) :
 			archive(archive_),
 			inputStream(&archive->getInputStream()),
-			tokeniser(inputStream, delims, keptDelims)
+			tokeniser(inputStream, delims, keptDelims, operators)
 		{}
 	};
-	typedef std::shared_ptr<ParseNode> ParseNodePtr;
 
 	// The stack of child tokenisers
-	typedef std::list<ParseNodePtr> NodeList;
+    using NodeList = std::list<ParseNode::Ptr>;
 	NodeList _nodes;
 
 	NodeList::iterator _curNode;
 
 	// A set of visited files to catch infinite include loops
-	typedef std::list<std::string> FileNameStack;
-	FileNameStack _fileStack;
+    std::list<std::string> _fileStack;
 
-	typedef std::list<std::string> StringList;
+	using StringList = std::list<std::string>;
 
 	// A map associating names to #define'd macros
-	typedef std::map<std::string, Macro> Macros;
-	Macros _macros;
+    std::map<std::string, Macro> _macros;
 
 	// A small local buffer which is needed to properly resolve #define statements
 	// which could consist of several tokens themselves
@@ -622,18 +695,24 @@ private:
 	const char* _delims;
 	const char* _keptDelims;
 
+    // The list of operators supported by this tokeniser
+    std::vector<std::string> _operators;
+
 public:
+    constexpr static const char* KEPT_DELIMS = "{}(),;";
 
     /**
      * Construct a CodeTokeniser with the given text file from the VFS.
      */
-	CodeTokeniser(const ArchiveTextFilePtr& file,
-				  const char* delims = " \t\n\v\r",
-				  const char* keptDelims = "{}(),;") :
-		_delims(delims),
-		_keptDelims(keptDelims)
+    CodeTokeniser(const ArchiveTextFilePtr& file,
+                  const char* delims,
+                  const char* keptDelims,
+                  const std::vector<const char*>& operators) :
+        _delims(delims),
+        _keptDelims(keptDelims),
+        _operators(operators.begin(), operators.end())
     {
-		_nodes.push_back(ParseNodePtr(new ParseNode(file, _delims, _keptDelims)));
+		_nodes.emplace_back(std::make_shared<ParseNode>(file, _delims, _keptDelims, _operators));
 		_curNode = _nodes.begin();
 
 		_fileStack.push_back(file->getName());
@@ -641,12 +720,12 @@ public:
 		fillTokenBuffer();
 	}
 
-    bool hasMoreTokens() const
+    bool hasMoreTokens() const override
 	{
 		return !_tokenBuffer.empty();
     }
 
-    std::string nextToken()
+    std::string nextToken() override
 	{
 		if (_tokenBuffer.empty())
 		{
@@ -665,7 +744,7 @@ public:
 		return temp;
     }
 
-	std::string peek() const
+	std::string peek() const override
 	{
 		if (_tokenBuffer.empty())
 		{
@@ -703,12 +782,12 @@ private:
 
 			// Found a non-preprocessor token,
 			// check if this is matching a preprocessor definition
-			Macros::const_iterator found = _macros.find(_tokenBuffer.front());
+			auto found = _macros.find(_tokenBuffer.front());
 
 			if (found != _macros.end())
 			{
 				// Expand this macro, new tokens are acquired from the currently active tokeniser
-				StringList expanded = expandMacro(found->second, [this]() { return (*_curNode)->tokeniser.nextToken(); });
+				auto expanded = expandMacro(found->second, [this]() { return (*_curNode)->tokeniser.nextToken(); });
 
 				if (!expanded.empty())
 				{
@@ -722,10 +801,12 @@ private:
 		}
 	}
 
-	// Expands the given macro, returns the beginning and end of a range
+	// Expands the given macro
 	StringList expandMacro(const Macro& macro, const std::function<std::string()>& nextTokenFunc)
 	{
-		StringList argumentValues;
+        // A list of tokens that are fill in for each macro argument
+        std::vector<StringList> argumentValues;
+        argumentValues.resize(macro.arguments.size());
 
 		// Acquire the macro argument values if applicable
 		if (!macro.arguments.empty())
@@ -736,97 +817,111 @@ private:
 				throw ParseException(fmt::format("Error expanding macro {0}, expected '('", macro.name));
 			}
 
-			for (StringList::const_iterator i = macro.arguments.begin(); i != macro.arguments.end(); ++i)
-			{
-				std::string argumentToken = nextTokenFunc();
-				std::string argumentValue = "";
+            auto currentArgumentValues = argumentValues.begin();
+            for (auto arg : macro.arguments)
+            {
+                auto argumentToken = nextTokenFunc();
 
-				while (argumentToken != "," && argumentToken != ")")
-				{
-					argumentValue += argumentToken;
-					argumentValue.append(" ");
+                // Accumulate the macro arguments, comma-separated, until we hit the closing parenthesis
+                while (argumentToken != "," && argumentToken != ")")
+                {
+                    currentArgumentValues->emplace_back(std::move(argumentToken));
+                    argumentToken = nextTokenFunc();
+                }
 
-					argumentToken = nextTokenFunc();
-				}
-
-				argumentValues.push_back(argumentValue);
-			}
+                ++currentArgumentValues;
+            }
 		}
 
 		// Allocate a new list for the expanded tokens
-		StringList expandedTokens;
-		
-		// Insert the macro contents into the buffer, expanding sub-macros along the way
-		for (StringList::const_iterator t = macro.tokens.begin(); t != macro.tokens.end(); ++t)
+        auto macroTokens = macro.tokens;
+
+		// Process the macro tokens expanding sub-macros while iterating
+		for (auto t = macroTokens.begin(); t != macroTokens.end();)
 		{
-			// Replace macro variable with its value
-			std::string token = getMacroToken(*t, macro, argumentValues);
+			// Replace any macro identifier with the set of values
+			auto tokens = getMacroTokens(*t, macro, argumentValues);
 
-			// check if this is matching a preprocessor definition
-			Macros::const_iterator found = _macros.find(token);
+            // Insert all replaced tokens at this point in the list
+            t = macroTokens.erase(t);
+            t = macroTokens.insert(t, tokens.begin(), tokens.end());
 
-			if (found == _macros.end())
-			{
-				// Not a macro
-				expandedTokens.push_back(token);
-				continue;
-			}
+            auto found = _macros.find(*t);
 
-			// Enter recursion to expand this sub-macro, new tokens are acquired from the current iterator t
-			StringList subMacro = expandMacro(found->second, [&]() 
-			{ 
-				if (t == macro.tokens.end())
-				{
-					throw ParseException(fmt::format("Running out of tokens expanding sub-macro {0}", token));
-				}
+            if (found == _macros.end())
+            {
+                ++t;
+                continue; // leave this token unchanged
+            }
 
-				// Advance iterator and dereference
-				// When delivering tokens to sub-macro expansions we still need to replace any argument values
-				return getMacroToken(*(++t), macro, argumentValues);
-			});
+            // Remove the macro identifier, get its expansion
+            t = macroTokens.erase(t);
 
-			if (!subMacro.empty())
-			{
-				// Insert the expanded macro contents, don't insert *t itself
-				expandedTokens.insert(expandedTokens.end(), subMacro.begin(), subMacro.end());
-			}
-			else
-			{
-				rWarning() << "Macro expansion yields empty token list: " << *t <<
-					" in " << (*_curNode)->archive->getName() << std::endl;
-			}
+            // Enter recursion to expand this sub-macro, new tokens are acquired from the current iterator t
+            auto subMacro = expandMacro(found->second, [&]()
+            {
+                if (t == macroTokens.end())
+                {
+                    throw ParseException(fmt::format("Running out of tokens expanding sub-macro {0}", *t));
+                }
+
+                // Extract a new piece from the macroTokens and deliver this
+                auto subTokens = getMacroTokens(*t, macro, argumentValues);;
+
+                // Before returning the token, expand any placeholders
+                t = macroTokens.erase(t);
+                t = macroTokens.insert(t, subTokens.begin(), subTokens.end());
+
+                // Take and remove the token from the list and deliver it
+                auto token = *t;
+                t = macroTokens.erase(t);
+
+                return token;
+            });
+
+            if (!subMacro.empty())
+            {
+                // Insert the expanded macro contents
+                t = macroTokens.insert(t, subMacro.begin(), subMacro.end());
+            }
+            else
+            {
+                rWarning() << "Macro expansion yields empty token list: " << *t <<
+                    " in " << (*_curNode)->archive->getName() << std::endl;
+            }
 		}
 
-		return expandedTokens;
+		return macroTokens;
 	}
 
-	std::string getMacroToken(std::string token, const Macro& macro, const StringList& argumentValues)
-	{
-		// Check if the current token is referring to a macro argument and replace it with its value
-		for (StringList::const_iterator arg = macro.arguments.begin(), val = argumentValues.begin();
-			arg != macro.arguments.end() && val != argumentValues.end(); ++arg, ++val)
+    // Check if the current token is referring to a macro argument and replace it with its value tokens
+    static StringList getMacroTokens(std::string token, const Macro& macro, const std::vector<StringList>& argumentValues)
+    {
+        auto values = argumentValues.begin();
+
+		for (auto arg = macro.arguments.begin();
+			arg != macro.arguments.end() && values != argumentValues.end(); ++arg, ++values)
 		{
 			if (token == *arg)
 			{
-				return *val;
+				return *values;
 			}
 		}
 
-		return token; // leave token unchanged
-	}
+        return { token }; // leave token unchanged
+    }
 
 	void handlePreprocessorToken(const std::string& token)
 	{
 		if (token == "#include")
 		{
-			std::string includeFile = (*_curNode)->tokeniser.nextToken();
+			auto includeFile = (*_curNode)->tokeniser.nextToken();
+			auto file = GlobalFileSystem().openTextFile(includeFile);
 
-			ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(includeFile);
-
-			if (file != NULL)
+			if (file)
 			{
 				// Catch infinite recursions
-				FileNameStack::const_iterator found = std::find(_fileStack.begin(), _fileStack.end(), file->getName());
+				auto found = std::find(_fileStack.begin(), _fileStack.end(), file->getName());
 
 				if (found == _fileStack.end())
 				{
@@ -835,7 +930,7 @@ private:
 
 					_curNode = _nodes.insert(
 						_curNode,
-						ParseNodePtr(new ParseNode(file, _delims, _keptDelims))
+						std::make_shared<ParseNode>(file, _delims, _keptDelims, _operators)
 					);
 				}
 				else
@@ -856,13 +951,13 @@ private:
 		}
 		else if (token == "#undef")
 		{
-			std::string key = (*_curNode)->tokeniser.nextToken();
+			auto key = (*_curNode)->tokeniser.nextToken();
 			_macros.erase(key);
 		}
 		else if (token == "#ifdef")
 		{
-			std::string key = (*_curNode)->tokeniser.nextToken();
-			Macros::const_iterator found = _macros.find(key);
+            auto key = (*_curNode)->tokeniser.nextToken();
+            auto found = _macros.find(key);
 
 			if (found == _macros.end())
 			{
@@ -871,8 +966,7 @@ private:
 		}
 		else if (token == "#ifndef")
 		{
-			Macros::const_iterator found = _macros.find(
-				(*_curNode)->tokeniser.nextToken());
+            auto found = _macros.find((*_curNode)->tokeniser.nextToken());
 
 			if (found != _macros.end())
 			{
@@ -908,9 +1002,9 @@ private:
 
 		// Parse the entire macro
 		std::istringstream macroStream(defineToken);
-		SingleCodeFileTokeniser macroParser(macroStream);
+		SingleCodeFileTokeniser macroParser(macroStream, _delims, _keptDelims, _operators);
 
-		std::string name = macroParser.nextToken();
+		auto name = macroParser.nextToken();
 
 		bool paramsStarted = false;
 
@@ -920,9 +1014,7 @@ private:
 			paramsStarted = true;
 		}
 
-		std::pair<Macros::iterator, bool> result = _macros.insert(
-			Macros::value_type(name, Macro(name))
-		);
+		auto result = _macros.emplace(name, Macro(name));
 
 		if (!result.second)
 		{
@@ -930,11 +1022,11 @@ private:
 			result.first->second = Macro(name);
 		}
 
-		Macro& macro = result.first->second;
+		auto& macro = result.first->second;
 
 		while (macroParser.hasMoreTokens())
 		{
-			std::string macroToken = macroParser.nextToken();
+			auto macroToken = macroParser.nextToken();
 
 			// An opening parenthesis might be an argument list, but
 			// only if we're still at the beginning of the macro
@@ -983,7 +1075,7 @@ private:
 					<< (*_curNode)->archive->getName() << std::endl;
 			}
 
-			std::string token = (*_curNode)->tokeniser.nextToken();
+			auto token = (*_curNode)->tokeniser.nextToken();
 
 			if (token == "#endif")
 			{

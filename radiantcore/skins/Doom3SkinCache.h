@@ -2,14 +2,15 @@
 
 #include "Doom3ModelSkin.h"
 
+#include <map>
 #include "imodule.h"
-#include "modelskin.h"
-#include "parser/DefTokeniser.h"
 
+#include "modelskin.h"
+
+#include <sigc++/connection.h>
 #include <map>
 #include <string>
 #include <vector>
-#include "SkinDeclParser.h"
 
 namespace skins
 {
@@ -18,10 +19,9 @@ namespace skins
  * Implementation of ModelSkinCache interface for Doom 3 skin management.
  */
 class Doom3SkinCache :
-	public ModelSkinCache
+    public decl::IModelSkinCache
 {
-	// Table of named skin objects
-    std::map<std::string, ModelSkinPtr> _namedSkins;
+    std::mutex _cacheLock;
 
 	// List of all skins
 	std::vector<std::string> _allSkins;
@@ -30,32 +30,23 @@ class Doom3SkinCache :
 	// which are contained in the main NamedSkinMap.
     std::map<std::string, std::vector<std::string>> _modelSkins;
 
-    // Helper which will load the skin defs in a separate thread
-    SkinDeclParser _defLoader;
-
-	// Empty Doom3ModelSkin to return if a named skin is not found
-	Doom3ModelSkin _nullSkin;
-
 	sigc::signal<void> _sigSkinsReloaded;
+    sigc::connection _declsReloadedConnection;
+    sigc::connection _declCreatedConnection;
+    sigc::connection _declRemovedConnection;
+    sigc::connection _declRenamedConnection;
+
+    // This instance monitors all existing skins for changes
+    std::map<std::string, sigc::connection> _declChangedConnections;
+    std::set<std::string> _skinsPendingReparse;
 
 public:
-    Doom3SkinCache();
-
-	/* Return a specific named skin. If the named skin cannot be found, return
-	 * the empty (null) skin with no remaps.
-	 */
-    ModelSkin& capture(const std::string& name) override;
-
-	/* Get the vector of skin names corresponding to the given model.
-	 */
+    decl::ISkin::Ptr findSkin(const std::string& name) override;
+    bool renameSkin(const std::string& oldName, const std::string& newName) override;
+    decl::ISkin::Ptr copySkin(const std::string& nameOfOriginal, const std::string& nameOfCopy) override;
     const StringList& getSkinsForModel(const std::string& model) override;
-
-	/* Return a complete list of skins.
-	 */
     const StringList& getAllSkins() override;
-
-    void addNamedSkin(const ModelSkinPtr& modelSkin) override;
-    void removeSkin(const std::string& name) override;
+    bool skinCanBeModified(const std::string& name) override;
 
 	/**
 	 * greebo: Clears and reloads all skins.
@@ -69,25 +60,21 @@ public:
 	const std::string& getName() const override;
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 private:
-    // Load and parse the skin files, populating internal data structures.
-    // Function may be called more than once, will do nothing if already
-    // realised.
-    void ensureDefsLoaded();
+    void onSkinDeclsReloaded();
+    void updateModelsInScene();
+    void onSkinDeclCreated(decl::Type type, const std::string& name);
+    void onSkinDeclRemoved(decl::Type type, const std::string& name);
+    void onSkinDeclRenamed(decl::Type type, const std::string& oldName, const std::string& newName);
+    void onSkinDeclChanged(decl::ISkin& skin);
 
-    // Iterates over each skin file in the VFS skins/ folder
-    void loadSkinFiles();
-
-    // Parse an individual skin declaration and add return the skin object
-    Doom3ModelSkinPtr parseSkin(parser::DefTokeniser& tokeniser);
-
-    /* Parse the provided istream as a .skin file, and add all skins found within
-    * to the internal data structures.
-    *
-    * @filename: This is for informational purposes only (error message display).
-    */
-    void parseFile(std::istream& contents, const std::string& filename);
+    void handleSkinAddition(const std::string& name); // requires held lock
+    void handleSkinRemoval(const std::string& name); // requires held lock
+    void subscribeToSkin(const decl::ISkin::Ptr& skin);
+    void unsubscribeFromAllSkins();
+    void ensureCacheIsUpdated(); // requires lock to be held
 };
 
-} // namespace skins
+} // namespace

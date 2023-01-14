@@ -1,7 +1,8 @@
 #include "FileSystemView.h"
 
 #include "i18n.h"
-#include "wxutil/Bitmap.h"
+#include "../Bitmap.h"
+#include "../Icon.h"
 
 namespace wxutil
 {
@@ -110,11 +111,9 @@ void FileSystemView::Populate(const std::string& preselectPath)
     // Clear the treestore
     _treeStore->Clear();
 
-    wxutil::TreeModel::Row row = _treeStore->AddItem();
+    TreeModel::Row row = _treeStore->AddItem();
 
-    wxIcon loadingIcon;
-    loadingIcon.CopyFromBitmap(
-        wxutil::GetLocalBitmap(_fileIcon));
+    wxutil::Icon loadingIcon(GetLocalBitmap(_fileIcon));
 
     row[Columns().filename] = wxVariant(wxDataViewIconText(_("Loading..."), loadingIcon));
     row[Columns().isFolder] = false;

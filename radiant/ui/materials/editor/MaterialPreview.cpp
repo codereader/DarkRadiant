@@ -23,43 +23,54 @@ namespace
     const char* const FUNC_STATIC_CLASS = "func_static";
     const char* const GKEY_DEFAULT_ROOM_MATERIAL = "/materialPreview/defaultRoomMaterial";
     const char* const GKEY_DEFAULT_LIGHT_DEF = "/materialPreview/defaultLightDef";
+
+    inline bool isSkyboxMaterial(const MaterialPtr& material)
+    {
+        if (!material) return false;
+
+        auto result = false;
+
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+        {
+            if (layer->getMapType() == IShaderLayer::MapType::CameraCubeMap)
+            {
+                result = true;
+                return false;
+            }
+
+            return true;
+        });
+
+        return result;
+    }
 }
 
 MaterialPreview::MaterialPreview(wxWindow* parent) :
     RenderPreview(parent, true),
     _sceneIsReady(false),
-    _defaultCamDistanceFactor(2.0f)
+    _roomMaterial(game::current::getValue<std::string>(GKEY_DEFAULT_ROOM_MATERIAL)),
+    _defaultCamDistanceFactor(2.0f),
+    _lightClassname(getDefaultLightDef())
 {
-    _testModelSkin.reset(new TestModelSkin("model"));
-    GlobalModelSkinCache().addNamedSkin(_testModelSkin);
-
-    _testRoomSkin.reset(new TestModelSkin("room"));
-    GlobalModelSkinCache().addNamedSkin(_testRoomSkin);
+    _testModelSkin = std::make_unique<TestModelSkin>("model");
+    _testRoomSkin = std::make_unique<TestModelSkin>("room");
 
     setupToolbar();
 
+    setStartupLightingMode(true);
     setViewOrigin(Vector3(1, 1, 1) * 100);
     setViewAngles(Vector3(37, 135, 0));
 }
 
 MaterialPreview::~MaterialPreview()
 {
-    if (_testModelSkin)
-    {
-        GlobalModelSkinCache().removeSkin(_testModelSkin->getName());
-        _testModelSkin.reset();
-    }
-
-    if (_testRoomSkin)
-    {
-        GlobalModelSkinCache().removeSkin(_testRoomSkin->getName());
-        _testRoomSkin.reset();
-    }
+    _testModelSkin.reset();
+    _testRoomSkin.reset();
 }
 
 void MaterialPreview::setupToolbar()
 {
-    // Add one additional toolbar for particle-related stuff
+    // Add one additional toolbar
     wxToolBar* toolbar = new wxToolBar(_mainPanel, wxID_ANY);
     toolbar->SetToolBitmapSize(wxSize(16, 16));
 
@@ -77,6 +88,15 @@ void MaterialPreview::setupToolbar()
     toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelSphereButton->GetId());
     toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelTilesButton->GetId());
 
+    toolbar->AddSeparator();
+
+    _swapBackgroundMaterialButton = toolbar->AddTool(wxID_ANY, "Swap", wxutil::GetLocalBitmap("swap_background.png", wxART_TOOLBAR));
+    _swapBackgroundMaterialButton->SetToggle(true);
+    toolbar->ToggleTool(_swapBackgroundMaterialButton->GetId(), false);
+    _swapBackgroundMaterialButton->SetShortHelp(_("Swap Background and Foreground Materials"));
+
+    toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onSwapBackgroundMaterialChanged, this, _swapBackgroundMaterialButton->GetId());
+
     toolbar->Realize();
 
     addToolbar(toolbar);
@@ -87,8 +107,13 @@ const MaterialPtr& MaterialPreview::getMaterial()
     return _material;
 }
 
-void MaterialPreview::updateModelSkin()
+void MaterialPreview::updateModelSkin(const std::string& material)
 {
+    // Assign the material to the temporary skin
+    _testModelSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(material));
+
+    if (!_model) return;
+
     // Hide the model if there's no material to preview
     _model->setFiltered(_testModelSkin->isEmpty());
 
@@ -97,13 +122,59 @@ void MaterialPreview::updateModelSkin()
 
     if (skinnedModel)
     {
-        skinnedModel->skinChanged(_testModelSkin->getName());
+        skinnedModel->skinChanged(_testModelSkin->getSkinName());
     }
 }
 
-std::string MaterialPreview::getRoomMaterial()
+const std::string& MaterialPreview::getRoomMaterial()
 {
-    return game::current::getValue<std::string>(GKEY_DEFAULT_ROOM_MATERIAL);
+    return _roomMaterial;
+}
+
+void MaterialPreview::setRoomMaterial(const std::string& material)
+{
+    _roomMaterial = material;
+    updateSceneMaterials();
+
+    signal_SceneChanged().emit();
+}
+
+MaterialPreview::TestModel MaterialPreview::getTestModelType()
+{
+    if (_testModelCubeButton->IsToggled()) return TestModel::Cube;
+    if (_testModelSphereButton->IsToggled()) return TestModel::Sphere;
+    if (_testModelTilesButton->IsToggled()) return TestModel::Tiles;
+
+    return TestModel::Cube;
+}
+
+void MaterialPreview::setTestModelType(TestModel type)
+{
+    _testModelCubeButton->GetToolBar()->ToggleTool(_testModelCubeButton->GetId(), type == TestModel::Cube);
+    _testModelSphereButton->GetToolBar()->ToggleTool(_testModelSphereButton->GetId(), type == TestModel::Sphere);
+    _testModelTilesButton->GetToolBar()->ToggleTool(_testModelTilesButton->GetId(), type == TestModel::Tiles);
+
+    setupTestModel();
+}
+
+std::string MaterialPreview::GetTestModelTypeName(TestModel type)
+{
+    switch (type)
+    {
+    case TestModel::Cube: return "Cube";
+    case TestModel::Sphere: return "Sphere";
+    case TestModel::Tiles: return "Tiles";
+    default: throw std::invalid_argument("Unknown preview model type");
+    }
+}
+
+MaterialPreview::TestModel MaterialPreview::GetTestModelType(const std::string& typeName)
+{
+    if (typeName == "Cube") return TestModel::Cube;
+    if (typeName == "Sphere") return TestModel::Sphere;
+    if (typeName == "Tiles") return TestModel::Tiles;
+
+    return TestModel::Cube; // in case bad serialization data reaches this point
 }
 
 std::string MaterialPreview::getDefaultLightDef()
@@ -118,9 +189,8 @@ std::string MaterialPreview::getDefaultLightDef()
     return className;
 }
 
-void MaterialPreview::updateRoomSkin()
+void MaterialPreview::updateRoomSkin(const std::string& roomMaterial)
 {
-    auto roomMaterial = getRoomMaterial();
     _testRoomSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(roomMaterial));
 
     // Let the model update its remaps
@@ -128,7 +198,7 @@ void MaterialPreview::updateRoomSkin()
 
     if (skinnedRoom)
     {
-        skinnedRoom->skinChanged(_testRoomSkin->getName());
+        skinnedRoom->skinChanged(_testRoomSkin->getSkinName());
     }
 }
 
@@ -148,17 +218,14 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
 
     _sceneIsReady = false;
 
-    if (_model)
-    {
-        // Assign the material to the temporary skin
-        _testModelSkin->setRemapMaterial(_material);
+    // Detect whether we should apply this material to the background
+    _swapBackgroundMaterial = isSkyboxMaterial(_material);
+    _swapBackgroundMaterialButton->GetToolBar()->ToggleTool(_swapBackgroundMaterialButton->GetId(), _swapBackgroundMaterial);
 
-        updateModelSkin();
-    }
+    updateSceneMaterials();
 
     if (!hadMaterial && _material)
     {
-        setLightingModeEnabled(true);
         startPlayback();
     }
     else if (hadMaterial && !_material)
@@ -167,6 +234,20 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     }
 
     queueDraw();
+}
+
+void MaterialPreview::updateSceneMaterials()
+{
+    auto foregroundMaterial = _material ? _material->getName() : _roomMaterial;
+    auto backgroundMaterial = _roomMaterial;
+
+    if (_swapBackgroundMaterial)
+    {
+        std::swap(foregroundMaterial, backgroundMaterial);
+    }
+
+    updateModelSkin(foregroundMaterial);
+    updateRoomSkin(backgroundMaterial);
 }
 
 void MaterialPreview::enableFrobHighlight(bool enable)
@@ -233,29 +314,43 @@ void MaterialPreview::setupSceneGraph()
 
         // Make sure the shaderParm11 spawnarg is present
         Node_getEntity(_entity)->setKeyValue("shaderParm11", "0");
+        Node_getEntity(_entity)->setKeyValue("model", "-");
 
         _rootNode->addChildNode(_entity);
 
         setupTestModel();
 
+        // Hide all models that are not the test model
+        _entity->foreachNode([&](const scene::INodePtr& child)
+        {
+            if (Node_getModel(child) && child != _model)
+            {
+                child->enable(scene::Node::eHidden);
+            }
+            return true;
+        });
+
         getScene()->setRoot(_rootNode);
 
         // Set up the light
-        _light = GlobalEntityModule().createEntity(
-            GlobalEntityClassManager().findClass(getDefaultLightDef()));
+        _light = GlobalEntityModule().createEntity(GlobalEntityClassManager().findClass(_lightClassname));
 
         Node_getEntity(_light)->setKeyValue("light_radius", "750 750 750");
         Node_getEntity(_light)->setKeyValue("origin", "150 150 150");
 
         scene::addNodeToContainer(_light, _rootNode);
 
-        // Reset the default view, facing down to the model from diagonally above the bounding box
-        double distance = _model->localAABB().getRadius() * _defaultCamDistanceFactor;
+        // Initialise the view origin and angles, if thery're still empty
+        if (getViewOrigin() == Vector3(0,0,0))
+        {
+            // Reset the default view, facing down to the model from diagonally above the bounding box
+            double distance = _model->localAABB().getRadius() * _defaultCamDistanceFactor;
 
-        setViewOrigin(Vector3(1, 1, 1) * distance);
-        setViewAngles(Vector3(37, 135, 0));
+            setViewOrigin(Vector3(1, 1, 1) * distance);
+            setViewAngles(Vector3(37, 135, 0));
+        }
 
-        _sigLightChanged.emit();
+        signal_SceneChanged().emit();
     }
     catch (std::runtime_error&)
     {
@@ -275,11 +370,13 @@ void MaterialPreview::setupRoom()
 
     roomEntity->addChildNode(_room);
     
-    updateRoomSkin();
+    updateRoomSkin(getRoomMaterial());
 }
 
 void MaterialPreview::setupTestModel()
 {
+    if (!_entity) return; // too early
+
     if (_entity && _model)
     {
         scene::removeNodeFromParent(_model);
@@ -303,31 +400,53 @@ void MaterialPreview::setupTestModel()
     // The test model is a child of this entity
     scene::addNodeToContainer(_model, _entity);
 
-    updateModelSkin();
+    updateSceneMaterials();
 }
 
 void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
 {
-    setupTestModel();
+    if (ev.GetId() == _testModelCubeButton->GetId())
+    {
+        setTestModelType(TestModel::Cube);
+    }
+    else if (ev.GetId() == _testModelSphereButton->GetId())
+    {
+        setTestModelType(TestModel::Sphere);
+    }
+    else if (ev.GetId() == _testModelTilesButton->GetId())
+    {
+        setTestModelType(TestModel::Tiles);
+    }
+
     queueDraw();
 }
 
-sigc::signal<void>& MaterialPreview::signal_LightChanged()
+void MaterialPreview::onSwapBackgroundMaterialChanged(wxCommandEvent& ev)
 {
-    return _sigLightChanged;
+    _swapBackgroundMaterial = ev.IsChecked();
+    updateSceneMaterials();
+    queueDraw();
+}
+
+sigc::signal<void>& MaterialPreview::signal_SceneChanged()
+{
+    return _sigSceneChanged;
 }
 
 std::string MaterialPreview::getLightClassname()
 {
-    return _light ? Node_getEntity(_light)->getEntityClass()->getName() : "";
+    return _lightClassname;
 }
 
 void MaterialPreview::setLightClassname(const std::string& className)
 {
-    if (!_light || className.empty()) return;
+    // Store this value locally, even if we don't have any light to adjust yet
+    _lightClassname = className;
 
-    _light = changeEntityClassname(_light, className);
-    _sigLightChanged.emit();
+    if (!_light || _lightClassname.empty()) return;
+
+    _light = changeEntityClassname(_light, _lightClassname);
+    signal_SceneChanged().emit();
 }
 
 Vector3 MaterialPreview::getLightColour()
@@ -349,7 +468,7 @@ void MaterialPreview::setLightColour(const Vector3& colour)
     if (!_light) return;
 
     Node_getEntity(_light)->setKeyValue("_color", string::to_string(colour));
-    _sigLightChanged.emit();
+    signal_SceneChanged().emit();
 }
 
 void MaterialPreview::resetLightColour()
@@ -357,7 +476,7 @@ void MaterialPreview::resetLightColour()
     if (!_light) return;
 
     Node_getEntity(_light)->setKeyValue("_color", "");
-    _sigLightChanged.emit();
+    signal_SceneChanged().emit();
 }
 
 }

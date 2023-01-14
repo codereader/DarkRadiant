@@ -36,6 +36,7 @@
         <tool name="TextureToolSelectionTool" button="LMB" modifiers="SHIFT" />
         <tool name="TextureToolCycleSelectionTool" button="LMB" modifiers="ALT+SHIFT" />
         <tool name="TextureToolManipulateMouseTool" button="LMB" modifiers="" />
+        <tool name="MoveViewTool" button="RMB" modifiers=""/>
     </mouseToolMapping>
   </mouseToolMappings>
 	<cameraview>
@@ -59,13 +60,13 @@
 		<shortcut command="SelectParentEntities" key="E" modifiers="CONTROL+ALT+SHIFT" />
 		<shortcut command="Preferences" key="P" />
 		<shortcut command="ToggleConsole" key="O" />
-		<shortcut command="EntityList" key="J" />
+		<shortcut command="ToggleEntityList" key="J" />
 		<shortcut command="ToggleEntityInspector" key="N" />
 		<shortcut command="ToggleLightInspector" key="L" />
 		<shortcut command="ShowHidden" key="H" modifiers="SHIFT" />
 		<shortcut command="HideSelected" key="H" />
 		<shortcut command="HideDeselected" key="H" modifiers="CONTROL+SHIFT"/>
-		<shortcut command="ToggleLayerControlDialog" key="L" modifiers="CONTROL" />
+		<shortcut command="ToggleLayerControlPanel" key="L" modifiers="CONTROL" />
 		<shortcut command="ToggleMediaBrowser" key="M" />
 		<shortcut command="CSGSubtract" key="U" modifiers="SHIFT" />
 		<shortcut command="CSGMerge" key="U" modifiers="CONTROL" />
@@ -121,7 +122,7 @@
 		<shortcut command="GridUp" key="minus" />
 		<shortcut command="GridDown" key="plus" />
 		<shortcut command="RegionSetSelection" key="R" modifiers="SHIFT+CONTROL" />
-		<shortcut command="PatchInspector" key="S" modifiers="SHIFT" />
+		<shortcut command="TogglePatchInspector" key="S" modifiers="SHIFT" />
 		<shortcut command="PatchInsertColumnEnd" key="KP_Add" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchInsertRowEnd" key="KP_Add" modifiers="CONTROL" />
 		<shortcut command="PatchDeleteColumnEnd" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
@@ -135,8 +136,8 @@
 		<shortcut command="PatchCapDialog" key="C" modifiers="SHIFT" />
 		<shortcut command="NextLeakSpot" key="K" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PrevLeakSpot" key="L" modifiers="SHIFT+CONTROL" />
-		<shortcut command="SurfaceInspector" key="S" />
-		<shortcut command="ViewTextures" key="T" />
+		<shortcut command="ToggleSurfaceInspector" key="S" />
+		<shortcut command="ToggleTextureBrowser" key="T" />
 		<shortcut command="ToggleCrosshairs" key="X" modifiers="SHIFT" />
 		<shortcut command="ToggleGrid" key="0" />
 		<shortcut command="ToggleView" key="V" modifiers="SHIFT+CONTROL" />
@@ -151,6 +152,7 @@
 		<shortcut command="DragVertices" key="V" />
 		<shortcut command="DragEdges" key="E" />
 		<shortcut command="DragFaces" key="F" />
+		<shortcut command="ToggleSelectionFocus" key="F" modifiers="CONTROL" />
 		<shortcut command="ThickenPatchDialog" key="T" modifiers="CONTROL" />
 		<shortcut command="ToggleShowAllLightRadii" key="F" modifiers="CONTROL+SHIFT+ALT" />
 		<shortcut command="ToggleClipper" key="X" />
@@ -170,7 +172,8 @@
 		<shortcut command="SetGrid64" key="7" modifiers=""/>
 		<shortcut command="SetGrid128" key="8" modifiers=""/>
 		<shortcut command="SetGrid256" key="9" modifiers=""/>
-		<shortcut command="TextureTool" key="T" modifiers="CONTROL+ALT"/>
+		<shortcut command="ToggleTextureTool" key="T" modifiers="CONTROL+ALT"/>
+		<shortcut command="ToggleMainControl_TextureTool" key="T" modifiers="CONTROL+ALT+SHIFT"/>
 		<shortcut command="NormaliseTexture" key="" modifiers=""/>
 		<shortcut command="TexToolGridUp" key="plus" modifiers="SHIFT" />
 		<shortcut command="TexToolGridDown" key="minus" modifiers="SHIFT" />
@@ -198,9 +201,9 @@
 		<shortcut command="LoadPosition7" key="7" modifiers="ALT"/>
 		<shortcut command="LoadPosition8" key="8" modifiers="ALT"/>
 		<shortcut command="LoadPosition9" key="9" modifiers="ALT"/>
-		<shortcut command="OverlayDialog" key="O" modifiers="ALT"/>
+		<shortcut command="ToggleOrthoBackgroundPanel" key="O" modifiers="ALT"/>
 		<shortcut command="ToggleRotationPivot" key="R" modifiers="CONTROL" />
-    <shortcut command="ToggleAasControlDialog" key="A" modifiers="CONTROL+SHIFT" />
+    <shortcut command="ToggleAasVisualisationPanel" key="A" modifiers="CONTROL+SHIFT" />
     <shortcut command="GroupSelected" key="G" modifiers="CONTROL+SHIFT" />
     <shortcut command="UngroupSelected" key="U" modifiers="CONTROL+SHIFT" />
 	</shortcuts>
@@ -215,5 +218,21 @@
         <commandRemapping oldname="SimplePatchMesh" newname="CreateSimplePatchDialog" />
         <commandRemapping oldname="CapCurrentCurve" newname="PatchCapDialog" />
         <commandRemapping oldname="ThickenPatch" newname="ThickenPatchDialog" />
+        <!-- Control Toggles have been unified in 3.5.0, some commands have been renamed -->
+        <commandRemapping oldname="ToggleLayerControlDialog" newname="ToggleLayerControlPanel" />
+        <commandRemapping oldname="SurfaceInspector" newname="ToggleSurfaceInspector" />
+        <commandRemapping oldname="PatchInspector" newname="TogglePatchInspector" />
+        <commandRemapping oldname="TransformDialog" newname="ToggleTransformPanel" />
+        <commandRemapping oldname="MergeControlPanel" newname="ToggleMapMergePanel" />
+        <commandRemapping oldname="EntityList" newname="ToggleEntityList" />
+        <commandRemapping oldname="ToggleAasControlDialog" newname="ToggleAasVisualisationPanel" />
+        <commandRemapping oldname="FindReplaceTextures" newname="ToggleFindAndReplaceMaterial" />
+        <commandRemapping oldname="OverlayDialog" newname="ToggleOrthoBackgroundPanel" />
+        <commandRemapping oldname="TextureTool" newname="ToggleTextureTool" />
+        <commandRemapping oldname="GameConnectionDialogToggle" newname="ToggleGameConnectionPanel" />
+        <commandRemapping oldname="ViewTextures" newname="ToggleTextureBrowser" />
+        <!-- DR 3.6.0: Re-bind the old FocusCameraOnSelection shortcut to ToggleSelectionFocus  -->
+        <!-- FocusCameraOnSelection is now called FocusCameraViewOnSelection -->
+        <commandRemapping oldname="FocusCameraOnSelection" newname="ToggleSelectionFocus" />
 	</commandRemappings>
 </input>

@@ -163,7 +163,7 @@ void setEntityKeyValueOnSelection(const cmd::ArgumentList& args)
 	setEntityKeyValue(args[0].getString(), args[1].getString());
 }
 
-void bindEntities(const cmd::ArgumentList& args)
+void bindEntities()
 {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
@@ -199,7 +199,7 @@ void bindEntities(const cmd::ArgumentList& args)
 	}
 }
 
-void connectSelectedEntities(const cmd::ArgumentList& args)
+void connectSelectedEntities()
 {
 	if (GlobalSelectionSystem().countSelected() == 2)
 	{
@@ -261,7 +261,7 @@ bool entityReferencesModel(const Entity& entity, const std::string& searchString
     // The entity might still reference the model through a model def
     auto modelDef = GlobalEntityClassManager().findModel(model);
 
-    return modelDef && modelDef->mesh == searchString;
+    return modelDef && modelDef->getMesh() == searchString;
 }
 
 void selectItemsByModel(const std::string& model)
@@ -326,6 +326,7 @@ void placePlayerStart(const cmd::ArgumentList& args)
     EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
     GlobalSceneGraph().root()->traverse(walker);
 
+    auto playerStartNode = walker.getEntityNode();
     auto playerStartEntity = walker.getEntity();
 
     if (playerStartEntity == nullptr)
@@ -334,16 +335,19 @@ void placePlayerStart(const cmd::ArgumentList& args)
         auto eclass = GlobalEntityClassManager().findClass(PLAYERSTART_CLASSNAME);
         if (!eclass) throw cmd::ExecutionNotPossible(_("Could not find the info_player_start entityDef"));
 
-        auto playerStartNode = GlobalEntityModule().createEntity(eclass);
+        playerStartNode = GlobalEntityModule().createEntity(eclass);
         scene::addNodeToContainer(playerStartNode, GlobalSceneGraph().root());
 
-        playerStartEntity = &playerStartNode->getEntity();
+        playerStartEntity = Node_getEntity(playerStartNode);
 
         // Set a default angle
         playerStartEntity->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
     }
 
     playerStartEntity->setKeyValue("origin", string::to_string(position));
+
+    // #5972: Leave player start selected after placement
+    Node_setSelected(playerStartNode, true);
 }
 
 } // namespace algorithm

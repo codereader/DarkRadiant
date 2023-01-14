@@ -150,8 +150,6 @@ const StringSet& MRU::getDependencies() const
 
 void MRU::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	constructPreferences();
 
 	_numMaxFiles = registry::getValue<std::size_t>(RKEY_MRU_LENGTH);

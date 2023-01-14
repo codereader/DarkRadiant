@@ -1,15 +1,15 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include "iradiant.h"
-#include "ui/common/ShaderSelector.h"
-#include "wxutil/window/TransientWindow.h"
+#include "ui/materials/MaterialSelector.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
 #include <map>
 #include <string>
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
+
+#include "wxutil/DockablePanel.h"
 
 /* FORWARD DECLS */
 class Entity;
@@ -20,15 +20,11 @@ class wxSlider;
 namespace ui
 {
 
-class LightInspector;
-typedef std::shared_ptr<LightInspector> LightInspectorPtr;
-
 /**
  * \brief Dialog to allow adjustment of properties on lights
  */
 class LightInspector :
-    public wxutil::TransientWindow,
-    public ShaderSelector::Client,
+    public wxutil::DockablePanel,
     public sigc::trackable,
     private wxutil::XmlResourceBasedWidget
 {
@@ -36,7 +32,7 @@ class LightInspector :
     bool _isProjected;
 
     // Internal widgets
-    ShaderSelector* _texSelector;
+    MaterialSelector* _texSelector;
     wxSlider* _brightnessSlider;
 
     // The light entities to edit
@@ -60,16 +56,17 @@ class LightInspector :
     sigc::connection _undoHandler;
     sigc::connection _redoHandler;
 
+public:
+    LightInspector(wxWindow* parent);
+    ~LightInspector() override;
+
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
-    // This is where the static shared_ptr of the singleton instance is held.
-    static LightInspectorPtr& InstancePtr();
-
-    // Constructor creates GTK widgets
-    LightInspector();
-
-    // TransientWindow callbacks
-    virtual void _preShow();
-    virtual void _preHide();
+    void connectListeners();
+    void disconnectListeners();
 
     // Widget construction functions
     void setupLightShapeOptions();
@@ -106,24 +103,8 @@ private:
     // Set the given key/value pair on ALL entities in the list of lights
     void setKeyValueAllLights(const std::string& k, const std::string& v);
 
-    /** greebo: Gets called when the shader selection gets changed, so that
-     *          the displayed texture info can be updated.
-     */
-    void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel& listStore);
-
-    // Safely disconnects this dialog from all the systems
-    // and saves the window size/position to the registry
-    void onMainFrameShuttingDown();
-
-public:
-
-    /** Toggle the visibility of the dialog instance, constructing it if necessary.
-     */
-    static void toggleInspector(const cmd::ArgumentList& args);
-
-    /** greebo: This is the actual home of the static instance
-     */
-    static LightInspector& Instance();
+    // greebo: Gets called when the light texture selection has changed
+    void shaderSelectionChanged();
 
     // Update the sensitivity of the widgets
     void update();

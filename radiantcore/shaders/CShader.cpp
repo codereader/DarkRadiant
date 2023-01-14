@@ -1,11 +1,12 @@
 #include "CShader.h"
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 #include "MapExpression.h"
 
 #include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
 #include "gamelib.h"
+#include "decl/DeclLib.h"
 #include "materials/ParseLib.h"
 #include "parser/DefTokeniser.h"
 
@@ -20,17 +21,16 @@ namespace {
 namespace shaders
 {
 
-/* Constructor. Sets the name and the ShaderDefinition to use.
+/* Constructor. Sets the name and the ShaderTemplate to use.
  */
-CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
-    CShader(name, definition, false)
+CShader::CShader(const std::string& name, const ShaderTemplate::Ptr& declaration) :
+    CShader(name, declaration, false)
 {}
 
-CShader::CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal) :
+CShader::CShader(const std::string& name, const ShaderTemplate::Ptr& declaration, bool isInternal) :
     _isInternal(isInternal),
-    _originalTemplate(definition.shaderTemplate),
-    _template(definition.shaderTemplate),
-    _fileInfo(definition.file),
+    _originalTemplate(declaration),
+    _template(declaration),
     _name(name),
     m_bInUse(false),
     _visible(true)
@@ -85,7 +85,7 @@ TexturePtr CShader::getEditorImage()
         if (!editorTex)
         {
             // If there is no editor expression defined, use the an image from a layer, but no Bump or speculars
-            for (const auto& layer : _layers)
+            for (const auto& layer : _template->getLayers())
             {
                 if (layer->getType() != IShaderLayer::BUMP && layer->getType() != IShaderLayer::SPECULAR &&
                     std::dynamic_pointer_cast<MapExpression>(layer->getMapExpression()))
@@ -191,6 +191,45 @@ void CShader::setDescription(const std::string& description)
     _template->setDescription(description);
 }
 
+Material::FrobStageType CShader::getFrobStageType()
+{
+    return _template->getFrobStageType();
+}
+
+void CShader::setFrobStageType(Material::FrobStageType type)
+{
+    ensureTemplateCopy();
+    _template->setFrobStageType(type);
+}
+
+IMapExpression::Ptr CShader::getFrobStageMapExpression()
+{
+    return _template->getFrobStageMapExpression();
+}
+
+void CShader::setFrobStageMapExpressionFromString(const std::string& expr)
+{
+    ensureTemplateCopy();
+    _template->setFrobStageMapExpressionFromString(expr);
+}
+
+Vector3 CShader::getFrobStageRgbParameter(std::size_t index)
+{
+    return _template->getFrobStageRgbParameter(index);
+}
+
+void CShader::setFrobStageParameter(std::size_t index, double value)
+{
+    ensureTemplateCopy();
+    _template->setFrobStageParameter(index, value);
+}
+
+void CShader::setFrobStageRgbParameter(std::size_t index, const Vector3& value)
+{
+    ensureTemplateCopy();
+    _template->setFrobStageRgbParameter(index, value);
+}
+
 bool CShader::IsInUse() const {
 	return m_bInUse;
 }
@@ -219,7 +258,7 @@ void CShader::clearMaterialFlag(Flags flag)
 
 bool CShader::IsDefault() const
 {
-	return _isInternal || _fileInfo.name.empty();
+	return _isInternal || _template->getBlockSyntax().fileInfo.name.empty();
 }
 
 // get the cull type
@@ -304,6 +343,12 @@ Material::DecalInfo CShader::getDecalInfo() const
 	return _template->getDecalInfo();
 }
 
+void CShader::setDecalInfo(const DecalInfo& info)
+{
+    ensureTemplateCopy();
+    return _template->setDecalInfo(info);
+}
+
 Material::Coverage CShader::getCoverage() const
 {
 	return _template->getCoverage();
@@ -312,49 +357,20 @@ Material::Coverage CShader::getCoverage() const
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const
 {
-	return _fileInfo.name.c_str();
+	return _template->getBlockSyntax().fileInfo.name.c_str();
 }
 
 void CShader::setShaderFileName(const std::string& fullPath)
 {
-    std::string path = fullPath;
-
-    if (path_is_absolute(path.c_str()))
-    {
-        auto rootPath = GlobalFileSystem().findRoot(path);
-
-        if (rootPath.empty())
-        {
-            throw std::invalid_argument("The path " + path + " is not located in the current mod file structure");
-        }
-
-        path = os::getRelativePath(path, rootPath);
-    }
-
     auto materialsFolder = getMaterialsFolderName();
-    auto pathRelativeToMaterialsFolder = os::getRelativePath(path, materialsFolder);
+    auto pathRelativeToMaterialsFolder = decl::geRelativeDeclSavePath(fullPath, getMaterialsFolderName(), getMaterialFileExtension());
 
-    // Check if the path starts with a "materials/" folder
-    // getRelativePath will return the unchanged path if this is not the case
-    if (pathRelativeToMaterialsFolder == path)
-    {
-        throw std::invalid_argument("The path " + path + " does not point to a " + materialsFolder + " folder");
-    }
-
-    auto extension = getMaterialFileExtension();
-    if (os::getExtension(pathRelativeToMaterialsFolder) != extension)
-    {
-        throw std::invalid_argument("The file extension must be " + extension);
-    }
-
-    _fileInfo.topDir = materialsFolder;
-    _fileInfo.name = pathRelativeToMaterialsFolder;
-    _fileInfo.visibility = vfs::Visibility::NORMAL;
+    _template->setFileInfo(vfs::FileInfo(materialsFolder, pathRelativeToMaterialsFolder, vfs::Visibility::NORMAL));
 }
 
 const vfs::FileInfo& CShader::getShaderFileInfo() const
 {
-    return _fileInfo;
+    return _template->getBlockSyntax().fileInfo;
 }
 
 std::string CShader::getDefinition()
@@ -413,25 +429,12 @@ const std::string& CShader::getGuiSurfArgument()
 // -----------------------------------------
 
 void CShader::realise() {
-	realiseLighting();
 }
 
-void CShader::unrealise() {
-	unrealiseLighting();
-}
-
-// Parse and load image maps for this shader
-void CShader::realiseLighting()
+void CShader::unrealise()
 {
-	for (const auto& layer : _template->getLayers())
-	{
-		_layers.push_back(layer);
-	}
-}
-
-void CShader::unrealiseLighting()
-{
-	_layers.clear();
+    _editorTexture.reset();
+    _texLightFalloff.reset();
 }
 
 void CShader::setName(const std::string& name)
@@ -440,19 +443,30 @@ void CShader::setName(const std::string& name)
     _sigMaterialModified.emit();
 }
 
-IShaderLayer* CShader::firstLayer() const
+IShaderLayer* CShader::firstLayer()
 {
-	if (_layers.empty())
-	{
-		return nullptr;
-	}
+    const auto& layers = _template->getLayers();
 
-	return _layers.front().get();
+	return layers.empty() ? nullptr : layers.front().get();
 }
 
-const IShaderLayerVector& CShader::getAllLayers() const
+std::size_t CShader::getNumLayers()
 {
-    return _layers;
+    return _template->getLayers().size();
+}
+
+IShaderLayer::Ptr CShader::getLayer(std::size_t index)
+{
+    return _template->getLayers().at(index);
+}
+
+void CShader::foreachLayer(const std::function<bool(const IShaderLayer::Ptr&)>& functor)
+{
+    for (const auto& layer : _template->getLayers())
+    {
+        // Abort traversal when the functor returns false
+        if (!functor(layer)) break;
+    }
 }
 
 std::size_t CShader::addLayer(IShaderLayer::Type type)
@@ -460,9 +474,6 @@ std::size_t CShader::addLayer(IShaderLayer::Type type)
     ensureTemplateCopy();
 
     auto newIndex = _template->addLayer(type);
-
-    unrealiseLighting();
-    realiseLighting();
 
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
@@ -476,9 +487,6 @@ void CShader::removeLayer(std::size_t index)
 
     _template->removeLayer(index);
 
-    unrealiseLighting();
-    realiseLighting();
-
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 }
@@ -489,9 +497,6 @@ void CShader::swapLayerPosition(std::size_t first, std::size_t second)
 
     _template->swapLayerPosition(first, second);
 
-    unrealiseLighting();
-    realiseLighting();
-
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 }
@@ -501,9 +506,6 @@ std::size_t CShader::duplicateLayer(std::size_t index)
     ensureTemplateCopy();
 
     auto newIndex = _template->duplicateLayer(index);
-
-    unrealiseLighting();
-    realiseLighting();
 
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
@@ -619,11 +621,16 @@ void CShader::ensureTemplateCopy()
 
 void CShader::commitModifications()
 {
-    // Overwrite the original template reference, the material is now unmodified again
-    _originalTemplate = _template;
+    if (_template == _originalTemplate) return;
+
+    // Replace the contents with our working copy
+    _originalTemplate->setBlockSyntax(_template->getBlockSyntax());
+
+    // Overwrite the working template reference, the material is now unmodified again
+    _template = _originalTemplate;
 }
 
-const ShaderTemplatePtr& CShader::getTemplate()
+const ShaderTemplate::Ptr& CShader::getTemplate()
 {
     return _template;
 }
@@ -633,12 +640,12 @@ void CShader::subscribeToTemplateChanges()
     // Disconnect from any signal first
     _templateChanged.disconnect();
 
-    _templateChanged = _template->sig_TemplateChanged().connect([this]()
+    _templateChanged = _template->sig_TemplateChanged().connect([this]
     {
-        _sigMaterialModified.emit();
-
-        // Check if the editor image needs an update
+        // Check if the editor image needs an update, do this before firing the handler
         updateEditorImage();
+
+        _sigMaterialModified.emit();
     });
 }
 
@@ -680,6 +687,27 @@ void CShader::refreshImageMaps()
     _sigMaterialModified.emit();
 }
 
-bool CShader::m_lightingEnabled = false;
+Material::ParseResult CShader::updateFromSourceText(const std::string& sourceText)
+{
+    ensureTemplateCopy();
+
+    // Attempt to parse the template (separately from the active one)
+    auto newTemplate= std::make_shared<ShaderTemplate>(getName());
+
+    // Only replace the contents of the block syntax, leave the rest unchanged
+    auto syntax = _template->getBlockSyntax();
+    syntax.contents = sourceText;
+    newTemplate->setBlockSyntax(syntax);
+
+    const auto& error = newTemplate->getParseErrors();
+
+    if (error.empty())
+    {
+        // Parse seems to be successful, assign the text to the actual template
+        _template->setBlockSyntax(syntax);
+    }
+
+    return ParseResult{ error.empty(), error };
+}
 
 } // namespace shaders

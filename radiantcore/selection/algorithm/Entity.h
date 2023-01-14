@@ -29,13 +29,13 @@ void setEntityKeyValueOnSelection(const cmd::ArgumentList& args);
  * spawnarg on both entities. Two entities must be highlighted for this
  * command to function correctly.
  */
-void bindEntities(const cmd::ArgumentList& args);
+void bindEntities();
 
 /**
  * greebo: Sets up the target spawnarg of the selected entities such that
  * the first selected entity is targetting the second.
  */
-void connectSelectedEntities(const cmd::ArgumentList& args);
+void connectSelectedEntities();
 
 /**
  * greebo: (De-)selects all entities that reference the given model path

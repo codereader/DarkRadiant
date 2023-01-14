@@ -54,7 +54,7 @@ void TargetLineNode::onRemoveFromScene(scene::IMapRootNode& root)
 void TargetLineNode::onPreRender(const VolumeTest& volume)
 {
     // If the owner is hidden, the lines are hidden too
-    if (!_targetLines.hasTargets() || !_owner.visible())
+    if (!_targetLines.hasTargets() || !_owner.visible() || getRenderState() == RenderState::Inactive)
     {
         // Hide ourselves
         _targetLines.clear();
@@ -86,6 +86,13 @@ void TargetLineNode::onVisibilityChanged(bool visible)
         // call RenderableTargetLines::update()
         _targetLines.clear();
     }
+}
+
+void TargetLineNode::onRenderStateChanged()
+{
+    Node::onRenderStateChanged();
+
+    _targetLines.queueUpdate();
 }
 
 std::size_t TargetLineNode::getHighlightFlags()

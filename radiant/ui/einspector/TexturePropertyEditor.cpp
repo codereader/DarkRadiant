@@ -1,5 +1,5 @@
 #include "TexturePropertyEditor.h"
-#include "LightTextureChooser.h"
+#include "ui/materials/MaterialChooser.h"
 #include "PropertyEditorFactory.h"
 
 #include "i18n.h"
@@ -13,12 +13,9 @@ namespace ui
 {
 
 // Main constructor
-TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities,
-											 const std::string& name,
-											 const std::string& options)
+TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _prefixes(options),
-  _key(name)
+  _key(key)
 {
 	constructBrowseButtonPanel(parent, _("Choose texture..."),
 		PropertyEditorFactory::getBitmapFor("texture"));
@@ -27,19 +24,19 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection&
 // Browse button callback
 void TexturePropertyEditor::onBrowseButtonClick()
 {
-	LightTextureChooser* dialog = new LightTextureChooser;
+	auto dialog = new MaterialChooser(getWidget(), MaterialSelector::TextureFilter::Lights);
 
-    dialog->setSelectedTexture(getKeyValue(_key));
+    dialog->SetSelectedDeclName(getKeyValueFromSelection(_key->getFullKey()));
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
 		// Return the last selection to calling process
-		std::string texture = dialog->getSelectedTexture();
+		std::string texture = dialog->GetSelectedDeclName();
 
 		if (!texture.empty())
 		{
 			// Apply the keyvalue immediately
-			setKeyValue(_key, texture);
+            setKeyValueOnSelection(_key->getFullKey(), texture);
 		}
 	}
 

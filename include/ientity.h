@@ -1,7 +1,6 @@
 #pragma once
 
 #include "inode.h"
-#include "ipath.h"
 #include "imodule.h"
 #include "irender.h"
 #include "inameobserver.h"
@@ -261,6 +260,9 @@ public:
         /// Entity class of the attached entity
         std::string eclass;
 
+        // Optional attachment name (arbitrarily chosen by the user)
+        std::string name;
+
         /// Vector offset where the attached entity should appear
         Vector3 offset;
 
@@ -366,8 +368,8 @@ public:
     // Returns the number of selected entities
     virtual std::size_t size() const = 0;
 
-    // Iterates over each selected entity, invoking the given functor
-    virtual void foreachEntity(const std::function<void(Entity*)>& functor) = 0;
+    // Iterates over each selected entity node, invoking the given functor
+    virtual void foreachEntity(const std::function<void(const IEntityNodePtr&)>& functor) = 0;
 
     // Returns the key value shared by all entities in this set, or an empty string
     // if there is no such value.
@@ -459,13 +461,13 @@ enum class LightEditVertexType : std::size_t
     NumberOfVertexTypes,
 };
 
-const char* const RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
-const char* const RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
-const char* const RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
-const char* const RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
-const char* const RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
-const char* const RKEY_FREE_OBJECT_ROTATION = "user/ui/rotateObjectsIndependently";
-const char* const RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
+constexpr const char* const RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
+constexpr const char* const RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
+constexpr const char* const RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
+constexpr const char* const RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
+constexpr const char* const RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
+constexpr const char* const RKEY_FREE_OBJECT_ROTATION = "user/ui/rotateObjectsIndependently";
+constexpr const char* const RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
 
 /**
  * Global entity settings affecting appearance, render options, etc.
@@ -502,7 +504,7 @@ public:
     virtual sigc::signal<void>& signal_settingsChanged() = 0;
 };
 
-const char* const MODULE_ENTITY("EntityModule");
+constexpr const char* const MODULE_ENTITY("EntityModule");
 
 /**
  * \brief

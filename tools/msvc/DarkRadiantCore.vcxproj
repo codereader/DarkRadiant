@@ -38,10 +38,11 @@
     <ClCompile Include="..\..\radiantcore\clipper\Clipper.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\ClipPoint.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\SplitAlgorithm.cpp" />
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationFolderParser.cpp" />
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationManager.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp" />
-    <ClCompile Include="..\..\radiantcore\eclass\EClassParser.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EntityClass.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AttachmentData.cpp" />
@@ -84,6 +85,9 @@
     <ClCompile Include="..\..\radiantcore\fonts\FontManager.cpp" />
     <ClCompile Include="..\..\radiantcore\fonts\GlyphInfo.cpp" />
     <ClCompile Include="..\..\radiantcore\fonts\GlyphSet.cpp" />
+    <ClCompile Include="..\..\radiantcore\fx\FxAction.cpp" />
+    <ClCompile Include="..\..\radiantcore\fx\FxDeclaration.cpp" />
+    <ClCompile Include="..\..\radiantcore\fx\FxManager.cpp" />
     <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\BMPLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp" />
@@ -105,7 +109,6 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
-    <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\map\autosaver\AutoSaver.cpp" />
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
@@ -171,6 +174,7 @@
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Surface.cpp" />
     <ClCompile Include="..\..\radiantcore\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\ModelNodeBase.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\lwo\clip.c">
@@ -593,7 +597,6 @@
     <ClCompile Include="..\..\radiantcore\model\StaticModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\model\StaticModelSurface.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleDef.cpp" />
-    <ClCompile Include="..\..\radiantcore\particles\ParticleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleNode.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticlesManager.cpp" />
@@ -624,11 +627,13 @@
     <ClCompile Include="..\..\radiantcore\log\StringLogDevice.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleRegistry.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\BlendLight.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\ColourShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp" />
@@ -636,12 +641,12 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.cpp" />
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractionPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\ObjectRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\RegularLight.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\GLFont.cpp" />
@@ -676,6 +681,7 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\SceneManipulationPivot.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\SceneSelectionTesters.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\SelectedNodeList.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSet.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSetInfoFileModule.cpp" />
@@ -705,9 +711,9 @@
     <ClCompile Include="..\..\radiantcore\shaders\CameraCubeMapDecl.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\CShader.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderLayer.cpp" />
-    <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ExpressionSlots.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\MapExpression.cpp" />
+    <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\MaterialSourceGenerator.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderExpression.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderLibrary.cpp" />
@@ -716,6 +722,7 @@
     <ClCompile Include="..\..\radiantcore\shaders\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\textures\GLTextureManager.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\textures\TextureManipulator.cpp" />
+    <ClCompile Include="..\..\radiantcore\skins\Doom3ModelSkin.cpp" />
     <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp" />
     <ClCompile Include="..\..\radiantcore\undo\UndoSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\undo\UndoSystemFactory.cpp" />
@@ -723,7 +730,6 @@
     <ClCompile Include="..\..\radiantcore\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DirectoryArchive.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystem.cpp" />
-    <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystemModule.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\ZipArchive.cpp" />
     <ClCompile Include="..\..\radiantcore\xmlregistry\RegistryTree.cpp" />
     <ClCompile Include="..\..\radiantcore\xmlregistry\XMLRegistry.cpp" />
@@ -758,11 +764,14 @@
     <ClInclude Include="..\..\radiantcore\clipper\Clipper.h" />
     <ClInclude Include="..\..\radiantcore\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiantcore\clipper\SplitAlgorithm.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFile.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationManager.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationStreamParser.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h" />
-    <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EntityClass.h" />
     <ClInclude Include="..\..\radiantcore\entity\algorithm\Speaker.h" />
@@ -826,6 +835,9 @@
     <ClInclude Include="..\..\radiantcore\fonts\FontManager.h" />
     <ClInclude Include="..\..\radiantcore\fonts\GlyphInfo.h" />
     <ClInclude Include="..\..\radiantcore\fonts\GlyphSet.h" />
+    <ClInclude Include="..\..\radiantcore\fx\FxAction.h" />
+    <ClInclude Include="..\..\radiantcore\fx\FxDeclaration.h" />
+    <ClInclude Include="..\..\radiantcore\fx\FxManager.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridItem.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridManager.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\BMPLoader.h" />
@@ -853,7 +865,6 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
-    <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h" />
     <ClInclude Include="..\..\radiantcore\map\autosaver\AutoSaver.h" />
     <ClInclude Include="..\..\radiantcore\map\CounterManager.h" />
@@ -937,7 +948,9 @@
     <ClInclude Include="..\..\radiantcore\model\md5\RenderableMD5Skeleton.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelCache.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelFormatManager.h" />
+    <ClInclude Include="..\..\radiantcore\model\ModelNodeBase.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
+    <ClInclude Include="..\..\radiantcore\model\NullModelBoxSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\lwo\lwo2.h" />
@@ -946,12 +959,12 @@
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\pm_fm.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h" />
+    <ClInclude Include="..\..\radiantcore\model\IndexedBoxSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\RenderableModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModel.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
-    <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleQuad.h" />
@@ -993,6 +1006,7 @@
     <ClInclude Include="..\..\radiantcore\messagebus\MessageBus.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleRegistry.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BlendLight.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\BufferObjectProvider.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ColourShader.h" />
@@ -1002,6 +1016,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h" />
@@ -1009,7 +1024,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractionPass.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ObjectRenderer.h" />
@@ -1018,6 +1032,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLState.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\RegularLight.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\TextRenderer.h" />
@@ -1061,6 +1076,7 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\SceneManipulationPivot.h" />
+    <ClInclude Include="..\..\radiantcore\selection\SceneSelectionTesters.h" />
     <ClInclude Include="..\..\radiantcore\selection\SceneWalkers.h" />
     <ClInclude Include="..\..\radiantcore\selection\SelectedNodeList.h" />
     <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSet.h" />
@@ -1092,14 +1108,12 @@
     <ClInclude Include="..\..\radiantcore\shaders\CameraCubeMapDecl.h" />
     <ClInclude Include="..\..\radiantcore\shaders\CShader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderLayer.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderSystem.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ExpressionSlots.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MaterialSourceGenerator.h" />
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderFileLoader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h" />
     <ClInclude Include="..\..\radiantcore\shaders\SoundMapExpression.h" />
@@ -1112,7 +1126,6 @@
     <ClInclude Include="..\..\radiantcore\shaders\VideoMapExpression.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3ModelSkin.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h" />
-    <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h" />
     <ClInclude Include="..\..\radiantcore\undo\Operation.h" />
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />
@@ -1135,6 +1148,20 @@
     <ClInclude Include="..\..\radiantcore\vfs\ZipStreamUtils.h" />
     <ClInclude Include="..\..\radiantcore\xmlregistry\RegistryTree.h" />
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\install\gl\blend_light_fp.glsl" />
+    <None Include="..\..\install\gl\blend_light_vp.glsl" />
+    <None Include="..\..\install\gl\cubemap_fp.glsl" />
+    <None Include="..\..\install\gl\cubemap_vp.glsl" />
+    <None Include="..\..\install\gl\interaction_fp.glsl" />
+    <None Include="..\..\install\gl\interaction_vp.glsl" />
+    <None Include="..\..\install\gl\regular_stage_fp.glsl" />
+    <None Include="..\..\install\gl\regular_stage_vp.glsl" />
+    <None Include="..\..\install\gl\shadowmap_fp.glsl" />
+    <None Include="..\..\install\gl\shadowmap_vp.glsl" />
+    <None Include="..\..\install\gl\zfill_alpha_fp.glsl" />
+    <None Include="..\..\install\gl\zfill_alpha_vp.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

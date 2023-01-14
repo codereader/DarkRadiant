@@ -63,8 +63,6 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		GlobalCommandSystem().addCommand(COMMAND_ADDTOLAYER,
 			std::bind(&LayerModule::addSelectionToLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
@@ -102,9 +100,9 @@ public:
 		);
 	}
 
-	ILayerManager::Ptr createLayerManager() override
+	ILayerManager::Ptr createLayerManager(INode& rootNode) override
 	{
-		return std::make_shared<LayerManager>();
+		return std::make_shared<LayerManager>(rootNode);
 	}
 
 private:

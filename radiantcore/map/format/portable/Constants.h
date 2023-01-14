@@ -19,6 +19,9 @@ const char* const TAG_MAP_LAYERS = "layers";
 const char* const TAG_MAP_LAYER = "layer";
 const char* const ATTR_MAP_LAYER_ID = "id";
 const char* const ATTR_MAP_LAYER_NAME = "name";
+const char* const ATTR_MAP_LAYER_PARENT_ID = "parentId";
+const char* const ATTR_MAP_LAYER_ACTIVE = "active";
+const char* const ATTR_MAP_LAYER_HIDDEN = "hidden";
 
 const char* const TAG_SELECTIONGROUPS = "selectionGroups";
 const char* const TAG_SELECTIONGROUP = "selectionGroup";

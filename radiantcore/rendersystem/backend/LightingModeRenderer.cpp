@@ -2,7 +2,6 @@
 
 #include "GLProgramFactory.h"
 #include "LightingModeRenderResult.h"
-#include "InteractingLight.h"
 #include "OpenGLShaderPass.h"
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
@@ -26,6 +25,7 @@ LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
     _lights(lights),
     _entities(entities),
     _shadowMapProgram(nullptr),
+    _blendLightProgram(nullptr),
     _shadowMappingEnabled(RKEY_ENABLE_SHADOW_MAPPING)
 {
     _untransformedObjectsWithoutAlphaTest.reserve(10000);
@@ -66,7 +66,8 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     ensureShadowMapSetup();
 
-    determineInteractingLight(view);
+    // Check and categorise all lights in view
+    collectLights(view);
 
     // Construct default OpenGL state
     OpenGLState current;
@@ -98,49 +99,38 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Draw any surfaces without any light interactions
     drawNonInteractionPasses(current, globalFlagsMask, view, time);
 
+    // Draw blend lights
+    drawBlendLights(current, globalFlagsMask, view, time);
+
     vertexBuffer->unbind();
     indexBuffer->unbind();
 
     cleanupState();
 
     // Cleanup the data accumulated in this render pass
-    _interactingLights.clear();
+    _regularLights.clear();
     _nearestShadowLights.clear();
+    _blendLights.clear();
 
     return std::move(_result); // move-return our result reference
 }
 
-void LightingModeRenderer::determineInteractingLight(const IRenderView& view)
+void LightingModeRenderer::collectLights(const IRenderView& view)
 {
-    _interactingLights.reserve(_lights.size());
+    _regularLights.reserve(_lights.size());
 
-    // Gather all visible lights and render the surfaces touched by them
+    // Categorise all visible lights
     for (const auto& light : _lights)
     {
-        InteractingLight interaction(*light, _geometryStore, _objectRenderer);
+        if (!light->isVisible()) continue;
 
-        if (!interaction.isInView(view))
+        if (light->isBlendLight())
         {
-            _result->skippedLights++;
+            collectBlendLight(*light, view);
             continue;
         }
 
-        _result->visibleLights++;
-
-        // Check all the surfaces that are touching this light
-        interaction.collectSurfaces(view, _entities);
-
-        _result->objects += interaction.getObjectCount();
-        _result->entities += interaction.getEntityCount();
-
-        // Move the interaction list into its place
-        auto& moved = _interactingLights.emplace_back(std::move(interaction));
-
-        // Check the distance of shadow casting lights to the viewer
-        if (_shadowMappingEnabled.get() && moved.isShadowCasting())
-        {
-            addToShadowLights(moved, view.getViewer());
-        }
+        collectRegularLight(*light, view);
     }
 
     // Assign shadow light indices
@@ -150,7 +140,62 @@ void LightingModeRenderer::determineInteractingLight(const IRenderView& view)
     }
 }
 
-void LightingModeRenderer::addToShadowLights(InteractingLight& light, const Vector3& viewer)
+void LightingModeRenderer::collectRegularLight(RendererLight& light, const IRenderView& view)
+{
+    RegularLight interaction(light, _geometryStore, _objectRenderer);
+
+    if (!interaction.isInView(view))
+    {
+        _result->skippedLights++;
+        return;
+    }
+
+    // Check all the surfaces that are touching this light
+    interaction.collectSurfaces(view, _entities);
+
+    _result->visibleLights++;
+    _result->objects += interaction.getObjectCount();
+    _result->entities += interaction.getEntityCount();
+
+    // Move the interaction list into its place
+    auto& moved = _regularLights.emplace_back(std::move(interaction));
+
+    // Check the distance of shadow casting lights to the viewer
+    if (_shadowMappingEnabled.get() && moved.isShadowCasting())
+    {
+        addToShadowLights(moved, view.getViewer());
+    }
+}
+
+void LightingModeRenderer::collectBlendLight(RendererLight& light, const IRenderView& view)
+{
+    BlendLight blendLight(light, _geometryStore, _objectRenderer);
+
+    if (!blendLight.isInView(view))
+    {
+        _result->skippedLights++;
+        return;
+    }
+
+    // Check all the surfaces that are touching this light
+    blendLight.collectSurfaces(view, _entities);
+
+    _result->visibleLights++;
+    _result->objects += blendLight.getObjectCount();
+
+    // Move the light into its place
+    _blendLights.emplace_back(std::move(blendLight));
+
+    // Make sure we have the blend light program around
+    if (!_blendLightProgram)
+    {
+        _blendLightProgram = dynamic_cast<BlendLightProgram*>(
+            _programFactory.getBuiltInProgram(ShaderProgram::BlendLight));
+        assert(_blendLightProgram != nullptr);
+    }
+}
+
+void LightingModeRenderer::addToShadowLights(RegularLight& light, const Vector3& viewer)
 {
     if (_nearestShadowLights.empty())
     {
@@ -202,7 +247,7 @@ void LightingModeRenderer::drawInteractingLights(OpenGLState& current, RenderSta
         OpenGLState::SetTextureState(current.texture5, _shadowMapFbo->getTextureNumber(), GL_TEXTURE5, GL_TEXTURE_2D);
     }
 
-    for (auto& interactionList : _interactingLights)
+    for (auto& interactionList : _regularLights)
     {
         auto shadowLightIndex = interactionList.getShadowLightIndex();
 
@@ -225,6 +270,25 @@ void LightingModeRenderer::drawInteractingLights(OpenGLState& current, RenderSta
     {
         // Unbind the shadow map texture
         OpenGLState::SetTextureState(current.texture5, 0, GL_TEXTURE5, GL_TEXTURE_2D);
+    }
+}
+
+void LightingModeRenderer::drawBlendLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
+    const IRenderView& view, std::size_t renderTime)
+{
+    if (_blendLights.empty()) return;
+
+    // Set the openGL state
+    auto blendLightState = OpenGLShaderPass::CreateBlendLightState(_blendLightProgram);
+
+    blendLightState.applyTo(current, globalFlagsMask);
+
+    _blendLightProgram->setModelViewProjection(view.GetViewProjection());
+
+    for (auto& blendLight : _blendLights)
+    {
+        blendLight.draw(current, globalFlagsMask , *_blendLightProgram, view, renderTime);
+        _result->nonInteractionDrawCalls += blendLight.getDrawCalls();
     }
 }
 
@@ -304,7 +368,7 @@ void LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFl
     // Set the modelview and projection matrix
     depthFillProgram->setModelViewProjection(view.GetViewProjection());
 
-    for (auto& interactionList : _interactingLights)
+    for (auto& interactionList : _regularLights)
     {
         interactionList.fillDepthBuffer(current, *depthFillProgram, renderTime, _untransformedObjectsWithoutAlphaTest);
         _result->depthDrawCalls += interactionList.getDepthDrawCalls();
@@ -360,13 +424,16 @@ void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, Render
             // For each pass except for the depth fill and interaction passes, draw the geometry
             glShader->foreachNonInteractionPass([&](OpenGLShaderPass& pass)
             {
+                // Evaluate the stage before deciding whether it's active
+                pass.evaluateShaderStages(time, entity.get());
+
                 if (!pass.stateIsActive())
                 {
                     return;
                 }
 
                 // Apply our state to the current state object
-                pass.evaluateStagesAndApplyState(current, globalFlagsMask, time, entity.get());
+                pass.applyState(current, globalFlagsMask);
 
                 // Bind textures
                 OpenGLState::SetTextureState(current.texture0, pass.state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);

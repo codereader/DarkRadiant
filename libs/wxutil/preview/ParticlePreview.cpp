@@ -64,7 +64,7 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 	_reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
 		wxutil::GetLocalBitmap("refresh.png", wxART_TOOLBAR));
     _reloadButton->SetShortHelp(_("Reload Particle Defs"));
-    IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
+    IEventPtr ev = GlobalEventManager().findEvent("ReloadDecls");
 	ev->connectToolItem(_reloadButton);
 
 	toolbar->Realize();
@@ -74,13 +74,23 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 
 ParticlePreview::~ParticlePreview()
 {
-	IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
+	IEventPtr ev = GlobalEventManager().findEvent("ReloadDecls");
 	ev->disconnectToolItem(_reloadButton);
 }
 
-void ParticlePreview::setParticle(const std::string& name)
+wxWindow* ParticlePreview::GetPreviewWidget()
 {
-    std::string nameClean = name;
+    return _mainPanel;
+}
+
+void ParticlePreview::ClearPreview()
+{
+    SetPreviewDeclName({});
+}
+
+void ParticlePreview::SetPreviewDeclName(const std::string& declName)
+{
+    std::string nameClean = declName;
 
     if (string::ends_with(nameClean, ".prt"))
     {
@@ -216,23 +226,23 @@ void ParticlePreview::onPostRender()
         drawAxes();
     }
 
-    const particles::IParticleDefPtr& def = _particleNode->getParticle()->getParticleDef();
+    const particles::IParticleDef::Ptr& def = _particleNode->getParticle()->getParticleDef();
 
     // Calculate the total time of the particles
     std::size_t totalTimeMsec = 0;
 
     for (std::size_t i = 0; i < def->getNumStages(); ++i)
     {
-        const particles::IStageDef& stage = def->getStage(i);
+        const auto& stage = def->getStage(i);
 
         // For ever-repeating stages, set stuff to INT_MAX and break
-        if (stage.getCycles() == 0)
+        if (stage->getCycles() == 0)
         {
             totalTimeMsec = INT_MAX;
             break;
         }
 
-        totalTimeMsec += static_cast<int>(stage.getCycleMsec() * stage.getCycles());
+        totalTimeMsec += static_cast<int>(stage->getCycleMsec() * stage->getCycles());
     }
 
     // Update the sensitivity of the auto-loop button

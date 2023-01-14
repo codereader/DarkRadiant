@@ -10,3 +10,8 @@ entityDef info_player_start
 	"editor_usage"				"The spawning position for the player."
 	"editor_var skin"			"Skin to use for player model."
 }
+
+entityDef derived_from_info_player_start
+{
+	"inherit"				"info_player_start"
+}

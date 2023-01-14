@@ -58,12 +58,10 @@ void createCurve(const std::string& key)
     // Insert this new node into the scenegraph root
     GlobalSceneGraph().root()->addChildNode(curve);
 
+    auto workZoneOrigin = GlobalSelectionSystem().getWorkZone().bounds.getOrigin();
+
     // Select this new curve node
     Node_setSelected(curve, true);
-
-    // Set the model key to be the same as the name
-    curve->getEntity().setKeyValue("model",
-                                   curve->getEntity().getKeyValue("name"));
 
     // Initialise the curve using three pre-defined points
     curve->getEntity().setKeyValue(
@@ -71,10 +69,10 @@ void createCurve(const std::string& key)
         "3 ( 0 0 0  50 50 0  50 100 0 )"
     );
 
-    ITransformablePtr transformable = scene::node_cast<ITransformable>(curve);
-    if (transformable != NULL) {
-        // Translate the entity to the center of the current workzone
-        transformable->setTranslation(GlobalXYWndManager().getActiveViewOrigin());
+    if (auto transformable = scene::node_cast<ITransformable>(curve); transformable)
+    {
+        // Translate the entity to the center of the workzone before the spline was created
+        transformable->setTranslation(workZoneOrigin);
         transformable->freezeTransform();
     }
 }
@@ -192,8 +190,8 @@ void appendCurveControlPoint(const cmd::ArgumentList& args)
 
 void removeCurveControlPoints(const cmd::ArgumentList& args)
 {
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
-		GlobalSelectionSystem().ComponentMode() != selection::ComponentSelectionMode::Vertex)
+	if (GlobalSelectionSystem().getSelectionMode() != SelectionMode::Component ||
+		GlobalSelectionSystem().ComponentMode() != ComponentSelectionMode::Vertex)
 	{
 		throw cmd::ExecutionNotPossible(
 			_("Can't remove curve points - must be in vertex editing mode.")
@@ -222,8 +220,8 @@ void removeCurveControlPoints(const cmd::ArgumentList& args)
 
 void insertCurveControlPoints(const cmd::ArgumentList& args)
 {
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
-		GlobalSelectionSystem().ComponentMode() != selection::ComponentSelectionMode::Vertex)
+	if (GlobalSelectionSystem().getSelectionMode() != SelectionMode::Component ||
+		GlobalSelectionSystem().ComponentMode() != ComponentSelectionMode::Vertex)
 	{
 		throw cmd::ExecutionNotPossible(
 			_("Can't insert curve points - must be in vertex editing mode.")

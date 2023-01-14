@@ -1,5 +1,6 @@
 #include "UserInterfaceModule.h"
 
+#include <cctype>
 #include <sigc++/functors/ptr_fun.h>
 
 #include "i18n.h"
@@ -10,37 +11,37 @@
 #include "imap.h"
 #include "ibrush.h"
 #include "ipatch.h"
+#include "iclipper.h"
 #include "ui/ieventmanager.h"
-#include "imousetool.h"
+#include "ishaderclipboard.h"
+#include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 #include "ishaders.h"
+#include "ieditstopwatch.h"
+#include "icounter.h"
 #include "icameraview.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "messages/TextureChanged.h"
-#include "string/string.h"
+#include "messages/ClearConsole.h"
+#include "string/predicate.h"
 #include "scene/Group.h"
 #include "command/ExecutionNotPossible.h"
 
 #include "module/StaticModule.h"
 
 #include "MapCommands.h"
-#include "ui/aas/AasControlDialog.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
-#include "ui/layers/LayerControlDialog.h"
-#include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/Documentation.h"
-#include "log/Console.h"
+#include "ui/console/Console.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/patch/PatchInspector.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
-#include "ui/transform/TransformDialog.h"
-#include "ui/findshader/FindShader.h"
+#include "ui/findshader/FindShaderControl.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/mousetool/ToolMappingDialog.h"
@@ -65,10 +66,22 @@
 #include "ui/brush/FindBrush.h"
 #include "ui/mousetool/RegistrationHelper.h"
 #include "ui/mapselector/MapSelector.h"
-#include "ui/merge/MergeControlDialog.h"
+#include "ui/merge/MapMergeControl.h"
 #include "ui/PointFileChooser.h"
+#include "ui/skin/SkinEditor.h"
 
 #include <wx/version.h>
+
+#include "aas/AasVisualisationControl.h"
+#include "console/ConsoleControl.h"
+#include "entitylist/EntityListControl.h"
+#include "layers/LayerControl.h"
+#include "lightinspector/LightInspectorControl.h"
+#include "overlay/OrthoBackgroundControl.h"
+#include "patch/PatchInspectorControl.h"
+#include "surfaceinspector/SurfaceInspectorControl.h"
+#include "textool/TextureToolControl.h"
+#include "transform/TransformPanelControl.h"
 
 namespace ui
 {
@@ -103,9 +116,17 @@ const StringSet& UserInterfaceModule::getDependencies() const
         MODULE_EVENTMANAGER,
         MODULE_RADIANT_CORE,
         MODULE_MRU_MANAGER,
+        MODULE_MENUMANAGER,
         MODULE_MAINFRAME,
         MODULE_MOUSETOOLMANAGER,
-        MODULE_MAP
+        MODULE_MAP,
+        MODULE_PATCH,
+        MODULE_BRUSHCREATOR,
+        MODULE_TEXTOOL_SELECTIONSYSTEM,
+        MODULE_SHADERCLIPBOARD,
+        MODULE_EDITING_STOPWATCH,
+        MODULE_COUNTER,
+        MODULE_CLIPPER,
     };
 
 	return _dependencies;
@@ -113,8 +134,6 @@ const StringSet& UserInterfaceModule::getDependencies() const
 
 void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Output the wxWidgets version to the logfile
 	std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
 	wxVersion += string::to_string(wxMINOR_VERSION) + ".";
@@ -125,9 +144,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	wxutil::MultiMonitor::printMonitorInfo();
 
 	registerUICommands();
-
-	// Register LayerControlDialog
-	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::toggle);
 
 	// Create a new menu item connected to the CreateNewLayerDialog command
 	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::CommandMenuItem>(
@@ -153,9 +169,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 			LayerOrthoContextMenuItem::RemoveFromLayer),
 		IOrthoContextMenu::SECTION_LAYER
 	);
-
-	GlobalMainFrame().signal_MainFrameConstructed().connect(
-		sigc::ptr_fun(LayerControlDialog::onMainFrameConstructed));
 
 	// Pre-load models
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
@@ -205,9 +218,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		radiant::IMessage::Type::Notification,
         radiant::TypeListener<radiant::NotificationMessage>(UserInterfaceModule::HandleNotificationMessage));
 
-	// Initialise the AAS UI
-	AasControlDialog::Init();
-
 	SelectionSetToolmenu::Init();
 
 	_mruMenu.reset(new MRUMenu);
@@ -224,7 +234,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	wxTheApp->Bind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
 
     _mapEditModeChangedConn = GlobalMapModule().signal_editModeChanged().connect(
-        sigc::ptr_fun(&MergeControlDialog::OnMapEditModeChanged)
+        sigc::ptr_fun(&MapMergePanel::OnMapEditModeChanged)
     );
 
     _autosaveTimer.reset(new map::AutoSaveTimer);
@@ -237,10 +247,46 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMenuManager().setVisibility("main/help/userGuideLocal", false);
     });
 #endif
+
+    _reloadMaterialsConn = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
+        .connect([this]() { dispatch([]() { GlobalMainFrame().updateAllWindows(); }); });
+
+    registerControl(std::make_shared<ConsoleControl>());
+    registerControl(std::make_shared<SurfaceInspectorControl>());
+    registerControl(std::make_shared<LayerControl>());
+    registerControl(std::make_shared<TextureToolControl>());
+    registerControl(std::make_shared<PatchInspectorControl>());
+    registerControl(std::make_shared<LightInspectorControl>());
+    registerControl(std::make_shared<TransformPanelControl>());
+    registerControl(std::make_shared<MapMergeControl>());
+    registerControl(std::make_shared<EntityListControl>());
+    registerControl(std::make_shared<AasVisualisationControl>());
+    registerControl(std::make_shared<FindShaderControl>());
+    registerControl(std::make_shared<OrthoBackgroundControl>());
+
+    GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
+    {
+        // Set default locations of some controls
+        GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false, 330, 480 });
+        GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false, 180, 300 });
+        GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false, 600, 400 });
+        GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false, 280, 480 });
+        GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false, 780, 420 });
+        GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false, 260, 310 });
+        GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false, 380, 440 });
+        GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false, 250, 400 });
+        GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false, 200, 200 });
+        GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false, 350, 200 });
+        GlobalMainFrame().addControl(UserControl::OrthoBackgroundPanel, { IMainFrame::Location::FloatingWindow, false, 480, 350 });
+
+        _viewMenu = std::make_unique<ViewMenu>();
+    });
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+    _viewMenu.reset();
+    _userControls.clear();
     _autosaveTimer.reset();
 
 	wxTheApp->Unbind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
@@ -248,6 +294,7 @@ void UserInterfaceModule::shutdownModule()
 	GlobalRadiantCore().getMessageBus().removeListener(_execFailedListener);
 	GlobalRadiantCore().getMessageBus().removeListener(_notificationListener);
 
+    _reloadMaterialsConn.disconnect();
 	_coloursUpdatedConn.disconnect();
 	_entitySettingsConn.disconnect();
     _mapEditModeChangedConn.disconnect();
@@ -273,6 +320,48 @@ void UserInterfaceModule::dispatch(const std::function<void()>& action)
 {
 	// Store this action in the event queue, it will be handled during the next event loop
 	wxTheApp->QueueEvent(new DispatchEvent(DISPATCH_EVENT, wxID_ANY, action));
+}
+
+void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
+{
+    if (!_userControls.emplace(control->getControlName(), control).second)
+    {
+        throw std::logic_error("The Control with name " + control->getControlName() + " has already been registered");
+    }
+
+    // Check the name for validity
+    if (!string::isAlphaNumeric(control->getControlName()))
+    {
+        throw std::invalid_argument("Control name " + control->getControlName() + " contains invalid characters, only alphanumerics are allowed");
+    }
+
+    // Add a command shortcut toggling this control
+    GlobalCommandSystem().addStatement(fmt::format("{0}{1}", TOGGLE_CONTROL_STATEMENT_PREFIX, control->getControlName()), 
+        fmt::format("{0} \"{1}\"", TOGGLE_CONTROL_COMMAND, control->getControlName()), false);
+
+    // Add a command shortcut for making this the main control
+    GlobalCommandSystem().addStatement(fmt::format("{0}{1}", TOGGLE_MAIN_CONTROL_STATEMENT_PREFIX, control->getControlName()),
+        fmt::format("{0} \"{1}\"", TOGGLE_MAIN_CONTROL_COMMAND, control->getControlName()), false);
+}
+
+IUserControl::Ptr UserInterfaceModule::findControl(const std::string& name)
+{
+    auto control = _userControls.find(name);
+
+    return control != _userControls.end() ? control->second : IUserControl::Ptr();
+}
+
+void UserInterfaceModule::unregisterControl(const std::string& controlName)
+{
+    _userControls.erase(controlName);
+}
+
+void UserInterfaceModule::foreachControl(const std::function<void(const std::string&)>& functor)
+{
+    for (const auto& [name, _] : _userControls)
+    {
+        functor(name);
+    }
 }
 
 void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
@@ -364,20 +453,6 @@ void UserInterfaceModule::applyEntityVertexColours()
 	settings.setLightVertexColour(LightEditVertexType::Selected, GlobalColourSchemeManager().getColour("light_vertex_selected"));
 }
 
-void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)
-{
-	// Disable screen updates for the scope of this function
-	auto blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
-
-	// Reload the Shadersystem, this will also trigger an
-	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
-	// is attached to this class as Observer
-	// We can't do this refresh() operation in a thread it seems due to context binding
-	GlobalMaterialManager().refresh();
-
-	GlobalMainFrame().updateAllWindows();
-}
-
 void UserInterfaceModule::registerUICommands()
 {
 	TexTool::registerCommands();
@@ -385,13 +460,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ProjectSettings", GameSetupDialog::Show);
 	GlobalCommandSystem().addCommand("Preferences", PrefDialog::ShowPrefDialog);
 
-	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
-	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
-	GlobalCommandSystem().addCommand("SurfaceInspector", SurfaceInspector::toggle);
-	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
-	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
-	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
+    GlobalCommandSystem().addCommand("clear", [](const auto&) { radiant::ClearConsoleMessage::Send(); });
+
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
                                      [](const cmd::ArgumentList&)
                                      { PointFileChooser::chooseAndToggle(); });
@@ -403,11 +473,11 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);
 
-	GlobalCommandSystem().addCommand("FindReplaceTextures", FindAndReplaceShader::ShowDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
 	GlobalCommandSystem().addCommand("OpenForumUrl", Documentation::OpenForumUrl);
+	GlobalCommandSystem().addCommand("OpenScriptReference", Documentation::OpenScriptReference);
 #ifndef WIN32
 	GlobalCommandSystem().addCommand("ShowOfflineUserGuide", Documentation::showOfflineUserGuide);
 #endif
@@ -415,27 +485,30 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
-	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
-	GlobalCommandSystem().addCommand("RefreshShaders", std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
 
 	// ----------------------- Bind Events ---------------------------------------
 
 	// Add the callback event
 	GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
+	GlobalCommandSystem().addCommand("SkinEditor", SkinEditor::ShowDialog);
 
 	// Register the "create layer" command
 	GlobalCommandSystem().addCommand("CreateNewLayerDialog", CreateLayerDialog::CreateNewLayer,
 		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
-	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);
-	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
-	GlobalCommandSystem().addCommand("ThickenPatchDialog", PatchThickenDialog::Show);
-	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
+    GlobalCommandSystem().addWithCheck("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchCapDialog", PatchCapDialog::Show,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("ThickenPatchDialog", PatchThickenDialog::Show,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
 
-	GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
-	GlobalCommandSystem().addCommand("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show, { cmd::ARGTYPE_INT });
+    GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
+    GlobalCommandSystem().addWithCheck("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show,
+                                       selection::pred::haveBrush, {cmd::ARGTYPE_INT});
 
-	// Set up the CloneSelection command to react on key up events only
+    // Set up the CloneSelection command to react on key up events only
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");

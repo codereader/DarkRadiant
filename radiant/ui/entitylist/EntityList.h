@@ -1,16 +1,11 @@
 #pragma once
 
-#include "ifilter.h"
 #include "iselection.h"
-#include "iscenegraph.h"
-#include "iradiant.h"
-#include "icommandsystem.h"
-#include "imodule.h"
-#include "wxutil/WindowPosition.h"
-#include "wxutil/window/TransientWindow.h"
 #include "GraphTreeModel.h"
-#include <set>
 #include <sigc++/connection.h>
+
+#include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace wxutil
 {
@@ -22,12 +17,10 @@ class wxCheckBox;
 namespace ui
 {
 
-class EntityList;
-typedef std::shared_ptr<EntityList> EntityListPtr;
-
 class EntityList :
-	public wxutil::TransientWindow,
-    public selection::SelectionSystem::Observer
+	public wxutil::DockablePanel,
+    public selection::SelectionSystem::Observer,
+    public wxutil::SingleIdleCallback
 {
 private:
 	// The GraphTreeModel instance
@@ -42,19 +35,22 @@ private:
 
 	sigc::connection _filtersConfigChangedConn;
 
-	struct DataViewItemLess
-	{
-		bool operator() (const wxDataViewItem& a, const wxDataViewItem& b) const
-		{
-			return a.GetID() < b.GetID();
-		}
-	};
+    wxDataViewItem _itemToScrollToWhenIdle;
+    std::vector<scene::INodeWeakPtr> _nodesToUpdate;
 
-	std::set<wxDataViewItem, DataViewItemLess> _selection;
+public:
+	EntityList(wxWindow* parent);
+    ~EntityList() override;
+
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
+    void onIdle() override;
 
 private:
-	// This is where the static shared_ptr of the singleton instance is held.
-	static EntityListPtr& InstancePtr();
+    void connectListeners();
+    void disconnectListeners();
 
 	/** greebo: Creates the widgets
 	 */
@@ -62,7 +58,7 @@ private:
 
 	/** greebo: Updates the treeview contents
 	 */
-	void update();
+	void updateSelectionStatus();
 
     // Repopulate the entire treestore from the scenegraph
     void refreshTreeModel();
@@ -71,7 +67,7 @@ private:
 	 * greebo: SelectionSystem::Observer implementation.
 	 * Gets notified as soon as the selection is changed.
 	 */
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent) override;
 
 	// Called by the graph tree model
 	void onTreeViewSelection(const wxDataViewItem& item, bool selected);
@@ -85,31 +81,6 @@ private:
 	void onVisibleOnlyToggle(wxCommandEvent& ev);
 
 	void expandRootNode();
-
-	// (private) Constructor, creates all the widgets
-	EntityList();
-
-	void _preHide();
-	void _preShow();
-
-	/** 
-	 * greebo: Shuts down this dialog, safely disconnects it
-	 * from the SelectionSystem.
-	 * Saves the window information to the Registry.
-	 */
-	void onMainFrameShuttingDown();
-
-public:
-    ~EntityList();
-
-	/** greebo: Toggles the window (command target).
-	 */
-	static void toggle(const cmd::ArgumentList& args);
-
-	/** greebo: Contains the static instance. Use this
-	 * 			to access the other members
-	 */
-	static EntityList& Instance();
 };
 
-} // namespace ui
+} // namespace

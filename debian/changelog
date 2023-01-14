@@ -1,3 +1,77 @@
+darkradiant (3.6.0~jammy1) jammy; urgency=medium
+
+  * New Selection Focus feature (Ctrl-F).
+  * Add Radiant.findEntityByName script method.
+  * Media Browser shows a thumbnail preview when selecting folders.
+  * Map is remembering layer visibilities between loads.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 15 Nov 2022 20:28:13 +0000
+
+darkradiant (3.5.0~jammy1) jammy; urgency=medium
+
+  * More customisable layout: all windows and panes can be dragged and
+    re-arranged. Legacy layouts like Embedded, Regular and Splitpane are
+    superseded and removed.
+  * The LayerControlPanel's tooltip popup is now less annoying.
+  * Clarify distinction between Shadow render mode and other render modes
+  * Show/hide Light Volumes for combined entities inconsistent.
+  * Currently applied particleDef not selected in Particle Selector.
+  * Layer visibility checkbox not reacting to double-clicks.
+  * Cannot toggle visibility of layers in Linux.
+  * Drag-and-dropping layers is not working in Linux.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 08 Nov 2022 19:52:10 +0000
+
+darkradiant (3.4.0~jammy1) jammy; urgency=medium
+
+  * Layers can now be organised into a tree rather than a flat list.
+  * Several bug fixes.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 11 Oct 2022 20:11:03 +0100
+
+darkradiant (3.3.0~jammy1) jammy; urgency=medium
+
+  * New FX chooser and support for parsing FX declarations.
+  * Numerous menu entries greyed out when not currently available.
+  * Certain menu entries and UI elements hidden when not available in current
+    game.
+  * Renderer now handles "translucent" keyword.
+  * Lighting mode renderer now draws hidden lights.
+  * Several minor bugfixes.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 27 Sep 2022 19:53:22 +0100
+
+darkradiant (3.2.0~jammy1) jammy; urgency=medium
+
+  * Show entityDefs related to selected models in Model Chooser.
+  * Support for rendering blend lights.
+  * Implement sorting of Interaction Stages.
+  * Recognise type of "set x on y" spawnargs.
+  * OBJ files: loader supports usemtl keywords directly referencing material
+    names (without .mtl file).
+  * Numerous bug fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 06 Sep 2022 20:27:52 +0100
+
+darkradiant (3.1.0~jammy1) jammy; urgency=medium
+
+  * Texture Tool now supports free scaling with the mouse.
+  * Improved robustness and correctness of decl handling.
+  * Numerous fixes to Material Editor.
+  * Improve Model Export dialog and workflow.
+  * Other fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 23 Aug 2022 20:49:18 +0100
+
+darkradiant (3.0.0~focal1) focal; urgency=medium
+
+  * New major release on all platforms
+  * Significant improvements to performance and functionality of renderer,
+    including shadow support.
+  * Numerous small fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Wed, 15 Jun 2022 20:39:03 +0100
+
 darkradiant (2.14.0~focal2) focal; urgency=medium
 
   * New major release on all platforms.

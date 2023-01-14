@@ -81,8 +81,8 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
     // If the image loader didn't convert grey to RGB, the grey value is
     // smeared across the whole RGB channels and they are not uniform
 
-    EXPECT_TRUE(std::dynamic_pointer_cast<RGBAImage>(img));
-    auto pixels = reinterpret_cast<RGBAPixel*>(img->getPixels());
+    EXPECT_TRUE(std::dynamic_pointer_cast<image::RGBAImage>(img));
+    auto pixels = reinterpret_cast<image::RGBAPixel*>(img->getPixels());
 
     auto numPixels = img->getWidth() * img->getHeight();
     for (auto i = 0; i < numPixels; ++i)

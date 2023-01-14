@@ -8,7 +8,7 @@ namespace ui
 {
 
 MaterialTreeView::MaterialTreeView(wxWindow* parent) :
-    ResourceTreeView(parent, Columns(), wxDV_NO_HEADER)
+    DeclarationTreeView(parent, decl::Type::Material, Columns(), wxDV_NO_HEADER)
 {
     auto* textCol = AppendIconTextColumn(_("Shader"), Columns().iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
@@ -17,7 +17,6 @@ MaterialTreeView::MaterialTreeView(wxWindow* parent) :
     textCol->SetWidth(300);
 
     AddSearchColumn(Columns().iconAndName);
-    EnableFavouriteManagement(decl::Type::Material);
 
     // The wxWidgets algorithm sucks at sorting large flat lists of strings,
     // so we do that ourselves
@@ -57,6 +56,19 @@ void MaterialTreeView::SetTreeMode(MaterialTreeView::TreeMode mode)
 
     // Try to select the same item we had as before
     SetSelectedFullname(previouslySelectedItem);
+}
+
+std::string MaterialTreeView::GetSelectedTextureFolderName()
+{
+    if (!IsDirectorySelected()) return {};
+
+    // The folder name is stored in the decl name column
+    auto fullName = GetSelectedFullname();
+
+    auto otherMaterialsPrefix = MaterialPopulator::GetOtherMaterialsName() + "/";
+
+    return string::starts_with(fullName, otherMaterialsPrefix) ? 
+        fullName.substr(otherMaterialsPrefix.length()) : fullName;
 }
 
 void MaterialTreeView::onMaterialCreated(const std::string& name)

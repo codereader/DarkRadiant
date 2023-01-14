@@ -215,7 +215,7 @@ void SelectionGroupInfoFileModule::parseSelectionGroups(parser::DefTokeniser& to
 			_groupInfo.back().id = id;
 			_groupInfo.back().name = name;
 
-			rMessage() << "[InfoFile]: Parsed group #" << id << " with name \"" << name << "\"" << std::endl;
+			rDebug() << "[InfoFile]: Parsed group #" << id << " with name \"" << name << "\"" << std::endl;
 
 			continue;
 		}

@@ -50,8 +50,6 @@ const StringSet& EditingStopwatch::getDependencies() const
 
 void EditingStopwatch::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	_mapSignal = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &EditingStopwatch::onMapEvent)
 	);

@@ -399,26 +399,8 @@ void SpeakerNode::freezeTransform()
 	if (!_spawnArgs.getKeyValue(KEY_S_SHADER).empty())
 	{
 		// Note: Write the spawnargs in meters
-
-		if (_radii.getMax() != _defaultRadii.getMax())
-		{
-			_spawnArgs.setKeyValue(KEY_S_MAXDISTANCE, string::to_string(_radii.getMax(true)));
-		}
-		else
-		{
-			// Radius is matching default, clear the spawnarg
-			_spawnArgs.setKeyValue(KEY_S_MAXDISTANCE, "");
-		}
-
-		if (_radii.getMin() != _defaultRadii.getMin())
-		{
-			_spawnArgs.setKeyValue(KEY_S_MINDISTANCE, string::to_string(_radii.getMin(true)));
-		}
-		else
-		{
-			// Radius is matching default, clear the spawnarg
-			_spawnArgs.setKeyValue(KEY_S_MINDISTANCE, "");
-		}
+		_spawnArgs.setKeyValue(KEY_S_MAXDISTANCE, string::to_string(_radii.getMax(true)));
+		_spawnArgs.setKeyValue(KEY_S_MINDISTANCE, string::to_string(_radii.getMin(true)));
 	}
 }
 
@@ -495,6 +477,14 @@ void SpeakerNode::clearRenderables()
     _renderableRadiiWireframe.clear();
     _renderableRadiiFill.clear();
     _renderableRadiiFillOutline.clear();
+}
+
+void SpeakerNode::onRenderStateChanged()
+{
+    EntityNode::onRenderStateChanged();
+
+    clearRenderables();
+    updateRenderables();
 }
 
 const Vector3& SpeakerNode::getWorldPosition() const

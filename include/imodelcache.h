@@ -19,8 +19,12 @@ public:
 	 * containing the suitable model node. The modelPath is analysed
 	 * and the correct ModelLoader is invoked to create the node.
 	 *
-	 * @returns: a valid scene::INodePtr, which is never NULL. If the model
+	 * @returns: a valid scene::INodePtr, which is never empty. If the model
 	 * could not be loaded, the fallback "NullModel" is returned.
+	 *
+	 * Note that the model path should refer to an actual object in the VFS,
+	 * modelPaths referring to modelDef declarations need to be resolved
+	 * by the caller.
 	 */
 	virtual scene::INodePtr getModelNode(const std::string& modelPath) = 0;
 
@@ -54,7 +58,7 @@ public:
 
 } // namespace model
 
-const char* const MODULE_MODELCACHE("ModelCache");
+constexpr const char* const MODULE_MODELCACHE("ModelCache");
 
 inline model::IModelCache& GlobalModelCache()
 {

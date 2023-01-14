@@ -52,7 +52,7 @@ inline void CreateSpeaker(const cmd::ArgumentList& args)
     // Set the shader keyvalue
     auto& entity = spkNode->getEntity();
 
-    entity.setKeyValue("s_shader", soundShader->getName());
+    entity.setKeyValue("s_shader", soundShader->getDeclName());
 
     // Initialise the speaker with suitable distance values
     auto radii = soundShader->getRadii();

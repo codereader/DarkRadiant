@@ -6,7 +6,8 @@
  */
 #pragma once
 
-#include "ModResource.h"
+#include "ideclmanager.h"
+#include "igameresource.h"
 
 #include "imodule.h"
 #include "ifilesystem.h"
@@ -119,30 +120,40 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  * \ingroup eclass
  */
 class IEntityClass :
-    public ModResource
+    public decl::IDeclaration
 {
 public:
     virtual ~IEntityClass() {}
 
+    // Enumeration of types DarkRadiant is capable of distinguishing when creating entities
+    enum class Type
+    {
+        Generic,            // fixed-size, coloured boxes with and without arrow
+        StaticGeometry,     // func_* entities supporting primitives (like worldspawn)
+        EntityClassModel,   // non-fixed size entities with a non-empty "model" key set
+        Light,              // all classes with editor_light/idLight or inheriting from them
+        Speaker,            // special class used for "speaker" entityDefs
+    };
+
+    // Returns the type of this entity class (as determined after parsing)
+    virtual Type getClassType() = 0;
+
     /// Signal emitted when entity class contents are changed or reloaded
     virtual sigc::signal<void>& changedSignal() = 0;
 
-    /// Get the name of this entity class
-    virtual const std::string& getName() const = 0;
-
     /// Get the parent entity class or NULL if there is no parent
-    virtual const IEntityClass* getParent() const = 0;
+    virtual IEntityClass* getParent() = 0;
 
     /// Get the UI visibility of this entity class
-    virtual vfs::Visibility getVisibility() const = 0;
+    virtual vfs::Visibility getVisibility() = 0;
 
     /// Query whether this entity class represents a light.
-    virtual bool isLight() const = 0;
+    virtual bool isLight() = 0;
 
     /* ENTITY CLASS SIZE */
 
     /// Query whether this entity has a fixed size.
-    virtual bool isFixedSize() const = 0;
+    virtual bool isFixedSize() = 0;
 
     /**
      * Return an AABB representing the declared size of this entity. This is
@@ -152,12 +163,12 @@ public:
      * AABB enclosing the "editor_mins" and "editor_maxs" points defined in the
      * entityDef.
      */
-    virtual AABB getBounds() const = 0;
+    virtual AABB getBounds() = 0;
 
     /* ENTITY CLASS COLOURS */
 
     /// Return the display colour of this entity class
-    virtual const Vector4& getColour() const = 0;
+    virtual const Vector4& getColour() = 0;
 
     // Overrides the colour defined in the .def files
     virtual void setColour(const Vector4& colour) = 0;
@@ -171,16 +182,16 @@ public:
      * not found.
      */
     virtual std::string getAttributeValue(const std::string& name,
-                                          bool includeInherited = true) const = 0;
+                                          bool includeInherited = true) = 0;
 
     // Returns the attribute type string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a type definition.
     // If no type is found, an empty string will be returned.
-    virtual std::string getAttributeType(const std::string& name) const = 0;
+    virtual std::string getAttributeType(const std::string& name) = 0;
 
     // Returns the attribute description string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a non-empty description.
-    virtual std::string getAttributeDescription(const std::string& name) const = 0;
+    virtual std::string getAttributeDescription(const std::string& name) = 0;
 
     /**
      * Function that will be invoked by forEachAttribute.
@@ -202,28 +213,13 @@ public:
      * true if editor keys (those which start with "editor_") should be passed
      * to the visitor, false if they should be skipped.
      */
-    virtual void forEachAttribute(AttributeVisitor visitor, bool editorKeys = false) const = 0;
-
-    /* MODEL AND SKIN */
-
-    /** Retrieve the model path for this entity.
-     *
-     * @returns
-     * The VFS model path, or the empty string if there is no model.
-     */
-    virtual const std::string& getModelPath() const = 0;
-
-    /// Get the model skin, or the empty string if there is no skin.
-    virtual const std::string& getSkin() const = 0;
+    virtual void forEachAttribute(AttributeVisitor visitor, bool editorKeys = false) = 0;
 
 	/**
 	 * Returns true if this entity is of type or inherits from the
 	 * given entity class name. className is treated case-sensitively.
 	 */
 	virtual bool isOfType(const std::string& className) = 0;
-
-    // Returns the mod-relative path to the file this DEF was declared in
-    virtual std::string getDefFileName() = 0;
 };
 
 /**
@@ -233,37 +229,27 @@ public:
  * \ingroup eclass
  */
 class IModelDef :
-    public ModResource
+    public decl::IDeclaration
 {
 public:
-    bool resolved;
+    using Ptr = std::shared_ptr<IModelDef>;
 
-    std::string name;
+    // The def this model is inheriting from (empty if there's no parent)
+    virtual const Ptr& getParent() = 0;
 
-    std::string mesh;
-    std::string skin;
+    // The MD5 mesh used by this modelDef
+    virtual const std::string& getMesh() = 0;
 
-    std::string parent;
+    // The named skin
+    virtual const std::string& getSkin() = 0;
 
-    typedef std::map<std::string, std::string> Anims;
-    Anims anims;
+    // The md5anim file name for the given anim key (e.g. "idle" or "af_pose")
+    virtual std::string getAnim(const std::string& animKey) = 0;
 
-    std::string modName;
-
-    // The mod-relative path to the file this DEF was declared in
-    std::string defFilename;
-
-    IModelDef() :
-        resolved(false),
-        modName("base")
-    {}
-
-    std::string getModName() const
-    {
-        return modName;
-    }
+    // Returns a dictionary of all the animations declared on this model def
+    using Anims = std::map<std::string, std::string>;
+    virtual const Anims& getAnims() = 0;
 };
-typedef std::shared_ptr<IModelDef> IModelDefPtr;
 
 /**
  * EntityClass visitor interface.
@@ -277,19 +263,7 @@ public:
     virtual void visit(const IEntityClassPtr& eclass) = 0;
 };
 
-/**
- * ModelDef visitor interface.
- *
- * \ingroup eclass
- */
-class ModelDefVisitor
-{
-public:
-    virtual ~ModelDefVisitor() {}
-    virtual void visit(const IModelDefPtr& modelDef) = 0;
-};
-
-const char* const MODULE_ECLASSMANAGER("EntityClassManager");
+constexpr const char* const MODULE_ECLASSMANAGER("EntityClassManager");
 
 /**
  * EntityClassManager interface. The entity class manager is responsible for
@@ -302,15 +276,6 @@ class IEntityClassManager :
     public RegisterableModule
 {
 public:
-    /// Signal emitted when starting to parse DEFs
-    virtual sigc::signal<void>& defsLoadingSignal() = 0;
-
-    /// Signal emitted when all DEFs have been loaded (after module initialisation)
-    virtual sigc::signal<void>& defsLoadedSignal() = 0;
-
-    /// Signal emitted when all DEFs are reloaded
-    virtual sigc::signal<void>& defsReloadedSignal() = 0;
-
     /**
      * Return the IEntityClass corresponding to the given name, creating it if
      * necessary. If it is created, the has_brushes parameter will be used to
@@ -336,8 +301,8 @@ public:
      */
     virtual void forEachEntityClass(EntityClassVisitor& visitor) = 0;
 
-    virtual void realise() = 0;
-    virtual void unrealise() = 0;
+    // Iterate over all entityDefs using the given function object
+    virtual void forEachEntityClass(const std::function<void(const IEntityClassPtr&)>& functor) = 0;
 
     /**
      * greebo: This reloads the entityDefs and modelDefs from all files. Does not
@@ -351,17 +316,12 @@ public:
     /**
      * greebo: Finds the model def with the given name. Might return NULL if not found.
      */
-    virtual IModelDefPtr findModel(const std::string& name) = 0;
-
-    /**
-     * Iterate over each ModelDef using the given visitor class.
-     */
-    virtual void forEachModelDef(ModelDefVisitor& visitor) = 0;
+    virtual IModelDef::Ptr findModel(const std::string& name) = 0;
 
     /**
      * Iterate over each ModelDef using the given function object.
      */
-    virtual void forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor) = 0;
+    virtual void forEachModelDef(const std::function<void(const IModelDef::Ptr&)>& functor) = 0;
 };
 
 /**

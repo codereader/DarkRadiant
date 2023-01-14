@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iimage.h"
+#include "ideclmanager.h"
 #include "imodule.h"
 #include "ifilesystem.h"
 #include <sigc++/signal.h>
@@ -172,6 +173,13 @@ public:
 		int		fadeMilliSeconds;
 		Vector4	startColour;
 		Vector4	endColour;
+
+        DecalInfo() :
+            stayMilliSeconds(0),
+            fadeMilliSeconds(0),
+            startColour(0,0,0,0),
+            endColour(0,0,0,0)
+        {}
 	};
 
 	enum Coverage
@@ -181,6 +189,15 @@ public:
 		MC_PERFORATED,		// may have alpha tested holes
 		MC_TRANSLUCENT		// blended with background
 	};
+
+    // TDM 2.11 frob stage keyword
+    enum class FrobStageType
+    {
+        Default,     // no frobstage keyword in this material
+        Diffuse,     // frobstage_diffuse has been declared: frobstage_diffuse 0.25 0.50
+        Texture,     // frobstage_texture textures/some/thing 0.15 0.40
+        NoFrobStage, // frobstage_none
+    };
 
 	virtual ~Material() {}
 
@@ -288,6 +305,11 @@ public:
 	/// Retrieves the decal info structure of this material.
 	virtual DecalInfo getDecalInfo() const = 0;
 
+    // Sets the decal info structure on this material.
+    // If the structure is not empty, it will enable the ParseFlag PF_HasDecalInfo,
+    // an empty/defaulted decalInfo structure will clear the flag
+    virtual void setDecalInfo(const DecalInfo& info) = 0;
+
 	/// Returns the coverage type of this material, also needed by the map compiler.
 	virtual Coverage getCoverage() const = 0;
 
@@ -347,16 +369,21 @@ public:
 	 */
 	virtual bool isDiscrete() const = 0;
 
+    // Returns the number of layers in this material
+    virtual std::size_t getNumLayers() = 0;
+
+    // Returns the n-th layer of this material (0-based index)
+    virtual IShaderLayer::Ptr getLayer(std::size_t index) = 0;
+
     /// Return the first material layer, if any
-	virtual IShaderLayer* firstLayer() const = 0;
+	virtual IShaderLayer* firstLayer() = 0;
 
     /**
-     * \brief Return a std::vector containing all layers in this material
-     * shader.
-     *
+     * \brief Visit all layers in this material using the given functor.
+     * The functor can return false to abort the traversal, true will continue.
      * This includes all diffuse, bump, specular or blend layers.
      */
-    virtual const IShaderLayerVector& getAllLayers() const = 0;
+    virtual void foreachLayer(const std::function<bool(const IShaderLayer::Ptr&)>& functor) = 0;
 
     // Add a new (typed) layer to this material, returning the index of the new layer
     virtual std::size_t addLayer(IShaderLayer::Type type) = 0;
@@ -397,6 +424,28 @@ public:
     // Set the description text of this material
 	virtual void setDescription(const std::string& description) = 0;
 
+    // Returns the frob stage type this material is using (defaults to FrobStageType::Default)
+    virtual FrobStageType getFrobStageType() = 0;
+
+    // Sets the frob stage type. Might assign a _white frob stage map expression (if empty).
+    virtual void setFrobStageType(FrobStageType type) = 0;
+
+    // When FrobStageType::Texture: defines the texture that has been declared using frobstage_texture
+    virtual shaders::IMapExpression::Ptr getFrobStageMapExpression() = 0;
+
+    // Sets the frob stage map expression (applicable to FrobStageType::Texture)
+    virtual void setFrobStageMapExpressionFromString(const std::string& expr) = 0;
+
+    // frobstage_diffuse and frobstage_texture accept two (r g b) or float expressions
+    // Index is [0..1]. The first parameter is additive, second is multiplicative
+    virtual Vector3 getFrobStageRgbParameter(std::size_t index) = 0;
+
+    // Assigns the RGB components to the frob stage parameter with the given index => "(x y z)"
+    virtual void setFrobStageRgbParameter(std::size_t index, const Vector3& value) = 0;
+
+    // Assigns a single uniform value to the frob stage parameter with the given index => "x"
+    virtual void setFrobStageParameter(std::size_t index, double value) = 0;
+
 	 /// Return TRUE if the shader is visible, FALSE if it is filtered or
 	 /// disabled in any other way.
 	virtual bool isVisible() const = 0;
@@ -426,6 +475,18 @@ public:
     // Reloads the textures used by this material from disk
     virtual void refreshImageMaps() = 0;
 
+    struct ParseResult
+    {
+        bool success;           // whether the update was successful
+        std::string parseError; // if success == false, this contains the error message
+    };
+
+    // Attempts to redefine this material from the given source text, which is
+    // just the block contents, exlcuding the outermost curly braces of the decl.
+    // Returns true on success, returns false if the source text could not
+    // be successfully parsed (e.g. due to malformed syntax).
+    virtual ParseResult updateFromSourceText(const std::string& sourceText) = 0;
+
     // Signal emitted when this material is modified
     virtual sigc::signal<void>& sig_materialChanged() = 0;
 };
@@ -438,7 +499,6 @@ std::ostream& operator<< (std::ostream& os, const Material& shader)
 {
 	os << "Material(name=" << shader.getName()
 	   << ", filename=" << shader.getShaderFileName()
-	   << ", firstlayer=" << shader.firstLayer()
 	   << ")";
 	return os;
 }
@@ -455,21 +515,19 @@ inline std::ostream& operator<< (std::ostream& os, const Material* m)
 typedef std::function<void(const std::string&)> ShaderNameCallback;
 
 // Represents a table declaration in the .mtr files
-class ITableDefinition
+class ITableDefinition :
+    public decl::IDeclaration
 {
 public:
     using Ptr = std::shared_ptr<ITableDefinition>;
 
     virtual ~ITableDefinition() {}
 
-    // The name of this table
-    virtual const std::string& getName() const = 0;
-
     // Retrieve a value from this table, respecting the clamp and snap flags
     virtual float getValue(float index) = 0;
 };
 
-const char* const MODULE_SHADERSYSTEM = "MaterialManager";
+constexpr const char* const MODULE_SHADERSYSTEM = "MaterialManager";
 
 /**
  * \brief
@@ -478,35 +536,12 @@ const char* const MODULE_SHADERSYSTEM = "MaterialManager";
  * The material manager parses all of the MTR declarations and provides access
  * to Material objects representing the loaded materials.
  */
-class MaterialManager
+class IMaterialManager
 : public RegisterableModule
 {
 public:
   // NOTE: shader and texture names used must be full path.
   // Shaders usable as textures have prefix equal to getTexturePrefix()
-
-  virtual void realise() = 0;
-  virtual void unrealise() = 0;
-  virtual void refresh() = 0;
-
-	/** Determine whether the shader system is realised. This may be used
-	 * by components which need to ensure the shaders are realised before
-	 * they start trying to display them.
-	 *
-	 * @returns
-	 * true if the shader system is realised, false otherwise
-	 */
-	virtual bool isRealised() = 0;
-
-	// Signal which is invoked when the materials defs have been parsed
-	// Note that the DEF files might be parsed in a separate thread so
-	// any call acquiring material info might need to block and wait for
-	// that background call to finish before it can yield results.
-	virtual sigc::signal<void>& signal_DefsLoaded() = 0;
-
-	// Signal invoked when the material defs have been unloaded due
-	// to a filesystem or other configuration change
-	virtual sigc::signal<void>& signal_DefsUnloaded() = 0;
 
 	/**
      * \brief Return the shader with the given name. The default shader will be
@@ -555,8 +590,6 @@ public:
      * Enable or disable active shaders updates (for performance).
      */
     virtual void setActiveShaderUpdates(bool val) = 0;
-
-  virtual void setLightingEnabled(bool enabled) = 0;
 
   virtual const char* getTexturePrefix() const = 0;
 
@@ -607,16 +640,15 @@ public:
     // If the path is not writable or the material is not suitable for saving, this will throw an exception
     virtual void saveMaterial(const std::string& name) = 0;
 
-    // Creates a named, internal material for debug/testing etc.
-    // Used by shaders without corresponding material declaration, like entity wireframe shaders
-    virtual MaterialPtr createDefaultMaterial(const std::string& name) = 0;
-
     // Tries to find the named table, returns an empty reference if nothing found
     virtual ITableDefinition::Ptr getTable(const std::string& name) = 0;
+
+    // Reload the textures used by the active shaders
+    virtual void reloadImages() = 0;
 };
 
-inline MaterialManager& GlobalMaterialManager()
+inline IMaterialManager& GlobalMaterialManager()
 {
-	static module::InstanceReference<MaterialManager> _reference(MODULE_SHADERSYSTEM);
+	static module::InstanceReference<IMaterialManager> _reference(MODULE_SHADERSYSTEM);
 	return _reference;
 }

@@ -64,7 +64,7 @@ void AasFileManager::ensureAasTypesLoaded()
 
     if (aasTypesClass)
     {
-        eclass::AttributeList list = eclass::getSpawnargsWithPrefix(*aasTypesClass, "type");
+        eclass::AttributeList list = eclass::getSpawnargsWithPrefix(aasTypesClass, "type");
 
         for (const EntityClassAttribute& attr : list)
         {
@@ -157,7 +157,6 @@ const StringSet& AasFileManager::getDependencies() const
 
 void AasFileManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // Define the static AasFileManager module

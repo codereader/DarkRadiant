@@ -17,22 +17,21 @@ class ClassnamePropertyEditor :
 {
 private:
 	// Keyvalue to set
-	std::string _key;
+    ITargetKey::Ptr _key;
 
 private:
 
-	void onBrowseButtonClick() override;
+	void _onBrowseButton(wxCommandEvent& ev);
+    void _onShowDefinition(wxCommandEvent& ev);
 
 public:
 
     // Main constructor
-    ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities,
-        const std::string& name, const std::string& options);
+    ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<ClassnamePropertyEditor>(parent, entities, name, options);
+        return std::make_shared<ClassnamePropertyEditor>(parent, entities, key);
     }
 };
 

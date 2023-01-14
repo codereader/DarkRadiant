@@ -49,8 +49,30 @@ public:
 
 	std::string getDefFileName()
 	{
-		return _eclass ? _eclass->getDefFileName() : std::string();
+		return _eclass ? _eclass->getDeclFilePath() : std::string();
 	}
+};
+
+class ScriptModelDef
+{
+public:
+    ScriptModelDef()
+    {}
+
+    ScriptModelDef(IModelDef& modelDef)
+    {
+        name = modelDef.getDeclName();
+        mesh = modelDef.getMesh();
+        skin = modelDef.getSkin();
+        parent = modelDef.getParent() ? modelDef.getParent()->getDeclName() : std::string();
+        anims = modelDef.getAnims();
+    }
+
+    std::string name;
+    std::string mesh;
+    std::string skin;
+    std::string parent;
+    IModelDef::Anims anims;
 };
 
 // Wrap around the EntityClassVisitor interface
@@ -70,12 +92,19 @@ public:
 	}
 };
 
+class ModelDefVisitor
+{
+public:
+    virtual ~ModelDefVisitor() {}
+    virtual void visit(const IModelDef::Ptr& modelDef) = 0;
+};
+
 // Wrap around the ModelDefVisitor interface
 class ModelDefVisitorWrapper :
 	public ModelDefVisitor
 {
 public:
-    void visit(const IModelDefPtr& modelDef) override
+    void visit(const IModelDef::Ptr& modelDef) override
 	{
 		// Wrap this method to python
 		PYBIND11_OVERLOAD_PURE(
@@ -93,12 +122,12 @@ public:
 class EClassManagerInterface :
 	public IScriptInterface
 {
-	IModelDef _emptyModelDef;
+	ScriptModelDef _emptyModelDef;
 
 public:
 	ScriptEntityClass findClass(const std::string& name);
 
-	IModelDef findModel(const std::string& name);
+    ScriptModelDef findModel(const std::string& name);
 
 	void forEachEntityClass(EntityClassVisitor& visitor);
 	void forEachModelDef(ModelDefVisitor& visitor);

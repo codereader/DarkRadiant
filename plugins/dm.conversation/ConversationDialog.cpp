@@ -86,8 +86,8 @@ void ConversationDialog::populateWindow()
 	_convView->AppendTextColumn(_("Name"), _convColumns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_convView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(ConversationDialog::onConversationSelectionChanged), NULL, this);
+	_convView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ConversationDialog::onConversationSelectionChanged, this);
+    _convView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [this](auto&) { editSelectedConversation(); });
 
 	convPanel->GetSizer()->Add(_convView, 1, wxEXPAND);
 
@@ -384,20 +384,27 @@ void ConversationDialog::selectConvByIndex(int index)
 	handleConversationSelectionChange();
 }
 
+void ConversationDialog::editSelectedConversation()
+{
+    int index = getSelectedConvIndex();
+
+    if (index == -1) return;
+
+    auto& conv = _curEntity->second->getConversation(index);
+
+    // Display the edit dialog, blocks on construction
+    auto editor = new ConversationEditor(this, conv);
+
+    editor->ShowModal();
+    editor->Destroy();
+
+    // Repopulate the conversation list
+    refreshConversationList();
+}
+
 void ConversationDialog::onEditConversation(wxCommandEvent& ev)
 {
-	int index = getSelectedConvIndex();
-
-	conversation::Conversation& conv = _curEntity->second->getConversation(index);
-
-	// Display the edit dialog, blocks on construction
-	ConversationEditor* editor = new ConversationEditor(this, conv);
-
-	editor->ShowModal();
-	editor->Destroy();
-
-	// Repopulate the conversation list
-	refreshConversationList();
+    editSelectedConversation();
 }
 
 void ConversationDialog::onDeleteConversation(wxCommandEvent& ev)

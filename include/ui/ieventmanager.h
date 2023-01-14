@@ -1,13 +1,10 @@
 #pragma once
 
-#include <list>
-#include <map>
 #include <string>
-
 #include <memory>
+#include <functional>
 
 #include "imodule.h"
-#include <functional>
 
 class wxWindow;
 class wxMenuItem;
@@ -38,6 +35,8 @@ namespace ui
 class IAccelerator
 {
 public:
+    using Ptr = std::shared_ptr<IAccelerator>;
+
     // destructor
     virtual ~IAccelerator() {}
 
@@ -107,7 +106,7 @@ public:
 	virtual void visit(const std::string& eventName, const IAccelerator& accel) = 0;
 };
 
-const char* const MODULE_EVENTMANAGER("EventManager");
+constexpr const char* const MODULE_EVENTMANAGER("EventManager");
 
 // The function object invoked when a ToggleEvent is changing states
 // The passed boolean indicates the new toggle state (true = active/toggled)
@@ -172,6 +171,10 @@ public:
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 
+    // Returns the accelerator that is bound to the given event (name)
+    // Returns an empty reference if either event or accelerator were not found.
+    virtual IAccelerator::Ptr findAcceleratorForEvent(const std::string& eventName) = 0;
+
 	// Register the given menu item with the given command. The event manager updates this item
 	// when the accelerator association changes
 	virtual void registerMenuItem(const std::string& eventName, wxMenuItem* item) = 0;
@@ -200,9 +203,8 @@ public:
 	 */
 	virtual std::string getEventStr(wxKeyEvent& ev) = 0;
 };
-typedef std::shared_ptr<IEventManager> IEventManagerPtr;
 
-// This is the accessor for the event manager
+// Global accessor for the event manager
 inline IEventManager& GlobalEventManager()
 {
 	static module::InstanceReference<IEventManager> _reference(MODULE_EVENTMANAGER);

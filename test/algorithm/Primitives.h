@@ -162,6 +162,38 @@ inline void foreachPatchVertex(const IPatch& patch, const std::function<void(con
     }
 }
 
+inline bool patchHasVertex(const IPatch& patch, const Vector3& position)
+{
+    for (std::size_t col = 0; col < patch.getWidth(); ++col)
+    {
+        for (std::size_t row = 0; row < patch.getHeight(); ++row)
+        {
+            if (math::isNear(patch.ctrlAt(row, col).vertex, position, 0.01))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+inline bool patchHasVertices(const IPatch& patch, const std::vector<Vector3>& positions)
+{
+    bool result = patch.getWidth() > 0 && patch.getHeight() > 0;
+
+    for (const auto& position : positions)
+    {
+        if (!patchHasVertex(patch, position))
+        {
+            result = false;
+            break;
+        }
+    }
+
+    return result;
+}
+
 inline AABB getTextureSpaceBounds(const IPatch& patch)
 {
     AABB bounds;

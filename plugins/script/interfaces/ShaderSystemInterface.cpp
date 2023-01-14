@@ -211,6 +211,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("TRANSLUCENT", Material::MC_TRANSLUCENT)
         .export_values();
 
+    py::enum_<Material::FrobStageType>(material, "FrobStageType")
+        .value("DEFAULT", Material::FrobStageType::Default)
+        .value("DIFFUSE", Material::FrobStageType::Diffuse)
+        .value("TEXTURE", Material::FrobStageType::Texture)
+        .value("NONE", Material::FrobStageType::NoFrobStage)
+        .export_values();
+
     py::enum_<IShaderLayer::Type>(stage, "Type")
         .value("DIFFUSE", IShaderLayer::Type::DIFFUSE)
         .value("BUMP", IShaderLayer::Type::BUMP)
@@ -272,6 +279,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("getSpectrum", &ScriptMaterial::getSpectrum);
     material.def("setSpectrum", &ScriptMaterial::setSpectrum);
     material.def("getDecalInfo", &ScriptMaterial::getDecalInfo);
+    material.def("setDecalInfo", &ScriptMaterial::setDecalInfo);
     material.def("getCoverage", &ScriptMaterial::getCoverage);
     material.def("getLightFalloffExpressionString", &ScriptMaterial::getLightFalloffExpressionString);
     material.def("setLightFalloffExpressionFromString", &ScriptMaterial::setLightFalloffExpressionFromString);
@@ -290,6 +298,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("removeStage", &ScriptMaterial::removeStage);
     material.def("duplicateStage", &ScriptMaterial::duplicateStage);
     material.def("swapStagePosition", &ScriptMaterial::swapStagePosition);
+    material.def("getFrobStageType", &ScriptMaterial::getFrobStageType);
+    material.def("setFrobStageType", &ScriptMaterial::setFrobStageType);
+    material.def("getFrobStageMapExpressionString", &ScriptMaterial::getFrobStageMapExpressionString);
+    material.def("setFrobStageMapExpressionFromString", &ScriptMaterial::setFrobStageMapExpressionFromString);
+    material.def("getFrobStageRgbParameter", &ScriptMaterial::getFrobStageRgbParameter);
+    material.def("setFrobStageParameter", &ScriptMaterial::setFrobStageParameter);
+    material.def("setFrobStageRgbParameter", &ScriptMaterial::setFrobStageRgbParameter);
 
     // Stage Flags
     py::enum_<IShaderLayer::Flags>(stage, "Flag")

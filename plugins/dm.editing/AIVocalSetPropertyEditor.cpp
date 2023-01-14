@@ -14,8 +14,9 @@
 namespace ui
 {
 
-AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key, const std::string& options) :
-	_entities(entities)
+AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key) :
+	_entities(entities),
+    _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
 	_widget = new wxPanel(parent, wxID_ANY);
@@ -47,10 +48,15 @@ void AIVocalSetPropertyEditor::updateFromEntities()
 	// Nothing to do
 }
 
-IPropertyEditor::Ptr AIVocalSetPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
-	const std::string& key, const std::string& options)
+sigc::signal<void(const std::string&, const std::string&)>& AIVocalSetPropertyEditor::signal_keyValueApplied()
 {
-	return std::make_shared<AIVocalSetPropertyEditor>(parent, entities, key, options);
+    return _sigKeyValueApplied;
+}
+
+IPropertyEditor::Ptr AIVocalSetPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
+    const ITargetKey::Ptr& key)
+{
+	return std::make_shared<AIVocalSetPropertyEditor>(parent, entities, key);
 }
 
 void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
@@ -63,10 +69,14 @@ void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
 	{
-        _entities.foreachEntity([&](Entity* entity)
+        auto selectedSet = dialog->getSelectedVocalSet();
+
+        _entities.foreachEntity([&](const IEntityNodePtr& entity)
         {
-            entity->setKeyValue(DEF_VOCAL_SET_KEY, dialog->getSelectedVocalSet());
+            entity->getEntity().setKeyValue(DEF_VOCAL_SET_KEY, selectedSet);
         });
+
+        signal_keyValueApplied().emit(DEF_VOCAL_SET_KEY, selectedSet);
 	}
 
 	dialog->Destroy();

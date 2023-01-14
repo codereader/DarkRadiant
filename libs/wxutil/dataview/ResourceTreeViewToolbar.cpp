@@ -12,7 +12,7 @@ namespace wxutil
 
 namespace
 {
-    constexpr const int APPLY_FILTER_TEXT_DELAY_MSEC = 250;
+    constexpr int APPLY_FILTER_TEXT_DELAY_MSEC = 250;
 }
 
 ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView) :
@@ -48,6 +48,7 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
     _filterEntry->SetMinSize(wxSize(100, -1));
     _filterEntry->Bind(wxEVT_TEXT, &ResourceTreeViewToolbar::_onEntryText, this);
     _filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);
+    _filterEntry->Bind(wxEVT_CHAR_HOOK, &ResourceTreeViewToolbar::_onEntryKey, this);
     _filterEntry->SetToolTip(_("Enter search text to filter the tree,\nuse arrow keys to navigate"));
 
     auto nextImg = wxutil::GetLocalBitmap("arrow_down.png");
@@ -161,6 +162,19 @@ void ResourceTreeViewToolbar::_onEntryChar(wxKeyEvent& ev)
     {
         ev.Skip();
     }
+}
+
+void ResourceTreeViewToolbar::_onEntryKey(wxKeyEvent& ev)
+{
+    if (ev.GetKeyCode() == WXK_ESCAPE && !_filterEntry->GetValue().empty())
+    {
+        // Clear the search box on esc and focus the tree view
+        ClearFilter();
+        _treeView->SetFocus();
+        return;
+    }
+
+    ev.Skip();
 }
 
 void ResourceTreeViewToolbar::_onEntryText(wxCommandEvent& ev)

@@ -6,6 +6,7 @@
 #include "ishaderlayer.h"
 #include "gamelib.h"
 #include "os/path.h"
+#include "string/case_conv.h"
 #include "xmlutil/MissingXMLNodeException.h"
 
 namespace shaders
@@ -294,6 +295,12 @@ constexpr std::pair<const char*, std::pair<const char*, const char*>> BlendTypeS
     { "none", { "gl_zero", "gl_one" } },
 };
 
+inline bool isDefaultBlendFunc(const std::pair<std::string, std::string>& blendFuncStrings)
+{
+    return string::to_lower_copy(blendFuncStrings.first) == "gl_one" && 
+           string::to_lower_copy(blendFuncStrings.second) == "gl_zero";
+}
+
 constexpr std::pair<const char*, IShaderLayer::TexGenType> TexGenTypeNames[]
 {
     { "normal", IShaderLayer::TEXGEN_NORMAL },
@@ -391,6 +398,27 @@ inline std::string getStringForClampType(ClampType type)
         if (type == pair.second)
         {
             return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
+constexpr std::pair<Material::FrobStageType, const char*> FrobStageTypeNames[]
+{
+    { Material::FrobStageType::Default, "" },
+    { Material::FrobStageType::Diffuse, "frobstage_diffuse" },
+    { Material::FrobStageType::Texture, "frobstage_texture" },
+    { Material::FrobStageType::NoFrobStage, "frobstage_none" },
+};
+
+inline std::string getStringForFrobStageType(Material::FrobStageType type)
+{
+    for (const auto& pair : FrobStageTypeNames)
+    {
+        if (type == pair.first)
+        {
+            return pair.second;
         }
     }
 

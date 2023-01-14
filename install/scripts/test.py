@@ -9,6 +9,89 @@ worldspawn = Radiant.findEntityByClassname("worldspawn")
 worldspawn.setKeyValue('test', 'success')
 print('Worldspawn edited')
 
+worldspawn = Radiant.findEntityByName("world")
+worldspawn.setKeyValue('test', 'another success')
+print('Worldspawn edited')
+
+# Test the DeclarationManager interface
+class TestDeclarationVisitor(dr.DeclarationVisitor) :
+    def visit(self, decl):
+        print(str(decl.getDeclType()) + ": " + decl.getDeclName())
+
+visitor = TestDeclarationVisitor()
+
+# Visit all skins
+GlobalDeclarationManager.foreachDeclaration(Declaration.Type.Skin, visitor)
+
+caulk = GlobalDeclarationManager.findDeclaration(Declaration.Type.Material, "textures/common/caulk")
+print("Name: " + caulk.getDeclName())
+print("Type: " + str(caulk.getDeclType()))
+print("Defined in: " + str(caulk.getDeclFilePath()))
+print("Definition: " + caulk.getBlockSyntax().contents)
+
+GlobalDeclarationManager.foreachDeclaration(Declaration.Type.ModelDef, visitor)
+
+# FX interface
+fx = GlobalFxManager.findFx("fx/sparks")
+
+if not fx.isNull():
+    # An FX declaration inherits all the Declaration methods and properties
+    print("Name: " + fx.getDeclName())
+    print("Type: " + str(fx.getDeclType()))
+    print("Defined in: " + str(fx.getDeclFilePath()))
+    print("Definition: " + fx.getBlockSyntax().contents)
+
+    print("Number of actions: " + str(fx.getNumActions()))
+    
+    action = fx.getAction(1)
+    print("Action with Index 1 (this is the second):")
+    print("Action #1 has Type: " + str(action.getActionType()))
+    print("Action #1 has Name: " + str(action.getName()))
+    print("Action #1 has Delay: " + str(action.getDelayInSeconds()))
+    print("Action #1 has Duration: " + str(action.getDurationInSeconds()))
+    print("Action #1 has IgnoreMaster: " + str(action.getIgnoreMaster()))
+    print("Action #1 has ShakeTime: " + str(action.getShakeTimeInSeconds()))
+    print("Action #1 has ShakeAmplitude: " + str(action.getShakeAmplitude()))
+    print("Action #1 has ShakeDistance: " + str(action.getShakeDistance()))
+    print("Action #1 has ShakeFalloff: " + str(action.getShakeFalloff()))
+    print("Action #1 has ShakeImpulse: " + str(action.getShakeImpulse()))
+    print("Action #1 has NoShadows: " + str(action.getNoShadows()))
+    print("Action #1 has FireSiblingAction: " + str(action.getFireSiblingAction()))
+    print("Action #1 has RandomDelay: " + str(action.getRandomDelay()))
+    print("Action #1 has Rotate: " + str(action.getRotate()))
+    print("Action #1 has TrackOrigin: " + str(action.getTrackOrigin()))
+    print("Action #1 has Restart: " + str(action.getRestart()))
+    print("Action #1 has FadeInTimeInSeconds: " + str(action.getFadeInTimeInSeconds()))
+    print("Action #1 has FadeOutTimeInSeconds: " + str(action.getFadeOutTimeInSeconds()))
+    print("Action #1 has DecalSize: " + str(action.getDecalSize()))
+    print("Action #1 has Offset: " + str(action.getOffset()))
+    print("Action #1 has Axis: " + str(action.getAxis()))
+    print("Action #1 has Angle: " + str(action.getAngle()))
+    print("Action #1 has UseLight: " + str(action.getUseLight()))
+    print("Action #1 has UseModel: " + str(action.getUseModel()))
+    print("Action #1 has AttachLight: " + str(action.getAttachLight()))
+    print("Action #1 has AttachEntity: " + str(action.getAttachEntity()))
+    print("Action #1 has LaunchProjectileDef: " + str(action.getLaunchProjectileDef()))
+    print("Action #1 has LightMaterialName: " + str(action.getLightMaterialName()))
+    print("Action #1 has LightRgbColour: " + str(action.getLightRgbColour()))
+    print("Action #1 has LightRadius: " + str(action.getLightRadius()))
+    print("Action #1 has ModelName: " + str(action.getModelName()))
+    print("Action #1 has DecalMaterialName: " + str(action.getDecalMaterialName()))
+    print("Action #1 has ParticleTrackVelocity: " + str(action.getParticleTrackVelocity()))
+    print("Action #1 has SoundShaderName: " + str(action.getSoundShaderName()))
+    print("Action #1 has ShockwaveDefName: " + str(action.getShockwaveDefName()))
+
+# Create a new material
+myOwnMaterial = GlobalDeclarationManager.findOrCreateDeclaration(Declaration.Type.Material, "textures/myown_material")
+
+syntax = myOwnMaterial.getBlockSyntax()
+syntax.contents = "diffusemap _white"
+myOwnMaterial.setBlockSyntax(syntax)
+
+# Save the material to a new file
+myOwnMaterial.setDeclFilePath("materials/", "script_test.mtr")
+GlobalDeclarationManager.saveDeclaration(myOwnMaterial)
+
 # Test the EClassManager interface
 eclass = GlobalEntityClassManager.findClass('atdm:func_shooter')
 print(eclass.getAttribute('editor_usage').getValue())

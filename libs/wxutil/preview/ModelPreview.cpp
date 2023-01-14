@@ -13,246 +13,194 @@
 #include "scene/BasicRootNode.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "string/convert.h"
-#include <sstream>
+#include "fmt/format.h"
 
 namespace wxutil
 {
 
-/* CONSTANTS */
-
 namespace
 {
-	const char* const FUNC_STATIC_CLASS = "func_static";
+	constexpr const char* const FUNC_STATIC_CLASS = "func_static";
 }
 
 ModelPreview::ModelPreview(wxWindow* parent) :
-    RenderPreview(parent, false),
-	_sceneIsReady(false),
-	_lastModel(""),
-	_defaultCamDistanceFactor(2.8f)
+    EntityPreview(parent)
 {}
+
+ModelPreview::~ModelPreview()
+{
+    _skinDeclChangedConn.disconnect();
+}
 
 const std::string& ModelPreview::getModel() const
 {
-	return _model;
+    return _model;
 }
 
 const std::string& ModelPreview::getSkin() const
 {
-	return _skin;
+    return _skin;
 }
 
 void ModelPreview::setModel(const std::string& model)
 {
-	// Remember the name and mark the scene as "not ready"
-	_model = model;
-	_sceneIsReady = false;
+    // Remember the name and mark the scene as "not ready"
+    _model = model;
+    queueSceneUpdate();
 
-	if (!_model.empty())
-	{
-		// Reset time if the model has changed
-		if (_model != _lastModel)
-		{
-			// Reset preview time
-			stopPlayback();
-		}
+    if (!_model.empty())
+    {
+        // Reset time if the model has changed
+        if (_model != _lastModel)
+        {
+            // Reset preview time
+            stopPlayback();
+        }
 
-		// Redraw
-		queueDraw(); 
-	}
-	else
-	{
-		stopPlayback();
-	}
+        // Redraw
+        queueDraw();
+    }
+    else
+    {
+        stopPlayback();
+    }
 }
 
 void ModelPreview::setSkin(const std::string& skin) {
 
-	_skin = skin;
-	_sceneIsReady = false;
+    _skin = skin;
+    _skinDeclChangedConn.disconnect();
+    queueSceneUpdate();
 
-	// Redraw
-	queueDraw();
-}
-
-void ModelPreview::setDefaultCamDistanceFactor(float factor)
-{
-	_defaultCamDistanceFactor = factor;
+    // Redraw
+    queueDraw();
 }
 
 void ModelPreview::setupSceneGraph()
 {
-	RenderPreview::setupSceneGraph();
+    EntityPreview::setupSceneGraph();
 
     try
     {
-        _rootNode = std::make_shared<scene::BasicRootNode>();
-
-        _entity = GlobalEntityModule().createEntity(
+        // Add a hidden func_static as preview entity
+        auto entity = GlobalEntityModule().createEntity(
             GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
 
-        _rootNode->addChildNode(_entity);
+        setEntity(entity);
 
-        _entity->enable(scene::Node::eHidden);
-
-        // This entity is acting as our root node in the scene
-        getScene()->setRoot(_rootNode);
-
-        // Set up the light
-        _light = GlobalEntityModule().createEntity(
-            GlobalEntityClassManager().findClass("light"));
-
-        Node_getEntity(_light)->setKeyValue("light_radius", "600 600 600");
-        Node_getEntity(_light)->setKeyValue("origin", "0 0 300");
-
-        _rootNode->addChildNode(_light);
+        entity->enable(scene::Node::eHidden);
+        entity->getEntity().setKeyValue("model", "-");
     }
     catch (std::runtime_error&)
     {
-        wxutil::Messagebox::ShowError(fmt::format(_("Unable to setup the preview,\n"
-			"could not find the entity class {0}"), FUNC_STATIC_CLASS));
+        Messagebox::ShowError(fmt::format(
+            _("Unable to setup the preview,\ncould not find the entity class '{0}'"),
+            FUNC_STATIC_CLASS));
+    }
+}
+
+void ModelPreview::prepareScene()
+{
+    EntityPreview::prepareScene();
+
+    // If the model name is empty, release the model
+    if (_model.empty())
+    {
+        if (_modelNode)
+        {
+            getEntity()->removeChildNode(_modelNode);
+        }
+
+        _modelNode.reset();
+
+        // Emit the signal carrying an empty pointer
+        _modelLoadedSignal.emit(model::ModelNodePtr());
+        return;
+    }
+
+    if (_modelNode)
+    {
+        getEntity()->removeChildNode(_modelNode);
+    }
+
+    // Check if the model key is pointing to a def
+    auto modelDef = GlobalEntityClassManager().findModel(_model);
+
+    _modelNode = GlobalModelCache().getModelNode(modelDef ? modelDef->getMesh() : _model);
+
+    if (_modelNode)
+    {
+        getEntity()->addChildNode(_modelNode);
+
+        // Apply the skin
+        applySkin();
+
+        // Apply the idle pose if possible
+        if (modelDef)
+        {
+            scene::applyIdlePose(_modelNode, modelDef);
+        }
+
+        setupInitialViewPosition();
+
+        _lastModel = _model;
+
+        // Done loading, emit the signal
+        _modelLoadedSignal.emit(Node_getModel(_modelNode));
+    }
+}
+
+void ModelPreview::setupInitialViewPosition()
+{
+    if (_lastModel != _model)
+    {
+        // Reset the model rotation
+        resetModelRotation();
+
+        // Reset the default view, facing down to the model from diagonally above the bounding box
+        double distance = getSceneBounds().getRadius() * _defaultCamDistanceFactor;
+
+        setViewOrigin(getSceneBounds().getOrigin() + Vector3(1, 1, 1) * distance);
+        setViewAngles(Vector3(34, 135, 0));
     }
 }
 
 AABB ModelPreview::getSceneBounds()
 {
-	if (!_modelNode)
-	{
-		return RenderPreview::getSceneBounds();
-	}
-
-	return _modelNode->localAABB();
-}
-
-void ModelPreview::prepareScene()
-{
-	// Clear the flag
-	_sceneIsReady = true;
-
-	// If the model name is empty, release the model
-	if (_model.empty())
-	{
-		if (_modelNode)
-		{
-			_entity->removeChildNode(_modelNode);
-		}
-
-		_modelNode.reset();
-
-		// Emit the signal carrying an empty pointer
-		_modelLoadedSignal.emit(model::ModelNodePtr());
-		return;
-	}
-
-	// Set up the scene
-	if (!_entity)
-	{
-		getScene(); // trigger a setupscenegraph call
-	}
-
-	if (_modelNode)
-	{
-		_entity->removeChildNode(_modelNode);
-	}
-
-	_modelNode = GlobalModelCache().getModelNode(_model);
-
-    if (_modelNode)
-	{
-        // Workaround until #5408 is implemented: remove all remnants from the entity
-        scene::NodeRemover remover;
-        _entity->traverseChildren(remover);
-
-		_entity->addChildNode(_modelNode);
-
-		// Apply the skin
-		model::ModelNodePtr model = Node_getModel(_modelNode);
-
-		if (model)
-		{
-			ModelSkin& mSkin = GlobalModelSkinCache().capture(_skin);
-			model->getIModel().applySkin(mSkin);
-		}
-
-		// Trigger an initial update of the subgraph
-		GlobalFilterSystem().updateSubgraph(getScene()->root());
-
-		if (_lastModel != _model)
-		{
-			// Reset the model rotation
-			resetModelRotation();
-
-			// Reset the default view, facing down to the model from diagonally above the bounding box
-			double distance = _modelNode->localAABB().getRadius() * _defaultCamDistanceFactor;
-
-			setViewOrigin(Vector3(1, 1, 1) * distance);
-			setViewAngles(Vector3(34, 135, 0));
-		}
-
-		_lastModel = _model;
-
-		// Done loading, emit the signal
-		_modelLoadedSignal.emit(model);
-	}
-}
-
-bool ModelPreview::onPreRender()
-{
-	if (!_sceneIsReady)
-	{
-		prepareScene();
-	}
-
-    if (_light)
+    if (!_modelNode)
     {
-        Vector3 lightOrigin = _viewOrigin + Vector3(0, 0, 20);
-
-        // Position the light just above the camera
-        Node_getEntity(_light)->setKeyValue("origin", string::to_string(lightOrigin));
-
-        // Let the light encompass the object
-        float radius = (getSceneBounds().getOrigin() - lightOrigin).getLength() * 2.0f;
-        radius = std::max(radius, 200.f);
-
-        std::ostringstream value;
-        value << radius << ' ' << radius << ' ' << radius;
-        
-        Node_getEntity(_light)->setKeyValue("light_radius", value.str());
-
-        Node_getEntity(_light)->setKeyValue("_color", "0.6 0.6 0.6");
+        return EntityPreview::getSceneBounds();
     }
 
-	return _modelNode != nullptr;
-}
-
-void ModelPreview::onModelRotationChanged()
-{
-    if (_entity)
-    {
-        // Update the model rotation on the entity
-        std::ostringstream value;
-        value << _modelRotation.xx() << ' '
-              << _modelRotation.xy() << ' '
-              << _modelRotation.xz() << ' '
-              << _modelRotation.yx() << ' '
-              << _modelRotation.yy() << ' '
-              << _modelRotation.yz() << ' '
-              << _modelRotation.zx() << ' '
-              << _modelRotation.zy() << ' '
-              << _modelRotation.zz();
-
-        Node_getEntity(_entity)->setKeyValue("rotation", value.str());
-    }
-}
-
-RenderStateFlags ModelPreview::getRenderFlagsFill()
-{
-	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
+    return _modelNode->localAABB();
 }
 
 sigc::signal<void, const model::ModelNodePtr&>& ModelPreview::signal_ModelLoaded()
 {
-	return _modelLoadedSignal;
+    return _modelLoadedSignal;
+}
+
+void ModelPreview::applySkin()
+{
+    if (auto model = Node_getModel(_modelNode); model)
+    {
+        auto skin = GlobalModelSkinCache().findSkin(_skin);
+
+        if (skin)
+        {
+            _skinDeclChangedConn.disconnect();
+            _skinDeclChangedConn = skin->signal_DeclarationChanged().connect(
+                sigc::mem_fun(*this, &ModelPreview::onSkinDeclarationChanged));
+        }
+
+        model->getIModel().applySkin(skin);
+    }
+}
+
+void ModelPreview::onSkinDeclarationChanged()
+{
+    applySkin();
+    queueDraw();
 }
 
 } // namespace ui

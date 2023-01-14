@@ -322,8 +322,6 @@ const StringSet& AutoMapSaver::getDependencies() const
 
 void AutoMapSaver::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
 		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
 	));

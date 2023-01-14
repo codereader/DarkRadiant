@@ -1,5 +1,6 @@
 #pragma once
 
+#include "commandsystem/Command.h"
 #include "icommandsystem.h"
 #include <map>
 #include "Executable.h"
@@ -19,23 +20,23 @@ class CommandSystem :
 public:
 	void foreachCommand(const std::function<void(const std::string&)>& functor) override;
 
-	void addCommand(const std::string& name, Function func, const Signature& signature = Signature()) override;
-	bool commandExists(const std::string& name) override;
-	void removeCommand(const std::string& name) override;
+    void addCommand(const std::string& name, Function func,
+                    const Signature& signature = Signature()) override;
+    void addWithCheck(const std::string& name, Function func, CheckFunction check,
+                      const Signature& signature) override;
+    bool commandExists(const std::string& name) override;
+    bool canExecute(const std::string& name) const override;
+    void removeCommand(const std::string& name) override;
 
-	void addStatement(const std::string& statementName, const std::string& string, bool saveStatementToRegistry = true) override;
-	void foreachStatement(const std::function<void(const std::string&)>& functor, bool customStatementsOnly) override;
+    void addStatement(const std::string& statementName, const std::string& string,
+                      bool saveStatementToRegistry = true) override;
+    void foreachStatement(const std::function<void(const std::string&)>& functor, bool customStatementsOnly) override;
 
 	// Retrieve the signature for the given command
 	Signature getSignature(const std::string& name) override;
 
 	// Execute the given command sequence
 	void execute(const std::string& input) override;
-
-	void executeCommand(const std::string& name) override;
-	void executeCommand(const std::string& name, const Argument& arg1) override;
-	void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2) override;
-	void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3) override;
 
 	// For more than 3 arguments, use this method to pass a vector of arguments
 	void executeCommand(const std::string& name, const ArgumentList& args) override;
@@ -50,12 +51,13 @@ public:
 	void printCmd(const ArgumentList& args);
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const IApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
+	void addCommandObject(const std::string& name, CommandPtr cmd);
 
 	// Save/load bind strings from Registry
 	void loadBinds();

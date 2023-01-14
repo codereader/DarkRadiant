@@ -3,6 +3,7 @@
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "itextstream.h"
+#include "ui/imainframe.h"
 #include "i18n.h"
 #include "iradiant.h"
 #include "imap.h"
@@ -55,18 +56,7 @@ namespace
 // Constructor.
 
 PrefabSelector::PrefabSelector() :
-	DialogBase(_(PREFABSELECTOR_TITLE)),
-    _treeView(nullptr),
-	_lastPrefab(""),
-    _description(nullptr),
-    _useModPath(nullptr),
-    _useCustomPath(nullptr),
-    _useRecentPath(nullptr),
-    _recentPathSelector(nullptr),
-    _customPath(nullptr),
-	_insertAsGroupBox(nullptr),
-    _recalculatePrefabOriginBox(nullptr),
-	_handlingSelectionChange(false)
+	DialogBase(_(PREFABSELECTOR_TITLE))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 

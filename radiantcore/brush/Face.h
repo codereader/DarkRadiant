@@ -214,6 +214,8 @@ public:
     // Called when the owning brush changes its visibility status
     void onBrushVisibilityChanged(bool visible);
 
+    void onBrushRenderStateChanged();
+
 	void updateFaceVisibility();
 
 	// Signal for external code to get notified each time the texdef of any face changes

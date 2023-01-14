@@ -48,7 +48,6 @@ public:
 	}
 
 	virtual void initialiseModule(const IApplicationContext& ctx) {
-		rMessage() << "ObjectivesEditorModule::initialiseModule called.\n";
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand(

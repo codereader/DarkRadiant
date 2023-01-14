@@ -54,9 +54,6 @@
     <ClInclude Include="..\..\libs\parser\CodeTokeniser.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\parser\DefBlockTokeniser.h">
-      <Filter>parser</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\registry\buffer.h">
       <Filter>registry</Filter>
     </ClInclude>
@@ -128,7 +125,6 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\UndoFileChangeTracker.h" />
     <ClInclude Include="..\..\libs\SurfaceShader.h" />
-    <ClInclude Include="..\..\libs\ThreadedDefLoader.h" />
     <ClInclude Include="..\..\libs\render\RenderablePivot.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -276,7 +272,6 @@
     <ClInclude Include="..\..\libs\stream\TemporaryOutputStream.h">
       <Filter>stream</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\decl\SpliceHelper.h" />
     <ClInclude Include="..\..\libs\materials\FrobStageSetup.h">
       <Filter>materials</Filter>
     </ClInclude>
@@ -389,6 +384,37 @@
     <ClInclude Include="..\..\libs\render\WindingRenderer.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\decl\DeclarationBase.h">
+      <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\decl\EditableDeclaration.h">
+      <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\decl\DeclarationCreator.h">
+      <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\parser\ThreadedDefLoader.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\parser\DefBlockSyntaxParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\ModelExportOptions.h" />
+    <ClInclude Include="..\..\libs\parser\GuiTokeniser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ClearConsole.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\TextureToolRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\EntitiesFirstSelector.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\decl\DeclLib.h">
+      <Filter>decl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -438,6 +464,9 @@
     </Filter>
     <Filter Include="settings">
       <UniqueIdentifier>{a23072d3-ab2e-4596-ba32-e785ba12be3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="decl">
+      <UniqueIdentifier>{b6509c1f-67af-4737-b9d9-833a01c4bdd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,0 +1,48 @@
+
+// Typed Declaration
+Skin tile_skin
+{
+	model "models/ase/tiles.ase"
+
+	textures/atest/a textures/numbers/10
+	textures/numbers/1 textures/numbers/11
+}
+
+tile_skin2
+{
+	model "models/ase/tiles.ase"
+
+	textures/atest/a textures/numbers/12
+}
+
+// Untyped declaration
+separated_tile_skin
+{
+	model "models/ase/separated_tiles.ase"
+	model "models/ase/separated_tiles22.ase"
+
+	material textures/numbers/11
+	textures/numbers/1 textures/numbers/11
+}
+
+// Typed declaration
+SkIn skin_with_strange_casing
+{
+    material textures/numbers/11
+}
+
+// a skin using the wildcard character to match all materials
+skin invisible
+{
+    *   textures/common/nodraw
+}
+
+// a skin using the wildcard character as fallback match
+skin skin_with_wildcard
+{
+    // This one should match first
+    textures/common/caulk   textures/common/shadowcaulk
+
+    // Everything else is matching this one
+    *   textures/common/nodraw
+}

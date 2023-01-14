@@ -3,6 +3,7 @@
 #include "Bounded.h"
 #include "irender.h"
 #include "inode.h"
+#include "modelskin.h"
 #include "imodule.h"
 #include "imodelsurface.h"
 #include <vector>
@@ -43,9 +44,10 @@ public:
 	/** Apply the given skin to this model.
 	 *
 	 * @param skin
-	 * The ModelSkin instance to apply to this model.
+	 * The skin instance to apply to this model.
+	 * Passing an empty skin will just remove a previously applied remap.
 	 */
-	virtual void applySkin(const ModelSkin& skin) = 0;
+	virtual void applySkin(const decl::ISkin::Ptr& skin) = 0;
 
 	/** Return the number of material surfaces on this model. Each material
 	 * surface consists of a set of polygons sharing the same material.

@@ -97,8 +97,6 @@ const StringSet& OpenGLModule::getDependencies() const
 
 void OpenGLModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	_contextCreated = GlobalOpenGLContext().signal_sharedContextCreated().connect(
 		sigc::mem_fun(this, &OpenGLModule::sharedContextCreated));
 

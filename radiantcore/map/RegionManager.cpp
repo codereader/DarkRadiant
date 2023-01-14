@@ -329,7 +329,7 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args)
     // Check, if there is anything selected
     if (info.totalCount > 0)
     {
-        if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+        if (GlobalSelectionSystem().getSelectionMode() != selection::SelectionMode::Component)
         {
             // Obtain the selection size (its min/max vectors)
             AABB regionBounds = GlobalSelectionSystem().getWorkZone().bounds;
@@ -439,8 +439,6 @@ const StringSet& RegionManager::getDependencies() const
 
 void RegionManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	initialiseCommands();
 
 	_worldMin = game::current::getValue<float>("/defaults/minWorldCoord");

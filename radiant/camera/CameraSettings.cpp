@@ -84,6 +84,7 @@ void CameraSettings::constructPreferencePage()
 
 	// States whether the selection boxes are stippled or not
 	page.appendCheckBox(_("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
+	page.appendCheckBox(_("Enable drag selections"), RKEY_CAMERA_DRAG_SELECTION_ENABLED);
 
     // Whether to show the toolbar (to please the screenspace addicts)
     page.appendCheckBox(_("Show camera toolbar"), RKEY_SHOW_CAMERA_TOOLBAR);
@@ -180,8 +181,6 @@ void CameraSettings::keyChanged()
 	importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
 
 	// Check if a global camwindow is set
-	CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-
     GlobalCamera().foreachCamWnd([&](CamWnd& cam)
     {
         bool freeMovedWasEnabled = cam.freeMoveEnabled();

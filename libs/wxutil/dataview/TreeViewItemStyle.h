@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/dataview.h>
+#include <wx/settings.h>
 
 // Background colour needs support by wxWidgets 3.1.1 or 3.1.4 on platforms other than MSW
 #if defined(__WXMSW__) || \
@@ -47,10 +48,19 @@ public:
 
     static wxDataViewItemAttr Inherited()
     {
-        wxDataViewItemAttr italic;
-        italic.SetItalic(true);
+        wxDataViewItemAttr result;
+        result.SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+        result.SetItalic(true);
 
-        return italic;
+        return result;
+    }
+
+    static wxDataViewItemAttr ActiveItemStyle()
+    {
+        wxDataViewItemAttr bold;
+        bold.SetBold(true);
+
+        return bold;
     }
 
     // Styles used by the merge action visualisation in data views

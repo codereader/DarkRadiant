@@ -1,10 +1,10 @@
 #pragma once
 
 #include <string>
-#include "icommandsystem.h"
-#include "wxutil/window/TransientWindow.h"
+#include <sigc++/connection.h>
 #include "wxutil/XmlResourceBasedWidget.h"
-#include <sigc++/trackable.h>
+
+#include "wxutil/DockablePanel.h"
 
 class wxTextCtrl;
 class wxButton;
@@ -18,24 +18,26 @@ namespace ui
  * greebo: The dialog providing the Find & Replace shader functionality.
  */
 class FindAndReplaceShader :
-	public wxutil::TransientWindow,
-	private wxutil::XmlResourceBasedWidget,
-    public sigc::trackable
+	public wxutil::DockablePanel,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
     wxTextCtrl* _lastFocusedEntry;
 
+    sigc::connection _shaderClipboardConn;
+
 public:
-	// Constructor
-	FindAndReplaceShader();
+	FindAndReplaceShader(wxWindow* parent);
+    ~FindAndReplaceShader() override;
 
-	~FindAndReplaceShader();
-
-	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
-	 */
-	static void ShowDialog(const cmd::ArgumentList& args);
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
 
 private:
+    void connectListeners();
+    void disconnectListeners();
+
     void onShaderClipboardChanged();
 
 	// This is called to initialise the dialog window / create the widgets
@@ -47,7 +49,6 @@ private:
 
 	// The callback for the buttons
 	void onReplace(wxCommandEvent& ev);
-	void onClose(wxCommandEvent& ev);
 
 	void onChooseFind(wxCommandEvent& ev);
 	void onChooseReplace(wxCommandEvent& ev);
@@ -60,4 +61,4 @@ private:
     std::string getPickHelpText();
 };
 
-} // namespace ui
+} // namespace

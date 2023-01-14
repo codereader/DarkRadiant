@@ -430,6 +430,7 @@ floors or walls in succession. To match the height of an existing brush, simply
 select (*Shift + Left click*) and deselect it (*ESC*) before drawing the new
 brush.
 
+[[BrushShapes]]
 ==== More complex brush shapes
 
 Although each brush starts out as a six-sided cuboid, it doesn't have to stay
@@ -463,6 +464,7 @@ While these shapes can be useful for certain architectural modelling, remember
 that brushes are always flat-shaded and are not generally a good substitute for
 spheres or cones created with patches or static meshes.
 
+[[CreatingARoom]]
 ==== Creating a room
 
 Although it is not too difficult to create a hollow room by creating floor,
@@ -626,6 +628,57 @@ will display all of the control vertices, and allow you to select and move them.
 
 .Making an arch by raising the central row of vertices in a simple patch
 image::PatchVertexEditing.png[align="center"]
+
+==== Adding or removing control points
+
+Control points can be added or removed from a patch using the appropriate sub-menus in the *Patch*
+menu.
+
+[cols="1h,3"]
+|===
+|*Insert*|
+Add rows or columns of control points without changing the dimensions of the patch — the control
+points will become more densely packed.
+|*Extend*|
+Add rows or columns of control points while extending the patch dimensions. The existing control
+points are left in the same position.
+|*Delete*|
+Remove rows or columns without changing the dimensions of the patch (the opposite of *Insert*). The
+control points will become less densely packed.
+|===
+
+.Inserting (top), Extending (middle) and Deleting (bottom) control points in a patch
+image::AddRemovePatchControlPoints.png[align="center"]
+
+==== Thickening a patch
+
+When created, every patch has zero thickness and can only be viewed from one side; however, a patch
+can be made into an apparently solid object by creating additional patches automatically via the
+*Thicken* command in the *Patch* menu.
+
+.Thickening a patch (left) with side walls (center) and no side walls (right)
+image::PatchThicken.png[align="center"]
+
+The *Thicken* dialog presents several options:
+
+[cols="1h,3"]
+|===
+|*Extrude along Vertex Normals*|
+Thicken the patch by extruding the patch surface in the direction it is facing.
+|*Extrude along X/Y/Z Axis*|
+Thicken the patch by extruding the surface along the specified axis, ignoring the face normal
+direction.
+|*Thickness (units)*|
+Distance in map units to extrude the patch by.
+|*Create seams ("side walls")*|
+If checked, the extruded patch will be made into a fully solid "object" with an interior volume
+completely enclosed by patches. If unchecked, only the initial patch and its extruded copy will be
+created, with the sides left open.
+|===
+
+TIP: Although a thickened patch appears as a solid object, it still consists of individual patches
+which can be selected and manipulated individually. If you wish it to continue to behave as a
+solid, you can <<Group,group>> the patches together.
 
 ==== More complex patch shapes
 
@@ -1833,6 +1886,47 @@ currently-selected entity. See <<ReparentingPrimitives,reparenting primitives>>.
 
 *Select parent entities*:: Select the parent entity of the currently-selected
 primitive. See <<ReparentingPrimitives,reparenting primitives>>.
+
+=== Entity menu
+
+*Connect selected entities*:: Set a `target` spawnarg on the first selected entity pointing to the
+second selected entity.
+
+*Bind selected entities*:: Set a `bind` spawnarg on the first selected entity pointing to the
+*second selected entity.
+
+*Entity class tree...*:: Show a tree of all available entity types in the current game, along with
+all of their properties. Unlike the tree shown in the *Create Entity* dialog, this entity class
+tree shows an inheritance-based hierarchy and does not include a 3D preview.
+
+=== Brush menu
+
+*Prism...*:: Create an angular prism (extruded polygon) from the selected brush. See
+<<BrushShapes,brush shapes>>.
+
+*Cone...*:: Create a cone or pyramid from the selected brush. See <<BrushShapes,brush shapes>>.
+
+*Sphere...*:: Create an approximation of a sphere from the selected brush. See
+<<BrushShapes,brush shapes>>.
+
+*CSG -> Make Hollow*:: Create a hollow room from the selected brush. See
+<<CreatingARoom,creating a room>>.
+
+*CSG -> Make Room*:: Create a hollow room from the selected brush, without any overlapping walls.
+See <<CreatingARoom,creating a room>>.
+
+*Clipper -> Clip Selection*:: Split the selected brush along the defined clip plane, keeping one
+half. See <<SplittingBrushes,splitting brushes>>.
+
+*Clipper -> Split Selection*:: Split the selected brush along the defined clip plane, keeping both
+halves. See <<SplittingBrushes,splitting brushes>>.
+
+*Clipper -> Flip Clip Orientation*:: Change which half of the brush is retained after using the
+*Clip Selection* command. Difficult to use in practice; instead just *Split Selection* and delete
+the unwanted half manually. See <<SplittingBrushes,splitting brushes>>.
+
+*Make Detail / Make Structural*:: These options only exist to support legacy games, and are not
+used in the Dark Mod.
 
 == Configuring DarkRadiant
 

@@ -88,6 +88,9 @@ public:
     void Rebuild();
 #endif
 
+    // Stops any ongoing inline-editing in any column
+    void CancelEditing();
+
 protected:
     // Synthesises a selection change event to notify any handlers
     void SendSelectionChangeEvent(const wxDataViewItem& item);

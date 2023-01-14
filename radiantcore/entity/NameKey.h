@@ -27,7 +27,7 @@ public:
 	{
 		if (_name.empty())
         {
-			return _entity.getEntityClass()->getName();
+			return _entity.getEntityClass()->getDeclName();
 		}
 		return _name;
 	}

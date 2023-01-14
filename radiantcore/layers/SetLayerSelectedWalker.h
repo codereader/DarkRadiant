@@ -1,46 +1,51 @@
 #pragma once
 
-#include "ientity.h"
+#include <unordered_set>
+
 #include "ilayer.h"
 #include "entitylib.h"
 
 namespace scene
 {
 
+/**
+ * Node visitor implementation, setting any node's selection status
+ * to the given value, as long as any of the node's layers is occurring in the given set.
+ */
 class SetLayerSelectedWalker :
 	public NodeVisitor
 {
-	int _layer;
+private:
+    const std::unordered_set<int>& _layerIds;
 	bool _selected;
 
 public:
-	SetLayerSelectedWalker(int layer, bool selected) :
-		_layer(layer),
+	SetLayerSelectedWalker(const std::unordered_set<int>& layerIds, bool selected) :
+        _layerIds(layerIds),
 		_selected(selected)
 	{}
 
-	// scene::NodeVisitor
-	bool pre(const scene::INodePtr& node)
+	bool pre(const INodePtr& node) override
 	{
-		if (!node->visible())
-		{
-			return false; // skip hidden nodes
-		}
+        // Skip hidden nodes, but only when we're selecting
+        // When de-selecting we don't care whether the target node can be seen
+        if (_selected && !node->visible()) return false;
 
-		if (Node_isWorldspawn(node))
-		{
-			// Skip the worldspawn
-			return true;
-		}
+        // Skip the worldspawn
+        if (Node_isWorldspawn(node)) return true;
 
-		const auto& layers = node->getLayers();
+        const auto& layers = node->getLayers();
 
-		if (layers.find(_layer) != layers.end())
-		{
-			Node_setSelected(node, _selected);
-		}
+        for (auto layerId : layers)
+        {
+            if (_layerIds.count(layerId) != 0)
+            {
+                Node_setSelected(node, _selected);
+                break;
+            }
+        }
 
-		return true;
+        return true;
 	}
 };
 

@@ -18,8 +18,9 @@ varying vec4 var_Colour; // colour to be multiplied on the final fragment
 
 void main()
 {
+    // Apply the supplied object transform to the incoming vertex
     // transform vertex position into homogenous clip-space
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_Position = u_ModelViewProjection * u_ObjectTransform * attr_Position;
 
     // Apply the texture matrix to get the texture coords for this vertex
     var_TexDiffuse.x = dot(u_DiffuseTextureMatrix[0], attr_TexCoord);

@@ -55,6 +55,8 @@ protected:
 public:
     virtual ~TextureNodeManipulator();
 
+    const Matrix3& getTransform() const;
+
     bool processNode(const textool::INode::Ptr& node) override;
 };
 

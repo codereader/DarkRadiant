@@ -2,10 +2,10 @@
 
 #include "render/RenderableBox.h"
 
+class IEntityNode;
+
 namespace entity
 {
-
-class EntityNode;
 
 class RenderableEntityBox final :
     public render::RenderableBox

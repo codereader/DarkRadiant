@@ -1,5 +1,6 @@
 #include "SceneRenderer.h"
 
+#include "GLProgramAttributes.h"
 #include "igl.h"
 #include "OpenGLState.h"
 

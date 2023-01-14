@@ -1,9 +1,9 @@
 #pragma once
 
-#include "wxutil/dialog/DialogBase.h"
 #include <set>
-#include <map>
-#include "wxutil/dataview/TreeView.h"
+
+#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 
 #include "AIVocalSetPreview.h"
 
@@ -19,27 +19,13 @@ public:
 	typedef std::set<std::string> SetList;
 
 private:
-	struct ListStoreColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		ListStoreColumns() : 
-			name(add(wxutil::TreeModel::Column::String))
-		{}
-
-		wxutil::TreeModel::Column name;
-	};
-
-	ListStoreColumns _columns;
-
-	wxutil::TreeModel::Ptr _setStore;
-	wxutil::TreeView* _setView;
+    wxutil::DeclarationTreeView::Columns _columns;
+	wxutil::DeclarationTreeView* _setView;
 
 	wxTextCtrl* _description;
 
 	// The name of the currently selected set
 	std::string _selectedSet;
-
-	static SetList _availableSets;
 
 	AIVocalSetPreview* _preview;
 

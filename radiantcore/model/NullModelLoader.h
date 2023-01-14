@@ -2,7 +2,6 @@
 
 #include "imodel.h"
 #include "ifilesystem.h"
-#include "itextstream.h"
 #include "os/path.h"
 
 #include "NullModelNode.h"
@@ -48,7 +47,7 @@ public:
 		model->setFilename(name);
 
 		// Construct a NullModelNode using this resource
-		return NullModelNodePtr(new NullModelNode(model));
+		return std::make_shared<NullModelNode>(model);
 	}
 
   	// Required function, not implemented.

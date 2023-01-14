@@ -73,6 +73,8 @@ private:
         glClearColor(0.9f, 0.9f, 0.9f, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
+        glMatrixMode(GL_TEXTURE);
+        glLoadIdentity();
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glMatrixMode(GL_PROJECTION);
@@ -144,15 +146,20 @@ private:
         case ImageType::Specular: layerToFind = IShaderLayer::SPECULAR; break;
         }
 
-        for (const auto& layer : _material->getAllLayers())
+        TexturePtr result;
+
+        _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             if (layer->getType() == layerToFind)
             {
-                return layer->getTexture();
+                result = layer->getTexture();
+                return false;
             }
-        }
 
-        return TexturePtr();
+            return true;
+        });
+
+        return result;
     }
 };
 

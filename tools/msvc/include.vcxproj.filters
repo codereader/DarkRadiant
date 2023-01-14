@@ -101,7 +101,6 @@
     <ClInclude Include="..\..\include\iversioncontrol.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
-    <ClInclude Include="..\..\include\ModResource.h" />
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
     <ClInclude Include="..\..\include\precompiled_main.h" />
     <ClInclude Include="..\..\include\precompiled_math.h" />
@@ -125,16 +124,7 @@
     <ClInclude Include="..\..\include\ui\ifilechooser.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ui\igroupdialog.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\ui\imainframe.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ui\imainframelayout.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ui\imediabrowser.h">
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ui\imenu.h">
@@ -168,6 +158,18 @@
     <ClInclude Include="..\..\include\irenderableobject.h" />
     <ClInclude Include="..\..\include\igeometrystore.h" />
     <ClInclude Include="..\..\include\iobjectrenderer.h" />
+    <ClInclude Include="..\..\include\ideclmanager.h" />
+    <ClInclude Include="..\..\include\igameresource.h" />
+    <ClInclude Include="..\..\include\ifx.h" />
+    <ClInclude Include="..\..\include\ui\ideclpreview.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\iwindowstate.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\iusercontrol.h">
+      <Filter>ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

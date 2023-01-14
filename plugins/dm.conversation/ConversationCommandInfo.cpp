@@ -20,7 +20,7 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 	// Read the arguments
 	// Find all attributes matching "argType", this spawnarg is mandatory
     eclass::AttributeList argTypes = eclass::getSpawnargsWithPrefix(
-        *eclass, "editor_argType"
+        eclass, "editor_argType"
     );
 
 	for (eclass::AttributeList::const_iterator i = argTypes.begin();
@@ -63,7 +63,7 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 		}
 		else {
 			rError() << "Could not determine Conversation Command Argument type: " <<
-				argTypeStr << " on entityDef " << eclass->getName() << std::endl;
+				argTypeStr << " on entityDef " << eclass->getDeclName() << std::endl;
 		}
 
 		// add the argument to the local list

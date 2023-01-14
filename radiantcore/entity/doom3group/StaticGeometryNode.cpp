@@ -692,7 +692,8 @@ void StaticGeometryNode::setIsModel(bool newValue) {
  */
 void StaticGeometryNode::updateIsModel()
 {
-	if (m_modelKey != m_name && !_spawnArgs.isWorldspawn())
+    // A non-empty "model" key value is another requirement for being treated as model
+	if (m_modelKey != m_name && !_spawnArgs.isWorldspawn() && !_spawnArgs.getKeyValue("model").empty())
 	{
 		setIsModel(true);
 	}

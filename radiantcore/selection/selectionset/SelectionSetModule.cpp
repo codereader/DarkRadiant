@@ -46,8 +46,6 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		GlobalCommandSystem().addCommand("DeleteAllSelectionSets",
 			std::bind(&SelectionSetModule::deleteAllSelectionSetsCmd, this, std::placeholders::_1));
 

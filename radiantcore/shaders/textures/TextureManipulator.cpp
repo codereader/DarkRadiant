@@ -6,7 +6,7 @@
 #include "registry/registry.h"
 #include "math/Vector3.h"
 #include "ipreferencesystem.h"
-#include "../Doom3ShaderSystem.h"
+#include "../MaterialManager.h"
 #include "RGBAImage.h"
 
 namespace 
@@ -56,7 +56,6 @@ void TextureManipulator::keyChanged()
 	if (_gamma != newGamma) {
 		_gamma = newGamma;
 		calculateGammaTable();
-		GetShaderSystem()->refresh();
 	}
 }
 
@@ -127,7 +126,7 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 	if (!(gl_width == width && gl_height == height)) {
 
 		// Create a new Image that hold the resampled texture
-		output.reset(new RGBAImage(gl_width, gl_height));
+		output.reset(new image::RGBAImage(gl_width, gl_height));
 
 		// Resample the texture into the allocated image
 		resampleTexture(sourcePixels, width, height,

@@ -3,6 +3,7 @@
 #include "scene/BasicRootNode.h"
 #include "scene/Node.h"
 #include "scenelib.h"
+#include "algorithm/Entity.h"
 
 namespace test
 {
@@ -55,6 +56,48 @@ protected:
     {
         visibilityMethodCalled = true;
         passedVisibilityValue = newState;
+    }
+};
+
+// Custom Node class to test the protected onRenderStateChanged method behaviour
+class RenderStateTestNode :
+    public scene::Node
+{
+public:
+    RenderStateTestNode() :
+        changedMethodCalled(false)
+    {}
+
+    // Default copy ctor for testing
+    RenderStateTestNode(const RenderStateTestNode& other) = default;
+
+    Type getNodeType() const override
+    {
+        return Type::Unknown;
+    }
+
+    const AABB& localAABB() const
+    {
+        static AABB dummy;
+        return dummy;
+    }
+
+    void onPreRender(const VolumeTest& volume) override {}
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override {}
+    std::size_t getHighlightFlags() override
+    {
+        return 0;
+    }
+
+    // Public test fields
+    bool changedMethodCalled = false;
+
+protected:
+    void onRenderStateChanged() override
+    {
+        Node::onRenderStateChanged();
+
+        changedMethodCalled = true;
     }
 };
 
@@ -255,6 +298,92 @@ TEST_F(SceneNodeTest, SetFilterStatus)
     EXPECT_FALSE(node->visibilityMethodCalled) << "Method shouldn't have been invoked, no change";
     EXPECT_TRUE(node->visible()) << "Should still be visible";
     EXPECT_FALSE(node->isFiltered()) << "Node should report as unfiltered";
+}
+
+TEST_F(SceneNodeTest, InitialRenderState)
+{
+    auto node = std::make_shared<RenderStateTestNode>();
+    EXPECT_EQ(node->getRenderState(), scene::INode::RenderState::Active) << "Should be active after construction";
+    EXPECT_FALSE(node->changedMethodCalled) << "Changed method should not have been called";
+}
+
+TEST_F(SceneNodeTest, RenderStateOfCopiedNode)
+{
+    auto node = std::make_shared<RenderStateTestNode>();
+    auto copy = std::make_shared<RenderStateTestNode>(*node);
+
+    EXPECT_EQ(copy->getRenderState(), scene::INode::RenderState::Active) << "Copied node should inherit the initial value";
+
+    node->setRenderState(scene::INode::RenderState::Inactive);
+    copy = std::make_shared<RenderStateTestNode>(*node);
+    EXPECT_EQ(copy->getRenderState(), scene::INode::RenderState::Inactive) << "Copied node should inherit the value";
+}
+
+TEST_F(SceneNodeTest, OnRenderStateChanged)
+{
+    auto node = std::make_shared<RenderStateTestNode>();
+    EXPECT_FALSE(node->changedMethodCalled) << "Changed method should not have been called";
+
+    // Setting to active again shouldn't do anything
+    node->setRenderState(scene::INode::RenderState::Active);
+    EXPECT_FALSE(node->changedMethodCalled) << "Changed method should not have been called";
+
+    // To Inactive
+    node->setRenderState(scene::INode::RenderState::Inactive);
+    EXPECT_TRUE(node->changedMethodCalled) << "Changed method should have been called";
+
+    // To inactive a second time
+    node->changedMethodCalled = false;
+    node->setRenderState(scene::INode::RenderState::Inactive);
+    EXPECT_FALSE(node->changedMethodCalled) << "Changed method should not have been called";
+
+    // Back to active
+    node->changedMethodCalled = false;
+    node->setRenderState(scene::INode::RenderState::Active);
+    EXPECT_TRUE(node->changedMethodCalled) << "Changed method should not have been called";
+}
+
+TEST_F(SceneNodeTest, SetRenderStateWorksNonrecursively)
+{
+    auto node = std::make_shared<RenderStateTestNode>();
+    auto child = std::make_shared<RenderStateTestNode>();
+    scene::addNodeToContainer(child, node);
+
+    EXPECT_EQ(node->getRenderState(), scene::INode::RenderState::Active) << "Should be active after construction";
+    EXPECT_EQ(child->getRenderState(), scene::INode::RenderState::Active) << "Should be active after construction";
+
+    node->setRenderState(scene::INode::RenderState::Inactive);
+    EXPECT_EQ(node->getRenderState(), scene::INode::RenderState::Inactive) << "Parent node should have been changed";
+    EXPECT_EQ(child->getRenderState(), scene::INode::RenderState::Active) << "setRenderState should not affect children";
+}
+
+TEST_F(SceneNodeTest, SetRenderStateAffectsAttachments)
+{
+    auto torch = algorithm::createEntityByClassName("atdm:torch_brazier");
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
+
+    bool hasAttachments = false;
+    // All attachments should be there and active
+    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    {
+        hasAttachments = true;
+        EXPECT_EQ(attachment->getRenderState(), scene::INode::RenderState::Active) << "Should be active after construction";
+    });
+    EXPECT_TRUE(hasAttachments) << "Unit test setup is wrong, node should have attachments";
+
+    // Set the state of the host entity to inactive
+    torch->setRenderState(scene::INode::RenderState::Inactive);
+    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    {
+        EXPECT_EQ(attachment->getRenderState(), scene::INode::RenderState::Inactive) << "Attachments not set to inactive";
+    });
+
+    // Back to active
+    torch->setRenderState(scene::INode::RenderState::Active);
+    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    {
+        EXPECT_EQ(attachment->getRenderState(), scene::INode::RenderState::Active) << "Attachments not set to active";
+    });
 }
 
 }

@@ -168,11 +168,9 @@ public:
 
         _needsUpdate = false;
 
-        static Vector3 Origin(0, 0, 0);
-
         // Calculate the corner vertices of this bounding box
-        Vector3 max(Origin + _bounds.extents);
-        Vector3 min(Origin - _bounds.extents);
+        Vector3 max(_bounds.origin + _bounds.extents);
+        Vector3 min(_bounds.origin - _bounds.extents);
 
         auto colour = getVertexColour();
 
@@ -199,86 +197,6 @@ public:
         {
             updateGeometryWithData(GeometryType::Lines, vertices, WireframeBoxIndices);
         }
-    }
-};
-
-class RenderableBoxSurface final :
-    public RenderableSurface
-{
-private:
-    const AABB& _bounds;
-    const Matrix4& _orientation;
-
-    std::vector<MeshVertex> _vertices;
-    std::vector<unsigned int> _indices;
-
-public:
-    RenderableBoxSurface(const AABB& bounds, const Matrix4& orientation) :
-        _bounds(bounds),
-        _orientation(orientation)
-    {
-        static Vector3 Origin(0, 0, 0);
-
-        // Calculate the corner vertices of this bounding box
-        Vector3 max(Origin + _bounds.extents);
-        Vector3 min(Origin - _bounds.extents);
-
-        auto vertices = detail::getFillBoxVertices(min, max, { 1, 1, 1, 1 });
-
-        for (const auto& vertex : vertices)
-        {
-            _vertices.push_back(MeshVertex(
-                toVector3(vertex.vertex),
-                toVector3(vertex.normal),
-                Vector2(vertex.texcoord.x(), vertex.texcoord.y()),
-                Vector4(vertex.colour.x(), vertex.colour.y(), vertex.colour.z(), vertex.colour.w()),
-                toVector3(vertex.tangent),
-                toVector3(vertex.bitangent)
-            ));
-        }
-
-        _indices = detail::generateTriangleBoxIndices();
-    }
-
-    bool isVisible() override
-    {
-        return !_indices.empty();
-    }
-
-    const std::vector<MeshVertex>& getVertices() override
-    {
-        return _vertices;
-    }
-
-    const std::vector<unsigned int>& getIndices() override
-    {
-        return _indices;
-    }
-
-    bool isOriented() override
-    {
-        return true;
-    }
-
-    const Matrix4& getObjectTransform() override
-    {
-        return _orientation;
-    }
-
-    const AABB& getObjectBounds() override
-    {
-        return _bounds;
-    }
-
-    bool isShadowCasting() override
-    {
-        return false;
-    }
-
-private:
-    inline Vector3 toVector3(const Vector3f& vector)
-    {
-        return { vector.x(), vector.y(), vector.z() };
     }
 };
 

@@ -6,7 +6,7 @@
 #include "math/ViewProjection.h"
 #include "math/Viewer.h"
 
-#if defined(_DEBUG)
+#if 0
 #define DEBUG_CULLING
 #endif
 

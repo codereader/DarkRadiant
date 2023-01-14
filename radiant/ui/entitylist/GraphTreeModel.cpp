@@ -1,10 +1,10 @@
 #include "GraphTreeModel.h"
 
-#include <iostream>
 #include "iselectable.h"
 #include "iselection.h"
 
 #include "GraphTreeModelPopulator.h"
+#include "debugging/ScenegraphUtils.h"
 
 namespace ui
 {
@@ -31,35 +31,36 @@ void GraphTreeModel::disconnectFromSceneGraph()
 	GlobalSceneGraph().removeSceneObserver(this);
 }
 
-const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node)
+const GraphTreeNode::Ptr& GraphTreeModel::insert(const scene::INodePtr& node)
 {
-	// Create a new GraphTreeNode
-	GraphTreeNodePtr gtNode(new GraphTreeNode(node));
-
 	// Insert this iterator below a possible parent iterator
-	wxDataViewItem parentIter = findParentIter(node);
+	auto parentIter = findParentIter(node);
 
-	wxutil::TreeModel::Row row = parentIter ? _model->AddItem(parentIter) : _model->AddItem();
-	gtNode->getIter() = row.getItem();
+	wxutil::TreeModel::Row row = parentIter ? _model->AddItemUnderParent(parentIter) : _model->AddItem();
+
+	// Create a new GraphTreeNode
+	auto gtNode = std::make_shared<GraphTreeNode>(node, row.getItem());
+
+    // Assign root node member
+    if (node->getNodeType() == scene::INode::Type::MapRoot)
+    {
+        _mapRootNode = gtNode;
+    }
 
 	// Fill in the values
-	row[_columns.node] = wxVariant(static_cast<void*>(node.get()));
+	row[_columns.node] = wxVariant(node.get());
 	row[_columns.name] = node->name();
 
 	row.SendItemAdded();
 
 	// Insert this iterator into the node map to facilitate lookups
-	std::pair<NodeMap::iterator, bool> result = _nodemap.insert(
-		NodeMap::value_type(scene::INodeWeakPtr(node), gtNode)
-	);
-
 	// Return the GraphTreeNode reference
-	return result.first->second;
+	return _nodemap.emplace(node, gtNode).first->second;
 }
 
 void GraphTreeModel::erase(const scene::INodePtr& node)
 {
-	NodeMap::iterator found = _nodemap.find(scene::INodeWeakPtr(node));
+	auto found = _nodemap.find(node);
 
 	if (found != _nodemap.end())
 	{
@@ -68,13 +69,18 @@ void GraphTreeModel::erase(const scene::INodePtr& node)
 
 		// ...and from our lookup table
 		_nodemap.erase(found);
+
+        if (_mapRootNode && _mapRootNode->getNode() == node)
+        {
+            _mapRootNode.reset();
+        }
 	}
 }
 
-const GraphTreeNodePtr& GraphTreeModel::find(const scene::INodePtr& node) const
+const GraphTreeNode::Ptr& GraphTreeModel::find(const scene::INodePtr& node) const
 {
-	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
-	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
+	auto found = _nodemap.find(node);
+	return found != _nodemap.end() ? found->second : _nullTreeNode;
 }
 
 void GraphTreeModel::clear()
@@ -82,6 +88,7 @@ void GraphTreeModel::clear()
 	// Remove everything, wx plus nodemap
 	_nodemap.clear();
 	_model->Clear();
+    _mapRootNode.reset();
 }
 
 void GraphTreeModel::refresh()
@@ -92,6 +99,8 @@ void GraphTreeModel::refresh()
     // Create a new model from scratch and populate it
     _model = new wxutil::TreeModel(_columns);
 #endif
+
+    if (!GlobalSceneGraph().root()) return;
 
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
@@ -117,55 +126,34 @@ void GraphTreeModel::updateSelectionStatus(const NotifySelectionUpdateFunc& noti
 }
 
 void GraphTreeModel::updateSelectionStatus(const scene::INodePtr& node,
-										   const NotifySelectionUpdateFunc& notifySelectionChanged)
+    const NotifySelectionUpdateFunc& notifySelectionChanged)
 {
-	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
-
-	GraphTreeNodePtr foundNode;
-
-	if (found == _nodemap.end())
-	{
-		// The node is not in our map, it might have been previously hidden
-		if (node->visible())
-		{
-			foundNode = insert(node);
-		}
-	}
-	else
-	{
-		foundNode = found->second;
-	}
-
-	if (foundNode)
-	{
-		notifySelectionChanged(foundNode->getIter(), Node_isSelected(node));
-	}
+    if (auto found = _nodemap.find(node); found != _nodemap.end())
+    {
+        notifySelectionChanged(found->second->getIter(), Node_isSelected(node));
+    }
 }
 
-const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::INodePtr& node) const
+wxDataViewItem GraphTreeModel::findParentIter(const scene::INodePtr& node)
 {
-	scene::INodePtr parent = node->getParent();
+    switch (node->getNodeType())
+    {
+    case scene::INode::Type::MapRoot:
+        return wxDataViewItem(); // root node is inserted at the root level
 
-	if (parent == NULL)
-	{
-		// No parent, return the NULL pointer
-		return _nullTreeNode;
-	}
+    case scene::INode::Type::Entity:
+        if (!_mapRootNode)
+        {
+            // Create a new map root node right here
+            insert(node->getParent());
+        }
+        
+        return _mapRootNode->getIter();
 
-	// Try to find the node
-	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(parent));
-
-	// Return NULL (empty shared_ptr) if not found
-	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
-}
-
-wxDataViewItem GraphTreeModel::findParentIter(const scene::INodePtr& node) const
-{
-	// Find the parent's GraphTreeNode
-	const GraphTreeNodePtr& nodePtr = findParentNode(node);
-
-	// Return an empty iterator if not found
-	return (nodePtr != NULL) ? nodePtr->getIter() : wxDataViewItem();
+    default:
+        rWarning() << "Node type " << getNameForNodeType(node->getNodeType()) << " should not be inserted into the tree" << std::endl;
+        return wxDataViewItem();
+    }
 }
 
 const GraphTreeModel::TreeColumns& GraphTreeModel::getColumns() const
@@ -178,16 +166,18 @@ wxutil::TreeModel::Ptr GraphTreeModel::getModel()
 	return _model;
 }
 
-// Gets called when a new <instance> is inserted into the scenegraph
 void GraphTreeModel::onSceneNodeInsert(const scene::INodePtr& node)
 {
-	insert(node); // wrap to the actual insert() method
+    if (!NodeIsRelevant(node)) return;
+
+    insert(node); // wrap to the actual insert() method
 }
 
-// Gets called when <instance> is removed from the scenegraph
 void GraphTreeModel::onSceneNodeErase(const scene::INodePtr& node)
 {
-	erase(node); // wrap to the actual erase() method
+    if (!NodeIsRelevant(node)) return;
+
+    erase(node); // wrap to the actual erase() method
 }
 
-} // namespace ui
+} // namespace

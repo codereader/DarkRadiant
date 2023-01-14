@@ -60,6 +60,11 @@ inline std::function<bool(const scene::INodePtr&)> brushHasMaterial(const std::s
     return [material](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader(material); };
 }
 
+inline std::function<bool(const scene::INodePtr&)> patchHasMaterial(const std::string& material)
+{
+    return [material](const scene::INodePtr& node) { return Node_isPatch(node) && Node_getIPatch(node)->getShader() == material; };
+}
+
 // Finds the first matching child brush of the given parent node, with any of the brush's faces matching the given material
 inline scene::INodePtr findFirstBrushWithMaterial(const scene::INodePtr& parent, const std::string& material)
 {
@@ -101,7 +106,7 @@ inline scene::INodePtr findFirstPatchWithMaterial(const scene::INodePtr& parent,
 }
 
 inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
-    const std::function<bool(IEntityNode&)>& predicate)
+    const std::function<bool(const IEntityNodePtr&)>& predicate)
 {
     IEntityNodePtr candidate;
 
@@ -109,7 +114,7 @@ inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
     {
         auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
-        if (entity && predicate(*entity))
+        if (entity && predicate(entity))
         {
             candidate = entity;
             return false;
@@ -123,17 +128,17 @@ inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
 
 inline scene::INodePtr findWorldspawn(const scene::INodePtr& root)
 {
-    return findFirstEntity(root, [&](IEntityNode& entity)
+    return findFirstEntity(root, [&](const IEntityNodePtr& entity)
     {
-        return entity.getEntity().isWorldspawn();
+        return entity->getEntity().isWorldspawn();
     });
 }
 
 inline scene::INodePtr getEntityByName(const scene::INodePtr& parent, const std::string& name)
 {
-    return findFirstEntity(parent, [&](IEntityNode& entity)
+    return findFirstEntity(parent, [&](const IEntityNodePtr& entity)
     {
-        return entity.getEntity().getKeyValue("name") == name;
+        return entity->getEntity().getKeyValue("name") == name;
     });
 }
 
@@ -146,9 +151,9 @@ inline void setWorldspawnKeyValue(const std::string& key, const std::string& val
     Node_getEntity(entity)->setKeyValue(key, value);
 }
 
-inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
+inline scene::INodePtr findChildModelNode(const scene::INodePtr& parent)
 {
-    model::ModelNodePtr candidate;
+    scene::INodePtr candidate;
 
     parent->foreachNode([&](const scene::INodePtr& node)
     {
@@ -156,7 +161,7 @@ inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
 
         if (model)
         {
-            candidate = model;
+            candidate = node;
             return false;
         }
 
@@ -164,6 +169,11 @@ inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
     });
 
     return candidate;
+}
+
+inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
+{
+    return Node_getModel(findChildModelNode(parent));
 }
 
 // Returns the number of children of the given parent node matching the given predicate

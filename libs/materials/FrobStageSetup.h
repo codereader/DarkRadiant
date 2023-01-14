@@ -97,21 +97,39 @@ public:
 
     static std::string GetDiffuseMap(const MaterialPtr& material)
     {
-        for (const auto& layer : material->getAllLayers())
+        auto diffuseMap = std::string();
+
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             if (layer->getType() == IShaderLayer::DIFFUSE && layer->getMapExpression())
             {
-                return layer->getMapExpression()->getExpressionString();
+                diffuseMap = layer->getMapExpression()->getExpressionString();
+                return false;
             }
-        }
 
-        return std::string();
+            return true;
+        });
+
+        return diffuseMap;
     }
 
 private:
+    static std::vector<IShaderLayer::Ptr> getAllLayers(const MaterialPtr& material)
+    {
+        std::vector<IShaderLayer::Ptr> layers;
+        
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+        {
+            layers.push_back(layer);
+            return true;
+        });
+
+        return layers;
+    }
+
     static std::pair<IShaderLayer::Ptr, int> FindWhiteBlendStage(const MaterialPtr& material)
     {
-        const auto& layers = material->getAllLayers();
+        auto layers = getAllLayers(material);
 
         for (int index = 0; index < layers.size(); ++index)
         {
@@ -153,7 +171,8 @@ private:
 
         if (diffuse.empty()) return std::make_pair(IShaderLayer::Ptr(), -1);
 
-        const auto& layers = material->getAllLayers();
+        auto layers = getAllLayers(material);
+
         for (int index = 0; index < layers.size(); ++index)
         {
             const auto& layer = layers[index];

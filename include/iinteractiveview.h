@@ -19,6 +19,9 @@ public:
      */
     virtual SelectionTestPtr createSelectionTestForPoint(const Vector2& point) = 0;
 
+    // Returns true if this view allows drag-selecting multiple items
+    virtual bool supportsDragSelections() = 0;
+
     // Returns the device dimensions in pixels
     virtual int getDeviceWidth() const = 0;
     virtual int getDeviceHeight() const = 0;

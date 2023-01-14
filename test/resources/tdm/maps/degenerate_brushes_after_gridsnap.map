@@ -1,0 +1,178 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+"target" "hilltop_portal"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272604 ) ( 0 -0.0078125 255.4882812499999 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666697710753 0 0.6666666716337205 ) ( 0 0.00819672178477049 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( -1 0 0 -64 ) ( ( 0.005208333488553762 0 128.0729141272604 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 0 -1 -62 ) ( ( -0.015625 0 2.281250000000001 ) ( 0 -0.0078125 0.875 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666604578495 0 0.333333343267441 ) ( 0 0.00819672178477049 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 1 0 0 44 ) ( ( 0.00390625 0 255.4296875 ) ( 0 0.00390625 255.7578125 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 1
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272604 ) ( 0 -0.0078125 255.4882812499991 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666697710752 0 0.6666666716337204 ) ( 0 0.008196721784770489 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666604578489 0 0.3333333432674395 ) ( 0 0.008196721784770478 0.4918032288551324 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( -1 0 0 -44 ) ( ( 0.015625 0 2.281250000000001 ) ( 0 0.0078125 255.515625 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( 1 0 0 42 ) ( ( 0.015625 0 125.71875 ) ( 0 0.0078125 255.5156250000001 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( 0.8320503234863281 0 -0.5547001957893372 53.80592155456543 ) ( ( 0.00390625 0 255.4296875 ) ( 0 0.003906250000014211 255.5558182394247 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 2
+{
+brushDef3
+{
+( 0 0 1 42 ) ( ( -0.007812499999999889 0 1.316406250000002 ) ( 4.440892098500626e-16 -0.0078125 2.375000000000011 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 0 -1 -62 ) ( ( -0.0078125 0 1.316406249999999 ) ( 0 -0.0078125 253.625 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 1 0 -24.00000000000011 ) ( ( 0.0078125 0 2.08203125 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 1 0 0 -32 ) ( ( 0.0078125 0 254.09765625 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( -1 0 0 15 ) ( ( 0.0078125 0 1.31640625 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( -0.2169304639101028 0.9761870503425598 0 -18.22215819358826 ) ( ( 0.0078125 0 2.116785502318544 ) ( 0 0.0078125 255.4999999999999 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 -1 0 20 ) ( ( 0.0078125 0 254.1511535644531 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+}
+}
+// primitive 3
+{
+brushDef3
+{
+( 0 0 1 62 ) ( ( -0.0078125 0 1.609375 ) ( 0 -0.007812500000000003 2.375 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 -1 0 2 ) ( ( 0.0078125 0 253.625 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( -1 0 0 -64 ) ( ( 0.0078125 0 1.609375000000003 ) ( 0 0.0078125 255.4999999999997 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 0 -1 -64 ) ( ( -0.0078125 0 1.609375 ) ( 0 -0.0078125 253.6250000000001 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 1 0 -24.00000000000011 ) ( ( 0.0078125 0 2.375 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 1 0 0 -32 ) ( ( 0.0078125 0 254.3906250000011 ) ( 0 0.0078125 255.5000000000003 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+}
+}
+// primitive 4
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272603 ) ( 0 -0.0078125 255.4882812499998 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666697710752 0 0.6666666716337208 ) ( 0 0.008196721784770489 0.491803228855133 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666604578494 0 0.3333333432674412 ) ( 0 0.008196721784770489 0.491803228855133 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( -1 0 0 -42 ) ( ( 0.015625 0 2.28125 ) ( 0 0.0078125 255.515625 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( 1 0 0 36 ) ( ( 0.015625 0 125.71875 ) ( 0 0.0078125 255.5156249999999 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( 0.4472136497497559 0 -0.8944272994995117 49.19350147247314 ) ( ( 0.00390625 0 255.4296874999998 ) ( 0 0.003906249999992895 255.5003814697264 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 5
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272604 ) ( 0 -0.0078125 255.4882812500001 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666697710753 0 0.3333333283662794 ) ( 0 0.00819672178477049 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666604578495 0 0.6666666567325592 ) ( 0 0.00819672178477049 0.4918032288551332 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( -1 0 0 -15.99999999999989 ) ( ( 0.015625 0 126.1875 ) ( 0 0.007812499999998224 255.5156249999999 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( 1 0 0 -4 ) ( ( 0.015625 0 1.812499999999999 ) ( 0 0.007812499999998224 255.5156249999998 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( -0.2425356507301331 0 -0.9701426029205322 36.86542129516602 ) ( ( -0.004464285913854837 0 0.3482142724096775 ) ( 0 -0.008196720853447914 -0.1512969130321762 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 6
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272604 ) ( 0 -0.0078125 255.4882812499999 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666697710752 0 0.3333333283662795 ) ( 0 0.008196721784770489 0.491803228855133 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666604578494 0 0.666666656732559 ) ( 0 0.008196721784770489 0.491803228855133 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 1 0 0 -10 ) ( ( 0.015625 0 1.8125 ) ( 0 0.0078125 255.515625 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( -1 0 0 4 ) ( ( 0.015625 0 126.1875 ) ( 0 0.0078125 255.5156250000001 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( -0.4472136497497559 0 -0.8944272994995117 34.88266468048096 ) ( ( -0.004464285913854834 0 0.3482142724096775 ) ( 0 -0.008196720853447918 0.02223209723248476 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 7
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272604 ) ( 0 -0.0078125 255.48828125 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666697710752 0 0.3333333283662794 ) ( 0 0.008196721784770489 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666604578495 0 0.6666666567325592 ) ( 0 0.008196721784770496 0.4918032288551334 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 1 0 0 -12 ) ( ( 0.015625 0 1.8125 ) ( 0 0.0078125 255.5156250000001 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( -1 0 0 10 ) ( ( 0.015625 0 126.1875 ) ( 0 0.0078125 255.5156250000001 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( -0.8320503234863281 0 -0.5547001957893372 27.18031120300293 ) ( ( -0.004464285913854834 0 0.3482142724096774 ) ( 0 -0.008196720853447914 0.5296836913527064 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 8
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272604 ) ( 0 -0.0078125 255.48828125 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666697710752 0 0.6666666716337204 ) ( 0 0.00819672178477049 0.4918032288551333 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 0 -1 -62 ) ( ( -0.015625 0 2.28125 ) ( 0 -0.0078125 0.734375 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666604578495 0 0.3333333432674409 ) ( 0 0.00819672178477049 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 1 0 0 -32 ) ( ( 0.005208333488553762 0 124.9062499962747 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( -1 0 0 12 ) ( ( -0.004464285913854837 1.301042606982605e-18 0.3482142724096775 ) ( 0 -0.008196720853447914 1.124268114566803 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 9
+{
+brushDef3
+{
+( 0 0 1 42 ) ( ( 0.0078125 0 1.082031250000005 ) ( 0 0.0078125 2.625000000000005 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 1 0 -24 ) ( ( 0.0078125 0 253.08203125 ) ( 0 0.0078125 255.4999999999998 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 0 -1 -62 ) ( ( 0.007812499999999889 0 1.082031250000013 ) ( 0 0.0078125 253.3750000000025 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( -1 0 0 -64 ) ( ( 0.0078125 0 254.3320312500001 ) ( 0 0.0078125 255.5000000000002 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 1 0 0 47 ) ( ( 0.0078125 0 1.08203125 ) ( 0 0.0078125 255.5000000000001 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0.2169304639101028 0.9761870503425598 0 -11.28038334846497 ) ( ( 0.0078125 0 254.0521916817427 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 -1 0 20 ) ( ( 0.0078125 0 254.8731231689454 ) ( 0 0.0078125 255.5000000000002 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+}
+}
+// primitive 10
+{
+brushDef3
+{
+( 0 0 1 -60 ) ( ( -0.005208333488553762 0 128.0729141272604 ) ( 0 -0.0078125 255.48828125 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 -1 0 6 ) ( ( 0.01041666697710753 0 0.6666666716337206 ) ( 0 0.008196721784770489 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 0 1 0 -20 ) ( ( 0.01041666604578495 0 0.3333333432674409 ) ( 0 0.008196721784770489 0.4918032288551331 ) ) "textures/darkmod/door/frame/arched_heavy01_frame" 0 0 0
+( 1 0 0 15.99999999999989 ) ( ( 0.015625 0 125.7187499999999 ) ( 0 0.007812499999998224 255.5156249999999 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( -1 0 0 -36 ) ( ( 0.015625 0 2.281249999999999 ) ( 0 0.007812499999998224 255.5156249999998 ) ) "textures/darkmod/door/wood/arched_heavy01" 0 0 0
+( 0.2425356507301331 0 -0.9701426029205322 44.62656211853027 ) ( ( 0.00390625 0 255.4296875 ) ( 0 0.00390625 255.5168174462845 ) ) "textures/darkmod/wood/panels/redbrown" 0 0 0
+}
+}
+// primitive 11
+{
+brushDef3
+{
+( 0 0 1 42 ) ( ( -0.0078125 0 1.285156249999997 ) ( 0 0.007812499999999917 2.624999999999998 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 -1 0 2 ) ( ( -0.0078125 0 253.0820312499998 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 0 -1 -62 ) ( ( -0.0078125 0 1.28515625 ) ( 0 0.0078125 253.3749999999998 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( -1 0 0 -64 ) ( ( -0.0078125 0 254.12890625 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 1 0 0 47 ) ( ( -0.0078125 0 1.28515625 ) ( 0 0.0078125 255.4999999999998 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0.2169304639101028 -0.9761870503425598 0 14.1004798412323 ) ( ( -0.0078125 0 254.0962633847039 ) ( 0 0.0078125 255.4999999999998 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 1 0 -6 ) ( ( -0.0078125 0 254.8731231689451 ) ( 0 0.0078125 255.4999999999999 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+}
+}
+// primitive 12
+{
+brushDef3
+{
+( 0 0 1 42 ) ( ( 0.0078125 0 1.11328125 ) ( 0 -0.0078125 2.374999999999999 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 0 -1 -62 ) ( ( 0.007812499999999889 0 1.113281249999999 ) ( -5.684341886080801e-14 -0.0078125 253.625 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 -1 0 2 ) ( ( -0.007812500000000028 0 2.082031250000001 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 1 0 0 -32 ) ( ( -0.0078125 0 254.30078125 ) ( 0 0.0078125 255.5 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( -1 0 0 15 ) ( ( -0.0078125 0 1.11328125 ) ( 0 0.0078125 255.4999999999998 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( -0.2169304639101028 -0.9761870503425598 0 7.158704996109009 ) ( ( -0.0078125 0 2.072721428752448 ) ( 0 0.0078125 255.4999999999999 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+( 0 1 0 -6 ) ( ( -0.0078125 0 254.1511535644531 ) ( 0 0.0078125 255.4999999999999 ) ) "textures/darkmod/stone/flat/smooth/marble_white01" 0 0 0
+}
+}
+// primitive 13
+{
+brushDef3
+{
+( 0 0 1 -43 ) ( ( -0.02083333395421505 0 32.22916604578491 ) ( 0 -0.0625 27.96874999999995 ) ) "textures/common/nodraw" 0 0 0
+( 0 -1 0 13 ) ( ( 0.01041666697710752 0 0.6666666716337204 ) ( 0 0.01639344356954098 0.7049180269241333 ) ) "textures/editor/visportal" 0 0 0
+( 0 0 -1 -62 ) ( ( -0.0625 0 8.937500000000002 ) ( 0 -0.0625 5.87500000000001 ) ) "textures/common/nodraw" 0 0 0
+( 0 1 0 -14 ) ( ( 0.0416666641831398 0 1.291666626930237 ) ( 0 0.0655737742781639 3.934425830841064 ) ) "textures/common/nodraw" 0 0 0
+( 1 0 0 -12 ) ( ( 0.02083333395421505 0 19.66666601598263 ) ( 0 0.0625 124 ) ) "textures/common/nodraw" 0 0 0
+( -1 0 0 -44 ) ( ( -0.0357142873108387 6.938893903907228e-18 2.928571492433548 ) ( 0 -0.06557376682758331 8.994144916534424 ) ) "textures/common/nodraw" 0 0 0
+}
+}
+}

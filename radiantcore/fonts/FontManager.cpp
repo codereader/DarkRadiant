@@ -38,8 +38,6 @@ const StringSet& FontManager::getDependencies() const
 
 void FontManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
     _loader = std::make_unique<FontLoader>(*this);
 
 	// Find installed fonts in a new thread

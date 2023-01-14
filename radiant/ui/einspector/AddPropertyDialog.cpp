@@ -13,6 +13,7 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include "wxutil/Bitmap.h"
+#include "wxutil/Icon.h"
 #include <wx/textctrl.h>
 
 #include <map>
@@ -128,10 +129,9 @@ public:
 			return;
 		}
 
-		wxutil::TreeModel::Row row = _store->AddItem(_parent);
+		wxutil::TreeModel::Row row = _store->AddItemUnderParent(_parent);
 
-		wxIcon icon;
-		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(attr.getType()));
+        wxutil::Icon icon(PropertyEditorFactory::getBitmapFor(attr.getType()));
 
 		row[_columns.displayName] = wxVariant(wxDataViewIconText(attr.getName(), icon));
 		row[_columns.propertyName] = attr.getName();
@@ -146,14 +146,13 @@ public:
 // Populate tree view
 void AddPropertyDialog::populateTreeView()
 {
-	wxIcon folderIcon;
-	folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
+    wxutil::Icon folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	// DEF-DEFINED PROPERTIES
 	{
 		// First add a top-level category named after the entity class, and populate
 		// it with custom keyvals defined in the DEF for that class
-		std::string cName = _entity->getEntityClass()->getName();
+		std::string cName = _entity->getEntityClass()->getDeclName();
 
 		wxutil::TreeModel::Row defRoot = _treeStore->AddItem();
 
@@ -162,7 +161,7 @@ void AddPropertyDialog::populateTreeView()
 		blueBold.SetBold(true);
 
 		defRoot[_columns.displayName] = wxVariant(wxDataViewIconText(cName, folderIcon));
-		defRoot[_columns.displayName] = blueBold;
+		defRoot[_columns.displayName].setAttr(blueBold);
 		defRoot[_columns.propertyName] = "";
 		defRoot[_columns.description] = _(CUSTOM_PROPERTY_TEXT);
 
@@ -222,7 +221,7 @@ void AddPropertyDialog::populateTreeView()
 			}
 
 			// Category sorted, add this property below it
-			item = _treeStore->AddItem(mIter->second).getItem();
+			item = _treeStore->AddItemUnderParent(mIter->second).getItem();
 
 			_treeStore->ItemAdded(mIter->second, item);
 		}
@@ -241,8 +240,7 @@ void AddPropertyDialog::populateTreeView()
 
 		wxutil::TreeModel::Row row(item, *_treeStore);
 
-		wxIcon icon;
-		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(type));
+        wxutil::Icon icon(PropertyEditorFactory::getBitmapFor(type));
 
 		row[_columns.displayName] = wxVariant(wxDataViewIconText(name, icon));
 		row[_columns.propertyName] = name;

@@ -2,7 +2,6 @@
 
 #include "inode.h"
 #include "ilayer.h"
-#include "iscenegraph.h"
 #include "iselectable.h"
 #include "ipatch.h"
 #include "ibrush.h"
@@ -144,19 +143,17 @@ class UpdateNodeVisibilityWalker :
     public NodeVisitor
 {
     std::stack<bool> _visibilityStack;
+    ILayerManager& _layerManager;
 
-    scene::IMapRootNodePtr _root;
 public:
-    UpdateNodeVisibilityWalker(const scene::IMapRootNodePtr& root) :
-        _root(root)
-    {
-        assert(_root);
-    }
+    UpdateNodeVisibilityWalker(ILayerManager& layerManager) :
+        _layerManager(layerManager)
+    {}
 
-    bool pre(const INodePtr& node) 
+    bool pre(const INodePtr& node) override
     {
         // Update the node visibility and store the result
-        bool nodeIsVisible = _root->getLayerManager().updateNodeVisibility(node);
+        bool nodeIsVisible = _layerManager.updateNodeVisibility(node);
 
         // Add a new element for this level
         _visibilityStack.push(nodeIsVisible);
@@ -164,7 +161,7 @@ public:
         return true;
     }
 
-    void post(const INodePtr& node) 
+    void post(const INodePtr& node) override
     {
         // Is this child visible?
         bool childIsVisible = _visibilityStack.top();
@@ -207,7 +204,7 @@ inline void addNodeToContainer(const INodePtr& node, const INodePtr& container)
     if (rootNode)
     {
         // Ensure that worldspawn is visible
-        UpdateNodeVisibilityWalker walker(rootNode);
+        UpdateNodeVisibilityWalker walker(rootNode->getLayerManager());
         container->traverse(walker);
     }
 }

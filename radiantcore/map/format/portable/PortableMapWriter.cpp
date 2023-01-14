@@ -54,7 +54,7 @@ PortableMapWriter::PortableMapWriter() :
 	_primitiveCount(0),
 	_document(xml::Document::create()),
 	_map(_document.addTopLevelNode("map")),
-	_curEntityPrimitives(nullptr)
+	_curEntityPrimitives(nullptr, nullptr)
 {
 	// Export name and version tag
 	_map.setAttributeValue(ATTR_VERSION, string::to_string(PortableMapFormat::Version));
@@ -67,12 +67,19 @@ void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::o
 	auto layers = _map.createChild(TAG_MAP_LAYERS);
 
 	// Visit all layers and add a tag for each
-	root->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
+    auto& layerManager = root->getLayerManager();
+    auto activeLayerId = layerManager.getActiveLayer();
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
 	{
 		auto layer = layers.createChild(TAG_MAP_LAYER);
 
 		layer.setAttributeValue(ATTR_MAP_LAYER_ID, string::to_string(layerId));
 		layer.setAttributeValue(ATTR_MAP_LAYER_NAME, layerName);
+		layer.setAttributeValue(ATTR_MAP_LAYER_PARENT_ID, string::to_string(layerManager.getParentLayer(layerId)));
+        layer.setAttributeValue(ATTR_MAP_LAYER_ACTIVE,
+            activeLayerId == layerId ? ATTR_VALUE_TRUE : ATTR_VALUE_FALSE);
+        layer.setAttributeValue(ATTR_MAP_LAYER_HIDDEN,
+            layerManager.layerIsVisible(layerId) ? ATTR_VALUE_FALSE : ATTR_VALUE_TRUE);
 	});
 
 	// Write selection groups
@@ -133,7 +140,7 @@ void PortableMapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostr
 	node.setAttributeValue(ATTR_ENTITY_NUMBER, string::to_string(_entityCount++));
 
 	auto primitiveNode = node.createChild(TAG_ENTITY_PRIMITIVES);
-	_curEntityPrimitives = xml::Node(primitiveNode.getNodePtr());
+	_curEntityPrimitives = xml::Node(primitiveNode);
 
 	auto keyValues = node.createChild(TAG_ENTITY_KEYVALUES);
 
@@ -155,12 +162,12 @@ void PortableMapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostrea
 	// Reset the primitive count again
 	_primitiveCount = 0;
 
-	_curEntityPrimitives = xml::Node(nullptr);
+	_curEntityPrimitives = xml::Node(nullptr, nullptr);
 }
 
 void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ostream& stream)
 {
-	assert(_curEntityPrimitives.getNodePtr() != nullptr);
+	assert(_curEntityPrimitives.isValid());
 
 	auto brushTag = _curEntityPrimitives.createChild(TAG_BRUSH);
 	brushTag.setAttributeValue(ATTR_BRUSH_NUMBER, string::to_string(_primitiveCount++));
@@ -224,7 +231,7 @@ void PortableMapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& 
 
 void PortableMapWriter::beginWritePatch(const IPatchNodePtr& patchNode, std::ostream& stream)
 {
-	assert(_curEntityPrimitives.getNodePtr() != nullptr);
+	assert(_curEntityPrimitives.isValid());
 
 	auto patchTag = _curEntityPrimitives.createChild(TAG_PATCH);
 	patchTag.setAttributeValue(ATTR_PATCH_NUMBER, string::to_string(_primitiveCount++));

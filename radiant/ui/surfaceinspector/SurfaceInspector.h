@@ -1,17 +1,14 @@
 #pragma once
 
 #include <map>
-#include "icommandsystem.h"
-#include "iregistry.h"
-#include "iradiant.h"
-#include "wxutil/window/TransientWindow.h"
 #include "wxutil/FormLayout.h"
-#include "ui/common/ShaderChooser.h"
 #include "messages/TextureChanged.h"
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
-#include <memory>
+
+#include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace wxutil { class ControlButton; }
 
@@ -27,13 +24,11 @@ class wxStaticText;
 namespace ui
 {
 
-class SurfaceInspector;
-typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
-
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector :
-	public wxutil::TransientWindow,
-	public sigc::trackable
+	public wxutil::DockablePanel,
+	public sigc::trackable,
+    public wxutil::SingleIdleCallback
 {
     // Manipulatable value field with nudge buttons and a step size selector
 	struct ManipulatorRow
@@ -109,34 +104,28 @@ class SurfaceInspector :
 
 public:
 
-	// Constructor
-	SurfaceInspector();
+	SurfaceInspector(wxWindow* parent);
 
-	/// Get the singletone instance
-    static SurfaceInspector& Instance();
+    ~SurfaceInspector() override;
 
     /// Update the instance if it exists, otherwise do nothing
-    static void update();
+    void update();
 
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
 	void keyChanged();
 
-	// Command target to toggle the dialog
-	static void toggle(const cmd::ArgumentList& args);
+protected:
+    void onIdle() override;
+
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
 
 private:
-	void onMainFrameShuttingDown();
+    void connectEventHandlers();
+    void disconnectEventHandlers();
 
 	void doUpdate();
-
-	// This is where the static shared_ptr of the singleton instance is held.
-	static SurfaceInspectorPtr& InstancePtr();
-
-	// TransientWindow events
-	void _preShow();
-	void _postShow();
-	void _preHide();
 
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
@@ -155,7 +144,7 @@ private:
     void createScaleLinkButtons(wxutil::FormLayout& table);
 
 	// Connect IEvents to the widgets
-	void connectEvents();
+	void connectButtons();
 
 	// Updates the texture shift/scale/rotation fields
 	void updateTexDef();
@@ -183,9 +172,6 @@ private:
 
 	// The keypress handler for catching the Enter key when in the value entry fields
 	void onValueEntryActivate(wxCommandEvent& ev);
-
-	// Called by wxWidgets when the system is idle
-	void onIdle(wxIdleEvent& ev);
 
 	void handleTextureChangedMessage(radiant::TextureChangedMessage& msg);
 

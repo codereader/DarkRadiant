@@ -1,6 +1,7 @@
 #pragma once
 
 #include "igame.h"
+#include "itextstream.h"
 #include "registry/registry.h"
 #include "string/convert.h"
 #include "os/path.h"
@@ -68,6 +69,47 @@ inline std::string getInfoFileExtension()
     }
 
     return extension;
+}
+
+constexpr const char* const LIGHT_PREFIX_XPATH = "/light/texture//prefix";
+
+/**
+ * Returns the list of light texture prefixes, including trailing slashes
+ */
+inline std::vector<std::string> getLightTexturePrefixes()
+{
+    std::vector<std::string> prefixes;
+
+    // Get the list of light texture prefixes from the registry
+    auto prefList = getNodes(LIGHT_PREFIX_XPATH);
+
+    // Copy the Node contents into the prefix vector
+    for (const auto& node : prefList)
+    {
+        prefixes.push_back(node.getContent() + "/");
+    }
+
+    return prefixes;
+}
+
+/**
+ * Returns the path where DarkRadiant is able to write custom game resources (like decls) to.
+ * This defaults to the mod path and falls back to the user engine path if not found.
+ * Does not create any directories.
+ */
+inline std::string getWriteableGameResourcePath()
+{
+    // Try the mod path first
+    auto targetPath = GlobalGameManager().getModPath();
+
+    if (targetPath.empty())
+    {
+        targetPath = GlobalGameManager().getUserEnginePath();
+
+        rMessage() << "No mod path found, falling back to user engine path: " << targetPath << std::endl;
+    }
+
+    return targetPath;
 }
 
 } // namespace

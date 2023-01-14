@@ -60,40 +60,32 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 	if (!eclass)
 	{
 		throw std::runtime_error(
-			_("createNodeForEntity(): "
-			  "cannot create entity for NULL entityclass.")
+			_("createNodeForEntity(): cannot create entity for NULL entityclass.")
 		);
 	}
 
-	// Otherwise create the correct entity subclass based on the entity class
-	// parameters.
-	EntityNodePtr node;
+    // Otherwise create the correct entity subclass based on the entity class parameters.
+    switch (eclass->getClassType())
+    {
+    case IEntityClass::Type::Light:
+        return LightNode::Create(eclass);
 
-	if (eclass->isLight())
-	{
-		node = LightNode::Create(eclass);
-	}
-	else if (!eclass->isFixedSize())
-	{
-		// Variable size entity
-		node = StaticGeometryNode::Create(eclass);
-	}
-	else if (!eclass->getAttributeValue("model").empty())
-	{
-		// Fixed size, has model path
-		node = EclassModelNode::Create(eclass);
-	}
-	else if (eclass->getName() == "speaker")
-	{
-		node = SpeakerNode::create(eclass);
-	}
-	else
-	{
-		// Fixed size, no model path
-		node = GenericEntityNode::Create(eclass);
-	}
+    case IEntityClass::Type::StaticGeometry:
+        return StaticGeometryNode::Create(eclass); // Variable size entity
 
-	return node;
+    case IEntityClass::Type::EntityClassModel:
+        return EclassModelNode::Create(eclass); // Fixed size, has model path
+
+    case IEntityClass::Type::Speaker:
+        return SpeakerNode::create(eclass);
+
+    case IEntityClass::Type::Generic:
+        return GenericEntityNode::Create(eclass); // Fixed size, no model path
+
+	default:
+        throw std::invalid_argument("Entity class type " + 
+            string::to_string(static_cast<int>(eclass->getClassType())) + " is not supported");
+    }
 }
 
 IEntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
@@ -106,11 +98,11 @@ IEntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
 		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
 	}
 
-	node->getEntity().setKeyValue("classname", eclass->getName());
+	node->getEntity().setKeyValue("classname", eclass->getDeclName());
 
 	// If this is not a worldspawn or unrecognised entity, generate a unique
 	// name for it
-	const std::string& eclassName = eclass->getName();
+	const std::string& eclassName = eclass->getDeclName();
 
 	if (!eclassName.empty() &&
 		eclassName != "worldspawn" &&
@@ -238,7 +230,7 @@ IEntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& n
     // Check for auto-setting key values. TODO: use forEachAttribute
     // directly here.
     eclass::AttributeList list = eclass::getSpawnargsWithPrefix(
-        *entityClass, "editor_setKeyValue"
+        entityClass, "editor_setKeyValue"
     );
 
     if (!list.empty())
@@ -289,8 +281,6 @@ const StringSet& Doom3EntityModule::getDependencies() const
 
 void Doom3EntityModule::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
 
     GlobalCommandSystem().addCommand("CreateSpeaker", std::bind(&algorithm::CreateSpeaker, std::placeholders::_1),

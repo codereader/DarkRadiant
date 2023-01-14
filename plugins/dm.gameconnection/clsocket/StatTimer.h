@@ -51,7 +51,7 @@
   #include <time.h>
 #endif
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__GNU__)
   #include <stdio.h>
   #include <sys/time.h>
 #endif

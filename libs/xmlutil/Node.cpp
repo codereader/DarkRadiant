@@ -1,81 +1,88 @@
 #include "Node.h"
 
+#include <mutex>
 #include <libxml/parser.h>
+
+#include "Document.h"
 
 namespace xml
 {
 
-// Construct a Node from the given xmlNodePtr.
-
-Node::Node(xmlNodePtr node):
+Node::Node(const Document* owner, xmlNodePtr node) :
+    _owner(owner),
     _xmlNode(node)
 {}
 
-// Return the actual node ptr
-xmlNodePtr Node::getNodePtr() const
+bool Node::isValid() const
 {
-	return _xmlNode;
+    return _xmlNode != nullptr;
 }
 
-// Return the name of a node
-const std::string Node::getName() const
+std::string Node::getName() const
 {
-	if (_xmlNode) {
-		return std::string( reinterpret_cast<const char*>(_xmlNode->name) );
+    std::lock_guard lock(_owner->getLock());
+
+	if (_xmlNode)
+    {
+		return std::string(reinterpret_cast<const char*>(_xmlNode->name));
 	}
-	else {
-		return "";
-	}
+
+    return {};
 }
 
-// Return a NodeList of all children of this node
 NodeList Node::getChildren() const
 {
+    // Lock the document to collect the children
+    std::lock_guard lock(_owner->getLock());
+
     NodeList retval;
 
-    // Iterate throught the list of children, adding each child node
-    // to the return list if it matches the requested name
-    for (xmlNodePtr child = _xmlNode->children; child != NULL; child = child->next) {
-        retval.push_back(child);
+    for (auto child = _xmlNode->children; child != nullptr; child = child->next)
+    {
+        retval.emplace_back(_owner, child);
     }
 
     return retval;
 }
 
-// Creates a new child with no content (i.e. <name />)
 Node Node::createChild(const std::string& name)
 {
+    std::lock_guard lock(_owner->getLock());
+
 	xmlChar* nodeName = xmlCharStrdup(name.c_str());
 
 	// Create a new child under the contained node
-	xmlNodePtr newChild = xmlNewChild(_xmlNode,	NULL, nodeName, NULL);
+	xmlNodePtr newChild = xmlNewChild(_xmlNode, nullptr, nodeName, nullptr);
 
 	xmlFree(nodeName);
 
 	// Create a new xml::Node out of this pointer and return it
-	return Node(newChild);
+	return Node(_owner, newChild);
 }
-
-// Return a NodeList of named children of this node
 
 NodeList Node::getNamedChildren(const std::string& name) const
 {
+    std::lock_guard lock(_owner->getLock());
+
     NodeList retval;
 
     // Iterate throught the list of children, adding each child node
     // to the return list if it matches the requested name
-    for (xmlNodePtr child = _xmlNode->children; child != NULL; child = child->next) {
-        if (xmlStrcmp(child->name, reinterpret_cast<const xmlChar*>(name.c_str())) == 0) {
-            retval.push_back(child);
+    for (auto child = _xmlNode->children; child != nullptr; child = child->next)
+    {
+        if (xmlStrcmp(child->name, reinterpret_cast<const xmlChar*>(name.c_str())) == 0)
+        {
+            retval.emplace_back(_owner, child);
         }
     }
 
     return retval;
 }
 
-// Set the value of the given attribute
 void Node::setAttributeValue(const std::string& key, const std::string& value)
 {
+    std::lock_guard lock(_owner->getLock());
+
 	xmlChar* k = xmlCharStrdup(key.c_str());
 	xmlChar* v = xmlCharStrdup(value.c_str());
 
@@ -90,32 +97,37 @@ void Node::setAttributeValue(const std::string& key, const std::string& value)
 
 std::string Node::getAttributeValue(const std::string& key) const
 {
+    std::lock_guard lock(_owner->getLock());
+
     // Iterate through the chain of attributes to find the requested one.
-    for (xmlAttrPtr attr = _xmlNode->properties; attr != NULL; attr = attr->next) {
-        if (xmlStrcmp(attr->name, reinterpret_cast<const xmlChar*>(key.c_str())) == 0) {
+    for (auto attr = _xmlNode->properties; attr != nullptr; attr = attr->next)
+    {
+        if (xmlStrcmp(attr->name, reinterpret_cast<const xmlChar*>(key.c_str())) == 0)
+        {
             return reinterpret_cast<const char*>(attr->children->content);
         }
     }
 
     // Not found, return an empty string
-    return "";
+    return {};
 }
-
-// Return the textual content of a given node. This may be an empty string if there is no
-// content available.
 
 std::string Node::getContent() const
 {
-	if (_xmlNode->children && _xmlNode->children->content) {
+    std::lock_guard lock(_owner->getLock());
+
+	if (_xmlNode->children && _xmlNode->children->content)
+    {
 		return std::string(reinterpret_cast<const char*>(_xmlNode->children->content));
 	}
-	else {
-		return "";
-	}
+
+	return {};
 }
 
 void Node::setContent(const std::string& content)
 {
+    std::lock_guard lock(_owner->getLock());
+
     // Remove all text children first
     for (xmlNodePtr child = _xmlNode->children; child != nullptr; )
     {
@@ -136,22 +148,29 @@ void Node::setContent(const std::string& content)
 
 void Node::addText(const std::string& text)
 {
+    std::lock_guard lock(_owner->getLock());
+
 	// Allocate a new text node
-	xmlNodePtr whitespace = xmlNewText(
-		reinterpret_cast<const xmlChar*>(text.c_str())
-	);
+	auto whitespace = xmlNewText(reinterpret_cast<const xmlChar*>(text.c_str()));
 
 	// Add the newly allocated text as sibling of this node
-	xmlAddSibling(_xmlNode, whitespace);
+    xmlAddNextSibling(_xmlNode, whitespace);
 }
 
 void Node::erase()
 {
+    std::lock_guard lock(_owner->getLock());
+
 	// unlink the node from the list first, otherwise: crashes ahead!
 	xmlUnlinkNode(_xmlNode);
 
 	// All child nodes are freed recursively
 	xmlFreeNode(_xmlNode);
+}
+
+xmlNodePtr Node::getNodePtr() const
+{
+    return _xmlNode;
 }
 
 } // namespace xml

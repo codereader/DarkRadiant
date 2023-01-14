@@ -33,8 +33,6 @@ const StringSet& TextureToolSelectionSystem::getDependencies() const
 
 void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     _selectionMode = SelectionMode::Surface;
 
     _manipulationPivot.setFromMatrix(Matrix4::getIdentity());
