@@ -220,7 +220,7 @@ void GameSetupPageTdm::validateSettings()
         bool found = false;
         std::regex exeRegex(_game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE));
 
-        os::foreachItemInDirectory(_config.enginePath, [&](const fs::path& path)
+        os::forEachItemInDirectory(_config.enginePath, [&](const fs::path& path)
         {
             try
             {
@@ -348,19 +348,17 @@ void GameSetupPageTdm::populateAvailableMissionPaths()
     // we cannot use automatic sorting since we want to see the most recently used missions
     // at the top of the list.
     std::vector<std::string> sortedFMs;
-    try
-    {
-        os::foreachItemInDirectory(fmPath.string(), [&](const fs::path& fmFolder)
-        {
+    os::forEachItemInDirectory(
+        fmPath.string(),
+        [&](const fs::path& fmFolder) {
             // Skip the mission preview image folder
-            if (fmFolder.filename() == "_missionshots") return;
+            if (fmFolder.filename() == "_missionshots")
+                return;
 
             sortedFMs.push_back(fmFolder.filename().string());
-        });
-    }
-    catch (const os::DirectoryNotFoundException&)
-    {}
-
+        },
+        std::nothrow
+    );
     std::sort(sortedFMs.begin(), sortedFMs.end());
 
     // Add the sorted FMs to the combo box
