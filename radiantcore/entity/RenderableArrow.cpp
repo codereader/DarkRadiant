@@ -21,7 +21,8 @@ void RenderableArrow::updateGeometry()
 
     _needsUpdate = false;
 
-    static Vector3 Up(0, 0, 1);
+    // BLENDO: Up should not be hardcoded as (0, 0, 1), as arrows straight up/down don't work
+    // static Vector3 Up(0, 0, 1);
     
     // The starting point of the arrow is at the center of the entity's visible bounding box
     auto origin = _node.getWorldPosition() + _node.localAABB().getOrigin();
@@ -31,11 +32,21 @@ void RenderableArrow::updateGeometry()
         _node.getEntityColour() : INACTIVE_ENTITY_COLOUR;
 
     Vector3 left(-direction.y(), direction.x(), 0);
+    // With arbitrary z rotation, left calculated this way is not guaranteed to be unit
+    left.normalise();
+
+    // If the direction is parallel to up, then should use a fixed left axis instead
+    if (math::isParallel(direction, g_vector3_axis_z))
+    {
+        left = g_vector3_axis_y;
+    }
+    
+    Vector3 up = direction.cross(left);
 
     Vector3 endpoint(origin + direction * 32.0);
 
-    Vector3 tip1(endpoint + direction * (-8.0) + Up * (-4.0));
-    Vector3 tip2(tip1 + Up * 8.0);
+    Vector3 tip1(endpoint + direction * (-8.0) + up * (-4.0));
+    Vector3 tip2(tip1 + up * 8.0);
     Vector3 tip3(endpoint + direction * (-8.0) + left * (-4.0));
     Vector3 tip4(tip3 + left * 8.0);
 
