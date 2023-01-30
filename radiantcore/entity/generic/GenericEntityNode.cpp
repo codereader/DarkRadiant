@@ -180,7 +180,10 @@ void GenericEntityNode::updateTransform()
 	if (_allow3Drotations)
 	{
 		// greebo: Use the z-direction as base for rotations
-		m_ray.direction = m_rotation.getMatrix4().transformDirection(Vector3(0,0,1));
+        // BLENDO: I'm not sure why they put Z here because X is forward,
+        // so the arrow should face that way?
+		// m_ray.direction = m_rotation.getMatrix4().transformDirection(Vector3(0,0,1));
+        m_ray.direction = m_rotation.getMatrix4().transformDirection(Vector3(1, 0, 0));
 	}
 	else
 	{
