@@ -20,9 +20,6 @@ void RenderableArrow::updateGeometry()
     if (!_needsUpdate) return;
 
     _needsUpdate = false;
-
-    // BLENDO: Up should not be hardcoded as (0, 0, 1), as arrows straight up/down don't work
-    // static Vector3 Up(0, 0, 1);
     
     // The starting point of the arrow is at the center of the entity's visible bounding box
     auto origin = _node.getWorldPosition() + _node.localAABB().getOrigin();
