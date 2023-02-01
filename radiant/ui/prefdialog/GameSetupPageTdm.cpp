@@ -63,8 +63,6 @@ public:
 
 GameSetupPageTdm::GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game) :
 	GameSetupPage(parent, game),
-	_missionEntry(nullptr),
-	_enginePathEntry(nullptr),
 	_fmFolderHistory(new FmFolderHistory)
 {
 	// Load the stored recent paths
@@ -191,16 +189,16 @@ void GameSetupPageTdm::onClose()
 
 void GameSetupPageTdm::validateSettings()
 {
-	constructPaths();
+    constructPaths();
 
-	std::string errorMsg;
+    std::string errorMsg;
 
-	// Validate the engine path first, otherwise we can't do anything
-	if (!os::fileOrDirExists(_config.enginePath))
-	{
-		// Engine path doesn't exist
-		errorMsg += fmt::format(_("Engine path \"{0}\" does not exist.\n"), _config.enginePath);
-	}
+    // Validate the engine path first, otherwise we can't do anything
+    if (!os::fileOrDirExists(_config.enginePath))
+    {
+        // Engine path doesn't exist
+        errorMsg += fmt::format(_("Engine path \"{0}\" does not exist.\n"), _config.enginePath);
+    }
     else
     {
         // Check if the TheDarkMod.exe file is in the right place
@@ -211,18 +209,18 @@ void GameSetupPageTdm::validateSettings()
 #if defined(WIN32)
         "engine_win32"
 #elif defined(__linux__) || defined (__FreeBSD__)
-		"engine_linux"
+        "engine_linux"
 #elif defined(__APPLE__)
-		"engine_macos"
+        "engine_macos"
 #else
 #error "unknown platform"
 #endif
-		;
+        ;
 
         bool found = false;
         std::regex exeRegex(_game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE));
 
-        os::foreachItemInDirectory(_config.enginePath, [&](const fs::path& path)
+        os::forEachItemInDirectory(_config.enginePath, [&](const fs::path& path)
         {
             try
             {
@@ -243,17 +241,17 @@ void GameSetupPageTdm::validateSettings()
         }
     }
 
-	// Check the mod path (=mission path), if not empty
-	if (!_config.modPath.empty() && !os::fileOrDirExists(_config.modPath))
-	{
-		// Path not existent => error
-		errorMsg += fmt::format(_("The mission path \"{0}\" does not exist.\n"), _config.modPath);
-	}
+    // Check the mod path (=mission path), if not empty
+    if (!_config.modPath.empty() && !os::fileOrDirExists(_config.modPath))
+    {
+        // Path not existent => error
+        errorMsg += fmt::format(_("The mission path \"{0}\" does not exist.\n"), _config.modPath);
+    }
 
-	if (!errorMsg.empty())
-	{
-		throw GameSettingsInvalidException(errorMsg);
-	}
+    if (!errorMsg.empty())
+    {
+        throw GameSettingsInvalidException(errorMsg);
+    }
 }
 
 void GameSetupPageTdm::onPageShown()
@@ -334,41 +332,48 @@ void GameSetupPageTdm::constructPaths()
 
 void GameSetupPageTdm::populateAvailableMissionPaths()
 {
-	// Remember the current value, the Clear() call will remove any text
-	std::string previousMissionValue = _missionEntry->GetValue().ToStdString();
+    // Remember the current value, the Clear() call will remove any text
+    std::string previousMissionValue = _missionEntry->GetValue().ToStdString();
 
-	_missionEntry->Clear();
+    _missionEntry->Clear();
 
-	fs::path enginePath = _enginePathEntry->getValue();
+    // Get the main engine path and calculate the FM directory path
+    const fs::path enginePath = _enginePathEntry->getValue();
+    if (enginePath.empty())
+        return;
 
-	if (enginePath.empty())
-	{
-		return;
-	}
+    const fs::path fmPath = enginePath / _fmFolder;
 
-	try
-	{
-		fs::path fmPath = enginePath / _fmFolder;
+    // Build a sorted list of available missions. Although wxComboBox has a wxCB_SORT style,
+    // we cannot use automatic sorting since we want to see the most recently used missions
+    // at the top of the list.
+    std::vector<std::string> sortedFMs;
+    os::forEachItemInDirectory(
+        fmPath.string(),
+        [&](const fs::path& fmFolder) {
+            // Skip the mission preview image folder
+            if (fmFolder.filename() == "_missionshots")
+                return;
 
-		os::foreachItemInDirectory(fmPath.string(), [&](const fs::path& fmFolder)
-		{
-			// Skip the mission preview image folder
-			if (fmFolder.filename() == "_missionshots") return;
+            sortedFMs.push_back(fmFolder.filename().string());
+        },
+        std::nothrow
+    );
+    std::sort(sortedFMs.begin(), sortedFMs.end());
 
-			_missionEntry->AppendString(fmFolder.filename().string());
-		});
-	}
-	catch (const os::DirectoryNotFoundException&)
-	{}
+    // Add the sorted FMs to the combo box
+    for (const auto& fm: sortedFMs) {
+        _missionEntry->AppendString(fm);
+    }
 
-	// Add the history entries to the top of the list
-	for (auto f = _fmFolderHistory->rbegin(); f != _fmFolderHistory->rend(); ++f)
-	{
-		_missionEntry->Insert(*f, 0);
-	}
+    // Add the history entries to the top of the list
+    for (auto f = _fmFolderHistory->rbegin(); f != _fmFolderHistory->rend(); ++f)
+    {
+        _missionEntry->Insert(*f, 0);
+    }
 
-	// Keep the previous value after repopulation
-	_missionEntry->SetValue(previousMissionValue);
+    // Keep the previous value after repopulation
+    _missionEntry->SetValue(previousMissionValue);
 }
 
 }

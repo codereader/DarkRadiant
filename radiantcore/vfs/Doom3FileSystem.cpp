@@ -69,7 +69,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     // Traverse the directory using the filename list as functor
     try
     {
-        os::foreachItemInDirectory(path, [&](const fs::path& file)
+        os::forEachItemInDirectory(path, [&](const fs::path& file)
         {
             try
             {

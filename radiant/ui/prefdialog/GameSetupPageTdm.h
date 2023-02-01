@@ -12,12 +12,10 @@ namespace ui
 * A Setup Page for the standalone version
 * of The Dark Mod (version 2.0 and later).
 */
-class GameSetupPageTdm :
-	public GameSetupPage
+class GameSetupPageTdm: public GameSetupPage
 {
-private:
-	wxComboBox* _missionEntry;
-	wxutil::PathEntry* _enginePathEntry;
+	wxComboBox* _missionEntry = nullptr;
+	wxutil::PathEntry* _enginePathEntry = nullptr;
 
 	std::string _fmFolder;
 

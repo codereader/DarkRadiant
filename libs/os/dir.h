@@ -13,32 +13,58 @@ namespace os
 {
 
 /**
- * Exception thrown by foreachItemInDirectory to indicate that the given directory
+ * Exception thrown by forEachItemInDirectory to indicate that the given directory
  * does not exist.
  */
-class DirectoryNotFoundException : 
+class DirectoryNotFoundException :
 	public std::runtime_error
 {
 public:
-    DirectoryNotFoundException(const std::string& what) : 
+    DirectoryNotFoundException(const std::string& what) :
 		std::runtime_error(what)
     {}
 };
 
-// Invoke functor for all items in a directory
-inline void foreachItemInDirectory(const std::string& path, const std::function<void(const fs::path&)>& functor)
+/**
+ * @brief Invoke functor for all items in a directory.
+ *
+ * If the path does not exist, the functor is not invoked and the function returns false.
+ *
+ * @param path
+ * Path to directory to iterate over.
+ *
+ * @param functor
+ * Functor to call for each item, which must expose an operator() which accepts a const
+ * fs::path reference.
+ *
+ * @return true if the directory exists, false otherwise
+ */
+template<typename F>
+bool forEachItemInDirectory(const std::string& path, F functor, std::nothrow_t)
 {
-	fs::path start(path);
+    fs::path start(path);
+    if (!fs::exists(start))
+        return false;
 
-	if (!fs::exists(start))
-	{
-		throw DirectoryNotFoundException("foreachItemInDirectory(): invalid directory '" + path + "'");
-	}
+    for (fs::directory_iterator it(start); it != fs::directory_iterator(); ++it) {
+        functor(*it);
+    }
+    return true;
+}
 
-	for (fs::directory_iterator it(start); it != fs::directory_iterator(); ++it)
-	{
-		functor(*it);
-	}
+/**
+ * @brief Invoke functor for all items in a directory.
+ *
+ * If the path does not exist, a DirectoryNotFoundException will be thrown.
+ *
+ * @sa forEachItemInDirectory(const std::string&, F, std::nothrow_t)
+ */
+template<typename F>
+inline void forEachItemInDirectory(const std::string& path, F functor)
+{
+    if (!forEachItemInDirectory(path, functor, std::nothrow))
+        throw DirectoryNotFoundException("forEachItemInDirectory(): invalid directory '" + path
+                                         + "'");
 }
 
 /**
@@ -66,7 +92,7 @@ inline bool makeDirectory(const std::string& name)
 #if __cpp_lib_filesystem
 			// C++17 standards-compliant call to std::filesystem::permissions
 			// Set permissions to rwxrwxr_x
-			fs::permissions(dirPath, 
+			fs::permissions(dirPath,
 				fs::perms::owner_exec | fs::perms::owner_write | fs::perms::owner_read |
 				fs::perms::group_exec | fs::perms::group_write | fs::perms::group_read |
 				fs::perms::others_exec | fs::perms::others_read,
@@ -90,7 +116,7 @@ inline bool makeDirectory(const std::string& name)
 				fs::others_exe | fs::others_read);
 #endif
 		}
-		
+
 		// Directory already exists or has been created successfully
 		return true;
 	}

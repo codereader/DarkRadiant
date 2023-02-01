@@ -130,7 +130,7 @@ void ModuleLoader::loadModulesFromPath(const std::string& path)
 	// In case the folder is non-existent, catch the exception
 	try
 	{
-		os::foreachItemInDirectory(os::standardPathWithSlash(path), [&](const fs::path& file)
+		os::forEachItemInDirectory(os::standardPathWithSlash(path), [&](const fs::path& file)
 		{
 			processModuleFile(file);
 		});

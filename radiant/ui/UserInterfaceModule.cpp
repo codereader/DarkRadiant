@@ -170,17 +170,18 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
-	// Pre-load models
-	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
-		sigc::ptr_fun(ModelSelector::Populate)
-	);
+    // Pre-load models once the main frame is constructed (since the ModelSelector is a UI
+    // dialog which requires a parent)
+    GlobalMainFrame().signal_MainFrameConstructed().connect(
+        sigc::ptr_fun(ModelSelector::Populate)
+    );
 
-	// Add the filter actions
-	GlobalOrthoContextMenu().addItem(
-		std::make_shared<FilterOrthoContextMenuItem>(_(SELECT_BY_FILTER_TEXT),
-			FilterOrthoContextMenuItem::SelectByFilter),
-		IOrthoContextMenu::SECTION_FILTER
-	);
+    // Add the filter actions
+    GlobalOrthoContextMenu().addItem(
+        std::make_shared<FilterOrthoContextMenuItem>(_(SELECT_BY_FILTER_TEXT),
+            FilterOrthoContextMenuItem::SelectByFilter),
+        IOrthoContextMenu::SECTION_FILTER
+    );
 
 	GlobalOrthoContextMenu().addItem(
 		std::make_shared<FilterOrthoContextMenuItem>(_(DESELECT_BY_FILTER_TEXT),

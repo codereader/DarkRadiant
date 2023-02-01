@@ -61,10 +61,11 @@ void PropertyNotebook::addControl(const std::string& controlName)
     }
 
     auto control = GlobalUserInterface().findControl(controlName);
-
-    if (!control)
-    {
-        throw std::logic_error("There's no such control: " + controlName);
+    if (!control) {
+        // This may happen if the user settings refer to a control which is not available in
+        // the current installation, e.g. because Dark Mod plugins are no longer installed.
+        rWarning() << "PropertyNotebook: no such control '" << controlName << "'\n";
+        return;
     }
 
     // Make sure the notebook is visible before adding pages
