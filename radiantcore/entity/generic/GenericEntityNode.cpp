@@ -15,7 +15,8 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
     _renderableBox(*this, localAABB(), m_origin),
-	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
+	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
+	_3DdirectionUsesUp(eclass->isOfType("func_emitter") || eclass->isOfType("func_splat"))
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
@@ -28,7 +29,8 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
     _renderableBox(*this, localAABB(), m_origin),
-	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
+	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
+	_3DdirectionUsesUp(other._eclass->isOfType("func_emitter") || other._eclass->isOfType("func_splat"))
 {}
 
 std::shared_ptr<GenericEntityNode> GenericEntityNode::Create(const IEntityClassPtr& eclass)
@@ -179,8 +181,13 @@ void GenericEntityNode::updateTransform()
 
 	if (_allow3Drotations)
 	{
-		// greebo: Use the z-direction as base for rotations
-		m_ray.direction = m_rotation.getMatrix4().transformDirection(Vector3(0,0,1));
+		// Almost all entities should use forward (x-axis)
+		Vector3 axis = g_vector3_axis_x;
+		if (_3DdirectionUsesUp)
+		{
+			axis = g_vector3_axis_z;
+		}
+		m_ray.direction = m_rotation.getMatrix4().transformDirection(Vector3(axis));
 	}
 	else
 	{

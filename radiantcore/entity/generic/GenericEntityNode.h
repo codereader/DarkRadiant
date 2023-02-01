@@ -56,6 +56,10 @@ class GenericEntityNode final : public EntityNode, public Snappable
 	// TRUE if this entity's arrow can be rotated in all directions,
 	// FALSE if the arrow is caught in the xy plane
 	bool _allow3Drotations;
+	
+	// TRUE if direction uses up after 3D rotation (only true for func_emitter/func_splat)
+	// FALSE if direction uses forward after 3D rotation (default)
+	bool _3DdirectionUsesUp;
 
 public:
 	GenericEntityNode(const IEntityClassPtr& eclass);
