@@ -666,8 +666,10 @@
 		3A3832F829276DC70049C4A1 /* SkinEditorTreeView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832F429276DC50049C4A1 /* SkinEditorTreeView.cpp */; };
 		3A3832F929276DC70049C4A1 /* SkinEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832F729276DC70049C4A1 /* SkinEditor.cpp */; };
 		3A3832FB29276DEE0049C4A1 /* Doom3ModelSkin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832FA29276DED0049C4A1 /* Doom3ModelSkin.cpp */; };
+		3A3832FF298D4D8A0049C4A1 /* icon_sound_mute.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A3832FE298D4D890049C4A1 /* icon_sound_mute.png */; };
+		3A383300298D4DBF0049C4A1 /* icon_sound_mute.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A3832FE298D4D890049C4A1 /* icon_sound_mute.png */; };
+		3A383301298D4DDA0049C4A1 /* icon_sound_mute.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A3832FE298D4D890049C4A1 /* icon_sound_mute.png */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
-		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
 		3AA6E08723BB4E9F00BF9AD7 /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */; };
 		3AA6E08923BB4EF200BF9AD7 /* ScrollWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */; };
@@ -2312,6 +2314,7 @@
 			dstPath = Contents/Resources/bitmaps;
 			dstSubfolderSpec = 1;
 			files = (
+				3A383301298D4DDA0049C4A1 /* icon_sound_mute.png in CopyFiles */,
 				3A383204285A11FD0049C4A1 /* swap_background.png in CopyFiles */,
 				3A383203285A11F10049C4A1 /* decl.png in CopyFiles */,
 				3A38315C2859E45A0049C4A1 /* missing_model.tga in CopyFiles */,
@@ -2766,6 +2769,7 @@
 			dstPath = Resources/bitmaps;
 			dstSubfolderSpec = 16;
 			files = (
+				3A383300298D4DBF0049C4A1 /* icon_sound_mute.png in CopyFiles */,
 				3A383206285A121F0049C4A1 /* swap_background.png in CopyFiles */,
 				3A383205285A12100049C4A1 /* decl.png in CopyFiles */,
 				3A38314E2859E3DA0049C4A1 /* lightingModeWithShadows.png in CopyFiles */,
@@ -3767,8 +3771,8 @@
 		3A3832F629276DC60049C4A1 /* SkinEditorTreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinEditorTreeView.h; path = ../../radiant/ui/skin/SkinEditorTreeView.h; sourceTree = SOURCE_ROOT; };
 		3A3832F729276DC70049C4A1 /* SkinEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinEditor.cpp; path = ../../radiant/ui/skin/SkinEditor.cpp; sourceTree = SOURCE_ROOT; };
 		3A3832FA29276DED0049C4A1 /* Doom3ModelSkin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3ModelSkin.cpp; path = ../../radiantcore/skins/Doom3ModelSkin.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832FE298D4D890049C4A1 /* icon_sound_mute.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_sound_mute.png; path = ../../install/bitmaps/icon_sound_mute.png; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
-		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollWindow.h; path = ../../libs/wxutil/ScrollWindow.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimresponseeditor.xrc; path = ../../install/ui/stimresponseeditor.xrc; sourceTree = SOURCE_ROOT; };
@@ -5509,7 +5513,6 @@
 				3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */,
 				3A38323F28C34E7D0049C4A1 /* Icon.h */,
 				3A011FEE1E50278400A62BC1 /* IConv.h */,
-				3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */,
 				3A011FF31E50278400A62BC1 /* menu */,
 				3A011FFB1E50278400A62BC1 /* ModalProgressDialog.cpp */,
 				3A011FFC1E50278400A62BC1 /* ModalProgressDialog.h */,
@@ -5648,6 +5651,7 @@
 		3A0122531E503C4D00A62BC1 /* bitmaps */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832FE298D4D890049C4A1 /* icon_sound_mute.png */,
 				3A38325828DDD90B0049C4A1 /* icon_fx.png */,
 				3A383200285A119A0049C4A1 /* decl.png */,
 				3A3831FF285A11990049C4A1 /* swap_background.png */,
@@ -9179,7 +9183,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */,
 				3A382FE126C177C20049C4A1 /* AutoSaveRequestBlocker.h in Headers */,
 				3AE5C27326392D3900643850 /* FilterPopupMenu.h in Headers */,
 				3A0120331E50278400A62BC1 /* DirChooser.h in Headers */,
@@ -10251,6 +10254,7 @@
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
 				3A383068272D31C60049C4A1 /* vscale_up.png in Resources */,
 				3A383074272D31C70049C4A1 /* bulb_unlit.png in Resources */,
+				3A3832FF298D4D8A0049C4A1 /* icon_sound_mute.png in Resources */,
 				3A383073272D31C70049C4A1 /* arrow_up_blue.png in Resources */,
 				3A382FA126C176340049C4A1 /* preserveAspect.png in Resources */,
 				3A383071272D31C60049C4A1 /* increase.png in Resources */,
