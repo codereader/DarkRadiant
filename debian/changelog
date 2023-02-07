@@ -1,3 +1,14 @@
+darkradiant (3.8.0~jammy1) jammy; urgency=medium
+
+  * New feature: Support new frob-related material keywords.
+  * Mission selection list in Game setup is now alphabetically sorted.
+  * Better distinction between inherited and regular spawnargs.
+  * Silence sound shader button.
+  * Add Reload Definitions button to Model Chooser.
+  * Various bug fixes and minor improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 07 Feb 2023 20:34:04 +0000
+
 darkradiant (3.7.0~jammy1) jammy; urgency=medium
 
   * New feature: Skin Editor
