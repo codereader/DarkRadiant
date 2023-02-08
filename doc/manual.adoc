@@ -247,6 +247,27 @@ Static meshes and animated AI can be positioned more freely, however grid
 snapping is a useful tool for ensuring that models are appropriately aligned
 with the level geometry.
 
+==== Customising the grid appearance
+
+The appearance of the grid can be customised using the options in the *Grid* tab of the *Edit
+-> Preferences* dialog. Separate styles can be chosen for major and minor grid lines.
+
+[align="center",cols="^.<a,^.<a,^.<a",grid="none"]
+|===
+|image:GridStyleLines.png[] +
+*Lines*
+|image:GridStyleDottedLines.png[] +
+*Dotted Lines*
+|image:GridStyleMoreDottedLines.png[] +
+*More Dotted Lines*
+|image:GridStyleSquares.png[] +
+*Squares*
+|image:GridStyleDots.png[] +
+*Dots*
+|image:GridStyleBigDots.png[] +
+*Big Dots*
+|===
+
 [[Using3DCameraView]]
 === Using the 3D camera view
 
