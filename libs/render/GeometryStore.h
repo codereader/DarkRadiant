@@ -91,7 +91,7 @@ public:
         }
     }
 
-    // Marks the beginning of a frame, switches to the next writing buffers 
+    // Marks the beginning of a frame, switches to the next writing buffers
     void onFrameStart()
     {
         _currentBuffer = (_currentBuffer + 1) % NumFrameBuffers;
@@ -106,8 +106,8 @@ public:
 
         // Replay any modifications of all other buffers onto this one,
         // in the order they are switched through
-        for (auto bufferIndex = (_currentBuffer + 1) % NumFrameBuffers; 
-             bufferIndex != _currentBuffer; 
+        for (auto bufferIndex = (_currentBuffer + 1) % NumFrameBuffers;
+             bufferIndex != _currentBuffer;
              bufferIndex = (bufferIndex + 1) % NumFrameBuffers)
         {
             current.applyTransactions(_frameBuffers[bufferIndex]);
@@ -182,7 +182,7 @@ public:
         {
             throw std::logic_error("This is an index remap slot, cannot update vertex data");
         }
-         
+
         assert(!indices.empty());
         current.indices.setData(GetIndexSlot(slot), indices);
 
@@ -248,7 +248,7 @@ public:
         current.indices.deallocate(GetIndexSlot(slot));
     }
 
-    RenderParameters getRenderParameters(Slot slot) override
+    BufferAddresses getBufferAddresses(Slot slot) const override
     {
         auto vertexSlot = GetVertexSlot(slot);
         auto indexSlot = GetIndexSlot(slot);
@@ -257,7 +257,7 @@ public:
 
         auto indexOffset = current.indices.getOffset(indexSlot);
 
-        return RenderParameters
+        return BufferAddresses
         {
             nullptr,                            // VBO buffer start
             current.vertices.getBufferStart(),  // client buffer start
@@ -268,7 +268,7 @@ public:
         };
     }
 
-    AABB getBounds(Slot slot) override
+    AABB getBounds(Slot slot) const override
     {
         auto& current = getCurrentBuffer();
 
@@ -277,7 +277,7 @@ public:
         auto vertex = current.vertices.getBufferStart() + current.vertices.getOffset(vertexSlot);
 
         // Get the indices and use them to iterate over the vertices
-        auto indexSlot = GetIndexSlot(slot); 
+        auto indexSlot = GetIndexSlot(slot);
         auto indexPointer = current.indices.getBufferStart() + current.indices.getOffset(indexSlot);
         auto numIndices = current.indices.getNumUsedElements(indexSlot);
 
@@ -314,11 +314,16 @@ private:
         return _frameBuffers[_currentBuffer];
     }
 
+    const FrameBuffer& getCurrentBuffer() const
+    {
+        return _frameBuffers[_currentBuffer];
+    }
+
     // Highest 2 bits define the type, then 2x 31 bits are used for the vertex and index slot IDs
     static Slot GetSlot(SlotType slotType, std::uint32_t vertexSlot, std::uint32_t indexSlot)
     {
         // Remove the highest bit from vertex and index slot numbers, then assign the highest two
-        return (static_cast<Slot>(vertexSlot & 0x7FFFFFFF) << 31) | 
+        return (static_cast<Slot>(vertexSlot & 0x7FFFFFFF) << 31) |
                (static_cast<Slot>(indexSlot & 0x7FFFFFFF)) |
                (static_cast<Slot>(slotType) << 62);
     }

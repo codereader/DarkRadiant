@@ -44,7 +44,7 @@ void ObjectRenderer::initAttributePointers()
 
 void ObjectRenderer::submitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode)
 {
-    const auto renderParams = _store.getRenderParameters(slot);
+    const auto renderParams = _store.getBufferAddresses(slot);
 
     glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
@@ -52,16 +52,16 @@ void ObjectRenderer::submitGeometry(IGeometryStore::Slot slot, GLenum primitiveM
 
 void ObjectRenderer::submitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode)
 {
-    const auto renderParams = _store.getRenderParameters(slot);
+    const auto renderParams = _store.getBufferAddresses(slot);
 
     glDrawElementsInstancedBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(numInstances), static_cast<GLint>(renderParams.firstVertex));
 }
 
-void ObjectRenderer::submitGeometryWithCustomIndices(IGeometryStore::Slot slot, GLenum primitiveMode, 
+void ObjectRenderer::submitGeometryWithCustomIndices(IGeometryStore::Slot slot, GLenum primitiveMode,
     const std::vector<unsigned int>& indices)
 {
-    const auto renderParams = _store.getRenderParameters(slot);
+    const auto renderParams = _store.getBufferAddresses(slot);
 
     // When using manually generated indices, we need to unbind the index array buffer
     auto [_, indexBuffer] = _store.getBufferObjects();
@@ -82,7 +82,7 @@ void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeom
 
     // Build the indices and offsets used for the glMulti draw call
     std::vector<GLsizei> sizes;
-    std::vector<void*> firstIndices;
+    std::vector<const void*> firstIndices;
     std::vector<GLint> firstVertices;
 
     sizes.reserve(surfaceCount);
@@ -91,7 +91,7 @@ void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeom
 
     for (const auto slot : slots)
     {
-        auto renderParams = store.getRenderParameters(slot);
+        auto renderParams = store.getBufferAddresses(slot);
 
         sizes.push_back(static_cast<GLsizei>(renderParams.indexCount));
         firstVertices.push_back(static_cast<GLint>(renderParams.firstVertex));

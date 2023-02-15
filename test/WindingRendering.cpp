@@ -82,7 +82,7 @@ inline void checkWindingDataInSlot(const VertexBuffer& buffer, VertexBuffer::Slo
     EXPECT_LT(slot, numWindingsInBuffer) << "Slot out of bounds";
 
     for (auto i = 0; i < windingSize; ++i)
-    { 
+    {
         auto position = slot * windingSize + i;
 
         auto expectedVertex = createNthVertexOfWinding(i, expectedId, windingSize);
@@ -150,7 +150,7 @@ TEST(CompactWindingVertexBuffer, RemoveOneWinding)
 {
     for (auto size = SmallestWindingSize; size < LargestWindingSize; ++size)
     {
-        // We will work with a buffer containing 13 windings, 
+        // We will work with a buffer containing 13 windings,
         // the test will remove a single winding from every possible position
         constexpr auto NumWindings = 13;
 
@@ -209,7 +209,7 @@ TEST(CompactWindingVertexBuffer, ReplaceWinding)
 {
     for (auto size = SmallestWindingSize; size < LargestWindingSize; ++size)
     {
-        // We will work with a buffer containing 13 windings, 
+        // We will work with a buffer containing 13 windings,
         // the test will replace a single winding from every possible position
         constexpr auto NumWindings = 13;
         constexpr auto IdForReplacement = NumWindings * 2;
@@ -248,7 +248,7 @@ TEST(CompactWindingVertexBuffer, RemoveMultipleWindings)
 {
     for (auto size = SmallestWindingSize; size < LargestWindingSize; ++size)
     {
-        // We will work with a buffer containing N windings, 
+        // We will work with a buffer containing N windings,
         // the test will remove 1 to N windings from every possible position (2^N - 1)
         constexpr auto NumWindings = 9;
 
@@ -537,14 +537,14 @@ TEST_F(WindingRendererTest, EntitySurfacesRemovedInDestructor)
 }
 
 // Checks that the given vertex slot contains the given set of vertices
-void verifyVertexSlot(render::IGeometryStore& store, render::IGeometryStore::Slot slot, 
+void verifyVertexSlot(render::IGeometryStore& store, render::IGeometryStore::Slot slot,
     const std::vector<render::RenderVertex>& vertices)
 {
-    auto renderParms = store.getRenderParameters(slot);
+    auto renderParms = store.getBufferAddresses(slot);
 
     auto expectedVertex = vertices.begin();
 
-    for (auto vertex = renderParms.clientBufferStart + renderParms.firstVertex; 
+    for (auto vertex = renderParms.clientBufferStart + renderParms.firstVertex;
          expectedVertex != vertices.end();
          ++vertex, ++expectedVertex)
     {
@@ -594,7 +594,7 @@ TEST_F(WindingRendererTest, IndexRemapsUpdatedAfterReallocation)
     verifyVertexSlot(geometryStore, surfaceEntity1->getStorageLocation(), entity1Windings);
 
     // Remember the offset of the first vertex
-    auto firstVertexOffsetBeforeMove = geometryStore.getRenderParameters(surfaceEntity1->getStorageLocation()).firstVertex;
+    auto firstVertexOffsetBeforeMove = geometryStore.getBufferAddresses(surfaceEntity1->getStorageLocation()).firstVertex;
 
     // Now add a few more windings for the second entity, this should invalidate all
     // the entity surfaces of the renderer (it failed to do so before #5963).
@@ -621,11 +621,11 @@ TEST_F(WindingRendererTest, IndexRemapsUpdatedAfterReallocation)
     verifyVertexSlot(geometryStore, surfaceEntity1->getStorageLocation(), entity1Windings);
 
     // The first vertex' offset of entity 1's surface ought to be different now
-    auto firstVertexOffsetAfterMove = geometryStore.getRenderParameters(surfaceEntity1->getStorageLocation()).firstVertex;
+    auto firstVertexOffsetAfterMove = geometryStore.getBufferAddresses(surfaceEntity1->getStorageLocation()).firstVertex;
     EXPECT_NE(firstVertexOffsetAfterMove, firstVertexOffsetBeforeMove) << "First vertex offset didn't change, this is very suspicious";
 
     // Compare the vertex offset of entity1's surface to that of entity2, they should match
-    auto entity2VertexOffset = geometryStore.getRenderParameters(surfaceEntity2->getStorageLocation()).firstVertex;
+    auto entity2VertexOffset = geometryStore.getBufferAddresses(surfaceEntity2->getStorageLocation()).firstVertex;
     EXPECT_EQ(entity2VertexOffset, firstVertexOffsetAfterMove) << "First vertex offset of both entities should match";
 }
 

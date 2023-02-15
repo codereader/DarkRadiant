@@ -19,7 +19,7 @@ TestBufferObjectProvider _testBufferObjectProvider;
 inline void verifyAllocation(render::IGeometryStore& store, render::IGeometryStore::Slot slot,
     const std::vector<render::RenderVertex>& vertices, const std::vector<unsigned int>& indices)
 {
-    auto renderParms = store.getRenderParameters(slot);
+    auto renderParms = store.getBufferAddresses(slot);
 
     auto expectedIndex = indices.begin();
     auto firstVertex = renderParms.clientBufferStart + renderParms.firstVertex;
@@ -222,7 +222,7 @@ TEST(GeometryStore, ResizeData)
 
     auto slot = store.allocateSlot(vertices.size(), indices.size());
     EXPECT_NE(slot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
-    
+
     // Store everything into the buffer
     store.updateData(slot, vertices, indices);
 

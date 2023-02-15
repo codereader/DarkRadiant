@@ -16,10 +16,8 @@ namespace render
  * the shader to render just the geometry batch managed by this object.
  * This is used to render highlights (such as selection overlays).
  */
-class RenderableGeometry :
-    public OpenGLRenderable
+class RenderableGeometry: public OpenGLRenderable
 {
-private:
     ShaderPtr _shader;
     IGeometryRenderer::Slot _surfaceSlot;
 
@@ -286,8 +284,8 @@ protected:
      * Indices of vertices to join together into primitives.
      */
     void updateGeometryWithData(GeometryType type,
-                                const std::vector<RenderVertex>& vertices,
-                                const std::vector<unsigned int>& indices)
+                                const IGeometryRenderer::Vertices& vertices,
+                                const IGeometryRenderer::Indices& indices)
     {
         // Size changes require removal of the geometry before update
         if (_lastVertexSize != vertices.size() || _lastIndexSize != indices.size())
@@ -304,21 +302,17 @@ protected:
             return;
         }
 
-        if (_surfaceSlot == IGeometryRenderer::InvalidSlot)
-        {
+        if (_surfaceSlot == IGeometryRenderer::InvalidSlot) {
             _surfaceSlot = _shader->addGeometry(type, vertices, indices);
         }
-        else
-        {
+        else {
             // In case the slot had been deactivated => reactivate automatically
             _shader->updateGeometry(_surfaceSlot, vertices, indices);
         }
 
         // Fire the bounds changed signal (after submitting the changed vertices)
         if (_renderAdapter)
-        {
             _renderAdapter->boundsChanged();
-        }
     }
 };
 

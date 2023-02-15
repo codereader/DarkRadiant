@@ -24,10 +24,10 @@ struct BufferTransaction
 
 /**
  * Buffer object managing allocations within a continuous block of memory.
- * 
+ *
  * While the memory location itself might change when the buffer is growing,
  * the whole data is always stored in a single continuous memory block.
- * 
+ *
  * Use the allocate/deallocate methods to acquire or release a chunk of
  * a certain size. The chunk size is fixed and cannot be changed.
  */
@@ -133,6 +133,11 @@ public:
         return _buffer.data();
     }
 
+    const ElementType* getBufferStart() const
+    {
+        return _buffer.data();
+    }
+
     std::size_t getSize(Handle handle) const
     {
         return _slots[handle].Size;
@@ -229,7 +234,7 @@ public:
         if (findLeftFreeSlot(releasedSlot, slotIndexToMerge))
         {
             auto& slotToMerge = _slots[slotIndexToMerge];
-            
+
             releasedSlot.Offset = slotToMerge.Offset;
             releasedSlot.Size += slotToMerge.Size;
 

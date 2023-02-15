@@ -40,12 +40,18 @@ public:
     /// List of indices
     using Indices = std::vector<unsigned int>;
 
-    // Allocate a slot to hold the given indexed vertex data.
-    // Returns the handle which can be used to update or deallocate the data later
-    // The indexType determines the primitive GLenum that is chosen to render this surface
-    // Added geometry is active by default.
+    /**
+     * @brief Allocate a slot to hold the given indexed vertex data.
+     *
+     * Added geometry is active by default.
+     *
+     * @param primType Determines the primitive GLenum that is chosen to render this surface
+     * @param vertices Vector of vertex data
+     * @param indices Vector of index data
+     * @return Slot which can be used to update or deallocate the data later
+     */
     virtual Slot
-    addGeometry(GeometryType indexType, const Vertices& vertices, const Indices& indices) = 0;
+    addGeometry(GeometryType primType, const Vertices& vertices, const Indices& indices) = 0;
 
     // Re-activates a previously deactivated geometry slot.
     virtual void activateGeometry(Slot slot) = 0;
@@ -71,7 +77,7 @@ public:
     virtual void renderGeometry(Slot slot) = 0;
 
     // Returns the bounding box of the geometry stored in the given slot
-    virtual AABB getGeometryBounds(Slot slot) = 0;
+    virtual AABB getGeometryBounds(Slot slot) const = 0;
 
     // Returns the storage handle to enable the backend renderer to get hold of the indexed vertex data
     virtual IGeometryStore::Slot getGeometryStorageLocation(Slot slot) = 0;

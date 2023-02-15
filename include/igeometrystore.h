@@ -179,28 +179,33 @@ public:
      */
     virtual void deallocateSlot(Slot slot) = 0;
 
-    // The render parameters suitable for rendering surfaces using gl(Multi)DrawElements
-    struct RenderParameters
+    /// The memory addresses required for rendering surfaces using gl(Multi)DrawElements
+    struct BufferAddresses
     {
-        RenderVertex* bufferStart;        // start of buffer (to pass to gl*Pointer, usually nullptr)
-        RenderVertex* clientBufferStart;  // start of buffer in client memory
-        unsigned int* firstIndex;         // first index location of the given geometry (to pass to glDraw*)
-        unsigned int* clientFirstIndex;   // first index location of the given geometry in client memory
+        const RenderVertex* bufferStart;        // start of buffer (to pass to gl*Pointer, usually nullptr)
+        const RenderVertex* clientBufferStart;  // start of buffer in client memory
+        const unsigned int* firstIndex;         // first index location of the given geometry (to pass to glDraw*)
+        const unsigned int* clientFirstIndex;   // first index location of the given geometry in client memory
         std::size_t indexCount;           // index count of the given geometry
         std::size_t firstVertex;          // offset to the first vertex of this surface
     };
 
-    // Returns the information necessary to render the given slot
-    // Don't store these parameters on the client side, they will be only be valid
-    // for a certain amount of time, at the latest until allocateSlot or deallocateSlot are invoked.
-    virtual RenderParameters getRenderParameters(Slot slot) = 0;
+    /**
+     * @brief Get the memory layout information necessary to render the given slot with
+     * OpenGL functions, e.g. glDrawElements().
+     *
+     * Don't store these pointers on the client side, they will be only be valid for a
+     * certain amount of time, at the latest until allocateSlot or deallocateSlot are
+     * invoked.
+     */
+    virtual BufferAddresses getBufferAddresses(Slot slot) const = 0;
 
     /**
      * Returns the bounds of the geometry stored in the given slot.
      * Note that this will only take those vertices into account
      * that are actually referenced by any index in the slot.
      */
-    virtual AABB getBounds(Slot slot) = 0;
+    virtual AABB getBounds(Slot slot) const = 0;
 
     // Return the buffer objects of the current frame
     virtual std::pair<IBufferObject::Ptr, IBufferObject::Ptr> getBufferObjects() = 0;

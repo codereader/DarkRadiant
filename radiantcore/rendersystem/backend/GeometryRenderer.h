@@ -141,7 +141,7 @@ public:
         _store.updateData(slotInfo.storageHandle, vertices, indices);
     }
 
-    AABB getGeometryBounds(Slot slot) override
+    AABB getGeometryBounds(Slot slot) const override
     {
         const auto& slotInfo = _slots.at(slot);
 

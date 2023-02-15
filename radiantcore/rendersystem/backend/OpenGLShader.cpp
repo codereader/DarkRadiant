@@ -179,7 +179,7 @@ void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
     _geometryRenderer.renderGeometry(slot);
 }
 
-AABB OpenGLShader::getGeometryBounds(IGeometryRenderer::Slot slot)
+AABB OpenGLShader::getGeometryBounds(IGeometryRenderer::Slot slot) const
 {
     return _geometryRenderer.getGeometryBounds(slot);
 }
@@ -449,7 +449,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
         {
         case IShaderLayer::DIFFUSE:
             // Use the diffusemap with the highest opacity for the z-fill pass
-            if (!diffuseForDepthFillPass || 
+            if (!diffuseForDepthFillPass ||
                 (diffuseForDepthFillPass->getAlphaTest() != -1 && layer->getAlphaTest() == -1))
             {
                 diffuseForDepthFillPass = layer;
@@ -485,7 +485,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
             auto& zPass = appendDepthFillPass();
 
             zPass.stage0 = diffuseForDepthFillPass;
-            zPass.texture0 = diffuseForDepthFillPass ? 
+            zPass.texture0 = diffuseForDepthFillPass ?
                 getTextureOrInteractionDefault(diffuseForDepthFillPass)->getGLTexNum() :
                 getDefaultInteractionTexture(IShaderLayer::DIFFUSE)->getGLTexNum();
             zPass.alphaThreshold = diffuseForDepthFillPass ? diffuseForDepthFillPass->getAlphaTest() : -1.0f;
