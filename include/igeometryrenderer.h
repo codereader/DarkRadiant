@@ -34,13 +34,18 @@ public:
     using Slot = std::uint64_t;
     static constexpr Slot InvalidSlot = std::numeric_limits<Slot>::max();
 
+    /// List of vertices
+    using Vertices = std::vector<RenderVertex>;
+
+    /// List of indices
+    using Indices = std::vector<unsigned int>;
+
     // Allocate a slot to hold the given indexed vertex data.
     // Returns the handle which can be used to update or deallocate the data later
     // The indexType determines the primitive GLenum that is chosen to render this surface
     // Added geometry is active by default.
-    virtual Slot addGeometry(GeometryType indexType,
-        const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) = 0;
+    virtual Slot
+    addGeometry(GeometryType indexType, const Vertices& vertices, const Indices& indices) = 0;
 
     // Re-activates a previously deactivated geometry slot.
     virtual void activateGeometry(Slot slot) = 0;
@@ -57,8 +62,7 @@ public:
 
     // Updates the vertex data. The size of the vertex and index array must be the same
     // as the one passed to addGeometry. To change the size the data needs to be removed and re-added.
-    virtual void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) = 0;
+    virtual void updateGeometry(Slot slot, const Vertices& vertices, const Indices& indices) = 0;
 
     // Submits all active geometry slots to GL
     virtual void renderAllVisibleGeometry() = 0;

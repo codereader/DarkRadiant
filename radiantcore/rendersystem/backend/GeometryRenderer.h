@@ -20,7 +20,7 @@ private:
     {
         GLenum primitiveMode;
         std::set<IGeometryStore::Slot> visibleStorageHandles;
-        
+
         SurfaceGroup(GLenum mode) :
             primitiveMode(mode)
         {}
@@ -73,8 +73,8 @@ public:
         return true;
     }
 
-    Slot addGeometry(GeometryType indexType, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) override
+    Slot
+    addGeometry(GeometryType indexType, const Vertices& vertices, const Indices& indices) override
     {
         auto groupIndex = GetGroupIndexForIndexType(indexType);
         auto& group = getGroupByIndex(groupIndex);
@@ -126,15 +126,14 @@ public:
 
         // Invalidate the slot
         slotInfo.storageHandle = InvalidStorageHandle;
-        
+
         if (slot < _freeSlotMappingHint)
         {
             _freeSlotMappingHint = slot;
         }
     }
 
-    void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) override
+    void updateGeometry(Slot slot, const Vertices& vertices, const Indices& indices) override
     {
         const auto& slotInfo = _slots.at(slot);
 
