@@ -108,14 +108,13 @@ inline Vector4 toVector4(const Colour4b& colour)
 }
 
 // Renders a fixed size point array as line strip
-class RenderableLineStrip :
-    public render::RenderableGeometry
+class RenderableLineStrip: public render::RenderableGeometry
 {
-protected:
     const Matrix4& _localToWorld;
     bool _needsUpdate;
     Vector4 _colour;
 
+protected:
     std::vector<Vertex3> _rawPoints;
 
 public:
@@ -155,7 +154,9 @@ protected:
 
         for (const auto& vertex : _rawPoints)
         {
-            vertices.push_back(render::RenderVertex(_localToWorld * vertex, { 0,0,0 }, { 0,0 }, _colour));
+            vertices.push_back(
+                render::RenderVertex(_localToWorld * vertex, {0, 0, 0}, {0, 0}, _colour)
+            );
 
             if (index > 0)
             {
