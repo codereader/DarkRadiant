@@ -127,7 +127,7 @@ private:
         _existingVersionFolders.clear();
 
         // Enumerate all existing folders and sort them by version
-        os::foreachItemInDirectory(_context.getSettingsPath(), [&](const fs::path& item)
+        os::forEachItemInDirectory(_context.getSettingsPath(), [&](const fs::path& item)
         {
             // Skip non-directories
             if (!fs::is_directory(item)) return;

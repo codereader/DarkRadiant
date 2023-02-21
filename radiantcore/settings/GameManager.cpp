@@ -397,7 +397,7 @@ void Manager::loadGameFiles(const std::string& appPath)
     {
 		// Invoke a functor on every file in the games/ dir,
 		// function gets called with the file (without path)
-		os::foreachItemInDirectory(gamePath, [&](const fs::path& file)
+		os::forEachItemInDirectory(gamePath, [&](const fs::path& file)
 		{
 			if (string::to_lower_copy(file.extension().string()) != Game::FILE_EXTENSION)
 			{
