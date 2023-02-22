@@ -12,6 +12,7 @@
 #include <fmt/format.h>
 #include <sigc++/retype_return.h>
 #include <wx/sizer.h>
+#include <wx/frame.h>
 
 #include "iselectiontest.h"
 #include "selectionlib.h"
@@ -542,7 +543,7 @@ void CamWnd::handleFreeMovement(float timePassed)
         origin += g_vector3_axis_z * (timePassed * movementSpeed);
     if (_freeMoveFlags & MOVE_DOWN)
         origin += g_vector3_axis_z * (-timePassed * movementSpeed);
-    
+
     _camera->setCameraOrigin(origin);
 }
 
@@ -1032,7 +1033,7 @@ void CamWnd::captureStates()
     _shaders.mergeActionShaderConflict = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayConflict);
 }
 
-void CamWnd::releaseStates() 
+void CamWnd::releaseStates()
 {
     _shaders.faceHighlightShader.reset();
     _shaders.primitiveHighlightShader.reset();
