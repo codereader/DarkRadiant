@@ -40,37 +40,28 @@ private:
 public:
     FreezePointer();
 
-	/**
-	 * Catch any mouse pointer movements. 
-	 * Any mouse movement will be reported to the given MotionFunction.
-	 * The EndMoveFunction will be invoked as soon as the cursor capture is lost.
-     * Defaults to: freeze and hide cursor, send motion deltas only.
-	 */
-    void startCapture(wxWindow* window, 
-                      const MotionFunction& function,
-                      const CaptureLostFunction& endMove);
-
     /**
-    * Catch any mouse pointer movements and redirect them to the given window.
-    * Any mouse movement will be reported to the given MotionFunction.
-    * The CaptureLostFunction will be invoked as soon as the cursor capture is lost.
-    * Define flags to control behaviour (hide cursor, etc.)
-    */
-    void startCapture(wxWindow* window, 
+     * @brief Catch any mouse pointer movements and redirect them to the given window.
+     *
+     * @param function Any mouse movement will be reported to the given MotionFunction.
+     * @param endMove Function invoked as soon as the cursor capture is lost.
+     */
+    void startCapture(wxWindow* window,
                       const MotionFunction& function,
                       const CaptureLostFunction& endMove,
-                      bool freezePointer,
-                      bool hidePointer,
-                      bool motionReceivesDeltas);
+                      bool freezePointer = true,
+                      bool hidePointer = true,
+                      bool motionReceivesDeltas = true);
 
-    // Returns true if the mouse is currently captured by this class.
-    bool isCapturing(wxWindow* window);
+    /// Returns true if the mouse is currently captured by this class.
+    bool isCapturing(wxWindow* window) const;
 
-	/**
-	 * Un-capture the cursor again. If the cursor was frozen, this moves 
-     * it back to where it was before.
-	 */
-	void endCapture();
+    /**
+     * @brief Un-capture the cursor again.
+     *
+     * If the cursor was frozen, this moves it back to where it was before.
+     */
+    void endCapture();
 
     // Activate or deactivate the freeze pointer behaviour
     // when activated, the cursor will be forced to stay at the current position
@@ -87,7 +78,7 @@ public:
 	 * During freeze mouse button events might be eaten by the window.
 	 * Use these to enable event propagation.
 	 */
-	void connectMouseEvents(const MouseEventFunction& onMouseDown, 
+	void connectMouseEvents(const MouseEventFunction& onMouseDown,
 							const MouseEventFunction& onMouseUp);
 	void disconnectMouseEvents();
 

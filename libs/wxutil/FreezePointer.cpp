@@ -18,13 +18,6 @@ FreezePointer::FreezePointer() :
 
 void FreezePointer::startCapture(wxWindow* window,
                                  const MotionFunction& motionDelta,
-                                 const CaptureLostFunction& endMove)
-{
-    startCapture(window, motionDelta, endMove, true, true, true);
-}
-
-void FreezePointer::startCapture(wxWindow* window, 
-                                 const MotionFunction& motionDelta, 
                                  const CaptureLostFunction& endMove,
                                  bool freezePointer,
                                  bool hidePointer,
@@ -38,8 +31,8 @@ void FreezePointer::startCapture(wxWindow* window,
     setFreezePointer(freezePointer);
     setHidePointer(hidePointer);
     setSendMotionDeltas(motionReceivesDeltas);
-	
-	// Find the toplevel window 
+
+	// Find the toplevel window
 	wxWindow* topLevel = wxGetTopLevelParent(window);
 
     if (_hidePointer)
@@ -81,7 +74,7 @@ void FreezePointer::startCapture(wxWindow* window,
     topLevel->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(FreezePointer::onMouseCaptureLost), NULL, this);
 }
 
-bool FreezePointer::isCapturing(wxWindow* window)
+bool FreezePointer::isCapturing(wxWindow* window) const
 {
     return _capturedWindow != nullptr;
 }
@@ -142,7 +135,7 @@ void FreezePointer::setSendMotionDeltas(bool shouldSendDeltasOnly)
     _motionReceivesDeltas = shouldSendDeltasOnly;
 }
 
-void FreezePointer::connectMouseEvents(const MouseEventFunction& onMouseDown, 
+void FreezePointer::connectMouseEvents(const MouseEventFunction& onMouseDown,
 									   const MouseEventFunction& onMouseUp)
 {
 	_onMouseUp = onMouseUp;
@@ -159,7 +152,7 @@ void FreezePointer::onMouseDown(wxMouseEvent& ev)
 {
 	if (_onMouseDown && _capturedWindow)
 	{
-        // The connected mouse up event expects window coordinates, 
+        // The connected mouse up event expects window coordinates,
         // not coordinates relative to the captured window
         wxMouseEvent copy(ev);
         wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
@@ -175,7 +168,7 @@ void FreezePointer::onMouseUp(wxMouseEvent& ev)
 {
     if (_onMouseUp && _capturedWindow)
 	{
-        // The connected mouse up event expects window coordinates, 
+        // The connected mouse up event expects window coordinates,
         // not coordinates relative to the captured window
         wxMouseEvent copy(ev);
         wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
@@ -192,7 +185,7 @@ void FreezePointer::onMouseMotion(wxMouseEvent& ev)
     if (!_capturedWindow) return;
 
 	wxPoint windowMousePos = _capturedWindow->ScreenToClient(wxGetMousePosition());
-		
+
 	int dx = windowMousePos.x - _freezePosX;
 	int dy = windowMousePos.y - _freezePosY;
 
