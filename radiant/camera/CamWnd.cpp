@@ -55,7 +55,10 @@ namespace
 inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 {
     wxSize size = widget.GetSize();
-    return Vector2(static_cast<Vector2::ElementType>(size.GetWidth() / 2), static_cast<Vector2::ElementType>(size.GetHeight() / 2));
+    return Vector2(
+        static_cast<Vector2::ElementType>(size.GetWidth() / 2.0),
+        static_cast<Vector2::ElementType>(size.GetHeight() / 2.0)
+    );
 }
 
 // ---------- CamWnd Implementation --------------------------------------------------
