@@ -305,6 +305,8 @@ private:
 
     void undoCmd(const cmd::ArgumentList& args);
     void redoCmd(const cmd::ArgumentList& args);
+
+    void assignRenderSystem(const scene::IMapRootNodePtr& root);
 };
 
 } // namespace map
