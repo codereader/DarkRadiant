@@ -270,9 +270,29 @@ void ThreeWayMergeOperation::compareAndCreateActions()
                         addActionForKeyValueDiff(keyValueDiff, entityToModify);
                     }
 
+                    // Collect fingerprints for all primitives of the target entity
+                    auto targetChildren = NodeUtils::CollectPrimitiveFingerprints(entityToModify);
+
                     for (const auto& primitiveDiff : pair.second->differingChildren)
                     {
-                        addActionsForPrimitiveDiff(primitiveDiff, entityToModify);
+                        switch (primitiveDiff.type)
+                        {
+                        case ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded:
+                            addAction(std::make_shared<AddChildAction>(primitiveDiff.node, entityToModify));
+                            break;
+
+                        case ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved:
+                            // The primitiveDiff at hand references the node in the source map,
+                            // we need to find its counter-part in the target map, look it up by its fingerprint
+                            auto targetPrimitive = targetChildren.find(primitiveDiff.fingerprint);
+
+                            if (targetPrimitive != targetChildren.end())
+                            {
+                                // Located the matching primitive on the target entity, mark for removal
+                                addAction(std::make_shared<RemoveChildAction>(targetPrimitive->second));
+                            }
+                            break;
+                        }
                     }
                 }
                 break;
