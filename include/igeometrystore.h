@@ -58,7 +58,7 @@ public:
     // Downloads the specified data chunk
     virtual std::vector<unsigned char> getData(std::size_t offset, std::size_t numBytes) = 0;
 
-    // Re-allocates the memory of this buffer, does not transfer the data 
+    // Re-allocates the memory of this buffer, does not transfer the data
     // from the old internal buffer to the new one.
     virtual void resize(std::size_t newSize) = 0;
 };
@@ -95,6 +95,12 @@ public:
     // Slot ID handed out to client code
     using Slot = std::uint64_t;
 
+    /// List of vertices
+    using Vertices = std::vector<RenderVertex>;
+
+    /// List of indices
+    using Indices = std::vector<unsigned int>;
+
     /**
      * Allocate memory blocks, one for vertices and one for indices, of the given size.
      * The block can be populated using updateData(), where it's possible to
@@ -121,17 +127,16 @@ public:
 
     /**
      * Load vertex and index data into the specified block. The given vertex and
-     * index arrays must not be larger than what has been allocated earlier, 
+     * index arrays must not be larger than what has been allocated earlier,
      * but they're allowed to be smaller.
      */
-    virtual void updateData(Slot slot, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) = 0;
+    virtual void updateData(Slot slot, const Vertices& vertices, const Indices& indices) = 0;
 
     /**
      * Updates the data of an index slot. Equivalent to calling updateData() with
      * an empty set of vertices.
      */
-    virtual void updateIndexData(Slot slot, const std::vector<unsigned int>& indices)
+    virtual void updateIndexData(Slot slot, const Indices& indices)
     {
         updateData(slot, {}, indices);
     }
@@ -141,14 +146,16 @@ public:
      * from vertexOffset/indexOffset respectively. The affected range must not be out of bounds
      * of the allocated slot.
      */
-    virtual void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<RenderVertex>& vertices,
-        std::size_t indexOffset, const std::vector<unsigned int>& indices) = 0;
+    virtual void updateSubData(
+        Slot slot, std::size_t vertexOffset, const Vertices& vertices, std::size_t indexOffset,
+        const Indices& indices
+    ) = 0;
 
     /**
      * Updates a portion of index data in an index slot. Equivalent to calling updateSubData() with
      * an empty set of vertices.
      */
-    virtual void updateIndexSubData(Slot slot, std::size_t indexOffset, const std::vector<unsigned int>& indices)
+    virtual void updateIndexSubData(Slot slot, std::size_t indexOffset, const Indices& indices)
     {
         updateSubData(slot, 0, {}, indexOffset, indices);
     }
@@ -172,28 +179,33 @@ public:
      */
     virtual void deallocateSlot(Slot slot) = 0;
 
-    // The render parameters suitable for rendering surfaces using gl(Multi)DrawElements
-    struct RenderParameters
+    /// The memory addresses required for rendering surfaces using gl(Multi)DrawElements
+    struct BufferAddresses
     {
-        RenderVertex* bufferStart;        // start of buffer (to pass to gl*Pointer, usually nullptr)
-        RenderVertex* clientBufferStart;  // start of buffer in client memory
-        unsigned int* firstIndex;         // first index location of the given geometry (to pass to glDraw*)
-        unsigned int* clientFirstIndex;   // first index location of the given geometry in client memory
+        const RenderVertex* bufferStart;        // start of buffer (to pass to gl*Pointer, usually nullptr)
+        const RenderVertex* clientBufferStart;  // start of buffer in client memory
+        const unsigned int* firstIndex;         // first index location of the given geometry (to pass to glDraw*)
+        const unsigned int* clientFirstIndex;   // first index location of the given geometry in client memory
         std::size_t indexCount;           // index count of the given geometry
         std::size_t firstVertex;          // offset to the first vertex of this surface
     };
 
-    // Returns the information necessary to render the given slot
-    // Don't store these parameters on the client side, they will be only be valid 
-    // for a certain amount of time, at the latest until allocateSlot or deallocateSlot are invoked.
-    virtual RenderParameters getRenderParameters(Slot slot) = 0;
+    /**
+     * @brief Get the memory layout information necessary to render the given slot with
+     * OpenGL functions, e.g. glDrawElements().
+     *
+     * Don't store these pointers on the client side, they will be only be valid for a
+     * certain amount of time, at the latest until allocateSlot or deallocateSlot are
+     * invoked.
+     */
+    virtual BufferAddresses getBufferAddresses(Slot slot) const = 0;
 
     /**
      * Returns the bounds of the geometry stored in the given slot.
-     * Note that this will only take those vertices into account 
+     * Note that this will only take those vertices into account
      * that are actually referenced by any index in the slot.
-     */ 
-    virtual AABB getBounds(Slot slot) = 0;
+     */
+    virtual AABB getBounds(Slot slot) const = 0;
 
     // Return the buffer objects of the current frame
     virtual std::pair<IBufferObject::Ptr, IBufferObject::Ptr> getBufferObjects() = 0;

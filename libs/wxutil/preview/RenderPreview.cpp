@@ -373,21 +373,19 @@ void RenderPreview::updateModelViewMatrix()
 
 void RenderPreview::startPlayback()
 {
-	if (_timer.IsRunning())
-    {
+    if (_timer.IsRunning()) {
         // Timer is already running, just reset the preview time
         _renderSystem->setTime(0);
     }
-    else
-    {
+    else {
         // Timer is not enabled, we're paused or stopped
         _timer.Start(MSEC_PER_FRAME);
     }
 
-	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
+    wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 
-	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), true);
-	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(), true);
+    toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), true);
+    toolbar->EnableTool(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(), true);
 
     updateFrameSelector();
 }
@@ -672,12 +670,10 @@ void RenderPreview::onGLScroll(wxMouseEvent& ev)
 
     Vector3 forward(_modelView[2], _modelView[6], _modelView[10]);
 
-	if (ev.GetWheelRotation() > 0)
-    {
+    if (ev.GetWheelRotation() > 0) {
         _viewOrigin -= forward * inc;
     }
-    else if (ev.GetWheelRotation() < 0)
-    {
+    else if (ev.GetWheelRotation() < 0) {
         _viewOrigin += forward * inc;
     }
 
@@ -728,16 +724,14 @@ void RenderPreview::onStopPlaybackClick(wxCommandEvent& ev)
 
 void RenderPreview::onPausePlaybackClick(wxCommandEvent& ev)
 {
-	// Disable the button
-	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
-	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), false);
+    // Disable the button
+    wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
+    toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), false);
 
-	if (_timer.IsRunning())
-    {
+    if (_timer.IsRunning()) {
         _timer.Stop();
     }
-    else
-    {
+    else {
         _timer.Start(MSEC_PER_FRAME); // re-enable playback
     }
 }

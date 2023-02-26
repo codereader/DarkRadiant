@@ -34,13 +34,24 @@ public:
     using Slot = std::uint64_t;
     static constexpr Slot InvalidSlot = std::numeric_limits<Slot>::max();
 
-    // Allocate a slot to hold the given indexed vertex data.
-    // Returns the handle which can be used to update or deallocate the data later
-    // The indexType determines the primitive GLenum that is chosen to render this surface
-    // Added geometry is active by default.
-    virtual Slot addGeometry(GeometryType indexType,
-        const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) = 0;
+    /// List of vertices
+    using Vertices = std::vector<RenderVertex>;
+
+    /// List of indices
+    using Indices = std::vector<unsigned int>;
+
+    /**
+     * @brief Allocate a slot to hold the given indexed vertex data.
+     *
+     * Added geometry is active by default.
+     *
+     * @param primType Determines the primitive GLenum that is chosen to render this surface
+     * @param vertices Vector of vertex data
+     * @param indices Vector of index data
+     * @return Slot which can be used to update or deallocate the data later
+     */
+    virtual Slot
+    addGeometry(GeometryType primType, const Vertices& vertices, const Indices& indices) = 0;
 
     // Re-activates a previously deactivated geometry slot.
     virtual void activateGeometry(Slot slot) = 0;
@@ -57,8 +68,7 @@ public:
 
     // Updates the vertex data. The size of the vertex and index array must be the same
     // as the one passed to addGeometry. To change the size the data needs to be removed and re-added.
-    virtual void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) = 0;
+    virtual void updateGeometry(Slot slot, const Vertices& vertices, const Indices& indices) = 0;
 
     // Submits all active geometry slots to GL
     virtual void renderAllVisibleGeometry() = 0;
@@ -67,7 +77,7 @@ public:
     virtual void renderGeometry(Slot slot) = 0;
 
     // Returns the bounding box of the geometry stored in the given slot
-    virtual AABB getGeometryBounds(Slot slot) = 0;
+    virtual AABB getGeometryBounds(Slot slot) const = 0;
 
     // Returns the storage handle to enable the backend renderer to get hold of the indexed vertex data
     virtual IGeometryStore::Slot getGeometryStorageLocation(Slot slot) = 0;

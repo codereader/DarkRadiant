@@ -12,6 +12,7 @@
 #include <fmt/format.h>
 #include <sigc++/retype_return.h>
 #include <wx/sizer.h>
+#include <wx/frame.h>
 
 #include "iselectiontest.h"
 #include "selectionlib.h"
@@ -54,7 +55,10 @@ namespace
 inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 {
     wxSize size = widget.GetSize();
-    return Vector2(static_cast<Vector2::ElementType>(size.GetWidth() / 2), static_cast<Vector2::ElementType>(size.GetHeight() / 2));
+    return Vector2(
+        static_cast<Vector2::ElementType>(size.GetWidth() / 2.0),
+        static_cast<Vector2::ElementType>(size.GetHeight() / 2.0)
+    );
 }
 
 // ---------- CamWnd Implementation --------------------------------------------------
@@ -542,7 +546,7 @@ void CamWnd::handleFreeMovement(float timePassed)
         origin += g_vector3_axis_z * (timePassed * movementSpeed);
     if (_freeMoveFlags & MOVE_DOWN)
         origin += g_vector3_axis_z * (-timePassed * movementSpeed);
-    
+
     _camera->setCameraOrigin(origin);
 }
 
@@ -1032,7 +1036,7 @@ void CamWnd::captureStates()
     _shaders.mergeActionShaderConflict = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayConflict);
 }
 
-void CamWnd::releaseStates() 
+void CamWnd::releaseStates()
 {
     _shaders.faceHighlightShader.reset();
     _shaders.primitiveHighlightShader.reset();

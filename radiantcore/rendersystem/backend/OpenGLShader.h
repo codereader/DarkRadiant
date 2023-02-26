@@ -60,7 +60,7 @@ private:
     GeometryRenderer _geometryRenderer;
     SurfaceRenderer _surfaceRenderer;
 
-    // Each shader can be used by either camera or orthoview, or both 
+    // Each shader can be used by either camera or orthoview, or both
     std::size_t _enabledViewTypes;
 
     bool _mergeModeActive;
@@ -83,7 +83,7 @@ private:
 	void destroy();
 
     void onMaterialChanged();
-    
+
 public:
     /// Construct and initialise
     OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem);
@@ -111,7 +111,7 @@ public:
         const std::vector<unsigned int>& indices) override;
     void renderAllVisibleGeometry() override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
-    AABB getGeometryBounds(IGeometryRenderer::Slot slot) override;
+    AABB getGeometryBounds(IGeometryRenderer::Slot slot) const override;
     IGeometryStore::Slot getGeometryStorageLocation(IGeometryRenderer::Slot slot) override;
 
     ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface) override;
