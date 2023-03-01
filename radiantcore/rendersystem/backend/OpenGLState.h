@@ -13,16 +13,14 @@ namespace render
 {
 
 /**
- * \brief
- * Data structure encapsulating various parameters of the OpenGL state machine,
- * as well as parameters used internally by Radiant.
+ * \brief Data structure encapsulating various parameters of the OpenGL state machine, as
+ * well as parameters used internally by Radiant.
  *
- * The OpenGLState class is used to keep track of OpenGL state parameters used
- * by the renderer, in order to avoid using slow glGet() calls or repeatedly
- * changing states to the same value. Each shader pass keeps an OpenGLState
- * member which stores the state values it wishes to use, and these values are
- * selectively applied to a single "current" OpenGLState object maintained by
- * the render system.
+ * The OpenGLState class is used to keep track of OpenGL state parameters used by the
+ * renderer, in order to avoid using slow glGet() calls or repeatedly changing states to the
+ * same value. Each shader pass keeps an OpenGLState member which stores the state values it
+ * wishes to use, and these values are selectively applied to a single "current" OpenGLState
+ * object maintained by the render system.
  */
 class OpenGLState
 {
@@ -187,16 +185,10 @@ public:
     IShaderLayer::Ptr stage3;
     IShaderLayer::Ptr stage4;
 
-    /**
-     * \brief
-     * Source blend mode.
-     */
+    /// Source blend mode.
     GLenum m_blend_src;
 
-    /**
-     * \brief
-     * Destination blend mode
-     */
+    /// Destination blend mode
     GLenum m_blend_dst;
 
     // Alpha test function
@@ -205,21 +197,17 @@ public:
     // Alpha test threshold
     GLfloat alphaThreshold;
 
-    GLfloat m_linewidth;
+    /// Width of solid lines
+    GLfloat lineWidth = 1.0f;
+
     GLfloat m_pointsize;
     GLint m_linestipple_factor;
     GLushort m_linestipple_pattern;
 
-    /**
-     * \brief
-     * GL program or shader object.
-     */
+    /// GL program or shader object.
     GLProgram* glProgram;
 
-    /**
-     * \brief
-     * The cube-map texgen mode for rendering.
-     */
+    /// The cube-map texgen mode for rendering.
     IShaderLayer::CubeMapMode cubeMapMode;
 
     // Whether to ignore the RGBA colour modulation defined by the associated shader stage
@@ -244,7 +232,6 @@ public:
       m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
       alphaFunc(GL_ALWAYS),
       alphaThreshold(0),
-      m_linewidth(1),
       m_pointsize(1),
       m_linestipple_factor(1),
       m_linestipple_pattern(0xAAAA),
@@ -422,7 +409,7 @@ public:
         }
 
         // Set up the alpha test parameters
-        if (requiredState & RENDER_ALPHATEST && 
+        if (requiredState & RENDER_ALPHATEST &&
             (alphaFunc != current.alphaFunc || alphaThreshold != current.alphaThreshold))
         {
             // Set alpha function in GL
@@ -472,11 +459,11 @@ public:
             current.m_blend_dst = m_blend_dst;
         }
 
-        if (!(requiredState & RENDER_FILL) && m_linewidth != current.m_linewidth)
+        if (!(requiredState & RENDER_FILL) && lineWidth != current.lineWidth)
         {
-            glLineWidth(m_linewidth);
+            glLineWidth(lineWidth);
             debug::assertNoGlErrors();
-            current.m_linewidth = m_linewidth;
+            current.lineWidth = lineWidth;
         }
 
         if (!(requiredState & RENDER_FILL) && m_pointsize != current.m_pointsize)

@@ -97,7 +97,7 @@ void ColourShader::construct()
 
         state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
         state.setDepthFunc(GL_LESS);
-        state.m_linewidth = 1;
+        state.lineWidth = 1;
         state.m_pointsize = 1;
 
         enableViewType(RenderViewType::OrthoView);
@@ -119,7 +119,7 @@ void ColourShader::construct()
         state.setRenderFlag(RENDER_BLEND);
         state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
         state.setDepthFunc(GL_LESS);
-        state.m_linewidth = 1;
+        state.lineWidth = 1;
         state.m_pointsize = 1;
 
         if (isMergeModeEnabled())

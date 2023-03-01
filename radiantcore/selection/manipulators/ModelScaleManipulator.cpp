@@ -38,7 +38,7 @@ void ModelScaleManipulator::testSelect(SelectionTest& test, const Matrix4& pivot
 		if (_curManipulatable) return; // already done here
 
 		const AABB& aabb = node->worldAABB();
-		
+
 		Vector3 points[8];
 		aabb.getCorners(points);
 
@@ -82,14 +82,14 @@ void ModelScaleManipulator::onPreRender(const RenderSystemPtr& renderSystem, con
 
     if (!_lineShader)
     {
-        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
+        _lineShader = renderSystem->capture(BuiltInShaderType::ManipulatorWireframe);
     }
 
     if (!_pointShader)
     {
         _pointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
     }
-    
+
     _aabbs.clear();
 
     foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
