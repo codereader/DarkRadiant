@@ -8,6 +8,7 @@
 #include "string/predicate.h"
 #include <fmt/format.h>
 #include <functional>
+#include <utility>
 
 namespace eclass
 {
