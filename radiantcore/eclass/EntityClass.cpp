@@ -6,6 +6,7 @@
 
 #include "string/predicate.h"
 #include <functional>
+#include <utility>
 
 namespace eclass
 {
