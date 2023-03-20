@@ -98,6 +98,18 @@ scene::INodePtr GenericEntityNode::clone() const
 	node->construct();
     node->constructClone(*this);
 
+    // When we clone objects which allow 3D rotations, if it uses angle instead of rotation
+    // as a key, the angle will get clobbered with a default rotation key of "", so we
+    // need to set it properly
+    if (_allow3Drotations)
+    {
+        std::string angleKey = _spawnArgs.getKeyValue("angle");
+        if (!angleKey.empty())
+        {
+            node->m_rotationKey.angleChanged(angleKey);
+        }
+    }
+
 	return node;
 }
 
