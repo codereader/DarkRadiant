@@ -1838,4 +1838,38 @@ TEST_F(EntityTest, MovingSpeakerNotRemovingDistanceArgs)
     EXPECT_NE(speaker->getEntity().getKeyValue("s_maxdistance"), "") << "Key value has been lost in translation";
 }
 
+// #6274: Empty rotation when cloning an entity using editor_rotatable and an angle key
+TEST_F(EntityTest, CloneGenericEntityRotatableAngle)
+{
+    auto separator = algorithm::createEntityByClassName("info_vacuumSeparator");
+    separator->getEntity().setKeyValue("angle", "180.0");
+
+    // Direction should be negative x axis
+    EXPECT_TRUE(math::isNear(separator->getDirection(), Vector3(-1, 0, 0), 0.01));
+
+    // Clone the entity node
+    auto separatorCopy = std::dynamic_pointer_cast<IEntityNode>(separator->clone());
+
+    // Confirm the direction of clone is also negative x axis
+    EXPECT_TRUE(math::isNear(separatorCopy->getDirection(), Vector3(-1, 0, 0), 0.01));
+    Matrix4 mat = Matrix4::getRotationAboutZ(math::Degrees(180.0));
+}
+
+// Related to #6274: Confirm that still works correctly when using rotation
+TEST_F(EntityTest, CloneGenericEntityRotatableRotation)
+{
+    auto separator = algorithm::createEntityByClassName("info_vacuumSeparator");
+    separator->getEntity().setKeyValue("rotation", "-1 0 0 0 -1 0 0 0 1");
+
+    // Direction should be negative x axis
+    EXPECT_TRUE(math::isNear(separator->getDirection(), Vector3(-1, 0, 0), 0.01));
+
+    // Clone the entity node
+    auto separatorCopy = std::dynamic_pointer_cast<IEntityNode>(separator->clone());
+
+    // Confirm the direction of clone is also negative x axis
+    EXPECT_TRUE(math::isNear(separatorCopy->getDirection(), Vector3(-1, 0, 0), 0.01));
+    Matrix4 mat = Matrix4::getRotationAboutZ(math::Degrees(180.0));
+}
+
 }
