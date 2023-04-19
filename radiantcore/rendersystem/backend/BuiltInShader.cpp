@@ -148,22 +148,9 @@ void BuiltInShader::construct()
 
     case BuiltInShaderType::ManipulatorWireframe:
     {
-        pass.setRenderFlags(RENDER_DEPTHWRITE
-            | RENDER_DEPTHTEST
-            | RENDER_OVERRIDE
-            | RENDER_VERTEX_COLOUR);
+        pass.setRenderFlags(RENDER_OVERRIDE | RENDER_VERTEX_COLOUR);
         pass.setSortPosition(OpenGLState::SORT_GUI1);
-        pass.setDepthFunc(GL_LEQUAL);
-
-        OpenGLState& hiddenLine = appendDefaultPass();
-        hiddenLine.setName(getName() + "_Hidden");
-        hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
-            | RENDER_DEPTHTEST
-            | RENDER_OVERRIDE
-            | RENDER_LINESTIPPLE
-            | RENDER_VERTEX_COLOUR);
-        hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-        hiddenLine.setDepthFunc(GL_GREATER);
+        pass.lineWidth = 2;
 
         enableViewType(RenderViewType::Camera);
         enableViewType(RenderViewType::OrthoView);
