@@ -52,7 +52,6 @@ void RotateManipulator::updateColours()
 	_circleY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
 	_circleZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
     _circleScreen.setColour(colourSelected(COLOUR_SCREEN(), _selectableScreen.isSelected()));
-    _circleSphere.setColour(colourSelected(COLOUR_SPHERE(), false));
 	_pivotPoint.setColour(colourSelected(COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
 }
 
@@ -139,7 +138,6 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
     _circleY.update(_lineShader);
     _circleZ.update(_lineShader);
     _circleScreen.update(_lineShader);
-    _circleSphere.update(_lineShader);
     _pivotPoint.update(_pivotPointShader);
     _angleText.update(_textRenderer);
 }
@@ -150,7 +148,6 @@ void RotateManipulator::clearRenderables()
     _circleY.clear();
     _circleZ.clear();
     _circleScreen.clear();
-    _circleSphere.clear();
     _pivotPoint.clear();
     _angleText.clear();
 
@@ -281,16 +278,12 @@ RotateManipulator::Component* RotateManipulator::getActiveComponent()
 
 void RotateManipulator::setSelected(bool select)
 {
-    _selectableX.setSelected(select);
-    _selectableY.setSelected(select);
-    _selectableZ.setSelected(select);
-    _selectableScreen.setSelected(select);
-	_selectablePivotPoint.setSelected(select);
+    selection::setSelected(select, _selectableX, _selectableY, _selectableZ,
+                           _selectableScreen, _selectablePivotPoint);
 
-	if (!select)
-	{
-		_rotateAxis.resetCurAngle();
-	}
+    if (!select) {
+        _rotateAxis.resetCurAngle();
+    }
 }
 
 bool RotateManipulator::isSelected() const
