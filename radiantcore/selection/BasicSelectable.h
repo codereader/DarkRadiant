@@ -38,4 +38,10 @@ template<typename... Item> void setSelected(bool select, Item&&... item)
     (item.setSelected(select), ...);
 }
 
+/// Convenience function to return true if any one of a number of items is selected
+template<typename... Item> bool isAnySelected(const Item&... item)
+{
+    return (item.isSelected() || ...);
+}
+
 } // namespace
