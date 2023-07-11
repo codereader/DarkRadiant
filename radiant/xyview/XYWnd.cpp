@@ -4,6 +4,7 @@
 #include "iclipper.h"
 #include "iscenegraph.h"
 #include "iundo.h"
+#include "ui/ieventmanager.h"
 #include "ui/imainframe.h"
 #include "icolourscheme.h"
 #include "ientity.h"
@@ -609,21 +610,13 @@ Vector3 XYWnd::convertXYToWorld(int x, int y)
 
 void XYWnd::snapToGrid(Vector3& point)
 {
-    if (_viewType == XY)
-    {
-        point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
-        point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
-    }
-    else if (_viewType == YZ)
-    {
-        point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
-        point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
-    }
-    else
-    {
-        point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
-        point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
-    }
+    std::map<EViewType, std::pair<std::size_t, std::size_t>> INDICES_BY_VIEWTYPE {
+        {XY, {0, 1}}, {YZ, {1, 2}}, {XZ, {0, 2}}
+    };
+
+    const auto indices = INDICES_BY_VIEWTYPE[_viewType];
+    point[indices.first] = float_snapped(point[indices.first], GlobalGrid().getGridSize());
+    point[indices.second] = float_snapped(point[indices.second], GlobalGrid().getGridSize());
 }
 
 /* greebo: This calculates the coordinates of the xy view window corners.
