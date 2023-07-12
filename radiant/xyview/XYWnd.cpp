@@ -65,6 +65,13 @@ namespace
 {
     constexpr const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
     constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+
+    // User-visible titles for view directions
+    static const std::map<EViewType, std::string> VIEWTYPE_TITLES {
+        {XY, _("XY Top")},
+        {XZ, _("XZ Front")},
+        {YZ, _("YZ Side")},
+    };
 }
 
 int XYWnd::_nextId = 1;
@@ -265,32 +272,6 @@ void XYWnd::ensureFont()
 
     const auto& manager = GlobalXYWnd();
     _font = GlobalOpenGL().getFont(manager.fontStyle(), manager.fontSize());
-}
-
-const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {
-    if (viewtype == XY) {
-        return _("XY Top");
-    }
-    if (viewtype == XZ) {
-        return _("XZ Front");
-    }
-    if (viewtype == YZ) {
-        return _("YZ Side");
-    }
-    return "";
-}
-
-const std::string XYWnd::getViewTypeStr(EViewType viewtype) {
-    if (viewtype == XY) {
-        return "XY";
-    }
-    if (viewtype == XZ) {
-        return "XZ";
-    }
-    if (viewtype == YZ) {
-        return "YZ";
-    }
-    return "";
 }
 
 void XYWnd::forceRedraw()
@@ -896,11 +877,9 @@ void XYWnd::drawGrid()
         }
 
         // we do this part (the old way) only if show_axis is disabled
-        if (!GlobalXYWnd().showAxes())
-        {
+        if (!GlobalXYWnd().showAxes()) {
             glRasterPos2d( _origin[nDim1] - w + 35 / _scale, _origin[nDim2] + h - 20 / _scale );
-
-            _font->drawString(getViewTypeTitle(_viewType));
+            _font->drawString(VIEWTYPE_TITLES.at(_viewType));
         }
     }
 

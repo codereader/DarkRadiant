@@ -123,12 +123,6 @@ public:
     static void captureStates();
     static void releaseStates();
 
-    // Returns the long type string ("XY Top", "YZ Side", "XZ Front") for use in window titles
-    static const std::string getViewTypeTitle(EViewType viewtype);
-
-    // Returns the short type string (XY, XZ, YZ)
-    static const std::string getViewTypeStr(EViewType viewtype);
-
     void positionView(const Vector3& position);
     const Vector3& getOrigin() const override;
     void setOrigin(const Vector3& origin) override;
