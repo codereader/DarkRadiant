@@ -6,6 +6,7 @@
 #include "gtest/gtest.h"
 
 #include "string/string.h"
+#include "string/convert.h"
 #include "os/path.h"
 
 namespace test
@@ -51,6 +52,51 @@ TEST(BasicTest, StringIsAlphaNumeric)
     EXPECT_FALSE(string::isAlphaNumeric("$abc"));
     EXPECT_FALSE(string::isAlphaNumeric("/abc"));
     EXPECT_FALSE(string::isAlphaNumeric("test&afff"));
+}
+
+TEST(BasicTest, StringConvertToNumeric)
+{
+    // Float
+    EXPECT_EQ(string::convert<float>(std::string("1.2")), 1.2f);
+    EXPECT_EQ(string::convert<float>(std::string("-86")), -86.0f);
+    EXPECT_EQ(string::convert<float>(std::string(""), -99.0f), -99.0f);
+    EXPECT_EQ(string::convert<float>(std::string("abc"), -99.0f), -99.0f);
+
+    // Double
+    EXPECT_EQ(string::convert<double>(std::string("3.1425")), 3.1425);
+    EXPECT_EQ(string::convert<double>(std::string("569")), 569);
+    EXPECT_EQ(string::convert<double>(std::string(""), 123.0), 123.0);
+    EXPECT_EQ(string::convert<double>(std::string("JFDJD"), 123.0), 123.0);
+
+    // Int
+    EXPECT_EQ(string::convert<int>(std::string("3.1425"), 500), 3 /* parsed truncated */);
+    EXPECT_EQ(string::convert<int>(std::string("569")), 569);
+    EXPECT_EQ(string::convert<int>(std::string(""), -5), -5);
+    EXPECT_EQ(string::convert<int>(std::string("-!-"), 1), 1);
+
+    // Unsigned Int
+    EXPECT_EQ(string::convert<unsigned>(std::string("6789"), 500), 6789);
+    EXPECT_EQ(
+        string::convert<unsigned>(std::string("-1")),
+        std::numeric_limits<unsigned>::max() /* wraparound */
+    );
+    EXPECT_EQ(string::convert<unsigned>(std::string(""), 87), 87);
+    EXPECT_EQ(string::convert<unsigned>(std::string("P89P"), 1), 1);
+
+    // Short
+    EXPECT_EQ(string::convert<short>(std::string("-56.25"), 123), -56 /* parsed truncated */);
+    EXPECT_EQ(string::convert<short>(std::string("1023")), 1023);
+    EXPECT_EQ(string::convert<short>(std::string(""), 1234), 1234);
+    EXPECT_EQ(string::convert<short>(std::string(":)"), 0), 0);
+
+    // Unsigned Short
+    EXPECT_EQ(
+        string::convert<unsigned short>(std::string("-1"), 5),
+        std::numeric_limits<unsigned short>::max() /* wraparound */
+    );
+    EXPECT_EQ(string::convert<unsigned short>(std::string("46")), 46);
+    EXPECT_EQ(string::convert<unsigned short>(std::string(""), 2), 2);
+    EXPECT_EQ(string::convert<unsigned short>(std::string("short"), 10), 10);
 }
 
 TEST(PathTests, GetFileExtension)
