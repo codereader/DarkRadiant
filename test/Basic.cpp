@@ -147,6 +147,32 @@ TEST(BasicTest, StringConvertToBool)
     EXPECT_EQ(string::convert<bool>(std::string(" :) ")), true);
 }
 
+TEST(BasicTest, StringConvertToVector)
+{
+    // Vector3
+    EXPECT_EQ(string::convert<Vector3>(std::string("")), Vector3());
+    EXPECT_EQ(string::convert<Vector3>(std::string("1 2 3")), Vector3(1, 2, 3));
+    EXPECT_EQ(
+        string::convert<Vector3>(std::string("-56.25 128 15.475")),
+        Vector3(-56.25, 128, 15.475)
+    );
+    EXPECT_EQ(
+        string::convert<Vector3>(std::string("NOT A VECTOR :("), {5, 10, 15}),
+        Vector3(5, 10, 15)
+    );
+
+    // Vector4
+    EXPECT_EQ(string::convert<Vector4>(std::string("")), Vector4());
+    EXPECT_EQ(string::convert<Vector4>(std::string("2 -2 4 6")), Vector4(2, -2, 4, 6));
+    EXPECT_EQ(
+        string::convert<Vector4>(std::string("3.141 -2.717 1.525 -640.5")),
+        Vector4(3.141, -2.717, 1.525, -640.5)
+    );
+    EXPECT_EQ(
+        string::convert<Vector4>(std::string("nope"), {5, 6, 7, 8}), Vector4(5, 6, 7, 8)
+    );
+}
+
 TEST(PathTests, GetFileExtension)
 {
     EXPECT_EQ(os::getExtension(""), "");
