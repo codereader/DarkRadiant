@@ -97,6 +97,38 @@ TEST(BasicTest, StringConvertToNumeric)
     EXPECT_EQ(string::convert<unsigned short>(std::string("46")), 46);
     EXPECT_EQ(string::convert<unsigned short>(std::string(""), 2), 2);
     EXPECT_EQ(string::convert<unsigned short>(std::string("short"), 10), 10);
+
+    // Long
+    EXPECT_EQ(string::convert<long>(std::string("2.717"), 999), 2 /* parsed truncated */);
+    EXPECT_EQ(string::convert<long>(std::string("98787878")), 98787878);
+    EXPECT_EQ(string::convert<long>(std::string(""), -1), -1);
+    EXPECT_EQ(string::convert<long>(std::string("LONG"), 53), 53);
+
+    // Unsigned Long
+    EXPECT_EQ(string::convert<unsigned long>(std::string("1.53")), 1 /* parsed truncated */);
+    EXPECT_EQ(
+        string::convert<unsigned long>(std::string("-1")),
+        std::numeric_limits<unsigned long>::max() /* wraparound */
+    );
+    EXPECT_EQ(string::convert<unsigned long>(std::string(""), 864), 864);
+    EXPECT_EQ(string::convert<unsigned long>(std::string("oooo12"), -7), -7);
+
+    // Long Long
+    EXPECT_EQ(string::convert<long long>(std::string("85.6"), 999), 85 /* parsed truncated */);
+    EXPECT_EQ(string::convert<long long>(std::string("1234")), 1234);
+    EXPECT_EQ(string::convert<long long>(std::string(""), -1), -1);
+    EXPECT_EQ(string::convert<long long>(std::string("/////"), 3), 3);
+
+    // Unsigned Long Long
+    EXPECT_EQ(
+        string::convert<unsigned long long>(std::string("9.12")), 9 /* parsed truncated */
+    );
+    EXPECT_EQ(
+        string::convert<unsigned long long>(std::string("-1")),
+        std::numeric_limits<unsigned long long>::max() /* wraparound */
+    );
+    EXPECT_EQ(string::convert<unsigned long long>(std::string(""), 1), 1);
+    EXPECT_EQ(string::convert<unsigned long long>(std::string("ull"), 2048), 2048);
 }
 
 TEST(PathTests, GetFileExtension)
