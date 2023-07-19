@@ -131,6 +131,22 @@ TEST(BasicTest, StringConvertToNumeric)
     EXPECT_EQ(string::convert<unsigned long long>(std::string("ull"), 2048), 2048);
 }
 
+TEST(BasicTest, StringConvertToBool)
+{
+    // Everything except "0" is true. This is weird, and should probably be fixed if it
+    // doesn't break existing behaviour.
+    EXPECT_EQ(string::convert<bool>(std::string(""), false), false);
+    EXPECT_EQ(string::convert<bool>(std::string(""), true), true);
+    EXPECT_EQ(string::convert<bool>(std::string("0")), false);
+    EXPECT_EQ(string::convert<bool>(std::string("000")), true);
+    EXPECT_EQ(string::convert<bool>(std::string("1")), true);
+    EXPECT_EQ(string::convert<bool>(std::string("100")), true);
+    EXPECT_EQ(string::convert<bool>(std::string("true")), true);
+    EXPECT_EQ(string::convert<bool>(std::string("false")), true);
+    EXPECT_EQ(string::convert<bool>(std::string(" 0 ")), true);
+    EXPECT_EQ(string::convert<bool>(std::string(" :) ")), true);
+}
+
 TEST(PathTests, GetFileExtension)
 {
     EXPECT_EQ(os::getExtension(""), "");
