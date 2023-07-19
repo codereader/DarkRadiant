@@ -10,7 +10,7 @@ namespace string
 
 // Converts a string to a different type, with a fallback value
 // A couple of template specialisations are defined below.
-template<typename T, typename Src> 
+template<typename T, typename Src>
 T convert(const Src& str, T defaultVal = T());
 
 // Template specialisation to convert std::string => float
@@ -199,7 +199,7 @@ inline Vector4 convert<Vector4, std::string>(const std::string& str, Vector4 def
 		std::istringstream stream(str);
 		stream >> std::skipws >> vec.x() >> vec.y() >> vec.z() >> vec.w();
 
-		if (stream.bad()) throw std::invalid_argument("Failed to parse Vector4");
+		if (stream.fail()) throw std::invalid_argument("Failed to parse Vector4");
 
 		return vec;
 	}
@@ -272,7 +272,7 @@ inline bool tryConvertToInt(const std::string& src, int& value)
 }
 
 // Convert the given type to a std::string
-template<typename Src> 
+template<typename Src>
 inline std::string to_string(const Src& value)
 {
     return std::to_string(value);
