@@ -16,6 +16,11 @@
 namespace registry
 {
 
+namespace
+{
+	const char* const RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
+}
+
 XMLRegistry::XMLRegistry() :
     _queryCounter(0),
     _changesSinceLastSave(0),
