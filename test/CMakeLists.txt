@@ -46,6 +46,7 @@ add_executable(drtest
                PatchWelding.cpp
                PointTrace.cpp
                Prefabs.cpp
+               Registry.cpp
                Renderer.cpp
                SceneNode.cpp
                SceneStatistics.cpp
