@@ -65,11 +65,7 @@ public:
     // Set the value of the given attribute
     void setAttributeValue(const std::string& key, const std::string& value);
 
-    /** Return the text content of this node.
-     *
-     * @returns
-     * The text content of this node.
-     */
+    /// Return the text content of this node.
 	std::string getContent() const;
 
     // Sets the contents of this XML node to the given string
