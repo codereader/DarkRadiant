@@ -35,7 +35,7 @@ std::string RegistryTree::prepareKey(const std::string& key)
 		// this is a path relative to root, don't alter it
 		return key;
 	}
-	else 
+	else
 	{
 		// add the prefix <darkradiant> and return
 		return std::string("/") + _topLevelNode + std::string("/") + key;
@@ -113,7 +113,7 @@ xml::Node RegistryTree::createKey(const std::string& key)
 		rMessage() << "XMLRegistry: Cannot insert key/path without slashes." << std::endl;
 		return xml::Node(nullptr, nullptr);
 	}
-		
+
 	xml::Node createdNode(nullptr, nullptr);
 
 	// The temporary path variable for walking through the hierarchy
@@ -152,33 +152,13 @@ xml::Node RegistryTree::createKey(const std::string& key)
 	return createdNode;
 }
 
-std::string RegistryTree::get(const std::string& key)
-{
-	// Add the toplevel node to the path if required
-	std::string fullKey = prepareKey(key);
-
-	// Try to load the node, return an empty string if nothing is found
-	xml::NodeList nodeList = _tree.findXPath(fullKey);
-
-	// Does it even exist?
-	// There is the theoretical case that this returns two nodes that match the key criteria
-	// This function always uses the first one, but this may be changed if this turns out to be problematic
-	if (!nodeList.empty())
-	{
-		// Get and convert the value
-		return string::utf8_to_mb(nodeList[0].getAttributeValue("value"));
-	}
-
-	return std::string();
-}
-
 void RegistryTree::set(const std::string& key, const std::string& value)
 {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(key);
 
 	// If the key doesn't exist, we have to create an empty one
-	if (!keyExists(fullKey)) 
+	if (!keyExists(fullKey))
 	{
 		createKey(fullKey);
 	}
@@ -218,7 +198,7 @@ void RegistryTree::setAttribute(const std::string& path,
 		// Set the value
 		nodeList[0].setAttributeValue(attrName, attrValue);
 	}
-	else 
+	else
 	{
 		// If the key is still not found, something nasty has happened
 		rMessage() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!" << std::endl;
@@ -239,7 +219,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
 	// Check if the importKey exists - if not: create it
   	std::string fullImportKey = prepareKey(importKey);
 
-  	if (!keyExists(fullImportKey)) 
+  	if (!keyExists(fullImportKey))
 	{
   		createKey(fullImportKey);
   	}
@@ -278,7 +258,7 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 	// Try to find the specified node
 	xml::NodeList result = _tree.findXPath(fullKey);
 
-	if (result.empty()) 
+	if (result.empty())
 	{
 		rMessage() << "XMLRegistry: Failed to save path " << fullKey << std::endl;
 		return;
