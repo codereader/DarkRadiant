@@ -45,11 +45,41 @@ TEST_F(RegistryTest, SetTypedValue)
     EXPECT_EQ(registry::getValue<std::string>(RKEY_STRINGVALUE), "whatever");
 
     // Look up the nodes themselves
-    EXPECT_EQ(nodeFromPath(RKEY_INTVALUE).getContent(), "");
-    EXPECT_EQ(nodeFromPath(RKEY_INTVALUE).getAttributeValue("value"), "57");
-    EXPECT_EQ(nodeFromPath(RKEY_BOOLVALUE).getAttributeValue("value"), "1");
-    EXPECT_EQ(nodeFromPath(RKEY_FLOATVALUE).getAttributeValue("value"), "1.374000");
-    EXPECT_EQ(nodeFromPath(RKEY_STRINGVALUE).getAttributeValue("value"), "whatever");
+    const auto nodeHasContentOnly = [](const char* key, const char* expValue) {
+        const auto node = nodeFromPath(key);
+        EXPECT_EQ(node.getContent(), expValue);
+        EXPECT_EQ(node.getAttributeValue("value"), "");
+    };
+    nodeHasContentOnly(RKEY_INTVALUE, "57");
+    nodeHasContentOnly(RKEY_BOOLVALUE, "1");
+    nodeHasContentOnly(RKEY_FLOATVALUE, "1.374000");
+    nodeHasContentOnly(RKEY_STRINGVALUE, "whatever");
+}
+
+TEST_F(RegistryTest, ReadOrRemoveLegacyValueAttribute)
+{
+    const char* INTKEY = "user/test/intValue";
+    const char* BOOLKEY = "user/test/boolValue";
+
+    // Manually create the nodes with a legacy "value" attribute
+    GlobalRegistry().createKey(INTKEY).setAttributeValue("value", "37");
+    GlobalRegistry().createKey(BOOLKEY).setAttributeValue("value", "1");
+
+    // The value attribute should be readable as a registry key
+    EXPECT_EQ(registry::getValue<int>(INTKEY), 37);
+    EXPECT_EQ(registry::getValue<bool>(BOOLKEY), true);
+
+    // Write using the standard API
+    registry::setValue(INTKEY, 27);
+    registry::setValue(BOOLKEY, false);
+
+    // Value attributes should have disappeared
+    EXPECT_EQ(GlobalRegistry().findXPath(INTKEY).at(0).getAttributeValue("value"), "");
+    EXPECT_EQ(GlobalRegistry().findXPath(BOOLKEY).at(0).getAttributeValue("value"), "");
+
+    // Read back using the standard API
+    EXPECT_EQ(registry::getValue<int>(INTKEY), 27);
+    EXPECT_EQ(registry::getValue<bool>(BOOLKEY), false);
 }
 
 TEST_F(RegistryTest, CreateNodeWithContent)

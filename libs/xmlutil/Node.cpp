@@ -45,19 +45,28 @@ NodeList Node::getChildren() const
     return retval;
 }
 
+namespace
+{
+    // RAII XML string wrapper
+    struct XMLString
+    {
+        xmlChar* ptr;
+
+        XMLString(const std::string& text) { ptr = xmlCharStrdup(text.c_str()); }
+        ~XMLString() { xmlFree(ptr); }
+    };
+}
+
 Node Node::createChild(const std::string& name)
 {
     std::lock_guard lock(_owner->getLock());
 
-	xmlChar* nodeName = xmlCharStrdup(name.c_str());
+    // Create a new child under the contained node
+    XMLString nodeName(name);
+    xmlNodePtr newChild = xmlNewChild(_xmlNode, nullptr, nodeName.ptr, nullptr);
 
-	// Create a new child under the contained node
-	xmlNodePtr newChild = xmlNewChild(_xmlNode, nullptr, nodeName, nullptr);
-
-	xmlFree(nodeName);
-
-	// Create a new xml::Node out of this pointer and return it
-	return Node(_owner, newChild);
+    // Create a new xml::Node out of this pointer and return it
+    return Node(_owner, newChild);
 }
 
 NodeList Node::getNamedChildren(const std::string& name) const
@@ -83,13 +92,18 @@ void Node::setAttributeValue(const std::string& key, const std::string& value)
 {
     std::lock_guard lock(_owner->getLock());
 
-	xmlChar* k = xmlCharStrdup(key.c_str());
-	xmlChar* v = xmlCharStrdup(value.c_str());
+    XMLString k(key);
+    XMLString v(value);
 
-	xmlSetProp(_xmlNode, k, v);
+    xmlSetProp(_xmlNode, k.ptr, v.ptr);
+}
 
-	xmlFree(k);
-	xmlFree(v);
+void Node::removeAttribute(const std::string& key)
+{
+    std::lock_guard lock(_owner->getLock());
+
+    XMLString k(key);
+    xmlUnsetProp(_xmlNode, k.ptr);
 }
 
 // Return the value of a given attribute, or throw AttributeNotFoundException

@@ -188,7 +188,15 @@ std::string XMLRegistry::getAttribute(const std::string& path, const std::string
 
 std::string XMLRegistry::get(const std::string& key)
 {
-    return string::utf8_to_mb(getAttribute(key, "value"));
+    if (const xml::NodeList nodeList = findXPath(key); !nodeList.empty()) {
+        if (const auto content = nodeList[0].getContent(); !content.empty()) {
+            return string::utf8_to_mb(content);
+        }
+        else {
+            return string::utf8_to_mb(nodeList[0].getAttributeValue("value"));
+        }
+    }
+    return {};
 }
 
 void XMLRegistry::set(const std::string& key, const std::string& value)

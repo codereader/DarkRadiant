@@ -154,28 +154,27 @@ xml::Node RegistryTree::createKey(const std::string& key)
 
 void RegistryTree::set(const std::string& key, const std::string& value)
 {
-	// Add the toplevel node to the path if required
-	std::string fullKey = prepareKey(key);
+    // Add the toplevel node to the path if required
+    std::string fullKey = prepareKey(key);
 
-	// If the key doesn't exist, we have to create an empty one
-	if (!keyExists(fullKey))
-	{
-		createKey(fullKey);
-	}
+    // If the key doesn't exist, we have to create an empty one
+    if (!keyExists(fullKey)) {
+        createKey(fullKey);
+    }
 
-	// Try to find the node
-	xml::NodeList nodeList = _tree.findXPath(fullKey);
-
-	if (!nodeList.empty())
-	{
-		// Set the value
-		nodeList[0].setAttributeValue("value", value);
-	}
-	else
-	{
-		// If the key is still not found, something nasty has happened
-		rMessage() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!" << std::endl;
-	}
+    // Try to find the node
+    if (xml::NodeList nodeList = _tree.findXPath(fullKey); !nodeList.empty()) {
+        // Write the content
+        nodeList[0].setContent(value);
+        // Remove any legacy "value" attribute
+        nodeList[0].removeAttribute("value");
+    }
+    else {
+        // If the key is still not found, something nasty has happened
+        throw std::logic_error(
+            "RegistryTree: created key [" + fullKey + "] but node not found"
+        );
+    }
 }
 
 void RegistryTree::setAttribute(const std::string& path,

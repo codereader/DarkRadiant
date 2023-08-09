@@ -65,6 +65,9 @@ public:
     // Set the value of the given attribute
     void setAttributeValue(const std::string& key, const std::string& value);
 
+    /// Remove an attribute altogether
+    void removeAttribute(const std::string& key);
+
     /// Return the text content of this node.
 	std::string getContent() const;
 
