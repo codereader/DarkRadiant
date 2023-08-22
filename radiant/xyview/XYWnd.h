@@ -34,15 +34,14 @@ class XYWnd final :
     public scene::Graph::Observer,
     protected wxutil::MouseToolHandler
 {
-private:
     XYWndManager& _owner;
 
     int _id;
     static int _nextId;
 
     wxutil::GLWidget* _wxGLWidget;
-    bool _drawing;
-    bool _updateRequested;
+    bool _drawing = false;
+    bool _updateRequested = false;
 
     // The maximum/minimum values of a coordinate
     double _minWorldCoord;
@@ -53,10 +52,10 @@ private:
 
     wxutil::FreezePointer _freezePointer;
 
-    wxCursor _defaultCursor;
-    wxCursor _crossHairCursor;
+    wxCursor _defaultCursor = wxCURSOR_DEFAULT;
+    wxCursor _crossHairCursor = wxCURSOR_CROSS;
 
-    bool _chasingMouse;
+    bool _chasingMouse = false;
 
     double	_scale;
     Vector3 _origin;
@@ -68,7 +67,7 @@ private:
 
     Vector3 _mousePosition;
 
-    EViewType _viewType;
+    EViewType _viewType = XY;
 
     // Context menu handling. Because we use right-click for both context menu and panning
     // (probably a bad design choice, but we're stuck with it), we need to distinguish between a
@@ -86,7 +85,7 @@ private:
     // Save the current button state
     unsigned int _eventState;
 
-    bool _isActive;
+    bool _isActive = false;
 
     int _chasemouseCurrentX;
     int _chasemouseCurrentY;
@@ -96,8 +95,8 @@ private:
     Matrix4 _projection = Matrix4::getIdentity();
     Matrix4 _modelView = Matrix4::getIdentity();
 
-    int _width;
-    int _height;
+    int _width = 0;
+    int _height = 0;
 
     sigc::connection _sigCameraChanged;
 

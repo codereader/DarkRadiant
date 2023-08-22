@@ -76,28 +76,19 @@ namespace
 
 int XYWnd::_nextId = 1;
 
-XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner) :
-    DockablePanel(parent),
-    MouseToolHandler(IMouseToolGroup::Type::OrthoView),
-    _owner(owner),
-    _id(_nextId++),
-	_wxGLWidget(new wxutil::GLWidget(this, std::bind(&XYWnd::onRender, this), "XYWnd")),
-    _drawing(false),
-    _updateRequested(false),
-	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
-	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
-	_defaultCursor(wxCURSOR_DEFAULT),
-	_crossHairCursor(wxCURSOR_CROSS),
-	_chasingMouse(false),
-	_isActive(false)
+XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner)
+: DockablePanel(parent),
+  MouseToolHandler(IMouseToolGroup::Type::OrthoView),
+  _owner(owner),
+  _id(_nextId++),
+  _wxGLWidget(new wxutil::GLWidget(this, std::bind(&XYWnd::onRender, this), "XYWnd")),
+  _minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
+  _maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord"))
 {
     _owner.registerXYWnd(this);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
-
-    _width = 0;
-    _height = 0;
 
     // Try to retrieve a recently used origin and scale from the registry
     std::string recentPath = std::string(RKEY_XYVIEW_ROOT) + "/recent";
@@ -113,39 +104,37 @@ XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner) :
         _scale = 1;
     }
 
-    _viewType = XY;
+    _wxGLWidget->SetCanFocus(false);
+    // Don't set a minimum size, to allow for cam window maximisation
+    //_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
-	_wxGLWidget->SetCanFocus(false);
-	// Don't set a minimum size, to allow for cam window maximisation
-	//_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
+    // wxGLWidget wireup
+    _wxGLWidget->Bind(wxEVT_SIZE, &XYWnd::onGLResize, this);
 
-	// wxGLWidget wireup
-	_wxGLWidget->Bind(wxEVT_SIZE, &XYWnd::onGLResize, this);
-
-	_wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &XYWnd::onGLWindowScroll, this);
+    _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &XYWnd::onGLWindowScroll, this);
     _wxGLWidget->Bind(wxEVT_MOTION, &XYWnd::onGLMouseMove, this);
 
-	_wxGLWidget->Bind(wxEVT_LEFT_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &XYWnd::onGLMouseButtonPress, this);
     _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-	_wxGLWidget->Bind(wxEVT_LEFT_UP, &XYWnd::onGLMouseButtonRelease, this);
-	_wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_UP, &XYWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &XYWnd::onGLMouseButtonPress, this);
     _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-	_wxGLWidget->Bind(wxEVT_RIGHT_UP, &XYWnd::onGLMouseButtonRelease, this);
-	_wxGLWidget->Bind(wxEVT_MIDDLE_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_UP, &XYWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_DOWN, &XYWnd::onGLMouseButtonPress, this);
     _wxGLWidget->Bind(wxEVT_MIDDLE_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-	_wxGLWidget->Bind(wxEVT_MIDDLE_UP, &XYWnd::onGLMouseButtonRelease, this);
-	_wxGLWidget->Bind(wxEVT_AUX1_DOWN, &XYWnd::onGLMouseButtonPress, this);
-	_wxGLWidget->Bind(wxEVT_AUX1_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-	_wxGLWidget->Bind(wxEVT_AUX1_UP, &XYWnd::onGLMouseButtonRelease, this);
-	_wxGLWidget->Bind(wxEVT_AUX2_DOWN, &XYWnd::onGLMouseButtonPress, this);
-	_wxGLWidget->Bind(wxEVT_AUX2_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-	_wxGLWidget->Bind(wxEVT_AUX2_UP, &XYWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_UP, &XYWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_AUX1_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX1_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX1_UP, &XYWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_AUX2_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX2_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX2_UP, &XYWnd::onGLMouseButtonRelease, this);
 
-	_wxGLWidget->Bind(wxEVT_IDLE, &XYWnd::onIdle, this);
+    _wxGLWidget->Bind(wxEVT_IDLE, &XYWnd::onIdle, this);
 
-	_freezePointer.connectMouseEvents(
-		std::bind(&XYWnd::onGLMouseButtonPress, this, std::placeholders::_1),
-		std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
+    _freezePointer.connectMouseEvents(
+        std::bind(&XYWnd::onGLMouseButtonPress, this, std::placeholders::_1),
+        std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
 
     updateProjection();
     updateModelview();
