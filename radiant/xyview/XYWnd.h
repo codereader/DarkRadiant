@@ -57,7 +57,7 @@ class XYWnd final :
 
     bool _chasingMouse = false;
 
-    double	_scale;
+    double _scale;
     Vector3 _origin;
 
     render::View _view;

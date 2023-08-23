@@ -64,6 +64,8 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 namespace
 {
     constexpr const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
+    constexpr const char* const RKEY_RECENT_ORIGIN = "user/ui/xyview/recent/origin";
+    constexpr const char* const RKEY_RECENT_SCALE = "user/ui/xyview/recent/scale";
     constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
     // User-visible titles for view directions
@@ -91,18 +93,8 @@ XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner)
     GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 
     // Try to retrieve a recently used origin and scale from the registry
-    std::string recentPath = std::string(RKEY_XYVIEW_ROOT) + "/recent";
-    _origin = string::convert<Vector3>(
-        GlobalRegistry().getAttribute(recentPath, "origin")
-    );
-    _scale = string::convert<double>(
-        GlobalRegistry().getAttribute(recentPath, "scale")
-    );
-
-    if (_scale == 0)
-    {
-        _scale = 1;
-    }
+    _origin = registry::getValue<Vector3>(RKEY_RECENT_ORIGIN);
+    _scale = registry::getValue<double>(RKEY_RECENT_SCALE, 1.0);
 
     _wxGLWidget->SetCanFocus(false);
     // Don't set a minimum size, to allow for cam window maximisation
@@ -162,11 +154,8 @@ XYWnd::~XYWnd()
 
     // Store the current position and scale to the registry, so that it may be
     // picked up again when creating XYViews after switching layouts
-    std::string recentPath = std::string(RKEY_XYVIEW_ROOT) + "/recent";
-    GlobalRegistry().setAttribute(recentPath, "origin",
-                                  string::to_string(_origin));
-    GlobalRegistry().setAttribute(recentPath, "scale",
-                                  string::to_string(_scale));
+    registry::setValue(RKEY_RECENT_ORIGIN, _origin);
+    registry::setValue(RKEY_RECENT_SCALE, _scale);
 }
 
 void XYWnd::destroyXYView()
@@ -353,75 +342,67 @@ bool XYWnd::checkChaseMouse(unsigned int state)
     int x = windowMousePos.x;
     int y = windowMousePos.y;
 
-	_chasemouseDeltaX = 0;
-	_chasemouseDeltaY = 0;
+    _chasemouseDeltaX = 0;
+    _chasemouseDeltaY = 0;
     _eventState = state;
 
-	// greebo: The mouse chase is only active when the corresponding setting is active
+    // greebo: The mouse chase is only active when the corresponding setting is active
     if (GlobalXYWnd().chaseMouse())
-	{
+    {
         // If the cursor moves close enough to the window borders, chase mouse will kick in
         // The chase mouse delta is capped between 0 and a value that depends on how much
         // the mouse cursor exceeds that imaginary border.
-		const int epsilon = 16;
+        const int epsilon = 16;
 
-		// Calculate the X delta
-		if (x < epsilon)
-		{
+        // Calculate the X delta
+        if (x < epsilon)
             _chasemouseDeltaX = std::max(x - epsilon, -GlobalXYWnd().chaseMouseCap());
-		}
-		else if (x > _width - epsilon)
-		{
+        else if (x > _width - epsilon)
             _chasemouseDeltaX = std::min(x - _width + epsilon, GlobalXYWnd().chaseMouseCap());
-		}
 
-		// Calculate the Y delta
-		if (y < epsilon)
-		{
+        // Calculate the Y delta
+        if (y < epsilon)
             _chasemouseDeltaY = std::max(y - epsilon, -GlobalXYWnd().chaseMouseCap());
-		}
-		else if (y > _height - epsilon)
-		{
+        else if (y > _height - epsilon)
             _chasemouseDeltaY = std::min(y - _height + epsilon, GlobalXYWnd().chaseMouseCap());
-		}
 
-		// If any of the deltas is uneqal to zero the mouse chase is to be performed
-		if (_chasemouseDeltaY != 0 || _chasemouseDeltaX != 0)
-		{
-			_chasemouseCurrentX = x;
-			_chasemouseCurrentY = y;
+        // If any of the deltas is uneqal to zero the mouse chase is to be performed
+        if (_chasemouseDeltaY != 0 || _chasemouseDeltaX != 0)
+        {
+            _chasemouseCurrentX = x;
+            _chasemouseCurrentY = y;
 
-			// Start the timer, if there isn't one already connected
-			if (!_chasingMouse)
-			{
-				_chaseMouseTimer.Start();
+            // Start the timer, if there isn't one already connected
+            if (!_chasingMouse)
+            {
+                _chaseMouseTimer.Start();
 
-				// Enable chase mouse handling in  the idle callbacks, so it gets called as
-				// soon as there is nothing more important to do. The callback queries the timer
-				// and takes the according window movement actions
-				_chasingMouse = true;
-			}
+                // Enable chase mouse handling in  the idle callbacks, so it gets called as
+                // soon as there is nothing more important to do. The callback queries the timer
+                // and takes the according window movement actions
+                _chasingMouse = true;
+            }
 
-			// Return true to signal that there are no other mouseMotion handlers to be performed
-			return true;
-		}
-		else
-		{
-			if (_chasingMouse)
-			{
-				// All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
-				_chasingMouse = false;
-			}
-		}
-	}
-	else
-	{
-		if (_chasingMouse)
-		{
-			// Remove the handlers, the user has probably released the mouse button during chase
-			_chasingMouse = false;
-		}
-	}
+            // Return true to signal that there are no other mouseMotion handlers to be performed
+            return true;
+        }
+        else
+        {
+            if (_chasingMouse)
+            {
+                // All deltas are zero, so there is no more mouse chasing necessary, remove the handlers
+                _chasingMouse = false;
+            }
+        }
+    }
+    else
+    {
+        if (_chasingMouse)
+        {
+            // Remove the handlers, the user has probably released the mouse button during chase
+            _chasingMouse = false;
+        }
+    }
 
     // No mouse chasing has been performed, return false
     return false;
@@ -552,8 +533,8 @@ XYMouseToolEvent XYWnd::createMouseEvent(const Vector2& point, const Vector2& de
 
 Vector3 XYWnd::convertXYToWorld(int x, int y)
 {
-    float normalised2world_scale_x = _width / 2 / _scale;
-    float normalised2world_scale_y = _height / 2 / _scale;
+    float normalised2world_scale_x = _width / 2.0 / _scale;
+    float normalised2world_scale_y = _height / 2.0 / _scale;
 
     if (_viewType == XY)
     {
@@ -597,8 +578,8 @@ Vector4 XYWnd::getWindowCoordinates() {
     int nDim1 = (_viewType == YZ) ? 1 : 0;
     int nDim2 = (_viewType == XY) ? 1 : 2;
 
-    double w = (_width / 2 / _scale);
-    double h = (_height / 2 / _scale);
+    double w = (_width / 2.0 / _scale);
+    double h = (_height / 2.0 / _scale);
 
     // Query the region minimum/maximum vectors
     auto regionBounds = GlobalRegionManager().getRegionBounds();
@@ -668,8 +649,8 @@ void XYWnd::drawGrid()
     glDisable(GL_BLEND);
     glLineWidth(1);
 
-    double w = _width / 2 / _scale;
-    double h = _height / 2 / _scale;
+    double w = _width / 2.0 / _scale;
+    double h = _height / 2.0 / _scale;
 
     Vector4 windowCoords = getWindowCoordinates();
 
@@ -1089,7 +1070,7 @@ void XYWnd::drawBlockGrid()
     if (_viewType == XY && _scale > .1) {
         for (x=xb ; x<xe ; x+=blockSize)
             for (y=yb ; y<ye ; y+=blockSize) {
-                glRasterPos2f (x+(blockSize/2), y+(blockSize/2));
+                glRasterPos2f (x+(blockSize/2.0), y+(blockSize/2.0));
                 sprintf (text, "%i,%i",(int)floor(x/blockSize), (int)floor(y/blockSize) );
                 _font->drawString(text);
             }
@@ -1293,8 +1274,8 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 }
 
 void XYWnd::updateProjection() {
-    _projection[0] = 1.0f / static_cast<float>(_width / 2);
-    _projection[5] = 1.0f / static_cast<float>(_height / 2);
+    _projection[0] = 1.0f / static_cast<float>(_width / 2.0);
+    _projection[5] = 1.0f / static_cast<float>(_height / 2.0);
     _projection[10] = 1.0f / (_maxWorldCoord * _scale);
 
     _projection[12] = 0.0f;
