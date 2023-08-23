@@ -14,16 +14,12 @@ namespace wxutil
  * - Tabbed panels are active if their tab is selected.
  * - Floating panels are active if they're not hidden.
  */
-class DockablePanel :
-    public wxPanel
+class DockablePanel: public wxPanel
 {
-private:
-    bool _active;
+    bool _active = false;
 
 public:
-    DockablePanel(wxWindow* parent) :
-        wxPanel(parent),
-        _active(false)
+    DockablePanel(wxWindow* parent): wxPanel(parent)
     {}
 
     bool panelIsActive()

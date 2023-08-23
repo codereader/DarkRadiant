@@ -128,7 +128,7 @@ void XYWndManager::registerCommands()
 	GlobalCommandSystem().addCommand("CenterXYViews", std::bind(&XYWndManager::splitViewFocus, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CenterXYView", std::bind(&XYWndManager::focusActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("Zoom100", std::bind(&XYWndManager::zoom100, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("RunBenchmark", std::bind(&XYWndManager::runBenchmark, this, std::placeholders::_1), 
+	GlobalCommandSystem().addCommand("RunBenchmark", std::bind(&XYWndManager::runBenchmark, this, std::placeholders::_1),
         { cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 
 	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
@@ -451,19 +451,6 @@ void XYWndManager::setActiveXY(int id)
     {
         _activeXYWndId = -1;
     }
-}
-
-int XYWndManager::getUniqueID() const
-{
-	for (int i = 0; i < INT_MAX; ++i)
-	{
-		if (_xyWnds.count(i) == 0)
-			return i;
-	}
-
-	throw std::runtime_error(
-		"Cannot create unique ID for ortho view: no more IDs."
-	);
 }
 
 /* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
