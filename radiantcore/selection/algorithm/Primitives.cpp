@@ -510,7 +510,7 @@ void resizeSelectedBrushesToBounds(const cmd::ArgumentList& args)
 
 int GetViewAxis()
 {
-	switch(GlobalXYWndManager().getActiveViewType())
+	switch(GlobalOrthoViewManager().getActiveViewType())
 	{
 	case XY:
 		return 2;

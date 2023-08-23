@@ -391,7 +391,7 @@ void FavouritesBrowser::onCreateEntity()
     // wrong number of brushes is selected.
     try
     {
-        GlobalEntityModule().createEntityFromSelection(data->fullPath, GlobalXYWndManager().getActiveViewOrigin());
+        GlobalEntityModule().createEntityFromSelection(data->fullPath, GlobalOrthoViewManager().getActiveViewOrigin());
     }
     catch (cmd::ExecutionFailure& e)
     {
@@ -432,7 +432,7 @@ void FavouritesBrowser::onCreateSpeaker()
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
 
     GlobalCommandSystem().executeCommand("CreateSpeaker", {
-        cmd::Argument(data->leafName), cmd::Argument(GlobalXYWndManager().getActiveViewOrigin())
+        cmd::Argument(data->leafName), cmd::Argument(GlobalOrthoViewManager().getActiveViewOrigin())
     });
 }
 

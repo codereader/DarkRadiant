@@ -21,7 +21,7 @@ namespace ui
 {
 
 // Common interface used by all orthographic/2D views, i.e. XY/YZ/XZ and Texture Tool
-class IOrthoViewBase : 
+class IOrthoViewBase :
     public IInteractiveView
 {
 public:
@@ -69,16 +69,16 @@ public:
     virtual void setCursorType(CursorType type) = 0;
 };
 
-class IXWndManager :
-	public RegisterableModule
+/// Interface for the module which manages all of the ortho/XY views
+class IOrthoViewManager: public RegisterableModule
 {
 public:
-	// Passes a draw call to each allocated view, set force to true 
+    // Passes a draw call to each allocated view, set force to true
     // to redraw immediately instead of queueing the draw.
-	virtual void updateAllViews(bool force = false) = 0;
+    virtual void updateAllViews(bool force = false) = 0;
 
-	// Sets the origin of all available views
-	virtual void setOrigin(const Vector3& origin) = 0;
+    // Sets the origin of all available views
+    virtual void setOrigin(const Vector3& origin) = 0;
 
     // Returns the origin of the currently active ortho view
     // Will throw std::runtime_error if no view is found
@@ -92,29 +92,29 @@ public:
     // Will throw std::runtime_error if no view is found
     virtual IOrthoView& getViewByType(EViewType viewType) = 0;
 
-	// Sets the scale of all available views
-	virtual void setScale(float scale) = 0;
+    // Sets the scale of all available views
+    virtual void setScale(float scale) = 0;
 
-	// Positions all available views
-	virtual void positionAllViews(const Vector3& origin) = 0;
+    // Positions all available views
+    virtual void positionAllViews(const Vector3& origin) = 0;
 
-	// Positions the active views
-	virtual void positionActiveView(const Vector3& origin) = 0;
+    // Positions the active views
+    virtual void positionActiveView(const Vector3& origin) = 0;
 
-	// Returns the view type of the currently active view
-	virtual EViewType getActiveViewType() const = 0;
+    // Returns the view type of the currently active view
+    virtual EViewType getActiveViewType() const = 0;
 
-	// Sets the viewtype of the active view
-	virtual void setActiveViewType(EViewType viewType) = 0;
+    // Sets the viewtype of the active view
+    virtual void setActiveViewType(EViewType viewType) = 0;
 };
 
 } // namespace
 
 constexpr const char* const MODULE_ORTHOVIEWMANAGER = "OrthoviewManager";
 
-// This is the accessor for the xy window manager module
-inline ui::IXWndManager& GlobalXYWndManager()
+/// Accessor for the OrthoViewManager module
+inline ui::IOrthoViewManager& GlobalOrthoViewManager()
 {
-    static module::InstanceReference<ui::IXWndManager> _reference(MODULE_ORTHOVIEWMANAGER);
+    static module::InstanceReference<ui::IOrthoViewManager> _reference(MODULE_ORTHOVIEWMANAGER);
     return _reference;
 }

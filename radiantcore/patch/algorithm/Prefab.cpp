@@ -40,7 +40,7 @@ namespace
 	}
 }
 
-void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab eType, 
+void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab eType,
 					 EViewType viewType, std::size_t width, std::size_t height)
 {
 	GlobalSelectionSystem().setSelectedAll(false);
@@ -90,10 +90,10 @@ void createPrefabInternal(EPatchPrefab prefabType, const std::string& undoCmdNam
 {
 	UndoableCommand undo(undoCmdName);
 
-	constructPrefab(getDefaultBoundsFromSelection(), 
+	constructPrefab(getDefaultBoundsFromSelection(),
 					getSelectedShader(),
-					prefabType, 
-					GlobalXYWndManager().getActiveViewType());
+					prefabType,
+					GlobalOrthoViewManager().getActiveViewType());
 }
 
 void createPrefab(const cmd::ArgumentList& args)
@@ -241,7 +241,7 @@ void createSimplePatch(const cmd::ArgumentList& args)
 		// Call the PatchConstruct routine (GtkRadiant legacy)
 		constructPrefab(bounds,
 			getSelectedShader(),
-			ePlane, GlobalXYWndManager().getActiveViewType(),
+			ePlane, GlobalOrthoViewManager().getActiveViewType(),
 			width, height);
 	}
 }

@@ -12,8 +12,8 @@ class wxMouseEvent;
 namespace ui
 {
 
-class XYWndManager : 
-    public IXWndManager
+/// Implementation of the IOrthoViewManager module
+class XYWndManager: public IOrthoViewManager
 {
 	std::map<int, XYWnd*> _xyWnds;
 
@@ -72,7 +72,7 @@ public:
 
 	unsigned int defaultBlockSize() const;
 
-	// Passes a draw call to each allocated view, set force to true 
+	// Passes a draw call to each allocated view, set force to true
     // to redraw immediately instead of queueing the draw.
 	void updateAllViews(bool force = false) override;
 
