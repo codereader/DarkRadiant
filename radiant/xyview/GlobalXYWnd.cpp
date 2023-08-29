@@ -55,7 +55,7 @@ namespace
 }
 
 class OrthoviewControl :
-    public IUserControl
+    public IUserControlCreator
 {
 private:
     XYWndManager& _owner;

@@ -12,7 +12,7 @@ class IUserInterfaceModule :
 public:
     ~IUserInterfaceModule() override {}
 
-    // Runs the specified action in the UI thread 
+    // Runs the specified action in the UI thread
     // this happens when the application has a chance to, usually during event processing
     // This method is safe to be called from any thread.
     virtual void dispatch(const std::function<void()>& action) = 0;
@@ -21,13 +21,13 @@ public:
      * Registers a new control. After registration, clients can acquire
      * the control by invoking the findControl() method.
      */
-    virtual void registerControl(const IUserControl::Ptr& control) = 0;
+    virtual void registerControl(const IUserControlCreator::Ptr& control) = 0;
 
     /**
      * Looks up the user control (interface) by name.
      * Returns an empty reference if nothing matches.
      */
-    virtual IUserControl::Ptr findControl(const std::string& name) = 0;
+    virtual IUserControlCreator::Ptr findControl(const std::string& name) = 0;
 
     /**
      * Unregisters the named control. Does nothing if the name is not registered.

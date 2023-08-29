@@ -7,7 +7,7 @@ namespace ui
 {
 
 class LayerControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override

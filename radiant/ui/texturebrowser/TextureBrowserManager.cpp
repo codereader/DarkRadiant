@@ -20,7 +20,7 @@ namespace
 }
 
 class TextureBrowserControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override

@@ -29,7 +29,7 @@ namespace
 }
 
 class CameraControl :
-    public IUserControl
+    public IUserControlCreator
 {
 private:
     CameraWndManager& _owner;

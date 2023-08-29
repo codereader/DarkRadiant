@@ -323,7 +323,7 @@ void UserInterfaceModule::dispatch(const std::function<void()>& action)
 	wxTheApp->QueueEvent(new DispatchEvent(DISPATCH_EVENT, wxID_ANY, action));
 }
 
-void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
+void UserInterfaceModule::registerControl(const IUserControlCreator::Ptr& control)
 {
     if (!_userControls.emplace(control->getControlName(), control).second)
     {
@@ -337,7 +337,7 @@ void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
     }
 
     // Add a command shortcut toggling this control
-    GlobalCommandSystem().addStatement(fmt::format("{0}{1}", TOGGLE_CONTROL_STATEMENT_PREFIX, control->getControlName()), 
+    GlobalCommandSystem().addStatement(fmt::format("{0}{1}", TOGGLE_CONTROL_STATEMENT_PREFIX, control->getControlName()),
         fmt::format("{0} \"{1}\"", TOGGLE_CONTROL_COMMAND, control->getControlName()), false);
 
     // Add a command shortcut for making this the main control
@@ -345,11 +345,11 @@ void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
         fmt::format("{0} \"{1}\"", TOGGLE_MAIN_CONTROL_COMMAND, control->getControlName()), false);
 }
 
-IUserControl::Ptr UserInterfaceModule::findControl(const std::string& name)
+IUserControlCreator::Ptr UserInterfaceModule::findControl(const std::string& name)
 {
     auto control = _userControls.find(name);
 
-    return control != _userControls.end() ? control->second : IUserControl::Ptr();
+    return control != _userControls.end() ? control->second : IUserControlCreator::Ptr();
 }
 
 void UserInterfaceModule::unregisterControl(const std::string& controlName)

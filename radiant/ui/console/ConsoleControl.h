@@ -7,7 +7,7 @@ namespace ui
 {
 
 class ConsoleControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override
