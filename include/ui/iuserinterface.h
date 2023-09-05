@@ -6,8 +6,15 @@
 namespace ui
 {
 
-class IUserInterfaceModule :
-    public RegisterableModule
+/**
+ * @brief Module responsible for creating all dockable UI panels.
+ *
+ * This is a dynamically populated factory object which maintains a map of
+ * IUserControlCreator objects indexed by name, each of which can create a dock widget of a
+ * specific type. Any part of the code (including plugins) can register new control
+ * creators.
+ */
+class IUserInterfaceModule: public RegisterableModule
 {
 public:
     ~IUserInterfaceModule() override {}
@@ -18,14 +25,23 @@ public:
     virtual void dispatch(const std::function<void()>& action) = 0;
 
     /**
-     * Registers a new control. After registration, clients can acquire
-     * the control by invoking the findControl() method.
+     * @brief Register a new control
+     *
+     * After registration, clients can acquire the control by invoking the findControl()
+     * method.
      */
-    virtual void registerControl(const IUserControlCreator::Ptr& control) = 0;
+    virtual void registerControl(IUserControlCreator::Ptr control) = 0;
 
     /**
-     * Looks up the user control (interface) by name.
-     * Returns an empty reference if nothing matches.
+     * @brief Lookup a control creator by name
+     *
+     * @param name
+     * The name of the control creator, which was exposed via the
+     * IUserControlCreator::getControlName() method.
+     *
+     * @return IUserControlCreator::Ptr
+     * Pointer to the matching control creator, or null if no control creator with this name
+     * could be found.
      */
     virtual IUserControlCreator::Ptr findControl(const std::string& name) = 0;
 

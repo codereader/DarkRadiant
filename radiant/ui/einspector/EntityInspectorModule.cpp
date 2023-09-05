@@ -1,5 +1,6 @@
 #include "EntityInspectorModule.h"
 
+#include "i18n.h"
 #include "ideclmanager.h"
 #include "iregistry.h"
 #include "iselection.h"

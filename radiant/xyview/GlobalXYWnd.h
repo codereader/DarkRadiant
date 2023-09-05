@@ -4,6 +4,7 @@
 #include "iorthoview.h"
 #include "icommandsystem.h"
 #include "imousetoolmanager.h"
+#include "ui/iusercontrol.h"
 
 #include "XYWnd.h"
 
@@ -13,7 +14,7 @@ namespace ui
 {
 
 /// Implementation of the IOrthoViewManager module
-class XYWndManager: public IOrthoViewManager
+class XYWndManager: public IOrthoViewManager, public IUserControlCreator
 {
     std::map<int, XYWnd*> _xyWnds;
 
@@ -141,6 +142,11 @@ public:
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
+
+    // IUserControlCreator implementation
+    std::string getControlName() override;
+    std::string getDisplayName() override;
+    wxWindow* createWidget(wxWindow* parent) override;
 
 private:
     void doWithActiveXyWnd(const std::function<void(XYWnd&)>& action) const;

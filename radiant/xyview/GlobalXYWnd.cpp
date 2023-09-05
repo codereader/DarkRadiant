@@ -54,32 +54,20 @@ namespace
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
 
-class OrthoviewControl :
-    public IUserControlCreator
+std::string XYWndManager::getControlName()
 {
-private:
-    XYWndManager& _owner;
+    return UserControl::OrthoView;
+}
 
-public:
-    OrthoviewControl(XYWndManager& owner) :
-        _owner(owner)
-    {}
+std::string XYWndManager::getDisplayName()
+{
+    return _("2D View");
+}
 
-    std::string getControlName() override
-    {
-        return UserControl::OrthoView;
-    }
-
-    std::string getDisplayName() override
-    {
-        return _("2D View");
-    }
-
-    wxWindow* createWidget(wxWindow* parent) override
-    {
-        return new XYWnd(parent, _owner);
-    }
-};
+wxWindow* XYWndManager::createWidget(wxWindow* parent)
+{
+    return new XYWnd(parent, *this);
+}
 
 XYWndManager::XYWndManager() :
     _maxZoomFactor(1024),
@@ -513,6 +501,11 @@ void XYWndManager::observeKey(const std::string& key)
     );
 }
 
+namespace
+{
+    void nullDeleter(XYWndManager*) {}
+}
+
 void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 {
 	// Connect self to the according registry keys
@@ -564,7 +557,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
 	toolGroup.registerMouseTool(std::make_shared<MeasurementTool>());
 
-    GlobalUserInterface().registerControl(std::make_shared<OrthoviewControl>(*this));
+    GlobalUserInterface().registerControl(IUserControlCreator::Ptr(this, nullDeleter));
 }
 
 void XYWndManager::shutdownModule()

@@ -85,7 +85,7 @@ public:
 	// This method is safe to be called from any thread.
 	void dispatch(const std::function<void()>& action) override;
 
-    void registerControl(const IUserControlCreator::Ptr& control) override;
+    void registerControl(IUserControlCreator::Ptr control) override;
     IUserControlCreator::Ptr findControl(const std::string& name) override;
     void unregisterControl(const std::string& controlName) override;
     void foreachControl(const std::function<void(const std::string&)>& functor) override;

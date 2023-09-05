@@ -323,7 +323,7 @@ void UserInterfaceModule::dispatch(const std::function<void()>& action)
 	wxTheApp->QueueEvent(new DispatchEvent(DISPATCH_EVENT, wxID_ANY, action));
 }
 
-void UserInterfaceModule::registerControl(const IUserControlCreator::Ptr& control)
+void UserInterfaceModule::registerControl(IUserControlCreator::Ptr control)
 {
     if (!_userControls.emplace(control->getControlName(), control).second)
     {
