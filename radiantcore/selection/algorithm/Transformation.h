@@ -46,7 +46,7 @@ void scaleSelected(const Vector3& scaleXYZ);
  */
 void scaleSelectedCmd(const cmd::ArgumentList& args);
 
-/** 
+/**
  * greebo: This duplicates the current selection (that's what happening
  * when you hit the space bar).
  */
@@ -71,7 +71,7 @@ enum ENudgeDirection
 void nudgeSelected(ENudgeDirection direction);
 
 // Overload for more control of what happens
-void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype);
+void nudgeSelected(ENudgeDirection direction, float amount, OrthoOrientation viewtype);
 
 /**
 * Command target, interprets the first command as direction

@@ -80,9 +80,9 @@ MouseTool::Result ClipperTool::onMouseMove(Event& ev)
         {
             // Leave the third coordinate of the clip point untouched (#5356)
             auto viewType = xyEvent.getViewType();
-            int missingDim = viewType == XY ? 2 : viewType == YZ ? 0 : 1;
+            int missingDim = viewType == OrthoOrientation::XY ? 2 : viewType == OrthoOrientation::YZ ? 0 : 1;
             auto& clipCoords = GlobalClipper().getMovingClipCoords();
-            
+
             Vector3 newWorldPos = xyEvent.getWorldPos();
             newWorldPos[missingDim] = clipCoords[missingDim];
 
@@ -148,8 +148,8 @@ void ClipperTool::dropClipPoint(XYMouseToolEvent& event)
     Vector3 point = event.getWorldPos();
     Vector3 mid = GlobalSelectionSystem().getCurrentSelectionCenter();
 
-    GlobalClipper().setViewType(static_cast<EViewType>(event.getViewType()));
-    int nDim = (GlobalClipper().getViewType() == YZ) ? 0 : ((GlobalClipper().getViewType() == XZ) ? 1 : 2);
+    GlobalClipper().setViewType(static_cast<OrthoOrientation>(event.getViewType()));
+    int nDim = (GlobalClipper().getViewType() == OrthoOrientation::YZ) ? 0 : ((GlobalClipper().getViewType() == OrthoOrientation::XZ) ? 1 : 2);
     point[nDim] = mid[nDim];
     point.snap(GlobalGrid().getGridSize());
     GlobalClipper().newClipPoint(point);

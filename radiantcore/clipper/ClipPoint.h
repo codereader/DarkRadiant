@@ -25,9 +25,9 @@ public:
 
 	operator Vector3&();
 
-	double intersect(const Vector3& point, EViewType viewtype, float scale);
+	double intersect(const Vector3& point, OrthoOrientation viewtype, float scale);
 
-	void testSelect(const Vector3& point, EViewType viewtype, float scale, double& bestDistance, ClipPoint*& bestClip);
+	void testSelect(const Vector3& point, OrthoOrientation viewtype, float scale, double& bestDistance, ClipPoint*& bestClip);
 
 	/*! Draw clip/path point with rasterized number label */
 	void Draw(int num, float scale);

@@ -41,7 +41,7 @@ namespace
 }
 
 void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab eType,
-					 EViewType viewType, std::size_t width, std::size_t height)
+					 OrthoOrientation viewType, std::size_t width, std::size_t height)
 {
 	GlobalSelectionSystem().setSelectedAll(false);
 

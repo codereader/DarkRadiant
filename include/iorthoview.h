@@ -9,8 +9,8 @@ typedef BasicVector3<double> Vector3;
 
 constexpr const char* const RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
 
-// Possible types of the orthogonal view window
-enum EViewType
+// Possible orientations of the orthogonal view window
+enum class OrthoOrientation
 {
     YZ = 0,
     XZ = 1,
@@ -63,7 +63,7 @@ public:
     virtual void snapToGrid(Vector3& point) = 0;
 
     // Returns the projection type (XY, XZ, YZ) of this view
-    virtual EViewType getViewType() const = 0;
+    virtual OrthoOrientation getViewType() const = 0;
 
     // Sets the mouse cursor type of this view
     virtual void setCursorType(CursorType type) = 0;
@@ -90,7 +90,7 @@ public:
 
     // Return the first view matching the given viewType
     // Will throw std::runtime_error if no view is found
-    virtual IOrthoView& getViewByType(EViewType viewType) = 0;
+    virtual IOrthoView& getViewByType(OrthoOrientation viewType) = 0;
 
     // Sets the scale of all available views
     virtual void setScale(float scale) = 0;
@@ -102,10 +102,10 @@ public:
     virtual void positionActiveView(const Vector3& origin) = 0;
 
     // Returns the view type of the currently active view
-    virtual EViewType getActiveViewType() const = 0;
+    virtual OrthoOrientation getActiveViewType() const = 0;
 
     // Sets the viewtype of the active view
-    virtual void setActiveViewType(EViewType viewType) = 0;
+    virtual void setActiveViewType(OrthoOrientation viewType) = 0;
 };
 
 } // namespace

@@ -40,7 +40,7 @@ public:
         return _worldPos;
     }
 
-    EViewType getViewType() const
+    OrthoOrientation getViewType() const
     {
         return _view.getViewType();
     }

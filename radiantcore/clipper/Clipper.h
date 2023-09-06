@@ -11,12 +11,12 @@ namespace
 	const unsigned int NUM_CLIP_POINTS = 3;
 }
 
-class Clipper final : 
+class Clipper final :
 	public IClipper
 {
 private:
 	// Hold the currently active xy view type
-	EViewType _viewType;
+	OrthoOrientation _viewType;
 
 	// The array holding the three possible clip points
 	ClipPoint _clipPoints[NUM_CLIP_POINTS];
@@ -45,8 +45,8 @@ public:
 
 	void constructPreferences();
 
-	EViewType getViewType() const override;
-	void setViewType(EViewType viewType) override;
+	OrthoOrientation getViewType() const override;
+	void setViewType(OrthoOrientation viewType) override;
 	ClipPoint* getMovingClip() override;
 
 	Vector3& getMovingClipCoords() override;
@@ -56,7 +56,7 @@ public:
 	const std::string& getCaulkShader() const override;
 
 	// greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
-	ClipPoint* find(const Vector3& point, EViewType viewtype, float scale) override;
+	ClipPoint* find(const Vector3& point, OrthoOrientation viewtype, float scale) override;
 
 	// Returns true if at least two clip points are set
 	bool valid() const;
@@ -86,4 +86,3 @@ public:
 	void splitSelectedCmd();
 
 }; // class Clipper
-

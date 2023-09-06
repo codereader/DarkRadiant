@@ -58,16 +58,16 @@ namespace
     }
 }
 
-double ClipPoint::intersect(const Vector3& point, EViewType viewtype, float scale)
+double ClipPoint::intersect(const Vector3& point, OrthoOrientation viewtype, float scale)
 {
-	int nDim1 = (viewtype == YZ) ? 1 : 0;
-	int nDim2 = (viewtype == XY) ? 1 : 2;
+	int nDim1 = (viewtype == OrthoOrientation::YZ) ? 1 : 0;
+	int nDim2 = (viewtype == OrthoOrientation::XY) ? 1 : 2;
 
     double screenDistanceSquared = Vector2(
         fDiff(_coords[nDim1], point[nDim1]) * scale,
         fDiff(_coords[nDim2], point[nDim2]) * scale).getLengthSquared();
 
-	if (screenDistanceSquared < 8*8) 
+	if (screenDistanceSquared < 8*8)
     {
 		return screenDistanceSquared;
 	}
@@ -75,7 +75,7 @@ double ClipPoint::intersect(const Vector3& point, EViewType viewtype, float scal
 	return FLT_MAX;
 }
 
-void ClipPoint::testSelect(const Vector3& point, EViewType viewtype, float scale, double& bestDistance, ClipPoint*& bestClip) {
+void ClipPoint::testSelect(const Vector3& point, OrthoOrientation viewtype, float scale, double& bestDistance, ClipPoint*& bestClip) {
 	if (isSet()) {
 		double distance = intersect(point, viewtype, scale);
 
@@ -85,4 +85,3 @@ void ClipPoint::testSelect(const Vector3& point, EViewType viewtype, float scale
 		}
 	}
 }
-

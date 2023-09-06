@@ -67,7 +67,7 @@ class XYWnd final :
 
     Vector3 _mousePosition;
 
-    EViewType _viewType = XY;
+    OrthoOrientation _viewType = OrthoOrientation::XY;
 
     // Context menu handling. Because we use right-click for both context menu and panning
     // (probably a bad design choice, but we're stuck with it), we need to distinguish between a
@@ -149,8 +149,8 @@ public:
     void updateModelview();
     void updateProjection();
 
-    void setViewType(EViewType n);
-    EViewType getViewType() const override;
+    void setViewType(OrthoOrientation n);
+    OrthoOrientation getViewType() const override;
 
     void setScale(float f);
     float getScale() const override;

@@ -107,11 +107,11 @@ public:
     void positionActiveView(const Vector3& origin) override;
 
     // Returns the view type of the currently active view
-    EViewType getActiveViewType() const override;
-    void setActiveViewType(EViewType viewType) override;
+    OrthoOrientation getActiveViewType() const override;
+    void setActiveViewType(OrthoOrientation viewType) override;
 
     IOrthoView& getActiveView() override;
-    IOrthoView& getViewByType(EViewType viewType) override;
+    IOrthoView& getViewByType(OrthoOrientation viewType) override;
 
     void toggleActiveView(const cmd::ArgumentList& args);
 
@@ -126,7 +126,7 @@ public:
     /**
      * Create a non-floating (embedded) orthoview of the given type
      */
-    XYWndPtr createEmbeddedOrthoView(EViewType viewType, wxWindow* parent);
+    XYWndPtr createEmbeddedOrthoView(OrthoOrientation viewType, wxWindow* parent);
 
     /**
      * greebo: This removes a certain orthoview ID, usually initiating

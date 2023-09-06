@@ -69,10 +69,10 @@ namespace
     constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
     // User-visible titles for view directions
-    static const std::map<EViewType, std::string> VIEWTYPE_TITLES {
-        {XY, _("XY Top")},
-        {XZ, _("XZ Front")},
-        {YZ, _("YZ Side")},
+    static const std::map<OrthoOrientation, std::string> VIEWTYPE_TITLES {
+        {OrthoOrientation::XY, _("XY Top")},
+        {OrthoOrientation::XZ, _("XZ Front")},
+        {OrthoOrientation::YZ, _("YZ Side")},
     };
 }
 
@@ -302,8 +302,8 @@ void XYWnd::setOrigin(const Vector3& origin) {
 
 void XYWnd::scrollByPixels(int x, int y)
 {
-    int nDim1 = (_viewType == YZ) ? 1 : 0;
-    int nDim2 = (_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
+    int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
     _origin[nDim1] -= x / _scale;
     _origin[nDim2] += y / _scale;
     updateModelview();
@@ -441,8 +441,8 @@ void XYWnd::onContextMenu()
 
 // makes sure the selected brush or camera is in view
 void XYWnd::positionView(const Vector3& position) {
-    int nDim1 = (_viewType == YZ) ? 1 : 0;
-    int nDim2 = (_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
+    int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
 
     _origin[nDim1] = position[nDim1];
     _origin[nDim2] = position[nDim2];
@@ -452,12 +452,12 @@ void XYWnd::positionView(const Vector3& position) {
     queueDraw();
 }
 
-void XYWnd::setViewType(EViewType viewType) {
+void XYWnd::setViewType(OrthoOrientation viewType) {
     _viewType = viewType;
     updateModelview();
 }
 
-EViewType XYWnd::getViewType() const {
+OrthoOrientation XYWnd::getViewType() const {
     return _viewType;
 }
 
@@ -536,21 +536,21 @@ Vector3 XYWnd::convertXYToWorld(int x, int y)
     float normalised2world_scale_x = _width / 2.0 / _scale;
     float normalised2world_scale_y = _height / 2.0 / _scale;
 
-    if (_viewType == XY)
+    if (_viewType == OrthoOrientation::XY)
     {
         return Vector3(
             normalised_to_world(screen_normalised(x, _width), _origin[0], normalised2world_scale_x),
             normalised_to_world(-screen_normalised(y, _height), _origin[1], normalised2world_scale_y),
             0);
     }
-    else if (_viewType == YZ)
+    else if (_viewType == OrthoOrientation::YZ)
     {
         return Vector3(
             0,
             normalised_to_world(screen_normalised(x, _width), _origin[1], normalised2world_scale_x),
             normalised_to_world(-screen_normalised(y, _height), _origin[2], normalised2world_scale_y));
     }
-    else // XZ
+    else // OrthoOrientation::XZ
     {
         return Vector3(
             normalised_to_world(screen_normalised(x, _width), _origin[0], normalised2world_scale_x),
@@ -561,8 +561,8 @@ Vector3 XYWnd::convertXYToWorld(int x, int y)
 
 void XYWnd::snapToGrid(Vector3& point)
 {
-    std::map<EViewType, std::pair<std::size_t, std::size_t>> INDICES_BY_VIEWTYPE {
-        {XY, {0, 1}}, {YZ, {1, 2}}, {XZ, {0, 2}}
+    std::map<OrthoOrientation, std::pair<std::size_t, std::size_t>> INDICES_BY_VIEWTYPE {
+        {OrthoOrientation::XY, {0, 1}}, {OrthoOrientation::YZ, {1, 2}}, {OrthoOrientation::XZ, {0, 2}}
     };
 
     const auto indices = INDICES_BY_VIEWTYPE[_viewType];
@@ -575,8 +575,8 @@ void XYWnd::snapToGrid(Vector3& point)
  * @returns: Vector4( xbegin, xend, ybegin, yend);
  */
 Vector4 XYWnd::getWindowCoordinates() {
-    int nDim1 = (_viewType == YZ) ? 1 : 0;
-    int nDim2 = (_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
+    int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
 
     double w = (_width / 2.0 / _scale);
     double h = (_height / 2.0 / _scale);
@@ -814,8 +814,8 @@ void XYWnd::drawGrid()
         }
     }
 
-    int nDim1 = (_viewType == YZ) ? 1 : 0;
-    int nDim2 = (_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
+    int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
 
     // draw coordinate text if needed
     if (GlobalXYWnd().showCoordinates())
@@ -864,8 +864,8 @@ void XYWnd::drawGrid()
     {
         const char* g_AxisName[3] = { "X", "Y", "Z" };
 
-        const std::string colourNameX = (_viewType == YZ) ? "axis_y" : "axis_x";
-        const std::string colourNameY = (_viewType == XY) ? "axis_y" : "axis_z";
+        const std::string colourNameX = (_viewType == OrthoOrientation::YZ) ? "axis_y" : "axis_x";
+        const std::string colourNameY = (_viewType == OrthoOrientation::XY) ? "axis_y" : "axis_z";
         const Vector3& colourX = GlobalColourSchemeManager().getColour(colourNameX);
         const Vector3& colourY = GlobalColourSchemeManager().getColour(colourNameY);
 
@@ -1055,7 +1055,7 @@ void XYWnd::drawBlockGrid()
         glVertex2f (x, ye);
     }
 
-    if (_viewType == XY) {
+    if (_viewType == OrthoOrientation::XY) {
         for (y=yb ; y<=ye ; y+=blockSize) {
             glVertex2f (xb, y);
             glVertex2f (xe, y);
@@ -1067,7 +1067,7 @@ void XYWnd::drawBlockGrid()
 
     // draw coordinate text if needed
 
-    if (_viewType == XY && _scale > .1) {
+    if (_viewType == OrthoOrientation::XY && _scale > .1) {
         for (x=xb ; x<xe ; x+=blockSize)
             for (y=yb ; y<ye ; y+=blockSize) {
                 glRasterPos2f (x+(blockSize/2.0), y+(blockSize/2.0));
@@ -1094,12 +1094,12 @@ void XYWnd::drawCameraIcon()
         fov = 48 / _scale;
         box = 16 / _scale;
 
-        if (_viewType == XY) {
+        if (_viewType == OrthoOrientation::XY) {
             x = origin[0];
             y = origin[1];
             a = degrees_to_radians(angles[camera::CAMERA_YAW]);
         }
-        else if (_viewType == YZ) {
+        else if (_viewType == OrthoOrientation::YZ) {
             x = origin[1];
             y = origin[2];
             a = degrees_to_radians(angles[camera::CAMERA_PITCH]);
@@ -1154,7 +1154,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
   std::ostringstream dimensions;
 
-  if (_viewType == XY)
+  if (_viewType == OrthoOrientation::XY)
   {
     glBegin (GL_LINES);
 
@@ -1193,7 +1193,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
     dimensions << "(" << g_pOrgStrings[0][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[0][1] << vMaxBounds[nDim2] << ")";
     _font->drawString(dimensions.str());
   }
-  else if (_viewType == XZ)
+  else if (_viewType == OrthoOrientation::XZ)
   {
     glBegin (GL_LINES);
 
@@ -1293,8 +1293,8 @@ void XYWnd::updateProjection() {
 
 // note: modelview matrix must have a uniform scale, otherwise strange things happen when rendering the rotation manipulator.
 void XYWnd::updateModelview() {
-    int nDim1 = (_viewType == YZ) ? 1 : 0;
-    int nDim2 = (_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
+    int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
 
     // translation
     _modelView[12] = -_origin[nDim1] * _scale;
@@ -1303,7 +1303,7 @@ void XYWnd::updateModelview() {
 
     // axis base
     switch (_viewType) {
-        case XY:
+        case OrthoOrientation::XY:
             _modelView[0]  =  _scale;
             _modelView[1]  =  0;
             _modelView[2]  =  0;
@@ -1316,7 +1316,7 @@ void XYWnd::updateModelview() {
             _modelView[9]  =  0;
             _modelView[10] = -_scale;
             break;
-        case XZ:
+        case OrthoOrientation::XZ:
             _modelView[0]  =  _scale;
             _modelView[1]  =  0;
             _modelView[2]  =  0;
@@ -1329,7 +1329,7 @@ void XYWnd::updateModelview() {
             _modelView[9]  =  _scale;
             _modelView[10] =  0;
             break;
-        case YZ:
+        case OrthoOrientation::YZ:
             _modelView[0]  =  0;
             _modelView[1]  =  0;
             _modelView[2]  = -_scale;
@@ -1368,8 +1368,8 @@ void XYWnd::draw()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glScalef(_scale, _scale, 1);
-    int nDim1 = (_viewType == YZ) ? 1 : 0;
-    int nDim2 = (_viewType == XY) ? 1 : 2;
+    int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
+    int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
     glTranslatef(-_origin[nDim1], -_origin[nDim2], 0);
 
     // Call the image overlay draw method with the window coordinates
@@ -1469,13 +1469,13 @@ void XYWnd::draw()
         Vector3 colour = GlobalColourSchemeManager().getColour("xyview_crosshairs");
         glColor4d(colour[0], colour[1], colour[2], 0.8f);
         glBegin (GL_LINES);
-        if (_viewType == XY) {
+        if (_viewType == OrthoOrientation::XY) {
             glVertex2f(2.0f * _minWorldCoord, _mousePosition[1]);
             glVertex2f(2.0f * _maxWorldCoord, _mousePosition[1]);
             glVertex2f(_mousePosition[0], 2.0f * _minWorldCoord);
             glVertex2f(_mousePosition[0], 2.0f * _maxWorldCoord);
         }
-        else if (_viewType == YZ) {
+        else if (_viewType == OrthoOrientation::YZ) {
             glVertex3f(_mousePosition[0], 2.0f * _minWorldCoord, _mousePosition[2]);
             glVertex3f(_mousePosition[0], 2.0f * _maxWorldCoord, _mousePosition[2]);
             glVertex3f(_mousePosition[0], _mousePosition[1], 2.0f * _minWorldCoord);
@@ -1536,13 +1536,13 @@ void XYWnd::draw()
             glLoadIdentity();
 
             switch (_viewType) {
-                case YZ:
+                case OrthoOrientation::YZ:
                     glColor3dv(GlobalColourSchemeManager().getColour("axis_x"));
                     break;
-                case XZ:
+                case OrthoOrientation::XZ:
                     glColor3dv(GlobalColourSchemeManager().getColour("axis_y"));
                     break;
-                case XY:
+                case OrthoOrientation::XY:
                     glColor3dv(GlobalColourSchemeManager().getColour("axis_z"));
                     break;
             }
@@ -1568,7 +1568,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point)
     point = convertXYToWorld(x, y);
     snapToGrid(point);
 
-    int nDim = (getViewType() == XY) ? 2 : (getViewType() == YZ) ? 0 : 1;
+    int nDim = (getViewType() == OrthoOrientation::XY) ? 2 : (getViewType() == OrthoOrientation::YZ) ? 0 : 1;
 
     const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
 
@@ -1612,8 +1612,8 @@ void XYWnd::zoomInOn(wxPoint cursor, int zoom)
 {
     const float newScale = getZoomedScale(zoom);
 
-    int dim1 = _viewType == YZ ? 1 : 0;
-    int dim2 = _viewType == XY ? 1 : 2;
+    int dim1 = _viewType == OrthoOrientation::YZ ? 1 : 0;
+    int dim2 = _viewType == OrthoOrientation::XY ? 1 : 2;
 
     // worldPos = origin + devicePos * device2WorldScale
     // devicePos and worldPos should remain constant. device2WorldScale is known before

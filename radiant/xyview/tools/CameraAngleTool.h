@@ -1,5 +1,6 @@
 #pragma once
 
+#include "XYMouseToolEvent.h"
 #include "i18n.h"
 #include "imousetool.h"
 #include "math/Vector3.h"
@@ -10,7 +11,7 @@ namespace ui
 {
 
 /**
-* The CameraAngleTool re-orients the camera such that 
+* The CameraAngleTool re-orients the camera such that
 * the clicked location is in its view.
 */
 class CameraAngleTool :
@@ -92,10 +93,10 @@ private:
 
             point -= camView.getCameraOrigin();
 
-            int n1 = (xyEvent.getViewType() == XY) ? 1 : 2;
-            int n2 = (xyEvent.getViewType() == YZ) ? 1 : 0;
+            int n1 = (xyEvent.getViewType() == OrthoOrientation::XY) ? 1 : 2;
+            int n2 = (xyEvent.getViewType() == OrthoOrientation::YZ) ? 1 : 0;
 
-            int nAngle = (xyEvent.getViewType() == XY) ? camera::CAMERA_YAW : camera::CAMERA_PITCH;
+            int nAngle = (xyEvent.getViewType() == OrthoOrientation::XY) ? camera::CAMERA_YAW : camera::CAMERA_PITCH;
 
             if (point[n1] || point[n2])
             {

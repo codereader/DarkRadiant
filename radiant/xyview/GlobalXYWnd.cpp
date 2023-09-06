@@ -319,7 +319,7 @@ IOrthoView& XYWndManager::getActiveView()
 }
 
 // Return the first view matching the given viewType
-IOrthoView& XYWndManager::getViewByType(EViewType viewType)
+IOrthoView& XYWndManager::getViewByType(OrthoOrientation viewType)
 {
 	for (auto& pair : _xyWnds)
 	{
@@ -353,16 +353,16 @@ void XYWndManager::positionActiveView(const Vector3& origin)
     doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.positionView(origin); });
 }
 
-EViewType XYWndManager::getActiveViewType() const
+OrthoOrientation XYWndManager::getActiveViewType() const
 {
-    auto viewType = XY;
+    auto viewType = OrthoOrientation::XY;
 
     doWithActiveXyWnd([&](auto& activeXyWnd) { viewType = activeXyWnd.getViewType(); });
 
     return viewType;
 }
 
-void XYWndManager::setActiveViewType(EViewType viewType)
+void XYWndManager::setActiveViewType(OrthoOrientation viewType)
 {
     doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.setViewType(viewType); });
 }
@@ -371,18 +371,12 @@ void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
 {
     doWithActiveXyWnd([&](auto& activeXyWnd)
     {
-        if (activeXyWnd.getViewType() == XY)
-        {
-            activeXyWnd.setViewType(XZ);
-        }
-        else if (activeXyWnd.getViewType() == XZ)
-        {
-            activeXyWnd.setViewType(YZ);
-        }
+        if (activeXyWnd.getViewType() == OrthoOrientation::XY)
+            activeXyWnd.setViewType(OrthoOrientation::XZ);
+        else if (activeXyWnd.getViewType() == OrthoOrientation::XZ)
+            activeXyWnd.setViewType(OrthoOrientation::YZ);
         else
-        {
-            activeXyWnd.setViewType(XY);
-        }
+            activeXyWnd.setViewType(OrthoOrientation::XY);
 
         // Re-focus the view when toggling projections
         activeXyWnd.setOrigin(getFocusPosition());
@@ -391,19 +385,19 @@ void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
 
 void XYWndManager::setActiveViewXY(const cmd::ArgumentList& args)
 {
-	setActiveViewType(XY);
+	setActiveViewType(OrthoOrientation::XY);
 	positionActiveView(getFocusPosition());
 }
 
 void XYWndManager::setActiveViewXZ(const cmd::ArgumentList& args)
 {
-	setActiveViewType(XZ);
+	setActiveViewType(OrthoOrientation::XZ);
 	positionActiveView(getFocusPosition());
 }
 
 void XYWndManager::setActiveViewYZ(const cmd::ArgumentList& args)
 {
-	setActiveViewType(YZ);
+	setActiveViewType(OrthoOrientation::YZ);
 	positionActiveView(getFocusPosition());
 }
 

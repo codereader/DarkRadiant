@@ -26,22 +26,22 @@ public:
 		}
 
 		// Determine the viewtype
-		EViewType viewType = GlobalOrthoViewManager().getActiveViewType();
+		OrthoOrientation viewType = GlobalOrthoViewManager().getActiveViewType();
 
 		unsigned int axis1 = 0;
 		unsigned int axis2 = 1;
 
 		// Determine which axes have to be compared
 		switch (viewType) {
-			case XY:
+			case OrthoOrientation::XY:
 				axis1 = 0;
 				axis2 = 1;
 			break;
-			case YZ:
+			case OrthoOrientation::YZ:
 				axis1 = 1;
 				axis2 = 2;
 			break;
-			case XZ:
+			case OrthoOrientation::XZ:
 				axis1 = 0;
 				axis2 = 2;
 			break;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "XYMouseToolEvent.h"
 #include "i18n.h"
 #include "imousetool.h"
 #include "iorthoview.h"
@@ -93,13 +94,13 @@ private:
 
             switch (xyEvent.getViewType())
             {
-            case XY:
+            case OrthoOrientation::XY:
                 origin[2] = workzoneOrigin[2];
                 break;
-            case YZ:
+            case OrthoOrientation::YZ:
                 origin[0] = workzoneOrigin[0];
                 break;
-            case XZ:
+            case OrthoOrientation::XZ:
                 origin[1] = workzoneOrigin[1];
                 break;
             };
