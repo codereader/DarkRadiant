@@ -1,4 +1,4 @@
-#include "XYWnd.h"
+#include "OrthoView.h"
 
 #include "i18n.h"
 #include "iclipper.h"
@@ -76,14 +76,14 @@ namespace
     };
 }
 
-int XYWnd::_nextId = 1;
+int OrthoView::_nextId = 1;
 
-XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner)
+OrthoView::OrthoView(wxWindow* parent, XYWndManager& owner)
 : DockablePanel(parent),
   MouseToolHandler(IMouseToolGroup::Type::OrthoView),
   _owner(owner),
   _id(_nextId++),
-  _wxGLWidget(new wxutil::GLWidget(this, std::bind(&XYWnd::onRender, this), "XYWnd")),
+  _wxGLWidget(new wxutil::GLWidget(this, std::bind(&OrthoView::onRender, this), "XYWnd")),
   _minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
   _maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord"))
 {
@@ -101,32 +101,32 @@ XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner)
     //_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
     // wxGLWidget wireup
-    _wxGLWidget->Bind(wxEVT_SIZE, &XYWnd::onGLResize, this);
+    _wxGLWidget->Bind(wxEVT_SIZE, &OrthoView::onGLResize, this);
 
-    _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &XYWnd::onGLWindowScroll, this);
-    _wxGLWidget->Bind(wxEVT_MOTION, &XYWnd::onGLMouseMove, this);
+    _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &OrthoView::onGLWindowScroll, this);
+    _wxGLWidget->Bind(wxEVT_MOTION, &OrthoView::onGLMouseMove, this);
 
-    _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_LEFT_UP, &XYWnd::onGLMouseButtonRelease, this);
-    _wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_RIGHT_UP, &XYWnd::onGLMouseButtonRelease, this);
-    _wxGLWidget->Bind(wxEVT_MIDDLE_DOWN, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_MIDDLE_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_MIDDLE_UP, &XYWnd::onGLMouseButtonRelease, this);
-    _wxGLWidget->Bind(wxEVT_AUX1_DOWN, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_AUX1_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_AUX1_UP, &XYWnd::onGLMouseButtonRelease, this);
-    _wxGLWidget->Bind(wxEVT_AUX2_DOWN, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_AUX2_DCLICK, &XYWnd::onGLMouseButtonPress, this);
-    _wxGLWidget->Bind(wxEVT_AUX2_UP, &XYWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_UP, &OrthoView::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_UP, &OrthoView::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_DOWN, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_DCLICK, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_UP, &OrthoView::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_AUX1_DOWN, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX1_DCLICK, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX1_UP, &OrthoView::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_AUX2_DOWN, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX2_DCLICK, &OrthoView::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_AUX2_UP, &OrthoView::onGLMouseButtonRelease, this);
 
-    _wxGLWidget->Bind(wxEVT_IDLE, &XYWnd::onIdle, this);
+    _wxGLWidget->Bind(wxEVT_IDLE, &OrthoView::onIdle, this);
 
     _freezePointer.connectMouseEvents(
-        std::bind(&XYWnd::onGLMouseButtonPress, this, std::placeholders::_1),
-        std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
+        std::bind(&OrthoView::onGLMouseButtonPress, this, std::placeholders::_1),
+        std::bind(&OrthoView::onGLMouseButtonRelease, this, std::placeholders::_1));
 
     updateProjection();
     updateModelview();
@@ -136,15 +136,15 @@ XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner)
 
     // greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
     _sigCameraChanged = GlobalCameraManager().signal_cameraChanged().connect(
-        sigc::mem_fun(this, &XYWnd::onCameraMoved));
+        sigc::mem_fun(this, &OrthoView::onCameraMoved));
 }
 
-int XYWnd::getId() const
+int OrthoView::getId() const
 {
     return _id;
 }
 
-XYWnd::~XYWnd()
+OrthoView::~OrthoView()
 {
     _owner.unregisterXYWnd(this);
 
@@ -158,7 +158,7 @@ XYWnd::~XYWnd()
     registry::setValue(RKEY_RECENT_SCALE, _scale);
 }
 
-void XYWnd::destroyXYView()
+void OrthoView::destroyXYView()
 {
     // Remove <self> from the scene change callback list
     GlobalSceneGraph().removeSceneObserver(this);
@@ -167,7 +167,7 @@ void XYWnd::destroyXYView()
     _wxGLWidget = nullptr;
 }
 
-void XYWnd::setScale(float f)
+void OrthoView::setScale(float f)
 {
     _scale = f;
     updateProjection();
@@ -175,19 +175,19 @@ void XYWnd::setScale(float f)
     queueDraw();
 }
 
-float XYWnd::getScale() const {
+float OrthoView::getScale() const {
     return _scale;
 }
 
-int XYWnd::getWidth() const {
+int OrthoView::getWidth() const {
     return _width;
 }
 
-int XYWnd::getHeight() const {
+int OrthoView::getHeight() const {
     return _height;
 }
 
-SelectionTestPtr XYWnd::createSelectionTestForPoint(const Vector2& point)
+SelectionTestPtr OrthoView::createSelectionTestForPoint(const Vector2& point)
 {
     float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
 
@@ -201,27 +201,27 @@ SelectionTestPtr XYWnd::createSelectionTestForPoint(const Vector2& point)
     return SelectionTestPtr(new SelectionVolume(scissored));
 }
 
-const VolumeTest& XYWnd::getVolumeTest() const
+const VolumeTest& OrthoView::getVolumeTest() const
 {
     return _view;
 }
 
-bool XYWnd::supportsDragSelections()
+bool OrthoView::supportsDragSelections()
 {
     return true;
 }
 
-int XYWnd::getDeviceWidth() const
+int OrthoView::getDeviceWidth() const
 {
     return getWidth();
 }
 
-int XYWnd::getDeviceHeight() const
+int OrthoView::getDeviceHeight() const
 {
     return getHeight();
 }
 
-void XYWnd::captureStates()
+void OrthoView::captureStates()
 {
     _highlightShaders.selectedShader = GlobalRenderSystem().capture(BuiltInShaderType::WireframeSelectionOverlay);
     _highlightShaders.selectedShaderGroup = GlobalRenderSystem().capture(BuiltInShaderType::WireframeSelectionOverlayOfGroups);
@@ -231,7 +231,7 @@ void XYWnd::captureStates()
     _highlightShaders.mergeActionShaderConflict = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayConflict);
 }
 
-void XYWnd::releaseStates()
+void OrthoView::releaseStates()
 {
 	_highlightShaders.selectedShader.reset();
 	_highlightShaders.selectedShaderGroup.reset();
@@ -241,7 +241,7 @@ void XYWnd::releaseStates()
     _highlightShaders.mergeActionShaderConflict.reset();
 }
 
-void XYWnd::ensureFont()
+void OrthoView::ensureFont()
 {
     if (_font)
     {
@@ -252,7 +252,7 @@ void XYWnd::ensureFont()
     _font = GlobalOpenGL().getFont(manager.fontStyle(), manager.fontSize());
 }
 
-void XYWnd::forceRedraw()
+void OrthoView::forceRedraw()
 {
     if (_drawing)
     {
@@ -263,44 +263,44 @@ void XYWnd::forceRedraw()
     _wxGLWidget->Update();
 }
 
-void XYWnd::queueDraw()
+void OrthoView::queueDraw()
 {
     _updateRequested = true;
 }
 
-void XYWnd::onSceneGraphChange()
+void OrthoView::onSceneGraphChange()
 {
     // Pass the call to queueDraw.
     queueDraw();
 }
 
-void XYWnd::updateFont()
+void OrthoView::updateFont()
 {
     // Clear out the font reference, it will be re-acquired
     // during the next draw call
     _font.reset();
 }
 
-void XYWnd::setActive(bool b) {
+void OrthoView::setActive(bool b) {
     _isActive = b;
 };
 
-bool XYWnd::isActive() const {
+bool OrthoView::isActive() const {
     return _isActive;
 };
 
-const Vector3& XYWnd::getOrigin() const
+const Vector3& OrthoView::getOrigin() const
 {
     return _origin;
 }
 
-void XYWnd::setOrigin(const Vector3& origin) {
+void OrthoView::setOrigin(const Vector3& origin) {
     _origin = origin;
     updateModelview();
     queueDraw();
 }
 
-void XYWnd::scrollByPixels(int x, int y)
+void OrthoView::scrollByPixels(int x, int y)
 {
     int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
     int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
@@ -314,7 +314,7 @@ void XYWnd::scrollByPixels(int x, int y)
  * The method is making use of a timer to determine the amount of time that has
  * passed since the chaseMouse has been started
  */
-void XYWnd::performChaseMouse()
+void OrthoView::performChaseMouse()
 {
 	float multiplier = _chaseMouseTimer.Time() / 10.0f;
     scrollByPixels(float_to_integer(-multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
@@ -335,7 +335,7 @@ void XYWnd::performChaseMouse()
  *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
-bool XYWnd::checkChaseMouse(unsigned int state)
+bool OrthoView::checkChaseMouse(unsigned int state)
 {
     wxPoint windowMousePos = _wxGLWidget->ScreenToClient(wxGetMousePosition());
 
@@ -408,7 +408,7 @@ bool XYWnd::checkChaseMouse(unsigned int state)
     return false;
 }
 
-void XYWnd::setCursorType(CursorType type)
+void OrthoView::setCursorType(CursorType type)
 {
     switch (type)
 	{
@@ -421,7 +421,7 @@ void XYWnd::setCursorType(CursorType type)
     };
 }
 
-void XYWnd::onCameraMoved()
+void OrthoView::onCameraMoved()
 {
     if (GlobalXYWnd().camXYUpdate())
     {
@@ -429,7 +429,7 @@ void XYWnd::onCameraMoved()
     }
 }
 
-void XYWnd::onContextMenu()
+void OrthoView::onContextMenu()
 {
 	// Get the click point in 3D space
 	Vector3 point;
@@ -440,7 +440,7 @@ void XYWnd::onContextMenu()
 }
 
 // makes sure the selected brush or camera is in view
-void XYWnd::positionView(const Vector3& position) {
+void OrthoView::positionView(const Vector3& position) {
     int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
     int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
 
@@ -452,17 +452,17 @@ void XYWnd::positionView(const Vector3& position) {
     queueDraw();
 }
 
-void XYWnd::setViewType(OrthoOrientation viewType) {
+void OrthoView::setViewType(OrthoOrientation viewType) {
     _viewType = viewType;
     updateModelview();
 }
 
-OrthoOrientation XYWnd::getViewType() const {
+OrthoOrientation OrthoView::getViewType() const {
     return _viewType;
 }
 
 // This gets called by the wx mousemoved callback or the periodical mousechase event
-void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
+void OrthoView::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 {
     // Context menu handling
     if (state == wxutil::MouseButton::RIGHT && _rightClickPos) // Only RMB, nothing else
@@ -502,7 +502,7 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 	}
 }
 
-void XYWnd::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState)
+void OrthoView::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState)
 {
     if (!tool) return;
 
@@ -523,7 +523,7 @@ void XYWnd::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, 
     handleGLMouseMotion(x, y, mouseState, mouseToolReceivesDeltas);
 }
 
-XYMouseToolEvent XYWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
+XYMouseToolEvent OrthoView::createMouseEvent(const Vector2& point, const Vector2& delta)
 {
     Vector2 normalisedDeviceCoords = device_constrained(
         window_to_normalised_device(point, _width, _height));
@@ -531,7 +531,7 @@ XYMouseToolEvent XYWnd::createMouseEvent(const Vector2& point, const Vector2& de
     return XYMouseToolEvent(*this, convertXYToWorld(point.x(), point.y()), normalisedDeviceCoords, delta);
 }
 
-Vector3 XYWnd::convertXYToWorld(int x, int y)
+Vector3 OrthoView::convertXYToWorld(int x, int y)
 {
     float normalised2world_scale_x = _width / 2.0 / _scale;
     float normalised2world_scale_y = _height / 2.0 / _scale;
@@ -559,7 +559,7 @@ Vector3 XYWnd::convertXYToWorld(int x, int y)
     }
 }
 
-void XYWnd::snapToGrid(Vector3& point)
+void OrthoView::snapToGrid(Vector3& point)
 {
     std::map<OrthoOrientation, std::pair<std::size_t, std::size_t>> INDICES_BY_VIEWTYPE {
         {OrthoOrientation::XY, {0, 1}}, {OrthoOrientation::YZ, {1, 2}}, {OrthoOrientation::XZ, {0, 2}}
@@ -574,7 +574,7 @@ void XYWnd::snapToGrid(Vector3& point)
  *
  * @returns: Vector4( xbegin, xend, ybegin, yend);
  */
-Vector4 XYWnd::getWindowCoordinates() {
+Vector4 OrthoView::getWindowCoordinates() {
     int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
     int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
 
@@ -610,7 +610,7 @@ Vector4 XYWnd::getWindowCoordinates() {
     return Vector4(xb, xe, yb, ye);
 }
 
-void XYWnd::drawGrid()
+void OrthoView::drawGrid()
 {
     double step, minor_step, stepx, stepy;
     step = minor_step = stepx = stepy = GlobalGrid().getGridSize();
@@ -925,7 +925,7 @@ void XYWnd::drawGrid()
     drawSelectionFocusArea(nDim1, nDim2, xb, xe, yb, ye);
 }
 
-void XYWnd::drawSelectionFocusArea(int nDim1, int nDim2, float xMin, float xMax, float yMin, float yMax)
+void OrthoView::drawSelectionFocusArea(int nDim1, int nDim2, float xMin, float xMax, float yMin, float yMax)
 {
     if (!GlobalSelectionSystem().selectionFocusIsActive()) return;
 
@@ -1009,7 +1009,7 @@ void XYWnd::drawSelectionFocusArea(int nDim1, int nDim2, float xMin, float xMax,
     glDisable(GL_BLEND);
 }
 
-void XYWnd::drawBlockGrid()
+void OrthoView::drawBlockGrid()
 {
     // Do nothing if there is no worldspawn yet
     Entity* worldSpawn = map::current::getWorldspawn();
@@ -1079,7 +1079,7 @@ void XYWnd::drawBlockGrid()
     glColor4f(0, 0, 0, 0);
 }
 
-void XYWnd::drawCameraIcon()
+void OrthoView::drawCameraIcon()
 {
     try
     {
@@ -1134,7 +1134,7 @@ void XYWnd::drawCameraIcon()
 
 // can be greatly simplified but per usual i am in a hurry
 // which is not an excuse, just a fact
-void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds)
+void OrthoView::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds)
 {
     if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
     {
@@ -1273,7 +1273,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
   }
 }
 
-void XYWnd::updateProjection() {
+void OrthoView::updateProjection() {
     _projection[0] = 1.0f / static_cast<float>(_width / 2.0);
     _projection[5] = 1.0f / static_cast<float>(_height / 2.0);
     _projection[10] = 1.0f / (_maxWorldCoord * _scale);
@@ -1292,7 +1292,7 @@ void XYWnd::updateProjection() {
 }
 
 // note: modelview matrix must have a uniform scale, otherwise strange things happen when rendering the rotation manipulator.
-void XYWnd::updateModelview() {
+void OrthoView::updateModelview() {
     int nDim1 = (_viewType == OrthoOrientation::YZ) ? 1 : 0;
     int nDim2 = (_viewType == OrthoOrientation::XY) ? 1 : 2;
 
@@ -1350,7 +1350,7 @@ void XYWnd::updateModelview() {
     _view.construct(_projection, _modelView, _width, _height);
 }
 
-void XYWnd::draw()
+void OrthoView::draw()
 {
     ensureFont();
 
@@ -1563,7 +1563,7 @@ void XYWnd::draw()
     debug::assertNoGlErrors();
 }
 
-void XYWnd::mouseToPoint(int x, int y, Vector3& point)
+void OrthoView::mouseToPoint(int x, int y, Vector3& point)
 {
     point = convertXYToWorld(x, y);
     snapToGrid(point);
@@ -1578,7 +1578,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point)
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
 //  we don't go below a zoom factor corresponding to 10% of the max world size
 //  (this has to be computed against the window size)
-float XYWnd::getZoomedScale(int steps)
+float OrthoView::getZoomedScale(int steps)
 {
     const float min_scale = std::min(getWidth(), getHeight()) / (1.1f * (_maxWorldCoord - _minWorldCoord));
     const float max_scale = GlobalXYWnd().maxZoomFactor();
@@ -1598,17 +1598,17 @@ float XYWnd::getZoomedScale(int steps)
     return scale;
 }
 
-void XYWnd::zoomOut()
+void OrthoView::zoomOut()
 {
     setScale( getZoomedScale( -1 ) );
 }
 
-void XYWnd::zoomIn()
+void OrthoView::zoomIn()
 {
     setScale( getZoomedScale( 1 ) );
 }
 
-void XYWnd::zoomInOn(wxPoint cursor, int zoom)
+void OrthoView::zoomInOn(wxPoint cursor, int zoom)
 {
     const float newScale = getZoomedScale(zoom);
 
@@ -1630,7 +1630,7 @@ void XYWnd::zoomInOn(wxPoint cursor, int zoom)
 
 // This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
 // It passes te call on to the XYWnd::chaseMouse() method.
-void XYWnd::onIdle(wxIdleEvent& ev)
+void OrthoView::onIdle(wxIdleEvent& ev)
 {
 	if (_chasingMouse)
 	{
@@ -1644,7 +1644,7 @@ void XYWnd::onIdle(wxIdleEvent& ev)
     }
 }
 
-void XYWnd::onGLResize(wxSizeEvent& ev)
+void OrthoView::onGLResize(wxSizeEvent& ev)
 {
 	const wxSize clientSize = _wxGLWidget->GetClientSize();
 
@@ -1656,7 +1656,7 @@ void XYWnd::onGLResize(wxSizeEvent& ev)
 	ev.Skip();
 }
 
-bool XYWnd::onRender()
+bool OrthoView::onRender()
 {
 	if (GlobalMainFrame().screenUpdatesEnabled())
 	{
@@ -1671,7 +1671,7 @@ bool XYWnd::onRender()
     return false; // nothing rendered
 }
 
-void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
+void OrthoView::onGLWindowScroll(wxMouseEvent& ev)
 {
     if (!ev.ShiftDown() && GlobalXYWnd().zoomCenteredOnMouseCursor())
     {
@@ -1694,7 +1694,7 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 	}
 }
 
-void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
+void OrthoView::onGLMouseButtonPress(wxMouseEvent& ev)
 {
 	// The focus might be on some editable child window - since the
 	// GL widget cannot be focused itself, let's reset the focus on the toplevel window
@@ -1718,7 +1718,7 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 	queueDraw();
 }
 
-void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
+void OrthoView::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
 	// Do the context menu handling first
     if (ev.RightUp() && !ev.HasAnyModifiers() && _rightClickPos)
@@ -1733,26 +1733,26 @@ void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 	queueDraw();
 }
 
-void XYWnd::onGLMouseMove(wxMouseEvent& ev)
+void OrthoView::onGLMouseMove(wxMouseEvent& ev)
 {
     MouseToolHandler::onGLMouseMove(ev);
 
     handleGLMouseMotion(ev.GetX(), ev.GetY(), wxutil::MouseButton::GetStateForMouseEvent(ev), false);
 }
 
-MouseTool::Result XYWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
+MouseTool::Result OrthoView::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
 {
     XYMouseToolEvent ev = createMouseEvent(point);
     return tool->onMouseDown(ev);
 }
 
-MouseTool::Result XYWnd::processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point)
+MouseTool::Result OrthoView::processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point)
 {
     XYMouseToolEvent ev = createMouseEvent(point);
     return tool->onMouseUp(ev);
 }
 
-MouseTool::Result XYWnd::processMouseMoveEvent(const MouseToolPtr& tool, int x, int y)
+MouseTool::Result OrthoView::processMouseMoveEvent(const MouseToolPtr& tool, int x, int y)
 {
     bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
 
@@ -1764,7 +1764,7 @@ MouseTool::Result XYWnd::processMouseMoveEvent(const MouseToolPtr& tool, int x, 
     return tool->onMouseMove(ev);
 }
 
-void XYWnd::startCapture(const MouseToolPtr& tool)
+void OrthoView::startCapture(const MouseToolPtr& tool)
 {
     if (_freezePointer.isCapturing(_wxGLWidget))
     {
@@ -1782,7 +1782,7 @@ void XYWnd::startCapture(const MouseToolPtr& tool)
     );
 }
 
-void XYWnd::endCapture()
+void OrthoView::endCapture()
 {
     if (!_freezePointer.isCapturing(_wxGLWidget))
     {
@@ -1792,12 +1792,12 @@ void XYWnd::endCapture()
     _freezePointer.endCapture();
 }
 
-IInteractiveView& XYWnd::getInteractiveView()
+IInteractiveView& OrthoView::getInteractiveView()
 {
     return *this;
 }
 
 /* STATICS */
-XYRenderer::HighlightShaders XYWnd::_highlightShaders;
+XYRenderer::HighlightShaders OrthoView::_highlightShaders;
 
 } // namespace

@@ -28,7 +28,8 @@ namespace ui
 
 class XYWndManager;
 
-class XYWnd final :
+/// Two dimensional orthographic view, implementing the IOrthoView interface
+class OrthoView final :
     public wxutil::DockablePanel,
     public IOrthoView,
     public scene::Graph::Observer,
@@ -103,8 +104,8 @@ class XYWnd final :
     IGLFont::Ptr _font;
 
 public:
-    XYWnd(wxWindow* parent, XYWndManager& owner);
-    ~XYWnd() override;
+    OrthoView(wxWindow* parent, XYWndManager& owner);
+    ~OrthoView() override;
 
     int getId() const;
 
@@ -210,7 +211,7 @@ private:
 /**
  * Shared pointer typedefs.
  */
-typedef std::shared_ptr<XYWnd> XYWndPtr;
-typedef std::weak_ptr<XYWnd> XYWndWeakPtr;
+typedef std::shared_ptr<OrthoView> XYWndPtr;
+typedef std::weak_ptr<OrthoView> XYWndWeakPtr;
 
 }

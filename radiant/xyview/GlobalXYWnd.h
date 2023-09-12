@@ -6,7 +6,7 @@
 #include "imousetoolmanager.h"
 #include "ui/iusercontrol.h"
 
-#include "XYWnd.h"
+#include "OrthoView.h"
 
 class wxMouseEvent;
 
@@ -16,7 +16,7 @@ namespace ui
 /// Implementation of the IOrthoViewManager module
 class XYWndManager: public IOrthoViewManager, public IUserControlCreator
 {
-    std::map<int, XYWnd*> _xyWnds;
+    std::map<int, OrthoView*> _xyWnds;
 
     // The active XYWnd
     int _activeXYWndId;
@@ -115,8 +115,8 @@ public:
 
     void toggleActiveView(const cmd::ArgumentList& args);
 
-    void registerXYWnd(XYWnd* view);
-    void unregisterXYWnd(XYWnd* view);
+    void registerXYWnd(OrthoView* view);
+    void unregisterXYWnd(OrthoView* view);
 
     /**
      * Create a non-floating (embedded) ortho view. DEPRECATED
@@ -149,7 +149,7 @@ public:
     wxWindow* createWidget(wxWindow* parent) override;
 
 private:
-    void doWithActiveXyWnd(const std::function<void(XYWnd&)>& action) const;
+    void doWithActiveXyWnd(const std::function<void(OrthoView&)>& action) const;
 
     /* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
      * If something is selected the center of the selection is taken as new origin, otherwise the camera

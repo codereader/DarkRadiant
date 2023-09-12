@@ -66,7 +66,7 @@ std::string XYWndManager::getDisplayName()
 
 wxWindow* XYWndManager::createWidget(wxWindow* parent)
 {
-    return new XYWnd(parent, *this);
+    return new OrthoView(parent, *this);
 }
 
 XYWndManager::XYWndManager() :
@@ -74,7 +74,7 @@ XYWndManager::XYWndManager() :
     _activeXYWndId(-1)
 {}
 
-void XYWndManager::registerXYWnd(XYWnd* view)
+void XYWndManager::registerXYWnd(OrthoView* view)
 {
     if (!_xyWnds.emplace(view->getId(), view).second)
     {
@@ -88,7 +88,7 @@ void XYWndManager::registerXYWnd(XYWnd* view)
     }
 }
 
-void XYWndManager::unregisterXYWnd(XYWnd* view)
+void XYWndManager::unregisterXYWnd(OrthoView* view)
 {
     auto id = view->getId();
     _xyWnds.erase(id);
@@ -268,7 +268,7 @@ void XYWndManager::updateAllViews(bool force)
 	}
 }
 
-void XYWndManager::doWithActiveXyWnd(const std::function<void(XYWnd&)>& action) const
+void XYWndManager::doWithActiveXyWnd(const std::function<void(OrthoView&)>& action) const
 {
     auto window = _xyWnds.find(_activeXYWndId);
 
@@ -538,7 +538,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 		_("Shows the mouse position in the orthoview")
 	);
 
-	XYWnd::captureStates();
+	OrthoView::captureStates();
 
     // Add default XY tools
     IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::OrthoView);
@@ -561,7 +561,7 @@ void XYWndManager::shutdownModule()
 	// Clear all tracked references
     _xyWnds.clear();
 
-	XYWnd::releaseStates();
+	OrthoView::releaseStates();
 }
 
 MouseToolStack XYWndManager::getMouseToolsForEvent(wxMouseEvent& ev)
