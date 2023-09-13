@@ -21,8 +21,7 @@ namespace ui
 {
 
 // Common interface used by all orthographic/2D views, i.e. XY/YZ/XZ and Texture Tool
-class IOrthoViewBase :
-    public IInteractiveView
+class IOrthoViewBase: public IInteractiveView
 {
 public:
     virtual ~IOrthoViewBase() {}
@@ -38,8 +37,8 @@ public:
     virtual void zoomOut() = 0;
 };
 
-class IOrthoView :
-    public IOrthoViewBase
+/// Interface for a single orthoview window
+class IOrthoView: public IOrthoViewBase
 {
 public:
     virtual ~IOrthoView() {}
@@ -62,8 +61,8 @@ public:
     // Note that one component of the given vector stays untouched.
     virtual void snapToGrid(Vector3& point) = 0;
 
-    // Returns the projection type (XY, XZ, YZ) of this view
-    virtual OrthoOrientation getViewType() const = 0;
+    /// Get the orientation of this view
+    virtual OrthoOrientation getOrientation() const = 0;
 
     // Sets the mouse cursor type of this view
     virtual void setCursorType(CursorType type) = 0;

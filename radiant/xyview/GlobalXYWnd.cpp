@@ -323,7 +323,7 @@ IOrthoView& XYWndManager::getViewByType(OrthoOrientation viewType)
 {
 	for (auto& pair : _xyWnds)
 	{
-		if (pair.second->getViewType() == viewType)
+		if (pair.second->getOrientation() == viewType)
 		{
 			return *pair.second;
 		}
@@ -357,7 +357,7 @@ OrthoOrientation XYWndManager::getActiveViewType() const
 {
     auto viewType = OrthoOrientation::XY;
 
-    doWithActiveXyWnd([&](auto& activeXyWnd) { viewType = activeXyWnd.getViewType(); });
+    doWithActiveXyWnd([&](auto& activeXyWnd) { viewType = activeXyWnd.getOrientation(); });
 
     return viewType;
 }
@@ -371,9 +371,9 @@ void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
 {
     doWithActiveXyWnd([&](auto& activeXyWnd)
     {
-        if (activeXyWnd.getViewType() == OrthoOrientation::XY)
+        if (activeXyWnd.getOrientation() == OrthoOrientation::XY)
             activeXyWnd.setViewType(OrthoOrientation::XZ);
-        else if (activeXyWnd.getViewType() == OrthoOrientation::XZ)
+        else if (activeXyWnd.getOrientation() == OrthoOrientation::XZ)
             activeXyWnd.setViewType(OrthoOrientation::YZ);
         else
             activeXyWnd.setViewType(OrthoOrientation::XY);

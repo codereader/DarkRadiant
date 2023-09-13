@@ -68,7 +68,7 @@ class OrthoView final :
 
     Vector3 _mousePosition;
 
-    OrthoOrientation _viewType = OrthoOrientation::XY;
+    OrthoOrientation _orientation = OrthoOrientation::XY;
 
     // Context menu handling. Because we use right-click for both context menu and panning
     // (probably a bad design choice, but we're stuck with it), we need to distinguish between a
@@ -150,8 +150,11 @@ public:
     void updateModelview();
     void updateProjection();
 
+    /// Change the view orientation
     void setViewType(OrthoOrientation n);
-    OrthoOrientation getViewType() const override;
+
+    /// \see IOrthoView::getOrientation
+    OrthoOrientation getOrientation() const override;
 
     void setScale(float f);
     float getScale() const override;
