@@ -149,7 +149,12 @@ public:
     wxWindow* createWidget(wxWindow* parent) override;
 
 private:
-    void doWithActiveXyWnd(const std::function<void(OrthoView&)>& action) const;
+    template<typename F> void doWithActiveXyWnd(F functor) const
+    {
+        if (auto window = _xyWnds.find(_activeXYWndId); window != _xyWnds.end()) {
+            functor(*window->second);
+        }
+    }
 
     /* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
      * If something is selected the center of the selection is taken as new origin, otherwise the camera

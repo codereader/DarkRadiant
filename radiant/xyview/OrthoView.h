@@ -151,7 +151,7 @@ public:
     void updateProjection();
 
     /// Change the view orientation
-    void setViewType(OrthoOrientation n);
+    void setOrientation(OrthoOrientation n);
 
     /// \see IOrthoView::getOrientation
     OrthoOrientation getOrientation() const override;

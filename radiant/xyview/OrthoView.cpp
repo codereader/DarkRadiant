@@ -452,7 +452,7 @@ void OrthoView::positionView(const Vector3& position) {
     queueDraw();
 }
 
-void OrthoView::setViewType(OrthoOrientation viewType) {
+void OrthoView::setOrientation(OrthoOrientation viewType) {
     _orientation = viewType;
     updateModelview();
 }

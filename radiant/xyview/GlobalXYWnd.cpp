@@ -268,16 +268,6 @@ void XYWndManager::updateAllViews(bool force)
 	}
 }
 
-void XYWndManager::doWithActiveXyWnd(const std::function<void(OrthoView&)>& action) const
-{
-    auto window = _xyWnds.find(_activeXYWndId);
-
-    if (window != _xyWnds.end())
-    {
-        action(*window->second);
-    }
-}
-
 void XYWndManager::zoomIn(const cmd::ArgumentList& args)
 {
     doWithActiveXyWnd([](auto& activeXyWnd) { activeXyWnd.zoomIn(); });
@@ -364,7 +354,7 @@ OrthoOrientation XYWndManager::getActiveViewType() const
 
 void XYWndManager::setActiveViewType(OrthoOrientation viewType)
 {
-    doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.setViewType(viewType); });
+    doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.setOrientation(viewType); });
 }
 
 void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
@@ -372,11 +362,11 @@ void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
     doWithActiveXyWnd([&](auto& activeXyWnd)
     {
         if (activeXyWnd.getOrientation() == OrthoOrientation::XY)
-            activeXyWnd.setViewType(OrthoOrientation::XZ);
+            activeXyWnd.setOrientation(OrthoOrientation::XZ);
         else if (activeXyWnd.getOrientation() == OrthoOrientation::XZ)
-            activeXyWnd.setViewType(OrthoOrientation::YZ);
+            activeXyWnd.setOrientation(OrthoOrientation::YZ);
         else
-            activeXyWnd.setViewType(OrthoOrientation::XY);
+            activeXyWnd.setOrientation(OrthoOrientation::XY);
 
         // Re-focus the view when toggling projections
         activeXyWnd.setOrigin(getFocusPosition());
