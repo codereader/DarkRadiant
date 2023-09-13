@@ -167,7 +167,7 @@ public:
 
     void updateFont();
 
-protected:
+private:
     // Disconnects all widgets and unsubscribes as observer
     void destroyXYView();
 
@@ -179,7 +179,6 @@ protected:
     void endCapture() override;
     IInteractiveView& getInteractiveView() override;
 
-private:
     XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void ensureFont();
@@ -209,6 +208,8 @@ private:
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
     void onGLMouseMove(wxMouseEvent& ev);
+
+    std::string rkeyForViewState() const;
 };
 
 /**

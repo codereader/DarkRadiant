@@ -68,6 +68,8 @@ namespace
     constexpr const char* const RKEY_RECENT_SCALE = "user/ui/xyview/recent/scale";
     constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
+    const std::string RKEY_STATE_ROOT = std::string(RKEY_XYVIEW_ROOT) + "/state";
+
     // User-visible titles for view directions
     static const std::map<OrthoOrientation, std::string> VIEWTYPE_TITLES {
         {OrthoOrientation::XY, _("XY Top")},
@@ -452,9 +454,13 @@ void OrthoView::positionView(const Vector3& position) {
     queueDraw();
 }
 
-void OrthoView::setOrientation(OrthoOrientation viewType) {
+void OrthoView::setOrientation(OrthoOrientation viewType)
+{
     _orientation = viewType;
     updateModelview();
+
+    // Persist orientation into the registry
+    registry::setValue(rkeyForViewState() + "/orientation", static_cast<int>(_orientation));
 }
 
 OrthoOrientation OrthoView::getOrientation() const {
@@ -1795,6 +1801,11 @@ void OrthoView::endCapture()
 IInteractiveView& OrthoView::getInteractiveView()
 {
     return *this;
+}
+
+std::string OrthoView::rkeyForViewState() const
+{
+    return RKEY_STATE_ROOT + "/view" + std::to_string(_id);
 }
 
 /* STATICS */
