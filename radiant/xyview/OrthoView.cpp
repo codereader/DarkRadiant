@@ -98,9 +98,12 @@ OrthoView::OrthoView(wxWindow* parent, XYWndManager& owner)
     _origin = registry::getValue<Vector3>(RKEY_RECENT_ORIGIN);
     _scale = registry::getValue<double>(RKEY_RECENT_SCALE, 1.0);
 
+    // Try to retrieve orientation from the registry
+    _orientation = static_cast<OrthoOrientation>(
+        registry::getValue<int>(rkeyForOrientation(), static_cast<int>(OrthoOrientation::XY))
+    );
+
     _wxGLWidget->SetCanFocus(false);
-    // Don't set a minimum size, to allow for cam window maximisation
-    //_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
     // wxGLWidget wireup
     _wxGLWidget->Bind(wxEVT_SIZE, &OrthoView::onGLResize, this);
@@ -460,7 +463,7 @@ void OrthoView::setOrientation(OrthoOrientation viewType)
     updateModelview();
 
     // Persist orientation into the registry
-    registry::setValue(rkeyForViewState() + "/orientation", static_cast<int>(_orientation));
+    registry::setValue(rkeyForOrientation(), static_cast<int>(_orientation));
 }
 
 OrthoOrientation OrthoView::getOrientation() const {
@@ -1806,6 +1809,11 @@ IInteractiveView& OrthoView::getInteractiveView()
 std::string OrthoView::rkeyForViewState() const
 {
     return RKEY_STATE_ROOT + "/view" + std::to_string(_id);
+}
+
+std::string OrthoView::rkeyForOrientation() const
+{
+    return rkeyForViewState() + "/orientation";
 }
 
 /* STATICS */

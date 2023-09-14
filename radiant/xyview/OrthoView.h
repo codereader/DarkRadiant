@@ -210,6 +210,7 @@ private:
     void onGLMouseMove(wxMouseEvent& ev);
 
     std::string rkeyForViewState() const;
+    std::string rkeyForOrientation() const;
 };
 
 /**
