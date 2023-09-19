@@ -133,10 +133,8 @@ public:
     void drawBlockGrid();
     void drawGrid();
 
-    Vector3 convertXYToWorld(int x, int y);
-    void snapToGrid(Vector3& point) override;
-
-    void mouseToPoint(int x, int y, Vector3& point);
+    Vector3 convertXYToWorld(int x, int y) const;
+    void snapToGrid(Vector3& point) const override;
 
     void zoomIn() override;
     void zoomOut() override;
@@ -178,6 +176,7 @@ private:
     void startCapture(const MouseToolPtr& tool) override;
     void endCapture() override;
     IInteractiveView& getInteractiveView() override;
+    Vector3 mouseToPoint(const Vector2i&) const;
 
     XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 

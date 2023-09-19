@@ -59,7 +59,7 @@ public:
 
     // Snaps the given Vector to the XY view's grid
     // Note that one component of the given vector stays untouched.
-    virtual void snapToGrid(Vector3& point) = 0;
+    virtual void snapToGrid(Vector3& point) const = 0;
 
     /// Get the orientation of this view
     virtual OrthoOrientation getOrientation() const = 0;

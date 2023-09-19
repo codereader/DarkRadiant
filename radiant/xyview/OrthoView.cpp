@@ -436,12 +436,11 @@ void OrthoView::onCameraMoved()
 
 void OrthoView::onContextMenu()
 {
-	// Get the click point in 3D space
-	Vector3 point;
-	mouseToPoint(_rightClickPos->initial.x(), _rightClickPos->initial.y(), point);
+    // Get the click point in 3D space
+    Vector3 point = mouseToPoint(_rightClickPos->initial);
 
-	// Display the menu, passing the coordinates for creation
-	OrthoContextMenu::Instance().Show(_wxGLWidget, point);
+    // Display the menu, passing the coordinates for creation
+    OrthoContextMenu::Instance().Show(_wxGLWidget, point);
 }
 
 // makes sure the selected brush or camera is in view
@@ -540,7 +539,7 @@ XYMouseToolEvent OrthoView::createMouseEvent(const Vector2& point, const Vector2
     return XYMouseToolEvent(*this, convertXYToWorld(point.x(), point.y()), normalisedDeviceCoords, delta);
 }
 
-Vector3 OrthoView::convertXYToWorld(int x, int y)
+Vector3 OrthoView::convertXYToWorld(int x, int y) const
 {
     float normalised2world_scale_x = _width / 2.0 / _scale;
     float normalised2world_scale_y = _height / 2.0 / _scale;
@@ -568,7 +567,7 @@ Vector3 OrthoView::convertXYToWorld(int x, int y)
     }
 }
 
-void OrthoView::snapToGrid(Vector3& point)
+void OrthoView::snapToGrid(Vector3& point) const
 {
     std::map<OrthoOrientation, std::pair<std::size_t, std::size_t>> INDICES_BY_VIEWTYPE {
         {OrthoOrientation::XY, {0, 1}}, {OrthoOrientation::YZ, {1, 2}}, {OrthoOrientation::XZ, {0, 2}}
@@ -1572,9 +1571,9 @@ void OrthoView::draw()
     debug::assertNoGlErrors();
 }
 
-void OrthoView::mouseToPoint(int x, int y, Vector3& point)
+Vector3 OrthoView::mouseToPoint(const Vector2i& vec) const
 {
-    point = convertXYToWorld(x, y);
+    Vector3 point = convertXYToWorld(vec.x(), vec.y());
     snapToGrid(point);
 
     int nDim = (getOrientation() == OrthoOrientation::XY) ? 2 : (getOrientation() == OrthoOrientation::YZ) ? 0 : 1;
@@ -1582,6 +1581,7 @@ void OrthoView::mouseToPoint(int x, int y, Vector3& point)
     const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
 
     point[nDim] = float_snapped(wz.bounds.getOrigin()[nDim], GlobalGrid().getGridSize());
+    return point;
 }
 
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
