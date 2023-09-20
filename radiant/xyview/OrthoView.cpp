@@ -71,10 +71,19 @@ namespace
     const std::string RKEY_STATE_ROOT = std::string(RKEY_XYVIEW_ROOT) + "/state";
 
     // User-visible titles for view directions
-    static const std::map<OrthoOrientation, std::string> VIEWTYPE_TITLES {
+    static const std::map<OrthoOrientation, std::string> ORIENTATION_TITLES {
         {OrthoOrientation::XY, _("XY Top")},
         {OrthoOrientation::XZ, _("XZ Front")},
         {OrthoOrientation::YZ, _("YZ Side")},
+    };
+
+    // Map orientations to the Vector3 indices corresponding to the two axes (X = 0, Y = 1,
+    // Z = 2)
+    using Axes = std::pair<std::size_t, std::size_t>;
+    static const std::map<OrthoOrientation, Axes> ORIENTATION_AXES {
+        {OrthoOrientation::XY, {0, 1}},
+        {OrthoOrientation::YZ, {1, 2}},
+        {OrthoOrientation::XZ, {0, 2}}
     };
 }
 
@@ -307,8 +316,7 @@ void OrthoView::setOrigin(const Vector3& origin) {
 
 void OrthoView::scrollByPixels(int x, int y)
 {
-    int nDim1 = (_orientation == OrthoOrientation::YZ) ? 1 : 0;
-    int nDim2 = (_orientation == OrthoOrientation::XY) ? 1 : 2;
+    const auto [nDim1, nDim2] = ORIENTATION_AXES.at(_orientation);
     _origin[nDim1] -= x / _scale;
     _origin[nDim2] += y / _scale;
     updateModelview();
@@ -444,10 +452,9 @@ void OrthoView::onContextMenu()
 }
 
 // makes sure the selected brush or camera is in view
-void OrthoView::positionView(const Vector3& position) {
-    int nDim1 = (_orientation == OrthoOrientation::YZ) ? 1 : 0;
-    int nDim2 = (_orientation == OrthoOrientation::XY) ? 1 : 2;
-
+void OrthoView::positionView(const Vector3& position)
+{
+    const auto [nDim1, nDim2] = ORIENTATION_AXES.at(_orientation);
     _origin[nDim1] = position[nDim1];
     _origin[nDim2] = position[nDim2];
 
@@ -569,22 +576,18 @@ Vector3 OrthoView::convertXYToWorld(int x, int y) const
 
 void OrthoView::snapToGrid(Vector3& point) const
 {
-    std::map<OrthoOrientation, std::pair<std::size_t, std::size_t>> INDICES_BY_VIEWTYPE {
-        {OrthoOrientation::XY, {0, 1}}, {OrthoOrientation::YZ, {1, 2}}, {OrthoOrientation::XZ, {0, 2}}
-    };
-
-    const auto indices = INDICES_BY_VIEWTYPE[_orientation];
-    point[indices.first] = float_snapped(point[indices.first], GlobalGrid().getGridSize());
-    point[indices.second] = float_snapped(point[indices.second], GlobalGrid().getGridSize());
+    const auto [axis1, axis2] = ORIENTATION_AXES.at(_orientation);
+    point[axis1] = float_snapped(point[axis1], GlobalGrid().getGridSize());
+    point[axis2] = float_snapped(point[axis2], GlobalGrid().getGridSize());
 }
 
 /* greebo: This calculates the coordinates of the xy view window corners.
  *
  * @returns: Vector4( xbegin, xend, ybegin, yend);
  */
-Vector4 OrthoView::getWindowCoordinates() {
-    int nDim1 = (_orientation == OrthoOrientation::YZ) ? 1 : 0;
-    int nDim2 = (_orientation == OrthoOrientation::XY) ? 1 : 2;
+Vector4 OrthoView::getWindowCoordinates()
+{
+    const auto [nDim1, nDim2] = ORIENTATION_AXES.at(_orientation);
 
     double w = (_width / 2.0 / _scale);
     double h = (_height / 2.0 / _scale);
@@ -822,8 +825,7 @@ void OrthoView::drawGrid()
         }
     }
 
-    int nDim1 = (_orientation == OrthoOrientation::YZ) ? 1 : 0;
-    int nDim2 = (_orientation == OrthoOrientation::XY) ? 1 : 2;
+    const auto [nDim1, nDim2] = ORIENTATION_AXES.at(_orientation);
 
     // draw coordinate text if needed
     if (GlobalXYWnd().showCoordinates())
@@ -857,7 +859,7 @@ void OrthoView::drawGrid()
         // we do this part (the old way) only if show_axis is disabled
         if (!GlobalXYWnd().showAxes()) {
             glRasterPos2d( _origin[nDim1] - w + 35 / _scale, _origin[nDim2] + h - 20 / _scale );
-            _font->drawString(VIEWTYPE_TITLES.at(_orientation));
+            _font->drawString(ORIENTATION_TITLES.at(_orientation));
         }
     }
 
@@ -1300,9 +1302,9 @@ void OrthoView::updateProjection() {
 }
 
 // note: modelview matrix must have a uniform scale, otherwise strange things happen when rendering the rotation manipulator.
-void OrthoView::updateModelview() {
-    int nDim1 = (_orientation == OrthoOrientation::YZ) ? 1 : 0;
-    int nDim2 = (_orientation == OrthoOrientation::XY) ? 1 : 2;
+void OrthoView::updateModelview()
+{
+    const auto [nDim1, nDim2] = ORIENTATION_AXES.at(_orientation);
 
     // translation
     _modelView[12] = -_origin[nDim1] * _scale;
@@ -1621,14 +1623,12 @@ void OrthoView::zoomInOn(wxPoint cursor, int zoom)
 {
     const float newScale = getZoomedScale(zoom);
 
-    int dim1 = _orientation == OrthoOrientation::YZ ? 1 : 0;
-    int dim2 = _orientation == OrthoOrientation::XY ? 1 : 2;
-
     // worldPos = origin + devicePos * device2WorldScale
     // devicePos and worldPos should remain constant. device2WorldScale is known before
     // and after zooming, so the origin delta can be calculated from what we have
     auto scaleAdjustment = (1 / _scale - 1 / newScale);
 
+    const auto [dim1, dim2] = ORIENTATION_AXES.at(_orientation);
     _origin[dim1] += screen_normalised(cursor.x, _width) * _width / 2 * scaleAdjustment;
     _origin[dim2] -= screen_normalised(cursor.y, _height) * _height / 2 * scaleAdjustment;
 
