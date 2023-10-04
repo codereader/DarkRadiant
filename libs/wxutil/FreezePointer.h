@@ -7,39 +7,38 @@
 namespace wxutil
 {
 
-class FreezePointer :
-	public wxEvtHandler
+/// Utility class to capture the mouse pointer and freeze it in place, e.g. for camera
+/// navigation in 2D and 3D views.
+class FreezePointer: public wxEvtHandler
 {
 public:
-	typedef std::function<void(int, int, unsigned int state)> MotionFunction;
-	typedef std::function<void()> CaptureLostFunction;
-	typedef std::function<void(wxMouseEvent&)> MouseEventFunction;
+    using MotionFunction = std::function<void(int, int, unsigned int state)>;
+    using CaptureLostFunction = std::function<void()>;
+    using MouseEventFunction = std::function<void(wxMouseEvent&)>;
 
 private:
     // Freeze position relative to captured window
-	int _freezePosX;
-	int _freezePosY;
+    int _freezePosX = 0;
+    int _freezePosY = 0;
 
     // Whether to lock the cursor in its position
-    bool _freezePointer;
+    bool _freezePointer = true;
 
     // Whether to hide the cursor during capture
-    bool _hidePointer;
+    bool _hidePointer = true;
 
     // Whether the motion callback receives deltas or absolute coords
-    bool _motionReceivesDeltas;
+    bool _motionReceivesDeltas = true;
 
-	MotionFunction _motionFunction;
-	CaptureLostFunction _captureLostFunction;
+    MotionFunction _motionFunction;
+    CaptureLostFunction _captureLostFunction;
 
-	wxWindow* _capturedWindow;
+    wxWindow* _capturedWindow = nullptr;
 
-	MouseEventFunction _onMouseUp;
-	MouseEventFunction _onMouseDown;
+    MouseEventFunction _onMouseUp;
+    MouseEventFunction _onMouseDown;
 
 public:
-    FreezePointer();
-
     /**
      * @brief Catch any mouse pointer movements and redirect them to the given window.
      *
@@ -63,34 +62,23 @@ public:
      */
     void endCapture();
 
-    // Activate or deactivate the freeze pointer behaviour
-    // when activated, the cursor will be forced to stay at the current position
-    void setFreezePointer(bool shouldFreeze);
-
-    // Set this to true to hide the cursor while the capture is active
-    void setHidePointer(bool shouldHide);
-
-    // Controls whether (during capture) the MotionFunction should receive
-    // deltas (relative to start point) or absolute coordinates.
-    void setSendMotionDeltas(bool shouldSendDeltasOnly);
-
-	/**
-	 * During freeze mouse button events might be eaten by the window.
-	 * Use these to enable event propagation.
-	 */
-	void connectMouseEvents(const MouseEventFunction& onMouseDown,
-							const MouseEventFunction& onMouseUp);
-	void disconnectMouseEvents();
+    /**
+     * During freeze mouse button events might be eaten by the window.
+     * Use these to enable event propagation.
+     */
+    void connectMouseEvents(const MouseEventFunction& onMouseDown,
+                            const MouseEventFunction& onMouseUp);
+    void disconnectMouseEvents();
 
 private:
-	// During capture we might need to propagate the mouseup and
-	// mousedown events to the client
-	void onMouseUp(wxMouseEvent& ev);
-	void onMouseDown(wxMouseEvent& ev);
+    // During capture we might need to propagate the mouseup and
+    // mousedown events to the client
+    void onMouseUp(wxMouseEvent& ev);
+    void onMouseDown(wxMouseEvent& ev);
 
-	// The callback to connect to the motion-notify-event
-	void onMouseMotion(wxMouseEvent& ev);
-	void onMouseCaptureLost(wxMouseCaptureLostEvent& ev);
+    // The callback to connect to the motion-notify-event
+    void onMouseMotion(wxMouseEvent& ev);
+    void onMouseCaptureLost(wxMouseCaptureLostEvent& ev);
 };
 
 } // namespace
