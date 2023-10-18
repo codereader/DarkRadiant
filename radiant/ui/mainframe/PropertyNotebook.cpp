@@ -24,7 +24,7 @@ namespace
 }
 
 PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
-    wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+    wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxNB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS),
     _layout(owner),
     _dropHint(nullptr),
@@ -60,8 +60,8 @@ void PropertyNotebook::addControl(const std::string& controlName)
         return;
     }
 
-    auto control = GlobalUserInterface().findControl(controlName);
-    if (!control) {
+    auto creator = GlobalUserInterface().findControl(controlName);
+    if (!creator) {
         // This may happen if the user settings refer to a control which is not available in
         // the current installation, e.g. because Dark Mod plugins are no longer installed.
         rWarning() << "PropertyNotebook: no such control '" << controlName << "'\n";
@@ -71,19 +71,25 @@ void PropertyNotebook::addControl(const std::string& controlName)
     // Make sure the notebook is visible before adding pages
     Show();
 
-    // Load the icon
-    int tabIconIndex = control->getIcon().empty() ? -1 :
-        _imageList->Add(wxutil::GetLocalBitmap(control->getIcon()));
-    
-    auto content = control->createWidget(this);
+    auto content = creator->createWidget(this);
     content->Reparent(this);
 
-    AddPage(content, control->getDisplayName(), false, tabIconIndex);
+    // Add with the icon if the control creator defines one, otherwise with no icon. Note
+    // that Linux wxWidgets does not like -1 as an image index; we must use the overload
+    // which takes a wxNullBitmap to signify no icon.
+    int tabIconIndex = -1;
+    if (const auto iconFile = creator->getIcon(); !iconFile.empty()) {
+        tabIconIndex = _imageList->Add(wxutil::GetLocalBitmap(iconFile));
+        AddPage(content, creator->getDisplayName(), false, tabIconIndex);
+    }
+    else {
+        AddPage(content, creator->getDisplayName(), false, wxNullBitmap);
+    }
 
     // Add this page by copy to the local list
     _pages.emplace_back(Page
     {
-        control->getControlName(),
+        creator->getControlName(),
         tabIconIndex,
         content,
     });
