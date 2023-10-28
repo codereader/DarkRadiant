@@ -150,7 +150,7 @@ private:
 	scene::INodePtr _brush;
 
 public:
-	BrushFindByIndexWalker(std::size_t index) : 
+	BrushFindByIndexWalker(std::size_t index) :
 		_index(index)
 	{}
 
@@ -180,7 +180,7 @@ private:
 	scene::INodePtr _entity;
 
 public:
-	EntityFindByIndexWalker(std::size_t index) : 
+	EntityFindByIndexWalker(std::size_t index) :
 		_index(index)
 	{}
 
@@ -243,7 +243,7 @@ void selectNodeByIndex(std::size_t entitynum, std::size_t brushnum)
 	{
 		Node_setSelected(path.top(), true);
 
-		GlobalXYWndManager().positionActiveView(path.top()->worldAABB().origin);
+		GlobalOrthoViewManager().positionActiveView(path.top()->worldAABB().origin);
 	}
 }
 
@@ -262,7 +262,7 @@ void selectNodeByIndexCmd(const cmd::ArgumentList& args)
 	{
 		throw cmd::ExecutionFailure("The Entity and Brush numbers must not be negative.");
 	}
-		
+
 	selectNodeByIndex(static_cast<std::size_t>(entityNumber), static_cast<std::size_t>(brushNumber));
 }
 

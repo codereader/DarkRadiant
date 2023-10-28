@@ -270,7 +270,7 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args)
         }
 
         // Obtain the current XY orthoview, if there is one
-        auto& xyWnd = GlobalXYWndManager().getViewByType(XY);
+        auto& xyWnd = GlobalOrthoViewManager().getViewByType(OrthoOrientation::XY);
         const auto& origin = xyWnd.getOrigin();
 
         Vector2 topLeft(

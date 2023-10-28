@@ -8,7 +8,7 @@ namespace ui
 {
 
 class AasVisualisationControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override

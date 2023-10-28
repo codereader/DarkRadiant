@@ -16,6 +16,11 @@
 namespace registry
 {
 
+namespace
+{
+	const char* const RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
+}
+
 XMLRegistry::XMLRegistry() :
     _queryCounter(0),
     _changesSinceLastSave(0),
@@ -172,35 +177,26 @@ void XMLRegistry::setAttribute(const std::string& path,
     _userTree.setAttribute(path, attrName, attrValue);
 }
 
-std::string XMLRegistry::getAttribute(const std::string& path,
-                                      const std::string& attrName)
+std::string XMLRegistry::getAttribute(const std::string& path, const std::string& attrName)
 {
     // Pass the query to the findXPath method, which queries the user tree first
-    xml::NodeList nodeList = findXPath(path);
-
-    if (nodeList.empty())
-    {
-        return std::string();
+    if (xml::NodeList nodeList = findXPath(path); !nodeList.empty()) {
+        return nodeList[0].getAttributeValue(attrName);
     }
-
-    return nodeList[0].getAttributeValue(attrName);
+    return std::string();
 }
 
 std::string XMLRegistry::get(const std::string& key)
 {
-    // Pass the query to the findXPath method, which queries the user tree first
-    xml::NodeList nodeList = findXPath(key);
-
-    // Does it even exist?
-    // It may well be the case that this returns two or more nodes that match the key criteria
-    // This function always uses the first one, as the user tree should override the default tree
-    if (!nodeList.empty())
-    {
-        // Convert the UTF-8 string back to locale and return
-        return string::utf8_to_mb(nodeList[0].getAttributeValue("value"));
+    if (const xml::NodeList nodeList = findXPath(key); !nodeList.empty()) {
+        if (const auto content = nodeList[0].getContent(); !content.empty()) {
+            return string::utf8_to_mb(content);
+        }
+        else {
+            return string::utf8_to_mb(nodeList[0].getAttributeValue("value"));
+        }
     }
-
-    return std::string();
+    return {};
 }
 
 void XMLRegistry::set(const std::string& key, const std::string& value)

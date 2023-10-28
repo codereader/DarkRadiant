@@ -34,7 +34,7 @@ namespace ui
 /**
  * Module responsible of registering and intialising the various
  * UI classes in DarkRadiant, e.g. the LayerSystem.
- * 
+ *
  * Currently many UI classes are spread and initialised all across
  * the main binary, so there's still work left to do.
  */
@@ -43,7 +43,7 @@ class UserInterfaceModule :
 	public IUserInterfaceModule
 {
 private:
-    std::map<std::string, IUserControl::Ptr> _userControls;
+    std::map<std::string, IUserControlCreator::Ptr> _userControls;
 
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
@@ -80,13 +80,13 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override;
 	void shutdownModule() override;
 
-	// Runs the specified action in the UI thread 
+	// Runs the specified action in the UI thread
 	// this happens when the application has a chance to, usually during event processing
 	// This method is safe to be called from any thread.
 	void dispatch(const std::function<void()>& action) override;
 
-    void registerControl(const IUserControl::Ptr& control) override;
-    IUserControl::Ptr findControl(const std::string& name) override;
+    void registerControl(IUserControlCreator::Ptr control) override;
+    IUserControlCreator::Ptr findControl(const std::string& name) override;
     void unregisterControl(const std::string& controlName) override;
     void foreachControl(const std::function<void(const std::string&)>& functor) override;
 

@@ -7,7 +7,7 @@ namespace ui
 {
 
 class FavouritesBrowserControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override

@@ -8,7 +8,7 @@ namespace ui
 {
 
 class OrthoBackgroundControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override

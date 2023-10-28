@@ -7,11 +7,6 @@
 #include <sigc++/slot.h>
 #include <sigc++/signal.h>
 
-namespace
-{
-	const char* const RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
-}
-
 /**
  * \addtogroup registry XML Registry
  */
@@ -24,8 +19,7 @@ const char* const MODULE_XMLREGISTRY("XMLRegistry");
  *
  * \ingroup registry
  */
-class Registry :
-	public RegisterableModule
+class Registry: public RegisterableModule
 {
 public:
 	enum Tree {
@@ -33,11 +27,13 @@ public:
 		treeUser
 	};
 
-	// Sets a variable in the XMLRegistry or retrieves one
-	virtual void 		set(const std::string& key, const std::string& value) = 0;
-	virtual std::string	get(const std::string& key) = 0;
+	/// Set a keyvalue in the registry
+    virtual void set(const std::string& key, const std::string& value) = 0;
 
-	// Checks whether a key exists in the registry
+    /// Get a keyvalue from the registry
+    virtual std::string get(const std::string& key) = 0;
+
+    // Checks whether a key exists in the registry
 	virtual bool keyExists(const std::string& key) = 0;
 
 	/**
@@ -59,7 +55,7 @@ public:
 	// Dumps the whole XML content to std::out for debugging purposes
 	virtual void dump() const = 0;
 
-	// Exports the data which has been modified during this session 
+	// Exports the data which has been modified during this session
 	// to XML files in the user's settings path
 	virtual void saveToDisk() = 0;
 
@@ -108,7 +104,7 @@ public:
 typedef std::shared_ptr<Registry> RegistryPtr;
 
 // This is the accessor for the registry
-inline Registry& GlobalRegistry() 
+inline Registry& GlobalRegistry()
 {
 	static module::InstanceReference<Registry> _reference(MODULE_XMLREGISTRY);
 	return _reference;

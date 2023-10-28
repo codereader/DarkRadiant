@@ -107,7 +107,7 @@ inline Vector4 toVector4(const Colour4b& colour)
 
 }
 
-// Renders a fixed size point array as line strip
+/// Renders a fixed size point array as line strip
 class RenderableLineStrip: public render::RenderableGeometry
 {
     const Matrix4& _localToWorld;
@@ -135,6 +135,18 @@ public:
     }
 
 protected:
+
+    /**
+     * @brief Construct a new RenderableLineStrip object
+     *
+     * @param numPoints
+     * Number of points in the line strip.
+     *
+     * @param localToWorld
+     * Reference to a matrix transforming local coordinates to world coordinates. This
+     * matrix is stored only by reference, and \b must remain valid for the entire lifetime
+     * of the RenderableLineStrip.
+     */
     RenderableLineStrip(std::size_t numPoints, const Matrix4& localToWorld) :
         _localToWorld(localToWorld),
         _needsUpdate(true),

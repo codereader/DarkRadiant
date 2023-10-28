@@ -172,7 +172,7 @@ add_executable(darkradiant
                xyview/tools/BrushCreatorTool.cpp
                xyview/tools/ClipperTool.cpp
                xyview/tools/MeasurementTool.cpp
-               xyview/XYWnd.cpp)
+               xyview/OrthoView.cpp)
 target_compile_options(darkradiant PRIVATE ${FREETYPE_CFLAGS} ${GLIB_CFLAGS})
 target_include_directories(darkradiant PRIVATE .)
 target_link_libraries(darkradiant PRIVATE

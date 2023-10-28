@@ -145,25 +145,12 @@ void BuiltInShader::construct()
         enableViewType(RenderViewType::OrthoView);
         break;
     }
-    
-    case BuiltInShaderType::WireframeOverlay:
-    {
-        pass.setRenderFlags(RENDER_DEPTHWRITE
-            | RENDER_DEPTHTEST
-            | RENDER_OVERRIDE
-            | RENDER_VERTEX_COLOUR);
-        pass.setSortPosition(OpenGLState::SORT_GUI1);
-        pass.setDepthFunc(GL_LEQUAL);
 
-        OpenGLState& hiddenLine = appendDefaultPass();
-        hiddenLine.setName(getName() + "_Hidden");
-        hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
-            | RENDER_DEPTHTEST
-            | RENDER_OVERRIDE
-            | RENDER_LINESTIPPLE
-            | RENDER_VERTEX_COLOUR);
-        hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-        hiddenLine.setDepthFunc(GL_GREATER);
+    case BuiltInShaderType::ManipulatorWireframe:
+    {
+        pass.setRenderFlags(RENDER_OVERRIDE | RENDER_VERTEX_COLOUR);
+        pass.setSortPosition(OpenGLState::SORT_GUI1);
+        pass.lineWidth = 2;
 
         enableViewType(RenderViewType::Camera);
         enableViewType(RenderViewType::OrthoView);
@@ -175,7 +162,7 @@ void BuiltInShader::construct()
         pass.setColour(1, 0, 0, 1);
         pass.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
         pass.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-        pass.m_linewidth = 4;
+        pass.lineWidth = 4;
 
         enableViewType(RenderViewType::Camera);
         enableViewType(RenderViewType::OrthoView);
@@ -231,7 +218,7 @@ void BuiltInShader::construct()
         constructWireframeSelectionOverlay(pass, "selected_brush");
         break;
     }
-    
+
     case BuiltInShaderType::WireframeSelectionOverlayOfGroups:
     {
         constructWireframeSelectionOverlay(pass, "selected_group_items");
@@ -254,14 +241,14 @@ void BuiltInShader::construct()
     {
         pass.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
         pass.setSortPosition(OpenGLState::SORT_GUI0);
-        pass.m_linewidth = 2;
+        pass.lineWidth = 2;
         pass.setDepthFunc(GL_LEQUAL);
 
         OpenGLState& hiddenLine = appendDefaultPass();
         hiddenLine.setName(getName() + "_Hidden");
         hiddenLine.setRenderFlags(RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
         hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-        hiddenLine.m_linewidth = 2;
+        hiddenLine.lineWidth = 2;
         hiddenLine.setDepthFunc(GL_GREATER);
 
         enableViewType(RenderViewType::Camera);
@@ -346,7 +333,7 @@ void BuiltInShader::construct()
 
         pass.setSortPosition(OpenGLState::SORT_BACKGROUND);
         pass.setDepthFunc(GL_LESS);
-        pass.m_linewidth = 1;
+        pass.lineWidth = 1;
         pass.m_pointsize = 1;
 
         enableViewType(RenderViewType::OrthoView);
@@ -369,7 +356,7 @@ void BuiltInShader::constructOrthoMergeActionOverlay(OpenGLState& pass, const Co
 {
     pass.setColour(colour);
     pass.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-    pass.m_linewidth = 2;
+    pass.lineWidth = 2;
 
     enableViewType(RenderViewType::OrthoView);
 }
@@ -419,7 +406,7 @@ void BuiltInShader::constructWireframeSelectionOverlay(OpenGLState& pass, const 
     pass.setColour({ colorSelBrushes, 1 });
     pass.setRenderFlag(RENDER_LINESTIPPLE);
     pass.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-    pass.m_linewidth = 2;
+    pass.lineWidth = 2;
     pass.m_linestipple_factor = 3;
 
     enableViewType(RenderViewType::OrthoView);

@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "igrid.h"
 #include "iclipper.h"
+#include "icommandsystem.h"
 #include "scenelib.h"
 #include "selectionlib.h"
 #include "command/ExecutionNotPossible.h"
@@ -66,7 +67,7 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
         Vector3 endPos = xyEvent.getWorldPos();
         xyEvent.getView().snapToGrid(endPos);
 
-        int nDim = (xyEvent.getViewType() == XY) ? 2 : (xyEvent.getViewType() == YZ) ? 0 : 1;
+        int nDim = (xyEvent.getViewType() == OrthoOrientation::XY) ? 2 : (xyEvent.getViewType() == OrthoOrientation::YZ) ? 0 : 1;
 
         const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
 

@@ -17,8 +17,8 @@ namespace algorithm
  * This method will de-select all items in the scene, and the newly created
  * item will be selected.
  */
-void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab eType, 
-					 EViewType viewType, std::size_t width = 3, std::size_t height = 3);
+void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab eType,
+					 OrthoOrientation viewType, std::size_t width = 3, std::size_t height = 3);
 
 // General-purpose command target, taking one string argument to specify the prefab type
 void createPrefab(const cmd::ArgumentList& args);

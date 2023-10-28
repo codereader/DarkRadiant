@@ -49,8 +49,8 @@ public:
 	virtual const std::string& getCaulkShader() const = 0;
 
 	// Return or set the view type of the xy view (needed for the projections).
-	virtual EViewType getViewType() const = 0;
-	virtual void setViewType(EViewType viewType) = 0;
+	virtual OrthoOrientation getViewType() const = 0;
+	virtual void setViewType(OrthoOrientation viewType) = 0;
 
 	// Returns the pointer to the currently moved clip point
 	virtual ClipPoint* getMovingClip() = 0;
@@ -59,7 +59,7 @@ public:
 	// Retrieves the reference to the coordinates of the currently "selected" clip point
 	virtual Vector3& getMovingClipCoords() = 0;
 
-	virtual ClipPoint* find(const Vector3& point, EViewType viewtype, float scale) = 0;
+	virtual ClipPoint* find(const Vector3& point, OrthoOrientation viewtype, float scale) = 0;
 
 	// Adds the given point as new clip point.
 	virtual void newClipPoint(const Vector3& point) = 0;
@@ -75,7 +75,7 @@ public:
 };
 
 // The accessor for the clipper module
-inline IClipper& GlobalClipper() 
+inline IClipper& GlobalClipper()
 {
 	static module::InstanceReference<IClipper> _reference(MODULE_CLIPPER);
 	return _reference;

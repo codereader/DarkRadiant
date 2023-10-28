@@ -510,7 +510,7 @@ void MainFrame::updateAllWindows(bool force)
         GlobalCamera().update();
     }
 
-    GlobalXYWndManager().updateAllViews(force);
+    GlobalOrthoViewManager().updateAllViews(force);
 
     if (force)
     {

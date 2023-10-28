@@ -856,7 +856,7 @@ void Patch::scaleTextureNaturally()
     auto defaultScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
 
     // Cycles through all the patch columns and assigns s/t coordinates.
-    // During each column or row cycle, the highest world distance between columns or rows 
+    // During each column or row cycle, the highest world distance between columns or rows
     // determines the distance in UV space (longest distance is taken).
     // World distances are scaled to UV space with the actual texture width/height,
     // scaled by the value in the registry.
@@ -1804,13 +1804,13 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
 // constDim will be the dimension which is held constant for each patch row,
 // matching to the view vector, e.g. Z for the XY viewtype
 // It is ensured that dim1 < dim2
-inline void assignDimsForViewType(EViewType viewType, std::size_t& dim1, std::size_t& dim2, std::size_t& constDim)
+inline void assignDimsForViewType(OrthoOrientation viewType, std::size_t& dim1, std::size_t& dim2, std::size_t& constDim)
 {
     switch (viewType)
     {
-        case XY: constDim = 2; break; // z coordinate is incremented each patch row
-        case YZ: constDim = 0; break; // x coordinate is incremented each patch row
-        case XZ: constDim = 1; break; // y coordinate is incremented each patch row
+        case OrthoOrientation::XY: constDim = 2; break; // z coordinate is incremented each patch row
+        case OrthoOrientation::YZ: constDim = 0; break; // x coordinate is incremented each patch row
+        case OrthoOrientation::XZ: constDim = 1; break; // y coordinate is incremented each patch row
     };
 
     // Calculate the other two dimensions, such that colDim1 < colDim2
@@ -1823,7 +1823,7 @@ inline void assignDimsForViewType(EViewType viewType, std::size_t& dim1, std::si
     }
 }
 
-void Patch::constructBevel(const AABB& aabb, EViewType viewType)
+void Patch::constructBevel(const AABB& aabb, OrthoOrientation viewType)
 {
     Vector3 vPos[3] =
     {
@@ -1857,13 +1857,13 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
         }
     }
 
-	if (viewType == XZ)
+	if (viewType == OrthoOrientation::XZ)
 	{
 		invertMatrix();
 	}
 }
 
-void Patch::constructEndcap(const AABB& aabb, EViewType viewType)
+void Patch::constructEndcap(const AABB& aabb, OrthoOrientation viewType)
 {
     Vector3 vPos[3] =
     {
@@ -1901,17 +1901,17 @@ void Patch::constructEndcap(const AABB& aabb, EViewType viewType)
         }
     }
 
-	if (viewType != XZ)
+	if (viewType != OrthoOrientation::XZ)
 	{
 		invertMatrix();
 	}
 }
 
-void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width, std::size_t height)
+void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, OrthoOrientation viewType, std::size_t width, std::size_t height)
 {
     if (eType == ePlane)
     {
-        constructPlane(aabb, viewType, width, height);
+        constructPlane(aabb, static_cast<int>(viewType), width, height);
     }
     else if (eType == eBevel)
     {
@@ -2114,7 +2114,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			insertRemove(true, false, true);
 		}
 
-		if (viewType == XZ)
+		if (viewType == OrthoOrientation::XZ)
 		{
 			invertMatrix();
 		}

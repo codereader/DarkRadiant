@@ -19,29 +19,29 @@ public:
 		// greebo: Perform a special selection test for lights
 		// as the small diamond should be tested against selection only
 		ILightNodePtr light = Node_getLightNode(node);
-		
+
 		if (light )
 		{
 			other = light->getSelectAABB();
 		}
 
 		// Determine the viewtype
-		EViewType viewType = GlobalXYWndManager().getActiveViewType();
+		OrthoOrientation viewType = GlobalOrthoViewManager().getActiveViewType();
 
 		unsigned int axis1 = 0;
 		unsigned int axis2 = 1;
 
 		// Determine which axes have to be compared
 		switch (viewType) {
-			case XY:
+			case OrthoOrientation::XY:
 				axis1 = 0;
 				axis2 = 1;
 			break;
-			case YZ:
+			case OrthoOrientation::YZ:
 				axis1 = 1;
 				axis2 = 2;
 			break;
-			case XZ:
+			case OrthoOrientation::XZ:
 				axis1 = 0;
 				axis2 = 2;
 			break;
@@ -89,7 +89,7 @@ public:
 		// greebo: Perform a special selection test for lights
 		// as the small diamond should be tested against selection only
 		ILightNodePtr light = Node_getLightNode(node);
-		
+
 		if (light )
 		{
 			other = light->getSelectAABB();
@@ -126,9 +126,9 @@ public:
             other = light->getSelectAABB();
         }
 
-        for (unsigned int i = 0; i < 3; ++i) 
+        for (unsigned int i = 0; i < 3; ++i)
         {
-            if (std::abs(box.origin[i] - other.origin[i]) >= (box.extents[i] - other.extents[i])) 
+            if (std::abs(box.origin[i] - other.origin[i]) >= (box.extents[i] - other.extents[i]))
             {
                 return false;
             }

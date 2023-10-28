@@ -546,7 +546,7 @@ void Map::focusViews(const Vector3& point, const Vector3& angles)
     // ortho views might not be present in headless mode
     if (module::GlobalModuleRegistry().moduleExists(MODULE_ORTHOVIEWMANAGER))
     {
-        GlobalXYWndManager().setOrigin(point);
+        GlobalOrthoViewManager().setOrigin(point);
     }
 }
 
@@ -1002,7 +1002,7 @@ void Map::saveAutomaticMapBackup(const cmd::ArgumentList& args)
 void Map::registerCommands()
 {
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
-    GlobalCommandSystem().addCommand("OpenMap", std::bind(&Map::openMapCmd, this, std::placeholders::_1), 
+    GlobalCommandSystem().addCommand("OpenMap", std::bind(&Map::openMapCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
@@ -1253,7 +1253,7 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
 
     // Create our main MapExporter walker for traversal
     auto writer = format->getMapWriter();
-    
+
     try
     {
         MapExporter exporter(*writer, GlobalSceneGraph().root(), out);

@@ -73,18 +73,8 @@ public:
         {
             auto filePath = _searchPath + filename.substr(prefix.length());
 
-            if (os::fileOrDirExists(filePath))
-            {
-#ifdef __WXMSW__
+            if (os::fileOrDirExists(filePath)) {
                 return wxBitmap(wxImage(filePath));
-#else
-                wxBitmap bm;
-                if (bm.LoadFile(filePath)) {
-                    return bm;
-                }
-
-                rError() << "Failed to load bitmap [" << filePath << "]\n";
-#endif
             }
         }
 
@@ -245,15 +235,15 @@ bool RadiantApp::OnExceptionInMainLoop()
 {
 	try
 	{
-		// This method is called by the main loop controlling code, 
-		// from within the catch(...) block. Let's re-throw the current 
+		// This method is called by the main loop controlling code,
+		// from within the catch(...) block. Let's re-throw the current
 		// exception and catch it to print the error message at the very least.
 		throw;
 	}
 	catch (const std::exception& ex)
 	{
 		rError() << "Unhandled Exception: " << ex.what() << std::endl;
-        radiant::PopupErrorHandler::HandleError(_("Real Hard DarkRadiant Failure"), 
+        radiant::PopupErrorHandler::HandleError(_("Real Hard DarkRadiant Failure"),
             std::string(ex.what()) + "\n\n" + _("Break into the debugger?"));
 	}
 
@@ -273,11 +263,11 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 #endif
 
 	// In first-startup scenarios the game configuration is not present
-	// in which case the GameManager will dispatch a message asking 
+	// in which case the GameManager will dispatch a message asking
 	// for showing a dialog or similar. Connect the listener.
 	_coreModule->get()->getMessageBus().addListener(radiant::IMessage::Type::GameConfigNeeded,
         radiant::TypeListener<game::ConfigurationNeeded>(ui::GameSetupDialog::HandleGameConfigMessage));
-	
+
 	// Pick up all the statically defined modules and register them
 	module::internal::StaticModuleList::RegisterModules();
 

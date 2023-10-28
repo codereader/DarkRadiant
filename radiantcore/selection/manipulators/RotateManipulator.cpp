@@ -30,29 +30,30 @@ namespace
     );
 }
 
-RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
-	_pivot(pivot),
-	_pivotTranslatable(_pivot),
-    _rotateFree(*this),
-    _rotateAxis(*this),
-	_translatePivot(_pivotTranslatable),
-    _localPivotPoint(0,0,0),
-    _circleX(CircleSegments, CircleRadius, _local2worldX, REMAP_YZX),
-    _circleY(CircleSegments, CircleRadius, _local2worldY, REMAP_ZXY),
-    _circleZ(CircleSegments, CircleRadius, _local2worldZ, Matrix4::getIdentity()),
-    _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
-    _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
-	_pivotPoint(_localPivotPoint, _pivot2World._worldSpace),
-    _angleText("", { 0,0,0 }, AngleTextColour)
+RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius)
+: _pivot(pivot),
+  _pivotTranslatable(_pivot),
+  _rotateFree(*this),
+  _rotateAxis(*this),
+  _translatePivot(_pivotTranslatable),
+  _localPivotPoint(0, 0, 0),
+  _circle{
+      {CircleSegments, CircleRadius, _local2world.x, REMAP_YZX},
+      {CircleSegments, CircleRadius, _local2world.y, REMAP_ZXY},
+      {CircleSegments, CircleRadius, _local2world.z, Matrix4::getIdentity()}
+  },
+  _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
+  _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
+  _pivotPoint(_localPivotPoint, _pivot2World._worldSpace),
+  _angleText("", {0, 0, 0}, AngleTextColour)
 {}
 
 void RotateManipulator::updateColours()
 {
-    _circleX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
-	_circleY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
-	_circleZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
+    _circle.x.setColour(colourSelected(COLOUR_X(), _selectable.x.isSelected()));
+    _circle.y.setColour(colourSelected(COLOUR_Y(), _selectable.y.isSelected()));
+    _circle.z.setColour(colourSelected(COLOUR_Z(), _selectable.z.isSelected()));
     _circleScreen.setColour(colourSelected(COLOUR_SCREEN(), _selectableScreen.isSelected()));
-    _circleSphere.setColour(colourSelected(COLOUR_SPHERE(), false));
 	_pivotPoint.setColour(colourSelected(COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
 }
 
@@ -62,43 +63,43 @@ void RotateManipulator::updateCircleTransforms()
         _pivot2World._worldSpace.getTransposed().transformDirection(
             _pivot2World._viewpointSpace.zCol3()));
 
-    _circleX_visible = !math::isNear(g_vector3_axis_x, localViewpoint, 1e-6);
-    if (_circleX_visible)
+    const bool circleXVisible = !math::isNear(g_vector3_axis_x, localViewpoint, 1e-6);
+    if (circleXVisible)
     {
-        _local2worldX = Matrix4::getIdentity();
-        _local2worldX.setYCol(
+        _local2world.x = Matrix4::getIdentity();
+        _local2world.x.setYCol(
             g_vector3_axis_x.cross(localViewpoint).getNormalised()
         );
-        _local2worldX.setZCol(
-            _local2worldX.xCol3().cross(_local2worldX.yCol3()).getNormalised()
+        _local2world.x.setZCol(
+            _local2world.x.xCol3().cross(_local2world.x.yCol3()).getNormalised()
         );
-        _local2worldX.premultiplyBy(_pivot2World._worldSpace);
+        _local2world.x.premultiplyBy(_pivot2World._worldSpace);
     }
 
-    _circleY_visible = !math::isNear(g_vector3_axis_y, localViewpoint, 1e-6);
-    if (_circleY_visible)
+    const bool circleYVisible = !math::isNear(g_vector3_axis_y, localViewpoint, 1e-6);
+    if (circleYVisible)
     {
-        _local2worldY = Matrix4::getIdentity();
-        _local2worldY.setZCol(
+        _local2world.y = Matrix4::getIdentity();
+        _local2world.y.setZCol(
             g_vector3_axis_y.cross(localViewpoint).getNormalised()
         );
-        _local2worldY.setXCol(
-            _local2worldY.yCol3().cross(_local2worldY.zCol3()).getNormalised()
+        _local2world.y.setXCol(
+            _local2world.y.yCol3().cross(_local2world.y.zCol3()).getNormalised()
         );
-        _local2worldY.premultiplyBy(_pivot2World._worldSpace);
+        _local2world.y.premultiplyBy(_pivot2World._worldSpace);
     }
 
-    _circleZ_visible = !math::isNear(g_vector3_axis_z, localViewpoint, 1e-6);
-    if (_circleZ_visible)
+    const bool circleZVisible = !math::isNear(g_vector3_axis_z, localViewpoint, 1e-6);
+    if (circleZVisible)
     {
-        _local2worldZ = Matrix4::getIdentity();
-        _local2worldZ.setXCol(
+        _local2world.z = Matrix4::getIdentity();
+        _local2world.z.setXCol(
             g_vector3_axis_z.cross(localViewpoint).getNormalised()
         );
-        _local2worldZ.setYCol(
-            _local2worldZ.zCol3().cross(_local2worldZ.xCol3()).getNormalised()
+        _local2world.z.setYCol(
+            _local2world.z.zCol3().cross(_local2world.z.xCol3()).getNormalised()
         );
-        _local2worldZ.premultiplyBy(_pivot2World._worldSpace);
+        _local2world.z.premultiplyBy(_pivot2World._worldSpace);
     }
 }
 
@@ -112,7 +113,7 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
 
     if (!_lineShader)
     {
-        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
+        _lineShader = renderSystem->capture(BuiltInShaderType::ManipulatorWireframe);
     }
 
     if (!_pivotPointShader)
@@ -135,22 +136,20 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
     updateColours();
     updateAngleText();
 
-    _circleX.update(_lineShader);
-    _circleY.update(_lineShader);
-    _circleZ.update(_lineShader);
+    _circle.x.update(_lineShader);
+    _circle.y.update(_lineShader);
+    _circle.z.update(_lineShader);
     _circleScreen.update(_lineShader);
-    _circleSphere.update(_lineShader);
     _pivotPoint.update(_pivotPointShader);
     _angleText.update(_textRenderer);
 }
 
 void RotateManipulator::clearRenderables()
 {
-    _circleX.clear();
-    _circleY.clear();
-    _circleZ.clear();
+    _circle.x.clear();
+    _circle.y.clear();
+    _circle.z.clear();
     _circleScreen.clear();
-    _circleSphere.clear();
     _pivotPoint.clear();
     _angleText.clear();
 
@@ -161,17 +160,17 @@ void RotateManipulator::clearRenderables()
 
 std::string RotateManipulator::getRotationAxisName() const
 {
-    if (_selectableX.isSelected()) return "X";
-    if (_selectableY.isSelected()) return "Y";
-    if (_selectableZ.isSelected()) return "Z";
+    if (_selectable.x.isSelected()) return "X";
+    if (_selectable.y.isSelected()) return "Y";
+    if (_selectable.z.isSelected()) return "Z";
 
     return std::string();
 }
 
 void RotateManipulator::updateAngleText()
 {
-    if (_selectableX.isSelected() || _selectableY.isSelected() ||
-        _selectableZ.isSelected() || _selectableScreen.isSelected())
+    if (_selectable.x.isSelected() || _selectable.y.isSelected() ||
+        _selectable.z.isSelected() || _selectableScreen.isSelected())
     {
         double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
         auto rotationAxisName = getRotationAxisName();
@@ -201,30 +200,30 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
     {
         auto viewProj = test.getVolume().GetViewProjection();
         {
-            Matrix4 local2view = viewProj * _local2worldX;
+            Matrix4 local2view = viewProj * _local2world.x;
 
             SelectionIntersection best;
-            LineStrip_BestPoint(local2view, &_circleX.getRawPoints().front(),
-                                _circleX.getRawPoints().size(), best);
-            selector.addSelectable(best, &_selectableX);
+            LineStrip_BestPoint(local2view, &_circle.x.getRawPoints().front(),
+                                _circle.x.getRawPoints().size(), best);
+            selector.addSelectable(best, &_selectable.x);
         }
 
         {
-            Matrix4 local2view = viewProj * _local2worldY;
+            Matrix4 local2view = viewProj * _local2world.y;
 
             SelectionIntersection best;
-            LineStrip_BestPoint(local2view, &_circleY.getRawPoints().front(),
-                                _circleY.getRawPoints().size(), best);
-            selector.addSelectable(best, &_selectableY);
+            LineStrip_BestPoint(local2view, &_circle.y.getRawPoints().front(),
+                                _circle.y.getRawPoints().size(), best);
+            selector.addSelectable(best, &_selectable.y);
         }
 
         {
-            Matrix4 local2view = viewProj * _local2worldZ;
+            Matrix4 local2view = viewProj * _local2world.z;
 
             SelectionIntersection best;
-            LineStrip_BestPoint(local2view, &_circleZ.getRawPoints().front(),
-                                _circleZ.getRawPoints().size(), best);
-            selector.addSelectable(best, &_selectableZ);
+            LineStrip_BestPoint(local2view, &_circle.z.getRawPoints().front(),
+                                _circle.z.getRawPoints().size(), best);
+            selector.addSelectable(best, &_selectable.z);
         }
 
         {
@@ -259,15 +258,15 @@ RotateManipulator::Component* RotateManipulator::getActiveComponent()
 		return &_translatePivot;
 	}
 
-    if(_selectableX.isSelected()) {
+    if(_selectable.x.isSelected()) {
       _rotateAxis.SetAxis(g_vector3_axis_x);
       return &_rotateAxis;
     }
-    else if(_selectableY.isSelected()) {
+    else if(_selectable.y.isSelected()) {
       _rotateAxis.SetAxis(g_vector3_axis_y);
       return &_rotateAxis;
     }
-    else if(_selectableZ.isSelected()) {
+    else if(_selectable.z.isSelected()) {
       _rotateAxis.SetAxis(g_vector3_axis_z);
       return &_rotateAxis;
     }
@@ -281,26 +280,20 @@ RotateManipulator::Component* RotateManipulator::getActiveComponent()
 
 void RotateManipulator::setSelected(bool select)
 {
-    _selectableX.setSelected(select);
-    _selectableY.setSelected(select);
-    _selectableZ.setSelected(select);
-    _selectableScreen.setSelected(select);
-	_selectablePivotPoint.setSelected(select);
+    selection::setSelected(select, _selectable.x, _selectable.y, _selectable.z,
+                           _selectableScreen, _selectablePivotPoint);
 
-	if (!select)
-	{
-		_rotateAxis.resetCurAngle();
-	}
+    if (!select) {
+        _rotateAxis.resetCurAngle();
+    }
 }
 
 bool RotateManipulator::isSelected() const
 {
-    return _selectableX.isSelected() ||
-		_selectableY.isSelected() ||
-		_selectableZ.isSelected() ||
-		_selectableScreen.isSelected() ||
-		_selectableSphere.isSelected() ||
-		_selectablePivotPoint.isSelected();
+    return selection::isAnySelected(
+        _selectable.x, _selectable.y, _selectable.z, _selectableScreen, _selectableSphere,
+        _selectablePivotPoint
+    );
 }
 
 void RotateManipulator::rotate(const Quaternion& rotation)
@@ -319,5 +312,4 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 
 	SceneChangeNotify();
 }
-
 }

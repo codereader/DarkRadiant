@@ -8,212 +8,44 @@
 namespace string
 {
 
-// Converts a string to a different type, with a fallback value
-// A couple of template specialisations are defined below.
-template<typename T, typename Src> 
-T convert(const Src& str, T defaultVal = T());
-
-// Template specialisation to convert std::string => float
-template<>
-inline float convert<float, std::string>(const std::string& str, float defaultVal)
+/**
+ * @brief Convert a string to a different type, returning a default value if the conversion
+ * did not succeed.
+ *
+ * @tparam T
+ * Type of destination value. May be any type for which stringstream::operator>>() is
+ * defined.
+ */
+template<typename T> T convert(const std::string& str, T defaultVal = {}) noexcept
 {
-	try
-	{
-		return str.empty() ? defaultVal : std::stof(str);
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
+    std::stringstream stream(str);
+    T result;
 
-// Template specialisation to convert std::string => double
-template<>
-inline double convert<double, std::string>(const std::string& str, double defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : std::stod(str);
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => short
-template<>
-inline short convert<short, std::string>(const std::string& str, short defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : static_cast<short>(std::stoi(str));
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => unsigned short
-template<>
-inline unsigned short convert<unsigned short, std::string>(const std::string& str, unsigned short defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : static_cast<unsigned short>(std::stoul(str));
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => int
-template<>
-inline int convert<int, std::string>(const std::string& str, int defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : std::stoi(str);
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => unsigned int
-template<>
-inline unsigned int convert<unsigned int, std::string>(const std::string& str, unsigned int defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : static_cast<unsigned int>(std::stoul(str));
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => long
-template<>
-inline long convert<long, std::string>(const std::string& str, long defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : std::stol(str);
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => long long
-template<>
-inline long long convert<long long, std::string>(const std::string& str, long long defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : std::stoll(str);
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => unsigned long
-template<>
-inline unsigned long convert<unsigned long, std::string>(const std::string& str, unsigned long defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : std::stoul(str);
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => unsigned long long
-template<>
-inline unsigned long long convert<unsigned long long, std::string>(const std::string& str, unsigned long long defaultVal)
-{
-	try
-	{
-		return str.empty() ? defaultVal : std::stoull(str);
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
+    stream >> result;
+    if (stream.fail())
+        return defaultVal;
+    else
+        return result;
 }
 
 // Template specialisation to convert std::string => bool
 // Returns the default value if the string is empty, everything else except "0" returns true
-template<>
-inline bool convert<bool, std::string>(const std::string& str, bool defaultVal)
+template<> inline bool convert<bool>(const std::string& str, bool defaultVal) noexcept
 {
-	return str.empty() ? defaultVal : (str != "0");
+    return str.empty() ? defaultVal : (str != "0");
 }
 
-// Template specialisation to extract a Vector3 from the given string
-template<>
-inline Vector3 convert<Vector3, std::string>(const std::string& str, Vector3 defaultVal)
+/**
+ * @brief Identity "conversion" from std::string to std::string.
+ *
+ * Not much point in calling this explicitly, but might improve performance if found by
+ * type-based lookup in a templated function that calls convert<T>(), since it does not
+ * construct a stringstream.
+ */
+template<> inline std::string convert<std::string>(const std::string& str,
+                                                    std::string defaultVal) noexcept
 {
-    // Quickly return if nothing to parse
-    if (str.empty()) return defaultVal;
-
-	try
-	{
-		Vector3 vec;
-
-		std::istringstream stream(str);
-		stream >> std::skipws >> vec.x() >> vec.y() >> vec.z();
-
-		if (stream.fail()) throw std::invalid_argument("Failed to parse Vector3");
-
-		return vec;
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to extract a Vector4 from the given string
-template<>
-inline Vector4 convert<Vector4, std::string>(const std::string& str, Vector4 defaultVal)
-{
-    // Quickly return if nothing to parse
-    if (str.empty()) return defaultVal;
-
-	try
-	{
-		Vector4 vec;
-
-		std::istringstream stream(str);
-		stream >> std::skipws >> vec.x() >> vec.y() >> vec.z() >> vec.w();
-
-		if (stream.bad()) throw std::invalid_argument("Failed to parse Vector4");
-
-		return vec;
-	}
-	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
-	{
-		return defaultVal;
-	}
-}
-
-// Template specialisation to convert std::string => std::string, returning the input value
-template<>
-inline std::string convert<std::string, std::string>(const std::string& str, std::string defaultVal)
-{
-	return str;
+    return str;
 }
 
 #ifdef SPECIALISE_STR_TO_FLOAT
@@ -272,7 +104,7 @@ inline bool tryConvertToInt(const std::string& src, int& value)
 }
 
 // Convert the given type to a std::string
-template<typename Src> 
+template<typename Src>
 inline std::string to_string(const Src& value)
 {
     return std::to_string(value);

@@ -161,7 +161,7 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 {
     if (!_shader)
     {
-        _shader = GlobalRenderSystem().capture(BuiltInShaderType::WireframeOverlay);
+        _shader = GlobalRenderSystem().capture(BuiltInShaderType::ManipulatorWireframe);
 
         auto manipulatorFontStyle = registry::getValue<std::string>(selection::RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
             IGLFont::Style::Sans : IGLFont::Style::Mono;

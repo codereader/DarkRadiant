@@ -54,39 +54,27 @@ namespace
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
 
-class OrthoviewControl :
-    public IUserControl
+std::string XYWndManager::getControlName()
 {
-private:
-    XYWndManager& _owner;
+    return UserControl::OrthoView;
+}
 
-public:
-    OrthoviewControl(XYWndManager& owner) :
-        _owner(owner)
-    {}
+std::string XYWndManager::getDisplayName()
+{
+    return _("2D View");
+}
 
-    std::string getControlName() override
-    {
-        return UserControl::OrthoView;
-    }
-
-    std::string getDisplayName() override
-    {
-        return _("2D View");
-    }
-
-    wxWindow* createWidget(wxWindow* parent) override
-    {
-        return new XYWnd(parent, _owner);
-    }
-};
+wxWindow* XYWndManager::createWidget(wxWindow* parent)
+{
+    return new OrthoView(parent, *this);
+}
 
 XYWndManager::XYWndManager() :
     _maxZoomFactor(1024),
     _activeXYWndId(-1)
 {}
 
-void XYWndManager::registerXYWnd(XYWnd* view)
+void XYWndManager::registerXYWnd(OrthoView* view)
 {
     if (!_xyWnds.emplace(view->getId(), view).second)
     {
@@ -100,7 +88,7 @@ void XYWndManager::registerXYWnd(XYWnd* view)
     }
 }
 
-void XYWndManager::unregisterXYWnd(XYWnd* view)
+void XYWndManager::unregisterXYWnd(OrthoView* view)
 {
     auto id = view->getId();
     _xyWnds.erase(id);
@@ -128,7 +116,7 @@ void XYWndManager::registerCommands()
 	GlobalCommandSystem().addCommand("CenterXYViews", std::bind(&XYWndManager::splitViewFocus, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CenterXYView", std::bind(&XYWndManager::focusActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("Zoom100", std::bind(&XYWndManager::zoom100, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("RunBenchmark", std::bind(&XYWndManager::runBenchmark, this, std::placeholders::_1), 
+	GlobalCommandSystem().addCommand("RunBenchmark", std::bind(&XYWndManager::runBenchmark, this, std::placeholders::_1),
         { cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 
 	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
@@ -280,16 +268,6 @@ void XYWndManager::updateAllViews(bool force)
 	}
 }
 
-void XYWndManager::doWithActiveXyWnd(const std::function<void(XYWnd&)>& action) const
-{
-    auto window = _xyWnds.find(_activeXYWndId);
-
-    if (window != _xyWnds.end())
-    {
-        action(*window->second);
-    }
-}
-
 void XYWndManager::zoomIn(const cmd::ArgumentList& args)
 {
     doWithActiveXyWnd([](auto& activeXyWnd) { activeXyWnd.zoomIn(); });
@@ -331,11 +309,11 @@ IOrthoView& XYWndManager::getActiveView()
 }
 
 // Return the first view matching the given viewType
-IOrthoView& XYWndManager::getViewByType(EViewType viewType)
+IOrthoView& XYWndManager::getViewByType(OrthoOrientation viewType)
 {
 	for (auto& pair : _xyWnds)
 	{
-		if (pair.second->getViewType() == viewType)
+		if (pair.second->getOrientation() == viewType)
 		{
 			return *pair.second;
 		}
@@ -365,36 +343,30 @@ void XYWndManager::positionActiveView(const Vector3& origin)
     doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.positionView(origin); });
 }
 
-EViewType XYWndManager::getActiveViewType() const
+OrthoOrientation XYWndManager::getActiveViewType() const
 {
-    auto viewType = XY;
+    auto viewType = OrthoOrientation::XY;
 
-    doWithActiveXyWnd([&](auto& activeXyWnd) { viewType = activeXyWnd.getViewType(); });
+    doWithActiveXyWnd([&](auto& activeXyWnd) { viewType = activeXyWnd.getOrientation(); });
 
     return viewType;
 }
 
-void XYWndManager::setActiveViewType(EViewType viewType)
+void XYWndManager::setActiveViewType(OrthoOrientation viewType)
 {
-    doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.setViewType(viewType); });
+    doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.setOrientation(viewType); });
 }
 
 void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
 {
     doWithActiveXyWnd([&](auto& activeXyWnd)
     {
-        if (activeXyWnd.getViewType() == XY)
-        {
-            activeXyWnd.setViewType(XZ);
-        }
-        else if (activeXyWnd.getViewType() == XZ)
-        {
-            activeXyWnd.setViewType(YZ);
-        }
+        if (activeXyWnd.getOrientation() == OrthoOrientation::XY)
+            activeXyWnd.setOrientation(OrthoOrientation::XZ);
+        else if (activeXyWnd.getOrientation() == OrthoOrientation::XZ)
+            activeXyWnd.setOrientation(OrthoOrientation::YZ);
         else
-        {
-            activeXyWnd.setViewType(XY);
-        }
+            activeXyWnd.setOrientation(OrthoOrientation::XY);
 
         // Re-focus the view when toggling projections
         activeXyWnd.setOrigin(getFocusPosition());
@@ -403,19 +375,19 @@ void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
 
 void XYWndManager::setActiveViewXY(const cmd::ArgumentList& args)
 {
-	setActiveViewType(XY);
+	setActiveViewType(OrthoOrientation::XY);
 	positionActiveView(getFocusPosition());
 }
 
 void XYWndManager::setActiveViewXZ(const cmd::ArgumentList& args)
 {
-	setActiveViewType(XZ);
+	setActiveViewType(OrthoOrientation::XZ);
 	positionActiveView(getFocusPosition());
 }
 
 void XYWndManager::setActiveViewYZ(const cmd::ArgumentList& args)
 {
-	setActiveViewType(YZ);
+	setActiveViewType(OrthoOrientation::YZ);
 	positionActiveView(getFocusPosition());
 }
 
@@ -451,19 +423,6 @@ void XYWndManager::setActiveXY(int id)
     {
         _activeXYWndId = -1;
     }
-}
-
-int XYWndManager::getUniqueID() const
-{
-	for (int i = 0; i < INT_MAX; ++i)
-	{
-		if (_xyWnds.count(i) == 0)
-			return i;
-	}
-
-	throw std::runtime_error(
-		"Cannot create unique ID for ortho view: no more IDs."
-	);
 }
 
 /* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
@@ -526,6 +485,11 @@ void XYWndManager::observeKey(const std::string& key)
     );
 }
 
+namespace
+{
+    void nullDeleter(XYWndManager*) {}
+}
+
 void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 {
 	// Connect self to the according registry keys
@@ -564,7 +528,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 		_("Shows the mouse position in the orthoview")
 	);
 
-	XYWnd::captureStates();
+	OrthoView::captureStates();
 
     // Add default XY tools
     IMouseToolGroup& toolGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::OrthoView);
@@ -577,7 +541,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
 	toolGroup.registerMouseTool(std::make_shared<MeasurementTool>());
 
-    GlobalUserInterface().registerControl(std::make_shared<OrthoviewControl>(*this));
+    GlobalUserInterface().registerControl(IUserControlCreator::Ptr(this, nullDeleter));
 }
 
 void XYWndManager::shutdownModule()
@@ -587,7 +551,7 @@ void XYWndManager::shutdownModule()
 	// Clear all tracked references
     _xyWnds.clear();
 
-	XYWnd::releaseStates();
+	OrthoView::releaseStates();
 }
 
 MouseToolStack XYWndManager::getMouseToolsForEvent(wxMouseEvent& ev)

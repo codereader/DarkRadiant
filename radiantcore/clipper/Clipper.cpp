@@ -43,11 +43,11 @@ void Clipper::constructPreferences() {
 	page.appendEntry(_("Caulk shader name"), RKEY_CLIPPER_CAULK_SHADER);
 }
 
-EViewType Clipper::getViewType() const {
+OrthoOrientation Clipper::getViewType() const {
 	return _viewType;
 }
 
-void Clipper::setViewType(EViewType viewType) {
+void Clipper::setViewType(OrthoOrientation viewType) {
 	_viewType = viewType;
 }
 
@@ -80,7 +80,7 @@ const std::string& Clipper::getCaulkShader() const
 }
 
 // greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
-ClipPoint* Clipper::find(const Vector3& point, EViewType viewtype, float scale) {
+ClipPoint* Clipper::find(const Vector3& point, OrthoOrientation viewtype, float scale) {
 	double bestDistance = FLT_MAX;
 
 	ClipPoint* bestClip = NULL;
@@ -116,7 +116,7 @@ void Clipper::getPlanePoints(Vector3 planepts[3], const AABB& bounds) const {
 	Vector3 mins(bounds.origin - bounds.extents);
 
 	if (!_clipPoints[2].isSet()) {
-		int n = (_viewType == XY) ? 2 : (_viewType == YZ) ? 0 : 1;
+		int n = (_viewType == OrthoOrientation::XY) ? 2 : (_viewType == OrthoOrientation::YZ) ? 0 : 1;
 		int x = (n == 0) ? 1 : 0;
 		int y = (n == 2) ? 1 : 2;
 

@@ -9,8 +9,8 @@ typedef BasicVector3<double> Vector3;
 
 constexpr const char* const RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
 
-// Possible types of the orthogonal view window
-enum EViewType
+// Possible orientations of the orthogonal view window
+enum class OrthoOrientation
 {
     YZ = 0,
     XZ = 1,
@@ -21,8 +21,7 @@ namespace ui
 {
 
 // Common interface used by all orthographic/2D views, i.e. XY/YZ/XZ and Texture Tool
-class IOrthoViewBase : 
-    public IInteractiveView
+class IOrthoViewBase: public IInteractiveView
 {
 public:
     virtual ~IOrthoViewBase() {}
@@ -38,8 +37,8 @@ public:
     virtual void zoomOut() = 0;
 };
 
-class IOrthoView :
-    public IOrthoViewBase
+/// Interface for a single orthoview window
+class IOrthoView: public IOrthoViewBase
 {
 public:
     virtual ~IOrthoView() {}
@@ -60,25 +59,25 @@ public:
 
     // Snaps the given Vector to the XY view's grid
     // Note that one component of the given vector stays untouched.
-    virtual void snapToGrid(Vector3& point) = 0;
+    virtual void snapToGrid(Vector3& point) const = 0;
 
-    // Returns the projection type (XY, XZ, YZ) of this view
-    virtual EViewType getViewType() const = 0;
+    /// Get the orientation of this view
+    virtual OrthoOrientation getOrientation() const = 0;
 
     // Sets the mouse cursor type of this view
     virtual void setCursorType(CursorType type) = 0;
 };
 
-class IXWndManager :
-	public RegisterableModule
+/// Interface for the module which manages all of the ortho/XY views
+class IOrthoViewManager: public RegisterableModule
 {
 public:
-	// Passes a draw call to each allocated view, set force to true 
+    // Passes a draw call to each allocated view, set force to true
     // to redraw immediately instead of queueing the draw.
-	virtual void updateAllViews(bool force = false) = 0;
+    virtual void updateAllViews(bool force = false) = 0;
 
-	// Sets the origin of all available views
-	virtual void setOrigin(const Vector3& origin) = 0;
+    // Sets the origin of all available views
+    virtual void setOrigin(const Vector3& origin) = 0;
 
     // Returns the origin of the currently active ortho view
     // Will throw std::runtime_error if no view is found
@@ -90,31 +89,31 @@ public:
 
     // Return the first view matching the given viewType
     // Will throw std::runtime_error if no view is found
-    virtual IOrthoView& getViewByType(EViewType viewType) = 0;
+    virtual IOrthoView& getViewByType(OrthoOrientation viewType) = 0;
 
-	// Sets the scale of all available views
-	virtual void setScale(float scale) = 0;
+    // Sets the scale of all available views
+    virtual void setScale(float scale) = 0;
 
-	// Positions all available views
-	virtual void positionAllViews(const Vector3& origin) = 0;
+    // Positions all available views
+    virtual void positionAllViews(const Vector3& origin) = 0;
 
-	// Positions the active views
-	virtual void positionActiveView(const Vector3& origin) = 0;
+    // Positions the active views
+    virtual void positionActiveView(const Vector3& origin) = 0;
 
-	// Returns the view type of the currently active view
-	virtual EViewType getActiveViewType() const = 0;
+    // Returns the view type of the currently active view
+    virtual OrthoOrientation getActiveViewType() const = 0;
 
-	// Sets the viewtype of the active view
-	virtual void setActiveViewType(EViewType viewType) = 0;
+    // Sets the viewtype of the active view
+    virtual void setActiveViewType(OrthoOrientation viewType) = 0;
 };
 
 } // namespace
 
 constexpr const char* const MODULE_ORTHOVIEWMANAGER = "OrthoviewManager";
 
-// This is the accessor for the xy window manager module
-inline ui::IXWndManager& GlobalXYWndManager()
+/// Accessor for the OrthoViewManager module
+inline ui::IOrthoViewManager& GlobalOrthoViewManager()
 {
-    static module::InstanceReference<ui::IXWndManager> _reference(MODULE_ORTHOVIEWMANAGER);
+    static module::InstanceReference<ui::IOrthoViewManager> _reference(MODULE_ORTHOVIEWMANAGER);
     return _reference;
 }

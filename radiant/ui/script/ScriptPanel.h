@@ -8,7 +8,7 @@ namespace ui
 {
 
 class ScriptPanel :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     constexpr static const char* const Name = "ScriptPanel";

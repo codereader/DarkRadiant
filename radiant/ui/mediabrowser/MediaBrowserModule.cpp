@@ -8,7 +8,7 @@ namespace ui
 {
 
 class MediaBrowserControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override

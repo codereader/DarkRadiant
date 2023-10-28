@@ -10,6 +10,7 @@
 #include "render.h"
 #include "Renderables.h"
 #include "render/StaticRenderableText.h"
+#include "math/XYZ.h"
 
 namespace selection
 {
@@ -20,41 +21,33 @@ namespace selection
  * Draws circles for rotation around individual axes, plus a circle for free
  * rotation.
  */
-class RotateManipulator :
-	public ManipulatorBase,
-	public Rotatable
+class RotateManipulator: public ManipulatorBase, public Rotatable
 {
-private:
-	ManipulationPivot& _pivot;
-	TranslatablePivot _pivotTranslatable;
+    ManipulationPivot& _pivot;
+    TranslatablePivot _pivotTranslatable;
 
-	RotateFree _rotateFree;
-	RotateAxis _rotateAxis;
-	TranslateFree _translatePivot;
-	Vector3 _axisScreen;
+    RotateFree _rotateFree;
+    RotateAxis _rotateAxis;
+    TranslateFree _translatePivot;
+    Vector3 _axisScreen;
     Vertex3 _localPivotPoint;
 
-    RenderableSemiCircle _circleX;
-    RenderableSemiCircle _circleY;
-    RenderableSemiCircle _circleZ;
-	RenderableCircle _circleScreen;
-	RenderableCircle _circleSphere;
+    // Renderables
+    math::XYZ<RenderableSemiCircle> _circle;
+    RenderableCircle _circleScreen;
+    RenderableCircle _circleSphere;
     RenderablePoint _pivotPoint;
     render::StaticRenderableText _angleText;
 
-	BasicSelectable _selectableX;
-	BasicSelectable _selectableY;
-	BasicSelectable _selectableZ;
-	BasicSelectable _selectableScreen;
-	BasicSelectable _selectableSphere;
-	BasicSelectable _selectablePivotPoint;
-	Pivot2World _pivot2World;
-	Matrix4 _local2worldX;
-	Matrix4 _local2worldY;
-	Matrix4 _local2worldZ;
-	bool _circleX_visible;
-	bool _circleY_visible;
-	bool _circleZ_visible;
+    // Selectable objects
+    math::XYZ<BasicSelectable> _selectable;
+    BasicSelectable _selectableScreen;
+    BasicSelectable _selectableSphere;
+    BasicSelectable _selectablePivotPoint;
+    Pivot2World _pivot2World;
+
+    // Transformation matrices
+    math::XYZ<Matrix4> _local2world;
 
     ShaderPtr _lineShader;
     ShaderPtr _pivotPointShader;

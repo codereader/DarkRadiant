@@ -7,15 +7,6 @@
 namespace wxutil
 {
 
-FreezePointer::FreezePointer() :
-    _freezePosX(0),
-    _freezePosY(0),
-    _freezePointer(true),
-    _hidePointer(true),
-    _motionReceivesDeltas(true),
-    _capturedWindow(nullptr)
-{}
-
 void FreezePointer::startCapture(wxWindow* window,
                                  const MotionFunction& motionDelta,
                                  const CaptureLostFunction& endMove,
@@ -27,10 +18,10 @@ void FreezePointer::startCapture(wxWindow* window,
 	ASSERT_MESSAGE(motionDelta, "can't capture pointer");
 	ASSERT_MESSAGE(endMove, "can't capture pointer");
 
-    // Pass the flags before going ahead
-    setFreezePointer(freezePointer);
-    setHidePointer(hidePointer);
-    setSendMotionDeltas(motionReceivesDeltas);
+    // Store the flags before going ahead
+    _freezePointer = freezePointer;
+    _hidePointer = hidePointer;
+    _motionReceivesDeltas = motionReceivesDeltas;
 
 	// Find the toplevel window
 	wxWindow* topLevel = wxGetTopLevelParent(window);
@@ -118,21 +109,6 @@ void FreezePointer::endCapture()
     topLevel->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
 	topLevel->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
 	topLevel->Disconnect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(FreezePointer::onMouseDown), NULL, this);
-}
-
-void FreezePointer::setFreezePointer(bool shouldFreeze)
-{
-    _freezePointer = shouldFreeze;
-}
-
-void FreezePointer::setHidePointer(bool shouldHide)
-{
-    _hidePointer = shouldHide;
-}
-
-void FreezePointer::setSendMotionDeltas(bool shouldSendDeltasOnly)
-{
-    _motionReceivesDeltas = shouldSendDeltasOnly;
 }
 
 void FreezePointer::connectMouseEvents(const MouseEventFunction& onMouseDown,

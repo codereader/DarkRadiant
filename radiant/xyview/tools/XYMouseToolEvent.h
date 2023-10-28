@@ -8,10 +8,8 @@ namespace ui
 
 // Special event subtype for XY View events. Provides
 // information about view type, for example.
-class XYMouseToolEvent :
-    public OrthoViewMouseToolEvent
+class XYMouseToolEvent: public OrthoViewMouseToolEvent
 {
-private:
     IOrthoView& _view;
 
     // Current mouse coordinates, relative to 0,0,0 world origin
@@ -40,9 +38,9 @@ public:
         return _worldPos;
     }
 
-    EViewType getViewType() const
+    OrthoOrientation getViewType() const
     {
-        return _view.getViewType();
+        return _view.getOrientation();
     }
 
     float getScale() const

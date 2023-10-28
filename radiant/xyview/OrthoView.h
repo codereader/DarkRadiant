@@ -28,21 +28,21 @@ namespace ui
 
 class XYWndManager;
 
-class XYWnd final :
+/// Two dimensional orthographic view, implementing the IOrthoView interface
+class OrthoView final :
     public wxutil::DockablePanel,
     public IOrthoView,
     public scene::Graph::Observer,
     protected wxutil::MouseToolHandler
 {
-private:
     XYWndManager& _owner;
 
     int _id;
     static int _nextId;
 
     wxutil::GLWidget* _wxGLWidget;
-    bool _drawing;
-    bool _updateRequested;
+    bool _drawing = false;
+    bool _updateRequested = false;
 
     // The maximum/minimum values of a coordinate
     double _minWorldCoord;
@@ -53,12 +53,12 @@ private:
 
     wxutil::FreezePointer _freezePointer;
 
-    wxCursor _defaultCursor;
-    wxCursor _crossHairCursor;
+    wxCursor _defaultCursor = wxCURSOR_DEFAULT;
+    wxCursor _crossHairCursor = wxCURSOR_CROSS;
 
-    bool _chasingMouse;
+    bool _chasingMouse = false;
 
-    double	_scale;
+    double _scale;
     Vector3 _origin;
 
     render::View _view;
@@ -68,7 +68,7 @@ private:
 
     Vector3 _mousePosition;
 
-    EViewType _viewType;
+    OrthoOrientation _orientation = OrthoOrientation::XY;
 
     // Context menu handling. Because we use right-click for both context menu and panning
     // (probably a bad design choice, but we're stuck with it), we need to distinguish between a
@@ -86,7 +86,7 @@ private:
     // Save the current button state
     unsigned int _eventState;
 
-    bool _isActive;
+    bool _isActive = false;
 
     int _chasemouseCurrentX;
     int _chasemouseCurrentY;
@@ -96,16 +96,16 @@ private:
     Matrix4 _projection = Matrix4::getIdentity();
     Matrix4 _modelView = Matrix4::getIdentity();
 
-    int _width;
-    int _height;
+    int _width = 0;
+    int _height = 0;
 
     sigc::connection _sigCameraChanged;
 
     IGLFont::Ptr _font;
 
 public:
-    XYWnd(wxWindow* parent, XYWndManager& owner);
-    ~XYWnd() override;
+    OrthoView(wxWindow* parent, XYWndManager& owner);
+    ~OrthoView() override;
 
     int getId() const;
 
@@ -123,12 +123,6 @@ public:
     static void captureStates();
     static void releaseStates();
 
-    // Returns the long type string ("XY Top", "YZ Side", "XZ Front") for use in window titles
-    static const std::string getViewTypeTitle(EViewType viewtype);
-
-    // Returns the short type string (XY, XZ, YZ)
-    static const std::string getViewTypeStr(EViewType viewtype);
-
     void positionView(const Vector3& position);
     const Vector3& getOrigin() const override;
     void setOrigin(const Vector3& origin) override;
@@ -139,10 +133,8 @@ public:
     void drawBlockGrid();
     void drawGrid();
 
-    Vector3 convertXYToWorld(int x, int y);
-    void snapToGrid(Vector3& point) override;
-
-    void mouseToPoint(int x, int y, Vector3& point);
+    Vector3 convertXYToWorld(int x, int y) const;
+    void snapToGrid(Vector3& point) const override;
 
     void zoomIn() override;
     void zoomOut() override;
@@ -156,8 +148,11 @@ public:
     void updateModelview();
     void updateProjection();
 
-    void setViewType(EViewType n);
-    EViewType getViewType() const override;
+    /// Change the view orientation
+    void setOrientation(OrthoOrientation n);
+
+    /// \see IOrthoView::getOrientation
+    OrthoOrientation getOrientation() const override;
 
     void setScale(float f);
     float getScale() const override;
@@ -170,7 +165,7 @@ public:
 
     void updateFont();
 
-protected:
+private:
     // Disconnects all widgets and unsubscribes as observer
     void destroyXYView();
 
@@ -181,8 +176,8 @@ protected:
     void startCapture(const MouseToolPtr& tool) override;
     void endCapture() override;
     IInteractiveView& getInteractiveView() override;
+    Vector3 mouseToPoint(const Vector2i&) const;
 
-private:
     XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void ensureFont();
@@ -212,12 +207,15 @@ private:
     void onGLMouseButtonPress(wxMouseEvent& ev);
     void onGLMouseButtonRelease(wxMouseEvent& ev);
     void onGLMouseMove(wxMouseEvent& ev);
+
+    std::string rkeyForViewState() const;
+    std::string rkeyForOrientation() const;
 };
 
 /**
  * Shared pointer typedefs.
  */
-typedef std::shared_ptr<XYWnd> XYWndPtr;
-typedef std::weak_ptr<XYWnd> XYWndWeakPtr;
+typedef std::shared_ptr<OrthoView> XYWndPtr;
+typedef std::weak_ptr<OrthoView> XYWndWeakPtr;
 
 }

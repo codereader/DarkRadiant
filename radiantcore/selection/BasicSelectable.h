@@ -10,31 +10,38 @@ namespace selection
  * Behaves just as one would expect, keeping track of
  * the selected state by means of a boolean.
  */
-class BasicSelectable : 
-	public ISelectable
+class BasicSelectable: public ISelectable
 {
-private:
-	bool _selected;
+    bool _selected = false;
 
 public:
-	BasicSelectable() :
-		_selected(false)
-	{}
 
-	void setSelected(bool select = true)
-	{
-		_selected = select;
-	}
+    void setSelected(bool select = true) override
+    {
+        _selected = select;
+    }
 
-	bool isSelected() const
-	{
-		return _selected;
-	}
+    bool isSelected() const override
+    {
+        return _selected;
+    }
 
-	void invertSelected()
-	{
-		_selected = !_selected;
-	}
+    void invertSelected()
+    {
+        _selected = !_selected;
+    }
 };
+
+/// Convenience function to call setSelected() on a number of items
+template<typename... Item> void setSelected(bool select, Item&&... item)
+{
+    (item.setSelected(select), ...);
+}
+
+/// Convenience function to return true if any one of a number of items is selected
+template<typename... Item> bool isAnySelected(const Item&... item)
+{
+    return (item.isSelected() || ...);
+}
 
 } // namespace

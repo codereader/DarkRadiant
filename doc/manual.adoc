@@ -135,43 +135,41 @@ but there will be no available textures, models, entities or other game assets.
 
 === Interface layout
 
-DarkRadiant ships with a number of different user interface layouts, which
-control the position, visibility and window type of the major interface
-elements. The current layout can be changed from the *View -> Window Layout*
-menu, and will require DarkRadiant to be restarted.
+DarkRadiant uses a flexible layout system based on dockable windows which can be moved into
+various positions around the edges of the main window, or floated as separate top-level
+windows. The arrangement and sizes of these windows are saved into settings and persisted
+between sessions.
 
-All of the provided layouts allow window sizes and splitter positions to be
-changed, and the changes will persist through multiple editing sessions. It is
-also possible to create a new floating 2D view using the *View -> New XY view*
-command at any time, regardless of which layout is chosen.
+Each window has a small title bar at the top showing the window's name. Dragging this title
+bar will allow the docked window to be floated or docked into a different position depending
+on the drag destination. When the window is dragged near a possible dock position, a shaded
+rectangle will appear indicating where the window will be docked.
 
-*Dockable*:: Editing tab widget and 3D camera view are placed in dockable
-subwindows which can be floated and positioned freely, or docked to the window
-edges. The 2D view takes up the remaining space in the main window. This is the
-most flexible layout.
+There is a central 2D view which cannot be undocked or replaced, although it can be made
+arbitrarily small by expanding docked widgets towards the center. Likewise, the camera view
+and properties panels cannot be removed, although they can be resized and moved into
+different dock positions.
 
-*Embedded*:: A large 2D window is shown on the right, while the left-hand side
-is divided vertically into the 3D camera window and a tab widget containing the
-main editing panels. There are no floating subwindows in this layout.
+You can create _additional_ 2D and camera views using the *View -> New XY view* and *View ->
+New Camera view* menu items. These additional views can be floated or docked like the main
+windows, and can also be removed by clicking the *X* button at the top right of the title
+bar. All 2D views store their orientation (XY/YZ/XZ) into settings, which makes it possible
+to set up a traditional 3D modelling interface with three orthographic views and a camera
+view, if desired.
 
-*Regular*:: A legacy GtkRadiant layout which places the 2D window on the left,
- the 3D camera view on the top right, and a 2D scrolling textures panel on the
- bottom right. Other tabs in the editing panel are shown in a floating window.
-
-*RegularLeft*:: The same as *Regular* except the full-height 2D window is on the
- right and the 3D window and texture panels are on the left.
-
-*SplitPane*:: Three separate 2D windows, showing each of the major axes, are
- shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
- modelling applications. The editing tab widget is in a floating window.
-
+[[ColourSchemes]]
 === Colour schemes
 
-DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but
-ships with four other colour schemes, which can be chosen with the *View ->
-Colours...* dialog. If you prefer a dark theme, the `Black & Green` scheme might
-be suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
-provide a more neutral, low-contrast look.
+DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but ships with
+four other colour schemes, which can be chosen with the *View -> Colours...* dialog. If you
+prefer a dark theme, the `Black & Green` scheme might be suitable, whereas the
+`Maya/Max/Lightwave Emulation` and `Super Mal` themes provide a more neutral, low-contrast
+look.
+
+Colour schemes only affect what is rendered in the 2D and 3D views by DarkRadiant itself.
+The appearance of the user interface is determined by the *wxWidgets* toolkit based on the
+system-wide widget theme, and can only be changed via system settings or other applications
+(such as `gnome-tweaks` on Linux).
 
 [align="center",cols="^.<a,^.<a,^.<a",grid="none"]
 |===
@@ -296,6 +294,8 @@ Render objects as preview textures, with no lighting or material effects such as
 transparency.
 |image:lightingMode.png[align="center",width=24]|Render in lighting preview mode|
 Render all available lighting and texture effects.
+|image:lightingModeWithShadows.png[align="center",width=24]|Toggle shadow rendering|
+Enable the rendering of shadows when in lighting preview mode.
 3+^h|Animation rendering
 |image:StartPlayback.png[align="center",width=24]|Start render time|
 Begin rendering animated effects.
@@ -1907,6 +1907,14 @@ currently-selected entity. See <<ReparentingPrimitives,reparenting primitives>>.
 
 *Select parent entities*:: Select the parent entity of the currently-selected
 primitive. See <<ReparentingPrimitives,reparenting primitives>>.
+
+=== View menu
+
+*New XY view*:: Create a new dockable orthographic (2D) view.
+
+*New Camera view*:: Create a new dockable 3D camera view.
+
+*Colours...*:: Show a dialog for choosing and editing <<ColourSchemes,colour schemes>>.
 
 === Entity menu
 

@@ -421,7 +421,7 @@ public:
     virtual Slot addText(IRenderableText& text) = 0;
 
     // Removes the text instance in the given Slot
-    // The slot handle is invalidated by this operation and should be 
+    // The slot handle is invalidated by this operation and should be
     // discarded by the client, by setting it to InvalidSlot
     virtual void removeText(Slot slot) = 0;
 };
@@ -447,8 +447,8 @@ enum class BuiltInShaderType
     // Lines connecting the patch control points
     PatchLattice,
 
-    // Line shader drawing above regular things
-    WireframeOverlay,
+    /// Wireframe lines for manipulators
+    ManipulatorWireframe,
 
     // Fill shader drawing above regular things
     FlatshadeOverlay,
@@ -502,7 +502,7 @@ enum class BuiltInShaderType
     WireframeInactive,
 };
 
-// Available types of colour shaders. These areused 
+// Available types of colour shaders. These areused
 // to draw map items in the ortho view, or to render
 // connection lines, light volumes in both camera and ortho.
 enum class ColourShaderType
@@ -582,13 +582,13 @@ public:
 
     /**
      * Register the given entity to be considered during rendering.
-     * If this entity is a light it will be automatically recognised 
+     * If this entity is a light it will be automatically recognised
      * and inserted into the set of lights.
      */
     virtual void addEntity(const IRenderEntityPtr& renderEntity) = 0;
 
     /**
-     * Detaches this entity from this rendersystem, it won't be 
+     * Detaches this entity from this rendersystem, it won't be
      * affected by any rendering after this call.
      */
     virtual void removeEntity(const IRenderEntityPtr& renderEntity) = 0;
@@ -632,15 +632,15 @@ public:
      * Render the scene based on the light-entity interactions.
      * All the active lights and entities must have added themselves
      * to this rendersystem at this point, using addEntity().
-     * 
+     *
      * \param globalFlagsMask
      * The mask of render flags which are permitted during this render pass. Any
      * render flag which is 0 in this mask will not be enabled during rendering,
      * even if the particular shader requests it.
-     * 
+     *
      * \returns A result object which can be used to display a statistics summary.
      */
-    virtual IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask, 
+    virtual IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask,
         const render::IRenderView& view) = 0;
 
     virtual void realise() = 0;

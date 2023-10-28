@@ -141,7 +141,7 @@ void PointFile::advance(bool forward)
 
 		if (module::GlobalModuleRegistry().moduleExists(MODULE_ORTHOVIEWMANAGER))
 		{
-			GlobalXYWndManager().setOrigin(_points[_curPos].vertex);
+			GlobalOrthoViewManager().setOrigin(_points[_curPos].vertex);
 		}
 
 		{

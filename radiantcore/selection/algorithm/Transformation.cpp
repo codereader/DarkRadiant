@@ -322,15 +322,15 @@ struct AxisBase
 	{}
 };
 
-AxisBase AxisBase_forViewType(EViewType viewtype)
+AxisBase AxisBase_forViewType(OrthoOrientation viewtype)
 {
 	switch(viewtype)
 	{
-	case XY:
+	case OrthoOrientation::XY:
 		return AxisBase(g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z);
-	case XZ:
+	case OrthoOrientation::XZ:
 		return AxisBase(g_vector3_axis_x, g_vector3_axis_z, g_vector3_axis_y);
-	case YZ:
+	case OrthoOrientation::YZ:
 		return AxisBase(g_vector3_axis_y, g_vector3_axis_z, g_vector3_axis_x);
 	}
 
@@ -376,7 +376,7 @@ void translateSelected(const Vector3& translation)
 }
 
 // Specialised overload, called by the general nudgeSelected() routine
-void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
+void nudgeSelected(ENudgeDirection direction, float amount, OrthoOrientation viewtype)
 {
 	AxisBase axes(AxisBase_forViewType(viewtype));
 
@@ -399,7 +399,7 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 
 void nudgeSelected(ENudgeDirection direction)
 {
-	nudgeSelected(direction, GlobalGrid().getGridSize(), GlobalXYWndManager().getActiveViewType());
+	nudgeSelected(direction, GlobalGrid().getGridSize(), GlobalOrthoViewManager().getActiveViewType());
 }
 
 void nudgeSelectedCmd(const cmd::ArgumentList& args)

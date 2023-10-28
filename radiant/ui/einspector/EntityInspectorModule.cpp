@@ -1,5 +1,6 @@
 #include "EntityInspectorModule.h"
 
+#include "i18n.h"
 #include "ideclmanager.h"
 #include "iregistry.h"
 #include "iselection.h"
@@ -15,7 +16,7 @@ namespace ui
 {
 
 class EntityInspectorControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     std::string getControlName() override
