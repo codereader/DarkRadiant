@@ -73,6 +73,7 @@
     <ClCompile Include="..\..\..\test\Filters.cpp" />
     <ClCompile Include="..\..\..\test\Clipboard.cpp" />
     <ClCompile Include="..\..\..\test\Curves.cpp" />
+    <ClCompile Include="..\..\..\test\Registry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

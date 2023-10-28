@@ -369,10 +369,10 @@
     <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
+    <ClCompile Include="..\..\radiant\xyview\OrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
-    <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\ApplicationContext.h" />
@@ -604,6 +604,7 @@
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanelControl.h" />
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
+    <ClInclude Include="..\..\radiant\xyview\OrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraMoveTool.h" />
@@ -613,7 +614,6 @@
     <ClInclude Include="..\..\radiant\xyview\tools\XYMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
-    <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
     <ClInclude Include="..\..\radiant\log\PIDFile.h" />
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h" />
   </ItemGroup>

@@ -132,6 +132,7 @@
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\PointTrace.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
+    <ClCompile Include="..\..\..\test\Registry.cpp" />
     <ClCompile Include="..\..\..\test\Renderer.cpp" />
     <ClCompile Include="..\..\..\test\SceneNode.cpp" />
     <ClCompile Include="..\..\..\test\SceneStatistics.cpp" />
