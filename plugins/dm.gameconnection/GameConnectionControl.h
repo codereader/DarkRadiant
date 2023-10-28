@@ -8,7 +8,7 @@ namespace ui
 {
 
 class GameConnectionControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     constexpr static const char* Name = "GameConnectionPanel";

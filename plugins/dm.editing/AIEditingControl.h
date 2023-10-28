@@ -8,7 +8,7 @@ namespace ui
 {
 
 class AIEditingControl :
-    public IUserControl
+    public IUserControlCreator
 {
 public:
     constexpr static const char* const Name = "AIEditingPanel";
