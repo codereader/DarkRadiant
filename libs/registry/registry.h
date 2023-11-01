@@ -43,6 +43,13 @@ inline std::string combinePath(std::string basePath, const std::string& subPath)
     return string::ends_with(basePath, "/") ? basePath + subPath : basePath + "/" + subPath;
 }
 
+/// Connect a callback to be notified when a particular key changes
+inline sigc::signal<void>::iterator connect(const std::string& key,
+                                            sigc::signal<void>::slot_type&& slot)
+{
+    return GlobalRegistry().signalForKey(key).connect(slot);
+}
+
 /**
  * \brief
  * Scoped sentry object which sets a registry key to a temporary value for its

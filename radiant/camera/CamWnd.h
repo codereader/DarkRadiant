@@ -75,10 +75,10 @@ private:
     wxutil::FreezePointer _freezePointer;
 
     // Is true during an active drawing process
-    bool _drawing;
+    bool _drawing = false;
 
     // Update of this window in the next idle event loop
-    bool _updateRequested;
+    bool _updateRequested = false;
 
     // The GL widget
     wxutil::GLWidget* _wxGLWidget;
@@ -107,7 +107,7 @@ private:
 
     // Timer for animation
     wxTimer _timer;
-    bool _timerLock; // to avoid double-timer-firings
+    bool _timerLock = false; // to avoid double-timer-firings
 
     sigc::connection _glExtensionsInitialisedNotifier;
 
@@ -117,15 +117,15 @@ private:
     render::RenderStatistics _renderStats;
 
     // Remembering the free movement type while holding down a key
-    bool _freeMoveEnabled;
-    unsigned int _freeMoveFlags;
+    bool _freeMoveEnabled = false;
+    unsigned int _freeMoveFlags = 0;
     wxTimer _freeMoveTimer;
     wxStopWatch _keyControlTimer;
 
     wxutil::DeferredMotionDelta _deferredMotionDelta;
 
-    bool _strafe; // true when in strafemode toggled by the ctrl-key
-    bool _strafeForward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
+    bool _strafe = false; // true when in strafemode toggled by the ctrl-key
+    bool _strafeForward = false; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
 
     IGLFont::Ptr _glFont;
 
@@ -257,7 +257,7 @@ private:
     void drawTime();
     void drawGrid();
     void requestRedraw(bool force);
-    
+
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void onGLResize(wxSizeEvent& ev);
@@ -270,7 +270,7 @@ private:
 
     // Mouse motion callback used in freelook mode only, processes deltas
     void handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state);
-    
+
     void onGLExtensionsInitialised();
 
     void onFrame(wxTimerEvent& ev);
