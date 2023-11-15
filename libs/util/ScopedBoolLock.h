@@ -13,18 +13,12 @@ class ScopedBoolLock
 public:
 
     /// Construct and set target to true
-    ScopedBoolLock(bool& target) :
-        _target(target),
-        _previousValue(target)
-    {
+    ScopedBoolLock(bool& target): _target(target), _previousValue(target) {
         _target = true;
     }
 
     /// Destroy and set target to the previous value
-    ~ScopedBoolLock()
-    {
-        _target = _previousValue;
-    }
+    ~ScopedBoolLock() { _target = _previousValue; }
 };
 
 }

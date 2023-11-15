@@ -7,6 +7,7 @@
 class wxFileDirPickerEvent;
 class wxSpinDoubleEvent;
 class wxSpinCtrlDouble;
+class wxCheckBox;
 
 namespace ui
 {
@@ -16,9 +17,17 @@ class OrthoBackgroundPanel :
     public wxutil::DockablePanel,
     private wxutil::XmlResourceBasedWidget
 {
+    // Widgets
     wxSpinCtrlDouble* _spinScale = nullptr;
     wxSpinCtrlDouble* _spinHorizOffset = nullptr;
     wxSpinCtrlDouble* _spinVertOffset = nullptr;
+
+    struct {
+        wxCheckBox* useImage = nullptr;
+        wxCheckBox* keepAspect = nullptr;
+        wxCheckBox* scaleWithViewport = nullptr;
+        wxCheckBox* panWithViewport = nullptr;
+    } _cb;
 
     // TRUE, if a widget update is in progress (to avoid callback loops)
     bool _callbackActive = false;

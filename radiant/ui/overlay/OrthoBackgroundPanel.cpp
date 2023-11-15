@@ -10,6 +10,7 @@
 #include <wx/spinctrl.h>
 
 #include "OverlayRegistryKeys.h"
+#include "util/ScopedBoolLock.h"
 
 namespace ui
 {
@@ -90,16 +91,17 @@ void OrthoBackgroundPanel::setupDialog()
     vOffsetPanel->GetSizer()->Add(_spinVertOffset, 0, wxLEFT, 6);
     vOffsetPanel->GetSizer()->Layout();
 
-    wxCheckBox* keepAspect = findNamedObject<wxCheckBox>(this, "OverlayDialogKeepAspect");
-    wxCheckBox* scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
-    wxCheckBox* panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
+    _cb.keepAspect = findNamedObject<wxCheckBox>(this, "OverlayDialogKeepAspect");
+    _cb.scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
+    _cb.panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
 
-    keepAspect->Connect(wxEVT_CHECKBOX,
-        wxCommandEventHandler(OrthoBackgroundPanel::onOptionToggled), NULL, this);
-    scaleWithViewport->Connect(wxEVT_CHECKBOX,
-        wxCommandEventHandler(OrthoBackgroundPanel::onOptionToggled), NULL, this);
-    panWithViewport->Connect(wxEVT_CHECKBOX,
-        wxCommandEventHandler(OrthoBackgroundPanel::onOptionToggled), NULL, this);
+    _cb.keepAspect->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent& ev) { onOptionToggled(ev); });
+    _cb.scaleWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent& ev) {
+        onOptionToggled(ev);
+    });
+    _cb.panWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent& ev) {
+        onOptionToggled(ev);
+    });
 
     makeLabelBold(this, "OverlayDialogLabelFile");
     makeLabelBold(this, "OverlayDialogLabelTrans");
@@ -126,13 +128,9 @@ void OrthoBackgroundPanel::initialiseWidgets()
     _spinHorizOffset->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSLATIONX));
     _spinVertOffset->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSLATIONY));
 
-    wxCheckBox* keepAspect = findNamedObject<wxCheckBox>(this, "OverlayDialogKeepAspect");
-    wxCheckBox* scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
-    wxCheckBox* panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
-
-    keepAspect->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PROPORTIONAL));
-    scaleWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY));
-    panWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PAN_WITH_XY));
+    _cb.keepAspect->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PROPORTIONAL));
+    _cb.scaleWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY));
+    _cb.panWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PAN_WITH_XY));
 
     updateSensitivity();
 }
@@ -152,17 +150,10 @@ void OrthoBackgroundPanel::onOptionToggled(wxCommandEvent& ev)
 {
     if (_callbackActive) return;
 
-    _callbackActive = true;
-
-    wxCheckBox* keepAspect = findNamedObject<wxCheckBox>(this, "OverlayDialogKeepAspect");
-    wxCheckBox* scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
-    wxCheckBox* panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
-
-    registry::setValue<bool>(RKEY_OVERLAY_PROPORTIONAL, keepAspect->GetValue());
-    registry::setValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY, scaleWithViewport->GetValue());
-    registry::setValue<bool>(RKEY_OVERLAY_PAN_WITH_XY, panWithViewport->GetValue());
-
-    _callbackActive = false;
+    util::ScopedBoolLock lock(_callbackActive);
+    registry::setValue<bool>(RKEY_OVERLAY_PROPORTIONAL, _cb.keepAspect->GetValue());
+    registry::setValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY, _cb.scaleWithViewport->GetValue());
+    registry::setValue<bool>(RKEY_OVERLAY_PAN_WITH_XY, _cb.panWithViewport->GetValue());
 }
 
 void OrthoBackgroundPanel::onToggleUseImage(wxCommandEvent& ev)
