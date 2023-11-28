@@ -45,7 +45,7 @@ private:
     // callbacks
     void onFileSelection(wxFileDirPickerEvent& ev);
     void onToggleUseImage(wxCommandEvent& ev);
-    void onOptionToggled(wxCommandEvent& ev);
+    void onOptionToggled();
     void onScrollChange(wxScrollEvent& ev);
     void onSpinChange(wxSpinDoubleEvent& ev);
 };

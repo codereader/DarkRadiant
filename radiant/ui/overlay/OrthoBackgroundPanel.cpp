@@ -95,13 +95,9 @@ void OrthoBackgroundPanel::setupDialog()
     _cb.scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
     _cb.panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
 
-    _cb.keepAspect->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent& ev) { onOptionToggled(ev); });
-    _cb.scaleWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent& ev) {
-        onOptionToggled(ev);
-    });
-    _cb.panWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent& ev) {
-        onOptionToggled(ev);
-    });
+    _cb.keepAspect->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
+    _cb.scaleWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
+    _cb.panWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
 
     makeLabelBold(this, "OverlayDialogLabelFile");
     makeLabelBold(this, "OverlayDialogLabelTrans");
@@ -146,7 +142,7 @@ void OrthoBackgroundPanel::updateSensitivity()
     assert(controls->IsEnabled() == registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 }
 
-void OrthoBackgroundPanel::onOptionToggled(wxCommandEvent& ev)
+void OrthoBackgroundPanel::onOptionToggled()
 {
     if (_callbackActive) return;
 
