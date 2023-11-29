@@ -8,6 +8,7 @@ class wxFileDirPickerEvent;
 class wxSpinDoubleEvent;
 class wxSpinCtrlDouble;
 class wxCheckBox;
+class wxSlider;
 
 namespace ui
 {
@@ -22,6 +23,15 @@ class OrthoBackgroundPanel :
     wxSpinCtrlDouble* _spinHorizOffset = nullptr;
     wxSpinCtrlDouble* _spinVertOffset = nullptr;
 
+    // Sliders
+    struct {
+        wxSlider* opacity = nullptr;
+        wxSlider* hOffset = nullptr;
+        wxSlider* vOffset = nullptr;
+        wxSlider* scale = nullptr;
+    } _slider;
+
+    // Checkboxes
     struct {
         wxCheckBox* useImage = nullptr;
         wxCheckBox* keepAspect = nullptr;
@@ -38,7 +48,7 @@ public:
 private:
     // Widget construction helpers
     void setupDialog();
-
+    wxSpinCtrlDouble* makeSpinner(wxWindow* parent, float min, float max, float increment);
     void initialiseWidgets();
     void updateSensitivity();
 
