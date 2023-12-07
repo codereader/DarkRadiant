@@ -169,30 +169,28 @@ void assertProgramLinked(GLuint program)
     // Check the link status
     GLint linkStatus;
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-    if (linkStatus != GL_TRUE)
-    {
+    if (linkStatus != GL_TRUE) {
         throw std::runtime_error(
-            "Failed to construct GLSL program:\n"
-            + getProgramInfoLog(program)
+            "Failed to construct GLSL program:\n" + getProgramInfoLog(program)
         );
     }
 
 #ifdef _DEBUG
-
     // Ask GL to validate the program (this means that it will run)
     glValidateProgram(program);
 
     // Get the valid status and info log
     GLint validStatus;
     glGetProgramiv(program, GL_VALIDATE_STATUS, &validStatus);
+    const std::string validLog = getProgramInfoLog(program);
 
-    std::string validLog = getProgramInfoLog(program);
-
-    // Output to stream
-    rMessage() << "[renderer] GLSL program "
-              << (validStatus == GL_TRUE ? "IS " : "IS NOT ") << "valid.\n";
-    rMessage() << "Info:\n" << validLog << std::endl;
-
+    // Output anything interesting to console
+    if (validStatus != GL_TRUE) {
+        rWarning() << "GLSL program is not valid.\n";
+    }
+    if (!validLog.empty()) {
+        rMessage() << "GLSL info log:\n" << validLog << std::endl;
+    }
 #endif
 }
 
