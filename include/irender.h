@@ -684,9 +684,6 @@ public:
     // Returns true if openGL supports ARB or GLSL lighting
     virtual bool shaderProgramsAvailable() const = 0;
 
-    // Sets the flag whether shader programs are available.
-    virtual void setShaderProgramsAvailable(bool available) = 0;
-
     // Activates or deactivates the merge render mode
     virtual void setMergeModeEnabled(bool enabled) = 0;
 
