@@ -15,7 +15,7 @@ namespace
     const char* DEPTHFILL_ALPHA_FP_FILENAME = "zfill_alpha_fp.glsl";
 }
 
-void DepthFillAlphaProgram::create()
+DepthFillAlphaProgram::DepthFillAlphaProgram()
 {
     // Create the program object
     rMessage() << "[renderer] Creating GLSL depthfill+alpha program" << std::endl;
@@ -82,4 +82,3 @@ void DepthFillAlphaProgram::setDiffuseTextureTransform(const Matrix4& transform)
 }
 
 }
-

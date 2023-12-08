@@ -24,28 +24,16 @@ namespace render
 
 using CharBufPtr = std::shared_ptr<std::vector<char>>;
 
-// Constructor, populates map with GLProgram instances
-GLProgramFactory::GLProgramFactory()
-{
-    _builtInPrograms[ShaderProgram::DepthFillAlpha] = std::make_shared<DepthFillAlphaProgram>();
-    _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<InteractionProgram>();
-    _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<CubeMapProgram>();
-    _builtInPrograms[ShaderProgram::ShadowMap] = std::make_shared<ShadowMapProgram>();
-    _builtInPrograms[ShaderProgram::RegularStage] = std::make_shared<RegularStageProgram>();
-    _builtInPrograms[ShaderProgram::BlendLight] = std::make_shared<BlendLightProgram>();
-}
-
 GLProgram* GLProgramFactory::getBuiltInProgram(ShaderProgram builtInProgram)
 {
-	// Lookup the program, if not found throw an exception
-	auto i = _builtInPrograms.find(builtInProgram);
-
-    if (i != _builtInPrograms.end())
-    {
+    // Lookup the program, if not found throw an exception
+    if (auto i = _builtInPrograms.find(builtInProgram); i != _builtInPrograms.end()) {
         return i->second.get();
     }
 
-	throw std::runtime_error("GLProgramFactory: failed to find program " + string::to_string((int)builtInProgram));
+    throw std::runtime_error(
+        "GLProgramFactory: failed to find program " + string::to_string(int(builtInProgram))
+    );
 }
 
 GLProgram* GLProgramFactory::getProgram(const std::string& vertexProgramFilename,
@@ -71,21 +59,24 @@ GLProgram* GLProgramFactory::getProgram(const std::string& vertexProgramFilename
 // Realise the program factory.
 void GLProgramFactory::realise()
 {
-	// Realise each GLProgram in the map
-	for (ProgramMap::value_type& pair : _builtInPrograms)
-	{
-		pair.second->create();
-	}
+    if (!_builtInPrograms.empty()) {
+        return;
+    }
+
+    // Construct each GLProgram and populate the map
+    _builtInPrograms[ShaderProgram::DepthFillAlpha] = std::make_shared<DepthFillAlphaProgram>();
+    _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<InteractionProgram>();
+    _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<CubeMapProgram>();
+    _builtInPrograms[ShaderProgram::ShadowMap] = std::make_shared<ShadowMapProgram>();
+    _builtInPrograms[ShaderProgram::RegularStage] = std::make_shared<RegularStageProgram>();
+    _builtInPrograms[ShaderProgram::BlendLight] = std::make_shared<BlendLightProgram>();
 }
 
 // Unrealise the program factory.
 void GLProgramFactory::unrealise()
 {
-	// Destroy each GLProgram in the map
-    for (ProgramMap::value_type& pair : _builtInPrograms)
-	{
-		pair.second->destroy();
-	}
+    // Clear out the map and destroy all shaders
+    _builtInPrograms.clear();
 }
 
 namespace

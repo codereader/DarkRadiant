@@ -6,20 +6,15 @@
 namespace render
 {
 
-class CubeMapProgram :
-    public GLSLProgramBase
+class CubeMapProgram: public GLSLProgramBase
 {
-private:
     // Uniform/program-local parameter IDs.
-    GLint _locViewOrigin;
+    GLint _locViewOrigin = -1;
 
 public:
-    CubeMapProgram() :
-        _locViewOrigin(-1)
-    {}
+    CubeMapProgram();
 
     /* GLProgram implementation */
-    void create() override;
     void enable() override;
     void disable() override;
 
@@ -27,4 +22,3 @@ public:
 };
 
 } // namespace render
-

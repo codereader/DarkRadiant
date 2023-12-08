@@ -10,22 +10,15 @@ class RegularStageProgram :
     public GLSLProgramBase
 {
 private:
-    int _locDiffuseTextureMatrix;
-    int _locColourModulation;
-    int _locColourAddition;
-    int _locModelViewProjection;
-    int _locObjectTransform;
+    int _locDiffuseTextureMatrix = -1;
+    int _locColourModulation = -1;
+    int _locColourAddition = -1;
+    int _locModelViewProjection = -1;
+    int _locObjectTransform = -1;
 
 public:
-    RegularStageProgram() :
-        _locDiffuseTextureMatrix(-1),
-        _locColourModulation(-1),
-        _locColourAddition(-1),
-        _locModelViewProjection(-1),
-        _locObjectTransform(-1)
-    {}
+    RegularStageProgram();
 
-    void create() override;
     void enable() override;
     void disable() override;
 
@@ -36,4 +29,3 @@ public:
 };
 
 } // namespace render
-

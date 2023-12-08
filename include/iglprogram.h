@@ -2,36 +2,17 @@
 
 class Matrix4;
 
-/**
- * Representation of a GL vertex/fragment program.
- */
+/// Representation of a GL vertex/fragment program.
 class GLProgram
 {
 public:
-    /**
-	 * Destructor
-	 */
-	virtual ~GLProgram() {}
+    /// Destructor
+    virtual ~GLProgram() {}
 
-	/**
-	 * Create this program using glGenPrograms and siblings. This needs the
-	 * OpenGL system to be initialised so cannot happen in the constructor.
-	 */
-	virtual void create() = 0;
+    /// Bind this program as the currently-operative shader.
+    virtual void enable() = 0;
 
-	/**
-	 * Destroy this program using GL calls.
-	 */
-	virtual void destroy() = 0;
-
-	/**
-	 * Bind this program as the currently-operative shader.
-	 */
-	virtual void enable() = 0;
-
-  	/**
-  	 * Unbind this program from OpenGL.
-  	 */
+    /// Unbind this program from OpenGL.
     virtual void disable() = 0;
 };
 

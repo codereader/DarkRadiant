@@ -27,7 +27,7 @@ namespace
 }
 
 // Main construction
-void InteractionProgram::create()
+InteractionProgram::InteractionProgram()
 {
 	// Initialise the lightScale value
     auto currentGame = GlobalGameManager().currentGame();
@@ -286,13 +286,9 @@ void InteractionProgram::setShadowMapRectangle(const Rectangle& rectangle)
     // v.w /= 6 * r_shadowMapSize.GetFloat();
     auto position = (Vector2f(rectangle.x, rectangle.y) * 2 + Vector2f(1, 1)) / (2 * FrameBuffer::DefaultShadowMapSize);
 
-    glUniform4f(_locShadowMapRect, position.x(), position.y(), 
+    glUniform4f(_locShadowMapRect, position.x(), position.y(),
         0, (static_cast<float>(rectangle.width) - 1) / FrameBuffer::DefaultShadowMapSize);
     debug::assertNoGlErrors();
 }
 
 }
-
-
-
-

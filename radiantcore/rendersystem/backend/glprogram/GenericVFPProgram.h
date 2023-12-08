@@ -7,11 +7,10 @@ namespace render
 {
 
 /**
- * An ARB vertex/fragment program as referenced by a idTech4 material 
+ * An ARB vertex/fragment program as referenced by a idTech4 material
  * declaration. The programs are loaded from the game's glprogs/ folder.
  */
-class GenericVFPProgram : 
-    public GLProgram
+class GenericVFPProgram: public GLProgram
 {
     // openGL Vertex and fragment program identifiers
     GLuint _vertexProgram;
@@ -22,8 +21,6 @@ public:
                       const std::string& fragmentProgramFilename);
 
     // GLProgram implementation
-    void create() override;
-    void destroy() override;
     void enable() override;
     void disable() override;
 };

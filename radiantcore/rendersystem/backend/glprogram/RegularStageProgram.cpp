@@ -16,7 +16,7 @@ namespace
     const char* const FP_FILENAME = "regular_stage_fp.glsl";
 }
 
-void RegularStageProgram::create()
+RegularStageProgram::RegularStageProgram()
 {
     // Create the program object
     rMessage() << "[renderer] Creating GLSL Regular Stage program" << std::endl;

@@ -7,26 +7,22 @@
 namespace render
 {
 
-class GLSLProgramBase :
-    public GLProgram
+/// Implementation of GLProgram
+class GLSLProgramBase: public GLProgram
 {
 protected:
     // Program object
-    GLuint _programObj;
+    GLuint _programObj = 0;
 
-    GLSLProgramBase() :
-        _programObj(0)
-    {}
-
-public:
-    // Partial GLProgram implementation
-    virtual void destroy() override;
-    virtual void enable() override;
-    virtual void disable() override;
-
-protected:
     void loadMatrixUniform(GLuint location, const Matrix4& matrix);
     void loadTextureMatrixUniform(GLuint location, const Matrix4& matrix);
+
+public:
+    ~GLSLProgramBase();
+
+    // Partial GLProgram implementation
+    void enable() override;
+    void disable() override;
 };
 
 }

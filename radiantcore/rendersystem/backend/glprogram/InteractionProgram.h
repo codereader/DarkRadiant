@@ -10,10 +10,8 @@ namespace render
 class OpenGLState;
 struct Rectangle;
 
-class InteractionProgram :
-    public GLSLProgramBase
+class InteractionProgram: public GLSLProgramBase
 {
-private:
 	// The value all lights should be scaled by, obtained from the game description
 	float _lightScale;
 
@@ -39,9 +37,9 @@ private:
     int _locShadowMapRect;
 
 public:
+    InteractionProgram();
 
     /* GLProgram implementation */
-    void create() override;
     void enable() override;
     void disable() override;
 
@@ -66,4 +64,3 @@ public:
 };
 
 } // namespace render
-
