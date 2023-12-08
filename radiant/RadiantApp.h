@@ -16,8 +16,7 @@
 * Not to be confused with the RadiantModule which implements the IRadiant
 * interface.
 */
-class RadiantApp : 
-	public wxApp
+class RadiantApp: public wxApp
 {
 	// The RadiantApp owns the ApplicationContext which is then passed to the
 	// ModuleRegistry as a reference.
