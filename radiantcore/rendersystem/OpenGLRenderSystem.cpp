@@ -50,14 +50,20 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
     // If the openGL module is already initialised and a shared context is created
     // trigger a call to extensionsInitialised().
-    if (module::GlobalModuleRegistry().moduleExists(MODULE_SHARED_GL_CONTEXT) &&
-        GlobalOpenGLContext().getSharedContext())
-    {
-        extensionsInitialised();
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_SHARED_GL_CONTEXT)) {
+        if (GlobalOpenGLContext().getSharedContext()) {
+            extensionsInitialised();
+        }
+        else {
+            // No shared context yet, but we still want to initialise properly when it is created
+            GlobalOpenGLContext().signal_sharedContextCreated().connect(
+                sigc::mem_fun(*this, &OpenGLRenderSystem::extensionsInitialised)
+            );
+        }
     }
-
-    if (shouldRealise)
-    {
+    // extensionsInitialised() calls realise() itself, so we only need to call here if we
+    // didn't enter the previous block
+    else if (shouldRealise) {
         realise();
     }
 }
