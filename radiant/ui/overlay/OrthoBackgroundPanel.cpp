@@ -27,10 +27,23 @@ OrthoBackgroundPanel::OrthoBackgroundPanel(wxWindow* parent): DockablePanel(pare
 
 namespace
 {
+    constexpr int LABEL_INDENT = 5;
+
     wxStaticText* makeLabel(wxWindow* parent, const std::string& text) {
         wxStaticText* label = new wxStaticText(parent, wxID_ANY, text);
         label->SetLabelMarkup(text);
         return label;
+    }
+
+    void addSliderRow(wxWindow* parent, wxSizer& sizer, const std::string& label,
+                      wxSlider* slider, wxSpinCtrlDouble* spinner)
+    {
+        sizer.Add(makeLabel(parent, label), 0, wxALL, LABEL_INDENT);
+
+        wxBoxSizer* rightPanel = new wxBoxSizer(wxHORIZONTAL);
+        rightPanel->Add(slider, 1);
+        rightPanel->Add(spinner);
+        sizer.Add(rightPanel, 1, wxEXPAND);
     }
 }
 
@@ -57,47 +70,41 @@ void OrthoBackgroundPanel::setupDialog()
     filepicker->Connect(wxEVT_FILEPICKER_CHANGED,
         wxFileDirPickerEventHandler(OrthoBackgroundPanel::onFileSelection), NULL, this);
 
-    _slider.opacity = findNamedObject<wxSlider>(this, "OverlayDialogTransparencySlider");
-    _slider.opacity->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this);
+    wxPanel* cpanel = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
+    auto* cpanelSizer = cpanel->GetSizer();
 
-    // Scale slider
-    _slider.scale = findNamedObject<wxSlider>(this, "OverlayDialogScaleSlider");
+    // Opacity slider
+    _slider.opacity = new wxSlider(cpanel, wxID_ANY, 50, 0, 100);
+    _slider.opacity->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this);
+    cpanelSizer->Add(makeLabel(cpanel, "<b>Opacity</b>"), 0, wxALL, LABEL_INDENT);
+    cpanelSizer->Add(_slider.opacity, 1, wxEXPAND);
+
+    // Scale slider and spinner
+    _slider.scale = new wxSlider(cpanel, wxID_ANY, 100, 0, 2000);
     _slider.scale->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    wxPanel* scalePanel = findNamedObject<wxPanel>(this, "OverlayDialogScalePanel");
+    _spinScale = makeSpinner(cpanel, 0, 20, 0.01);
+    addSliderRow(cpanel, *cpanelSizer, "<b>Scale</b>", _slider.scale, _spinScale);
 
-    // Scale spinbox
-    _spinScale = makeSpinner(scalePanel, 0, 20, 0.01);
-    scalePanel->GetSizer()->Add(_spinScale, 0, wxLEFT, 6);
-    scalePanel->GetSizer()->Layout();
-
-    // Horizontal Offset slider
-    _slider.hOffset = findNamedObject<wxSlider>(this, "OverlayDialogHorizOffsetSlider");
+    // Horizontal Offset slider and spinner
+    _slider.hOffset = new wxSlider(cpanel, wxID_ANY, 0, -2000, 2000);
     _slider.hOffset->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    wxPanel* hOffsetPanel = findNamedObject<wxPanel>(this, "OverlayDialogHorizOffsetPanel");
+    _spinHorizOffset = makeSpinner(cpanel, -20, 20, 0.01);
+    addSliderRow(cpanel, *cpanelSizer, "<b>Horz. offset</b>", _slider.hOffset, _spinHorizOffset);
 
-    // Horizontal Offset spinbox
-    _spinHorizOffset = makeSpinner(hOffsetPanel, -20, 20, 0.01);
-    hOffsetPanel->GetSizer()->Add(_spinHorizOffset, 0, wxLEFT, 6);
-    hOffsetPanel->GetSizer()->Layout();
-
-    // Vertical Offset slider
-    _slider.vOffset = findNamedObject<wxSlider>(this, "OverlayDialogVertOffsetSlider");
-    _slider.vOffset->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this);
-    wxPanel* vOffsetPanel = findNamedObject<wxPanel>(this, "OverlayDialogVertOffsetPanel");
-
-    // Vertical Offset spinbox
-    _spinVertOffset = makeSpinner(vOffsetPanel, -20, 20, 0.01);
-    vOffsetPanel->GetSizer()->Add(_spinVertOffset, 0, wxLEFT, 6);
-    vOffsetPanel->GetSizer()->Layout();
+    // Vertical Offset slider and spinner
+    _slider.vOffset = new wxSlider(cpanel, wxID_ANY, 0, -2000, 2000);
+    _slider.vOffset->Connect(
+        wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
+    );
+    _spinVertOffset = makeSpinner(cpanel, -20, 20, 0.01);
+    addSliderRow(cpanel, *cpanelSizer, "<b>Vert. offset</b>", _slider.vOffset, _spinVertOffset);
 
     // Options checkboxes
-    wxPanel* cpanel = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
-    auto* cpanelSizer = cpanel->GetSizer();
-    cpanelSizer->Add(makeLabel(cpanel, "<b>Options</b>"), 0, wxALL, 5);
+    cpanelSizer->Add(makeLabel(cpanel, "<b>Options</b>"), 0, wxALL, LABEL_INDENT);
 
     auto* checkboxSizer = new wxBoxSizer(wxVERTICAL);
     _cb.keepAspect = new wxCheckBox(cpanel, wxID_ANY, "Keep aspect");
@@ -113,10 +120,6 @@ void OrthoBackgroundPanel::setupDialog()
     _cb.panWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
 
     makeLabelBold(this, "OverlayDialogLabelFile");
-    makeLabelBold(this, "OverlayDialogLabelTrans");
-    makeLabelBold(this, "OverlayDialogLabelScale");
-    makeLabelBold(this, "OverlayDialogLabelHOffset");
-    makeLabelBold(this, "OverlayDialogLabelVOffset");
 }
 
 void OrthoBackgroundPanel::initialiseWidgets()
