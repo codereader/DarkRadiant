@@ -27,26 +27,6 @@
 						<hgap>6</hgap>
 						<growablecols>1</growablecols>
 						<growablerows></growablerows>
-						<object class="sizeritem">
-							<option>0</option>
-							<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-							<border>5</border>
-							<object class="wxStaticText" name="OverlayDialogLabelFile">
-								<label>Image file</label>
-								<wrap>-1</wrap>
-							</object>
-						</object>
-						<object class="sizeritem">
-							<option>0</option>
-							<flag>wxALL|wxEXPAND</flag>
-							<border>5</border>
-							<object class="wxFilePickerCtrl" name="OverlayDialogFilePicker">
-								<value></value>
-								<message>Select a file</message>
-								<wildcard>*.*</wildcard>
-								<style>wxFLP_DEFAULT_STYLE|wxFLP_OPEN</style>
-							</object>
-						</object>
 					</object>
 				</object>
 			</object>

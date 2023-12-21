@@ -9,6 +9,7 @@ class wxSpinDoubleEvent;
 class wxSpinCtrlDouble;
 class wxCheckBox;
 class wxSlider;
+class wxFilePickerCtrl;
 
 namespace ui
 {
@@ -22,6 +23,7 @@ class OrthoBackgroundPanel :
     wxSpinCtrlDouble* _spinScale = nullptr;
     wxSpinCtrlDouble* _spinHorizOffset = nullptr;
     wxSpinCtrlDouble* _spinVertOffset = nullptr;
+    wxFilePickerCtrl* _filePicker = nullptr;
 
     // Sliders
     struct {

@@ -66,16 +66,23 @@ void OrthoBackgroundPanel::setupDialog()
     useImageBtn->Connect(wxEVT_CHECKBOX,
         wxCommandEventHandler(OrthoBackgroundPanel::onToggleUseImage), NULL, this);
 
-    wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
-    filepicker->Connect(wxEVT_FILEPICKER_CHANGED,
-        wxFileDirPickerEventHandler(OrthoBackgroundPanel::onFileSelection), NULL, this);
-
     wxPanel* cpanel = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
     auto* cpanelSizer = cpanel->GetSizer();
 
+    // File picker
+    _filePicker = new wxFilePickerCtrl(cpanel, wxID_ANY);
+    _filePicker->Connect(
+        wxEVT_FILEPICKER_CHANGED,
+        wxFileDirPickerEventHandler(OrthoBackgroundPanel::onFileSelection), NULL, this
+    );
+    cpanelSizer->Add(makeLabel(cpanel, "<b>Image file</b>"), 0, wxALL, LABEL_INDENT);
+    cpanelSizer->Add(_filePicker, 1, wxEXPAND);
+
     // Opacity slider
     _slider.opacity = new wxSlider(cpanel, wxID_ANY, 50, 0, 100);
-    _slider.opacity->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this);
+    _slider.opacity->Connect(
+        wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
+    );
     cpanelSizer->Add(makeLabel(cpanel, "<b>Opacity</b>"), 0, wxALL, LABEL_INDENT);
     cpanelSizer->Add(_slider.opacity, 1, wxEXPAND);
 
@@ -118,8 +125,6 @@ void OrthoBackgroundPanel::setupDialog()
     _cb.keepAspect->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
     _cb.scaleWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
     _cb.panWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
-
-    makeLabelBold(this, "OverlayDialogLabelFile");
 }
 
 void OrthoBackgroundPanel::initialiseWidgets()
@@ -128,8 +133,7 @@ void OrthoBackgroundPanel::initialiseWidgets()
     useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 
     // Image filename
-    wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
-    filepicker->SetFileName(wxFileName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)));
+    _filePicker->SetFileName(wxFileName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)));
 
     _slider.opacity->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSPARENCY) * 100.0);
 
@@ -179,9 +183,9 @@ void OrthoBackgroundPanel::onToggleUseImage(wxCommandEvent& ev)
 void OrthoBackgroundPanel::onFileSelection(wxFileDirPickerEvent& ev)
 {
     // Set registry key
-    wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
-
-    GlobalRegistry().set(RKEY_OVERLAY_IMAGE, filepicker->GetFileName().GetFullPath().ToStdString());
+    GlobalRegistry().set(
+        RKEY_OVERLAY_IMAGE, _filePicker->GetFileName().GetFullPath().ToStdString()
+    );
 
     // Refresh display
     GlobalSceneGraph().sceneChanged();
