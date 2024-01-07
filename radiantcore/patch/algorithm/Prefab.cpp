@@ -248,69 +248,47 @@ void createSimplePatch(const cmd::ArgumentList& args)
 
 void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const std::string& shader)
 {
-	if ((type == CapType::EndCap || type == CapType::InvertedEndCap) && patch.getWidth() != 5)
-	{
-		rError() << "cannot create end-cap - patch width != 5" << std::endl;
+    if ((type == CapType::EndCap || type == CapType::InvertedEndCap) && patch.getWidth() != 5)
+    {
+        throw cmd::ExecutionFailure(_("Cannot create end-cap, patch must have a width of 5."));
+    }
 
-		throw cmd::ExecutionFailure(_("Cannot create end-cap, patch must have a width of 5."));
-	}
+    if ((type == CapType::Bevel || type == CapType::InvertedBevel) && patch.getWidth() != 3)
+    {
+        throw cmd::ExecutionFailure(_("Cannot create bevel-cap, patch must have a width of 3."));
+    }
 
-	if ((type == CapType::Bevel || type == CapType::InvertedBevel) && patch.getWidth() != 3)
-	{
-		throw cmd::ExecutionFailure(_("Cannot create bevel-cap, patch must have a width of 3."));
+    if (type == CapType::Cylinder && patch.getWidth() != 9)
+    {
+        throw cmd::ExecutionFailure(_("Cannot create cylinder-cap, patch must have a width of 9."));
+    }
 
-	}
+    assert(parent != NULL);
 
-	if (type == CapType::Cylinder && patch.getWidth() != 9)
-	{
-		throw cmd::ExecutionFailure(_("Cannot create cylinder-cap, patch must have a width of 9."));
-	}
+    // We do this once for the front and once for the back patch
+    for (auto front : { true, false })
+    {
+        scene::INodePtr cap(GlobalPatchModule().createPatch(PatchDefType::Def2));
+        parent->addChildNode(cap);
 
-	assert(parent != NULL);
+        auto capPatch = Node_getPatch(cap);
+        assert(capPatch);
 
-	{
-		scene::INodePtr cap(GlobalPatchModule().createPatch(PatchDefType::Def2));
-		parent->addChildNode(cap);
+        patch.MakeCap(capPatch, type, ROW, front);
 
-		Patch* capPatch = Node_getPatch(cap);
-		assert(capPatch != NULL);
+        capPatch->setShader(shader);
 
-		patch.MakeCap(capPatch, type, ROW, true);
-		capPatch->setShader(shader);
-
-		// greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
-		if (!capPatch->isDegenerate())
-		{
-			Node_setSelected(cap, true);
-		}
-		else
-		{
-			parent->removeChildNode(cap);
-			rWarning() << "Prevented insertion of degenerate patch." << std::endl;
-		}
-	}
-
-	{
-		scene::INodePtr cap(GlobalPatchModule().createPatch(PatchDefType::Def2));
-		parent->addChildNode(cap);
-
-		Patch* capPatch = Node_getPatch(cap);
-		assert(capPatch != NULL);
-
-		patch.MakeCap(capPatch, type, ROW, false);
-		capPatch->setShader(shader);
-
-		// greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
-		if (!capPatch->isDegenerate())
-		{
-			Node_setSelected(cap, true);
-		}
-		else
-		{
-			parent->removeChildNode(cap);
-			rWarning() << "Prevented insertion of degenerate patch." << std::endl;
-		}
-	}
+        // greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
+        if (!capPatch->isDegenerate())
+        {
+            Node_setSelected(cap, true);
+        }
+        else
+        {
+            parent->removeChildNode(cap);
+            rWarning() << "Prevented insertion of degenerate patch." << std::endl;
+        }
+    }
 }
 
 }
