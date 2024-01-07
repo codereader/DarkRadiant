@@ -246,8 +246,12 @@ void createSimplePatch(const cmd::ArgumentList& args)
 	}
 }
 
-void constructCap(const IPatch& sourcePatch, Patch& patch, patch::CapType capType, bool front)
+scene::INodePtr constructCap(const IPatch& sourcePatch, CapType capType, bool front, const std::string& material)
 {
+    auto cap = GlobalPatchModule().createPatch(PatchDefType::Def2);
+
+    auto& capPatch = *Node_getPatch(cap);
+
     auto width = sourcePatch.getWidth();
     auto height = sourcePatch.getHeight();
 
@@ -265,22 +269,31 @@ void constructCap(const IPatch& sourcePatch, Patch& patch, patch::CapType capTyp
     if (sourcePatch.subdivisionsFixed())
     {
         const auto& subdivisions = sourcePatch.getSubdivisions();
-        switch (capType)
-        {
-        case patch::CapType::InvertedEndCap:
-            patch.setFixedSubdivisions(true, subdivisions);
-            break;
 
-        default:
+        if (capType == CapType::InvertedEndCap)
+        {
+            capPatch.setFixedSubdivisions(true, subdivisions);
+        }
+        else
+        {
             // Flip the subdivision X/Y values for all other cap types
-            patch.setFixedSubdivisions(true, { subdivisions.y(), subdivisions.x() });
+            capPatch.setFixedSubdivisions(true, { subdivisions.y(), subdivisions.x() });
         }
     }
 
-    patch.constructSeam(capType, points, width);
+    capPatch.constructSeam(capType, points, width);
+
+    // greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
+    if (capPatch.isDegenerate())
+    {
+        return {};
+    }
 
     // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
-    patch.scaleTextureNaturally();
+    capPatch.setShader(material);
+    capPatch.scaleTextureNaturally();
+
+    return cap;
 }
 
 void createCaps(const IPatch& patch, const scene::INodePtr& parent, CapType type, const std::string& shader)
@@ -305,25 +318,12 @@ void createCaps(const IPatch& patch, const scene::INodePtr& parent, CapType type
     // We do this once for the front and once for the back patch
     for (auto front : { true, false })
     {
-        auto cap = GlobalPatchModule().createPatch(PatchDefType::Def2);
-        parent->addChildNode(cap);
+        auto cap = constructCap(patch, type, front, shader);
 
-        auto capPatch = Node_getPatch(cap);
-        assert(capPatch);
-
-        constructCap(patch, *capPatch, type, front);
-
-        capPatch->setShader(shader);
-
-        // greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
-        if (!capPatch->isDegenerate())
+        if (cap)
         {
+            parent->addChildNode(cap);
             Node_setSelected(cap, true);
-        }
-        else
-        {
-            parent->removeChildNode(cap);
-            rWarning() << "Prevented insertion of degenerate patch." << std::endl;
         }
     }
 }
