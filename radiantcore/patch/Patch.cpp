@@ -725,40 +725,6 @@ void Patch::appendPoints(bool columns, bool beginning) {
     controlPointsChanged();
 }
 
-void Patch::constructCap(Patch& patch, patch::CapType capType, bool front) const
-{
-    std::vector<Vector3> points(_width);
-
-    auto index = front ? 0 : _height-1;
-
-    for (auto i = 0; i < _width; i++)
-    {
-        const auto& ctrl = ctrlAt(index, i);
-        points[front ? i : _width - 1 - i] = ctrl.vertex;
-    }
-
-    // Inherit the same fixed tesselation as the source patch
-    if (subdivisionsFixed())
-    {
-        const auto& subdivisions = getSubdivisions();
-        switch (capType)
-        {
-        case patch::CapType::InvertedEndCap:
-            patch.setFixedSubdivisions(true, subdivisions);
-            break;
-
-        default:
-            // Flip the subdivision X/Y values for all other cap types
-            patch.setFixedSubdivisions(true, { subdivisions.y(), subdivisions.x() });
-        }
-    }
-
-    patch.constructSeam(capType, points, _width);
-
-    // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
-    patch.scaleTextureNaturally();
-}
-
 void Patch::flipTexture(int nAxis)
 {
     selection::algorithm::TextureFlipper::FlipPatch(*this, nAxis);

@@ -246,7 +246,44 @@ void createSimplePatch(const cmd::ArgumentList& args)
 	}
 }
 
-void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const std::string& shader)
+void constructCap(const IPatch& sourcePatch, Patch& patch, patch::CapType capType, bool front)
+{
+    auto width = sourcePatch.getWidth();
+    auto height = sourcePatch.getHeight();
+
+    std::vector<Vector3> points(sourcePatch.getWidth());
+
+    auto row = front ? 0 : height - 1;
+
+    for (auto i = 0; i < width; i++)
+    {
+        const auto& ctrl = sourcePatch.ctrlAt(row, i);
+        points[front ? i : width - 1 - i] = ctrl.vertex;
+    }
+
+    // Inherit the same fixed tesselation as the source patch
+    if (sourcePatch.subdivisionsFixed())
+    {
+        const auto& subdivisions = sourcePatch.getSubdivisions();
+        switch (capType)
+        {
+        case patch::CapType::InvertedEndCap:
+            patch.setFixedSubdivisions(true, subdivisions);
+            break;
+
+        default:
+            // Flip the subdivision X/Y values for all other cap types
+            patch.setFixedSubdivisions(true, { subdivisions.y(), subdivisions.x() });
+        }
+    }
+
+    patch.constructSeam(capType, points, width);
+
+    // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
+    patch.scaleTextureNaturally();
+}
+
+void createCaps(const IPatch& patch, const scene::INodePtr& parent, CapType type, const std::string& shader)
 {
     if ((type == CapType::EndCap || type == CapType::InvertedEndCap) && patch.getWidth() != 5)
     {
@@ -274,7 +311,7 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const
         auto capPatch = Node_getPatch(cap);
         assert(capPatch);
 
-        patch.constructCap(*capPatch, type, front);
+        constructCap(patch, *capPatch, type, front);
 
         capPatch->setShader(shader);
 

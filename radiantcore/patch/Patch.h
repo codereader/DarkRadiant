@@ -215,7 +215,6 @@ public:
 	void redisperseRows() override;
 	void redisperseColumns() override;
 	void insertRemove(bool insert, bool column, bool first) override;
-    void constructCap(Patch& patch, patch::CapType capType, bool front) const;
     void constructSeam(patch::CapType eType, std::vector<Vector3>& points, std::size_t width);
 
 	void flipTexture(int axis) override;
