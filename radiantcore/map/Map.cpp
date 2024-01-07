@@ -1494,7 +1494,7 @@ void Map::emitMapEvent(MapEvent ev)
     }
     catch (std::runtime_error & ex)
     {
-        radiant::NotificationMessage::SendError(fmt::format(_("Failure running map event {0}:\n{1}"), ev, ex.what()));
+        radiant::NotificationMessage::SendError(fmt::format(_("Failure running map event {0}:\n{1}"), static_cast<int>(ev), ex.what()));
     }
 }
 
