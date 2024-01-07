@@ -74,6 +74,7 @@
     <ClCompile Include="..\..\..\test\Clipboard.cpp" />
     <ClCompile Include="..\..\..\test\Curves.cpp" />
     <ClCompile Include="..\..\..\test\Registry.cpp" />
+    <ClCompile Include="..\..\..\test\TestOrthoViewManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
@@ -136,6 +137,7 @@
     <ClInclude Include="..\..\..\test\algorithm\Selection.h">
       <Filter>algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\TestOrthoViewManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">

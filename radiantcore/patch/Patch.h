@@ -216,7 +216,7 @@ public:
 	void redisperseColumns() override;
 	void insertRemove(bool insert, bool column, bool first) override;
   	Patch* MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool bFirst);
-	void ConstructSeam(patch::CapType eType, Vector3* p, std::size_t width);
+    void constructSeam(patch::CapType eType, std::vector<Vector3>& points, std::size_t width);
 
 	void flipTexture(int axis) override;
 

@@ -253,31 +253,23 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const
 		rError() << "cannot create end-cap - patch width != 5" << std::endl;
 
 		throw cmd::ExecutionFailure(_("Cannot create end-cap, patch must have a width of 5."));
-
-		return;
 	}
 
 	if ((type == CapType::Bevel || type == CapType::InvertedBevel) && patch.getWidth() != 3)
 	{
 		throw cmd::ExecutionFailure(_("Cannot create bevel-cap, patch must have a width of 3."));
 
-		rError() << "cannot create bevel-cap - patch width != 3" << std::endl;
-		return;
-
 	}
 
 	if (type == CapType::Cylinder && patch.getWidth() != 9)
 	{
 		throw cmd::ExecutionFailure(_("Cannot create cylinder-cap, patch must have a width of 9."));
-
-		rError() << "cannot create cylinder-cap - patch width != 9" << std::endl;
-		return;
 	}
 
 	assert(parent != NULL);
 
 	{
-		scene::INodePtr cap(GlobalPatchModule().createPatch(patch::PatchDefType::Def2));
+		scene::INodePtr cap(GlobalPatchModule().createPatch(PatchDefType::Def2));
 		parent->addChildNode(cap);
 
 		Patch* capPatch = Node_getPatch(cap);
@@ -299,7 +291,7 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const
 	}
 
 	{
-		scene::INodePtr cap(GlobalPatchModule().createPatch(patch::PatchDefType::Def2));
+		scene::INodePtr cap(GlobalPatchModule().createPatch(PatchDefType::Def2));
 		parent->addChildNode(cap);
 
 		Patch* capPatch = Node_getPatch(cap);

@@ -32,6 +32,25 @@ inline scene::INodePtr getNthChild(const scene::INodePtr& parent, std::size_t in
     return candidate;
 }
 
+inline scene::INodePtr findFirstNode(const scene::INodePtr& parent,
+    const std::function<bool(const scene::INodePtr&)>& predicate)
+{
+    scene::INodePtr candidate;
+
+    parent->foreachNode([&](const scene::INodePtr& node)
+    {
+        if (!candidate && predicate(node))
+        {
+            candidate = node;
+            return false;
+        }
+
+        return true;
+    });
+
+    return candidate;
+}
+
 // Finds the first matching child brush of the given parent node matching the given predicate
 inline scene::INodePtr findFirstBrush(const scene::INodePtr& parent,
     const std::function<bool(const IBrushNodePtr&)>& predicate)
@@ -42,7 +61,7 @@ inline scene::INodePtr findFirstBrush(const scene::INodePtr& parent,
     {
         auto brushNode = std::dynamic_pointer_cast<IBrushNode>(node);
 
-        if (brushNode && predicate(brushNode))
+        if (!candidate && brushNode && predicate(brushNode))
         {
             candidate = node;
             return false;
@@ -84,7 +103,7 @@ inline scene::INodePtr findFirstPatch(const scene::INodePtr& parent,
     {
         auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
-        if (patchNode && predicate(patchNode))
+        if (!candidate && patchNode && predicate(patchNode))
         {
             candidate = node;
             return false;

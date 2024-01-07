@@ -6,6 +6,7 @@
 #include "iselection.h"
 #include "scenelib.h"
 #include "algorithm/Primitives.h"
+#include "algorithm/Scene.h"
 #include "algorithm/View.h"
 #include "render/View.h"
 
@@ -95,6 +96,29 @@ TEST_F(PatchTest, VertexSnappingIsUndoable)
 
     GlobalCommandSystem().executeCommand("Undo");
     EXPECT_TRUE(math::isNear(ctrl.vertex, vertexBeforeSnapping, 0.01)) << "Vertex should be reverted and off-grid again";
+}
+
+TEST_F(PatchTest, InvertedEndCapInheritsDef2)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    GlobalCommandSystem().execute("PatchEndCap");
+
+    auto endcap = algorithm::findFirstPatch(worldspawn, [](auto&) { return true; });
+    Node_setSelected(endcap, true);
+    EXPECT_FALSE(Node_getIPatch(endcap)->subdivisionsFixed()) << "End cap should not have fixed tesselation";
+
+    // Execute the create inverted end cap command, check the tesselation
+    GlobalCommandSystem().execute("CapSelectedPatches invertedendcap");
+
+    // Get the two end caps
+    auto invertedEndCap1 = algorithm::findFirstNode(worldspawn, [&](auto& patch) { return patch != endcap; });
+    auto invertedEndCap2 = algorithm::findFirstNode(worldspawn, [&](auto& patch) { return patch != endcap && patch != invertedEndCap1; });
+    EXPECT_TRUE(invertedEndCap1) << "Couldn't locate the first end cap";
+    EXPECT_TRUE(invertedEndCap2) << "Couldn't locate the second end cap";
+
+    EXPECT_FALSE(Node_getIPatch(invertedEndCap1)->subdivisionsFixed()) << "Inverted end caps should not have fixed tesselation";
+    EXPECT_FALSE(Node_getIPatch(invertedEndCap2)->subdivisionsFixed()) << "Inverted end caps should not have fixed tesselation";
 }
 
 }
