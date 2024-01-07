@@ -99,6 +99,12 @@
 				match="textures/common/trig(.*)"
 				action="hide" />
 		</filter>
+		<filter name="Location Entities">
+			<filterCriterion type="entityclass" match=".*_location.*" action="hide"/>
+		</filter>
+		<filter name="Player Start Entity">
+			<filterCriterion type="entityclass" match="info_player_start" action="hide"/>
+		</filter>
 		<filter name="Nodraw Textures">
 			<filterCriterion
 				type="texture"
