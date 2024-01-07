@@ -8,9 +8,7 @@
 namespace render
 {
 
-/**
- * GLProgram shared pointer type.
- */
+/// GLProgram shared pointer type.
 typedef std::shared_ptr<GLProgram> GLProgramPtr;
 
 enum class ShaderProgram
@@ -23,33 +21,25 @@ enum class ShaderProgram
     BlendLight,
 };
 
-/**
- * Factory class reponsible for creating GLProgam instances addressed by name.
- */
+/// Factory class reponsible for creating GLProgam instances addressed by name.
 class GLProgramFactory
 {
-	// Internal map of string names to GLProgram subclasses
-	typedef std::map<ShaderProgram, GLProgramPtr> ProgramMap;
-	ProgramMap _builtInPrograms;
+    // Internal map of string names to GLProgram subclasses
+    using ProgramMap = std::map<ShaderProgram, GLProgramPtr>;
+    ProgramMap _builtInPrograms;
 
     // Game-specific programs are referenced as pair
-    typedef std::map<std::pair<std::string, std::string>, GLProgramPtr> GameProgramMap;
+    using GameProgramMap = std::map<std::pair<std::string, std::string>, GLProgramPtr>;
     GameProgramMap _gamePrograms;
 
-    // Using GLSL flag
-    bool _usingGLSL;
-
 public:
-    // Constructor, populates internal map
-    GLProgramFactory();
-
     /**
      * Get the named built-in GL program.
      *
      * Returns a raw pointer which is owned by the GLProgramFactory and should
      * never be deleted.
      */
-	GLProgram* getBuiltInProgram(ShaderProgram builtInProgram);
+    GLProgram* getBuiltInProgram(ShaderProgram builtInProgram);
 
     /**
      * Gets or creates the GL program for the given V/F program filenames.
@@ -63,10 +53,10 @@ public:
                           const std::string& fragmentProgramFilename);
 
     /// Construct and initialise the GLPrograms
-	void realise();
+    void realise();
 
     /// Release and destroy GLProgram resources
-	void unrealise();
+    void unrealise();
 
     /**
      * \brief

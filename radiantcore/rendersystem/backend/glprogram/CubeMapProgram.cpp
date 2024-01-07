@@ -16,7 +16,7 @@ namespace
     const char* const FP_FILENAME = "cubemap_fp.glsl";
 }
 
-void CubeMapProgram::create()
+CubeMapProgram::CubeMapProgram()
 {
     // Create the program object
     rMessage() << "[renderer] Creating GLSL CubeMap program" << std::endl;

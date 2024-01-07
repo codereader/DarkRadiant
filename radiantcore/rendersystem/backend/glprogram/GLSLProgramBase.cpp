@@ -5,7 +5,7 @@
 namespace render
 {
 
-void GLSLProgramBase::destroy()
+GLSLProgramBase::~GLSLProgramBase()
 {
     glDeleteProgram(_programObj);
     _programObj = 0;

@@ -14,7 +14,7 @@ namespace
     constexpr const char* const BLEND_LIGHT_FP_FILENAME = "blend_light_fp.glsl";
 }
 
-void BlendLightProgram::create()
+BlendLightProgram::BlendLightProgram()
 {
     // Create the program object
     rMessage() << "[renderer] Creating GLSL Blend Light program" << std::endl;

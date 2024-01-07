@@ -15,7 +15,7 @@ namespace
     constexpr const char* const SHADOWMAP_FP_FILENAME = "shadowmap_fp.glsl";
 }
 
-void ShadowMapProgram::create()
+ShadowMapProgram::ShadowMapProgram()
 {
     // Create the program object
     rMessage() << "[renderer] Creating GLSL shadowmap program" << std::endl;
@@ -71,8 +71,8 @@ void ShadowMapProgram::setAlphaTest(float alphaTest)
 void ShadowMapProgram::setLightOrigin(const Vector3& lightOrigin)
 {
     glUniform3f(_locLightOrigin,
-        static_cast<GLfloat>(lightOrigin.x()), 
-        static_cast<GLfloat>(lightOrigin.y()), 
+        static_cast<GLfloat>(lightOrigin.x()),
+        static_cast<GLfloat>(lightOrigin.y()),
         static_cast<GLfloat>(lightOrigin.z()));
 
     debug::assertNoGlErrors();
@@ -89,4 +89,3 @@ void ShadowMapProgram::setDiffuseTextureTransform(const Matrix4& transform)
 }
 
 }
-

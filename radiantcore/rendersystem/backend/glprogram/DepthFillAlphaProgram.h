@@ -9,14 +9,14 @@ class DepthFillAlphaProgram :
     public GLSLProgramBase,
     public ISupportsAlphaTest
 {
-private:
-    GLint _locAlphaTest;
-    GLint _locObjectTransform;
-    GLint _locModelViewProjection;
-    GLint _locDiffuseTextureMatrix;
-    
+    GLint _locAlphaTest = -1;
+    GLint _locObjectTransform = -1;
+    GLint _locModelViewProjection = -1;
+    GLint _locDiffuseTextureMatrix = -1;
+
 public:
-    void create() override;
+    DepthFillAlphaProgram();
+
     void enable() override;
     void disable() override;
 

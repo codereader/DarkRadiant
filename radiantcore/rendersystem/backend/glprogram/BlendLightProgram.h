@@ -6,17 +6,16 @@
 namespace render
 {
 
-class BlendLightProgram :
-    public GLSLProgramBase
+class BlendLightProgram: public GLSLProgramBase
 {
-private:
-    int _locLightTextureMatrix;
-    int _locBlendColour;
-    int _locModelViewProjection;
-    int _locObjectTransform;
+    int _locLightTextureMatrix = -1;
+    int _locBlendColour = -1;
+    int _locModelViewProjection = -1;
+    int _locObjectTransform = -1;
 
 public:
-    void create() override;
+    BlendLightProgram();
+
     void enable() override;
     void disable() override;
 

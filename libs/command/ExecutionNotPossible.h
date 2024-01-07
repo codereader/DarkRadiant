@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <functional>
 #include "ExecutionFailure.h"
 
 namespace cmd

@@ -106,9 +106,7 @@ public:
 
 	void extensionsInitialised() override;
 	sigc::signal<void> signal_extensionsInitialised() override;
-
 	bool shaderProgramsAvailable() const override;
-	void setShaderProgramsAvailable(bool available) override;
 
 	typedef std::set<Renderable*> Renderables;
 	Renderables m_renderables;

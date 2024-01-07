@@ -233,21 +233,29 @@ void RadiantApp::OnInitCmdLine(wxCmdLineParser& parser)
 
 bool RadiantApp::OnExceptionInMainLoop()
 {
-	try
-	{
-		// This method is called by the main loop controlling code,
-		// from within the catch(...) block. Let's re-throw the current
-		// exception and catch it to print the error message at the very least.
-		throw;
-	}
-	catch (const std::exception& ex)
-	{
-		rError() << "Unhandled Exception: " << ex.what() << std::endl;
+    // This method is called by the main loop controlling code, from within the catch(...)
+    // block. Let's re-throw the current exception and catch it to print the error message
+    // at the very least.
+#if defined(__linux__)
+    try {
+        throw;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Fatal exception in main loop:\n" << e.what() << std::endl;
+    }
+
+    abort();
+#else
+    try {
+        throw;
+    }
+    catch (const std::exception& ex) {
+        rError() << "Unhandled Exception: " << ex.what() << std::endl;
         radiant::PopupErrorHandler::HandleError(_("Real Hard DarkRadiant Failure"),
             std::string(ex.what()) + "\n\n" + _("Break into the debugger?"));
-	}
-
-	return wxApp::OnExceptionInMainLoop();
+    }
+    return wxApp::OnExceptionInMainLoop();
+#endif
 }
 
 void RadiantApp::onStartupEvent(wxCommandEvent& ev)

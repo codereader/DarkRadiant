@@ -50,14 +50,20 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
     // If the openGL module is already initialised and a shared context is created
     // trigger a call to extensionsInitialised().
-    if (module::GlobalModuleRegistry().moduleExists(MODULE_SHARED_GL_CONTEXT) &&
-        GlobalOpenGLContext().getSharedContext())
-    {
-        extensionsInitialised();
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_SHARED_GL_CONTEXT)) {
+        if (GlobalOpenGLContext().getSharedContext()) {
+            extensionsInitialised();
+        }
+        else {
+            // No shared context yet, but we still want to initialise properly when it is created
+            GlobalOpenGLContext().signal_sharedContextCreated().connect(
+                sigc::mem_fun(*this, &OpenGLRenderSystem::extensionsInitialised)
+            );
+        }
     }
-
-    if (shouldRealise)
-    {
+    // extensionsInitialised() calls realise() itself, so we only need to call here if we
+    // didn't enter the previous block
+    else if (shouldRealise) {
         realise();
     }
 }
@@ -119,8 +125,8 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 {
     // Forward to the method accepting our factory function
     return capture(name, [&]()
-    { 
-        return std::make_shared<OpenGLShader>(name, *this); 
+    {
+        return std::make_shared<OpenGLShader>(name, *this);
     });
 }
 
@@ -207,9 +213,8 @@ void OpenGLRenderSystem::realise()
 
     _realised = true;
 
-    if (shaderProgramsAvailable() && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
-    {
-        // Realise the GLPrograms
+    // Make sure we realise the shaders even if a shader program is not active to begin with
+    if (shaderProgramsAvailable()) {
         _glProgramFactory->realise();
     }
 
@@ -297,7 +302,7 @@ void OpenGLRenderSystem::extensionsInitialised()
                << (haveGLSL ? "IS" : "IS NOT" ) << " available.\n";
 
     // Set the flag in the openGL module
-    setShaderProgramsAvailable(haveGLSL);
+    _shaderProgramsAvailable = haveGLSL;
 
     // Inform the user of missing extensions
     if (!haveGLSL)
@@ -324,11 +329,6 @@ sigc::signal<void> OpenGLRenderSystem::signal_extensionsInitialised()
 bool OpenGLRenderSystem::shaderProgramsAvailable() const
 {
     return _shaderProgramsAvailable;
-}
-
-void OpenGLRenderSystem::setShaderProgramsAvailable(bool available)
-{
-    _shaderProgramsAvailable = available;
 }
 
 void OpenGLRenderSystem::insertSortedState(const OpenGLStates::value_type& val) {
@@ -436,7 +436,7 @@ void OpenGLRenderSystem::addEntity(const IRenderEntityPtr& renderEntity)
     auto light = std::dynamic_pointer_cast<RendererLight>(renderEntity);
 
     if (!light) return;
-     
+
     if (!_lights.insert(light).second)
     {
         throw std::logic_error("Duplicate light registration.");

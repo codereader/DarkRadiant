@@ -34,9 +34,12 @@ public:
     // Optional icon file name to use for tab captions, e.g. "icon_texture.png"
     virtual std::string getIcon() { return {}; }
 
-    // Creates a new wxWidget window for packing into a dialog or sizer
-    // Widget ownership is transferred to the caller, IUserControl implementations
-    // will not delete the returned window
+    /**
+     * @brief Create a new wxWidget window for packing into a dialog or sizer.
+     *
+     * Widget ownership is transferred to the caller, IUserControlCreator implementations
+     * will not delete the returned window.
+     */
     virtual wxWindow* createWidget(wxWindow* parent) = 0;
 };
 

@@ -10,234 +10,225 @@
 #include <wx/spinctrl.h>
 
 #include "OverlayRegistryKeys.h"
+#include "util/ScopedBoolLock.h"
 
 namespace ui
 {
 
-OrthoBackgroundPanel::OrthoBackgroundPanel(wxWindow* parent) :
-    DockablePanel(parent),
-	_spinScale(nullptr),
-	_spinHorizOffset(nullptr),
-	_spinVertOffset(nullptr),
-	_callbackActive(false)
+OrthoBackgroundPanel::OrthoBackgroundPanel(wxWindow* parent): DockablePanel(parent)
 {
-	auto panel = loadNamedPanel(this, "OverlayDialogMainPanel");
+    auto panel = loadNamedPanel(this, "OverlayDialogMainPanel");
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(panel, 1, wxEXPAND);
-	
-	setupDialog();
+
+    setupDialog();
     initialiseWidgets();
+}
+
+namespace
+{
+    constexpr int LABEL_INDENT = 5;
+
+    wxStaticText* makeLabel(wxWindow* parent, const std::string& text) {
+        wxStaticText* label = new wxStaticText(parent, wxID_ANY, text);
+        label->SetLabelMarkup(text);
+        return label;
+    }
+
+    void addSliderRow(wxWindow* parent, wxSizer& sizer, const std::string& label,
+                      wxSlider* slider, wxSpinCtrlDouble* spinner)
+    {
+        sizer.Add(makeLabel(parent, label), 0, wxALL, LABEL_INDENT);
+
+        wxBoxSizer* rightPanel = new wxBoxSizer(wxHORIZONTAL);
+        rightPanel->Add(slider, 1);
+        rightPanel->Add(spinner);
+        sizer.Add(rightPanel, 1, wxEXPAND);
+    }
+}
+
+wxSpinCtrlDouble* OrthoBackgroundPanel::makeSpinner(wxWindow* parent, float min, float max, float increment)
+{
+    auto* spinner = new wxSpinCtrlDouble(parent, wxID_ANY);
+    spinner->SetRange(min, max);
+    spinner->SetIncrement(increment);
+    spinner->Bind(wxEVT_SPINCTRLDOUBLE, [this](wxSpinDoubleEvent& ev) {
+        onSpinChange(ev);
+    });
+
+    return spinner;
 }
 
 void OrthoBackgroundPanel::setupDialog()
 {
-	wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
-	useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
-	useImageBtn->Connect(wxEVT_CHECKBOX, 
-		wxCommandEventHandler(OrthoBackgroundPanel::_onToggleUseImage), NULL, this);
+    wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
+    useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+    useImageBtn->Connect(wxEVT_CHECKBOX,
+        wxCommandEventHandler(OrthoBackgroundPanel::onToggleUseImage), NULL, this);
 
-	wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
-	filepicker->Connect(wxEVT_FILEPICKER_CHANGED, 
-		wxFileDirPickerEventHandler(OrthoBackgroundPanel::_onFileSelection), NULL, this);
+    wxPanel* cpanel = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
+    auto* cpanelSizer = cpanel->GetSizer();
 
-	wxSlider* transSlider = findNamedObject<wxSlider>(this, "OverlayDialogTransparencySlider");
-	transSlider->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::_onScrollChange), NULL, this);
+    // File picker
+    _filePicker = new wxFilePickerCtrl(cpanel, wxID_ANY);
+    _filePicker->Connect(
+        wxEVT_FILEPICKER_CHANGED,
+        wxFileDirPickerEventHandler(OrthoBackgroundPanel::onFileSelection), NULL, this
+    );
+    cpanelSizer->Add(makeLabel(cpanel, "<b>Image file</b>"), 0, wxALL, LABEL_INDENT);
+    cpanelSizer->Add(_filePicker, 1, wxEXPAND);
 
-	// Scale
-	wxSlider* scaleSlider = findNamedObject<wxSlider>(this, "OverlayDialogScaleSlider");
-	scaleSlider->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::_onScrollChange), NULL, this);
+    // Opacity slider
+    _slider.opacity = new wxSlider(cpanel, wxID_ANY, 50, 0, 100);
+    _slider.opacity->Connect(
+        wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
+    );
+    cpanelSizer->Add(makeLabel(cpanel, "<b>Opacity</b>"), 0, wxALL, LABEL_INDENT);
+    cpanelSizer->Add(_slider.opacity, 1, wxEXPAND);
 
-	wxPanel* scalePanel = findNamedObject<wxPanel>(this, "OverlayDialogScalePanel");
-	
-	_spinScale = new wxSpinCtrlDouble(scalePanel, wxID_ANY);
-	_spinScale->SetRange(0, 20);
-	_spinScale->SetIncrement(0.01);
-	_spinScale->Connect(wxEVT_SPINCTRLDOUBLE, wxSpinDoubleEventHandler(OrthoBackgroundPanel::_onSpinChange), NULL, this);
-	
-	scalePanel->GetSizer()->Add(_spinScale, 0, wxLEFT, 6);
-	scalePanel->GetSizer()->Layout();
+    // Scale slider and spinner
+    _slider.scale = new wxSlider(cpanel, wxID_ANY, 100, 0, 2000);
+    _slider.scale->Connect(
+        wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
+    );
+    _spinScale = makeSpinner(cpanel, 0, 20, 0.01);
+    addSliderRow(cpanel, *cpanelSizer, "<b>Scale</b>", _slider.scale, _spinScale);
 
-	// Horizontal Offset
-	wxSlider* hOffsetSlider = findNamedObject<wxSlider>(this, "OverlayDialogHorizOffsetSlider");
-	hOffsetSlider->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::_onScrollChange), NULL, this);
+    // Horizontal Offset slider and spinner
+    _slider.hOffset = new wxSlider(cpanel, wxID_ANY, 0, -2000, 2000);
+    _slider.hOffset->Connect(
+        wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
+    );
+    _spinHorizOffset = makeSpinner(cpanel, -20, 20, 0.01);
+    addSliderRow(cpanel, *cpanelSizer, "<b>Horz. offset</b>", _slider.hOffset, _spinHorizOffset);
 
-	wxPanel* hOffsetPanel = findNamedObject<wxPanel>(this, "OverlayDialogHorizOffsetPanel");
-	
-	_spinHorizOffset = new wxSpinCtrlDouble(hOffsetPanel, wxID_ANY);
-	_spinHorizOffset->SetRange(-20, 20);
-	_spinHorizOffset->SetIncrement(0.01);
-	_spinHorizOffset->Connect(wxEVT_SPINCTRLDOUBLE, wxSpinDoubleEventHandler(OrthoBackgroundPanel::_onSpinChange), NULL, this);
-	
-	hOffsetPanel->GetSizer()->Add(_spinHorizOffset, 0, wxLEFT, 6);
-	hOffsetPanel->GetSizer()->Layout();
+    // Vertical Offset slider and spinner
+    _slider.vOffset = new wxSlider(cpanel, wxID_ANY, 0, -2000, 2000);
+    _slider.vOffset->Connect(
+        wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
+    );
+    _spinVertOffset = makeSpinner(cpanel, -20, 20, 0.01);
+    addSliderRow(cpanel, *cpanelSizer, "<b>Vert. offset</b>", _slider.vOffset, _spinVertOffset);
 
-	// Vertical Offset
-	wxSlider* vOffsetSlider = findNamedObject<wxSlider>(this, "OverlayDialogVertOffsetSlider");
-	vOffsetSlider->Connect(wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::_onScrollChange), NULL, this);
+    // Options checkboxes
+    cpanelSizer->Add(makeLabel(cpanel, "<b>Options</b>"), 0, wxALL, LABEL_INDENT);
 
-	wxPanel* vOffsetPanel = findNamedObject<wxPanel>(this, "OverlayDialogVertOffsetPanel");
-	
-	_spinVertOffset = new wxSpinCtrlDouble(vOffsetPanel, wxID_ANY);
-	_spinVertOffset->SetRange(-20, 20);
-	_spinVertOffset->SetIncrement(0.01);
-	_spinVertOffset->Connect(wxEVT_SPINCTRLDOUBLE, wxSpinDoubleEventHandler(OrthoBackgroundPanel::_onSpinChange), NULL, this);
-	
-	vOffsetPanel->GetSizer()->Add(_spinVertOffset, 0, wxLEFT, 6);
-	vOffsetPanel->GetSizer()->Layout();
+    auto* checkboxSizer = new wxBoxSizer(wxVERTICAL);
+    _cb.keepAspect = new wxCheckBox(cpanel, wxID_ANY, "Keep aspect");
+    _cb.scaleWithViewport = new wxCheckBox(cpanel, wxID_ANY, "Zoom with viewport");
+    _cb.panWithViewport = new wxCheckBox(cpanel, wxID_ANY, "Pan with viewport");
+    checkboxSizer->Add(_cb.keepAspect);
+    checkboxSizer->Add(_cb.scaleWithViewport);
+    checkboxSizer->Add(_cb.panWithViewport);
+    cpanelSizer->Add(checkboxSizer);
 
-	wxCheckBox* keepAspect = findNamedObject<wxCheckBox>(this, "OverlayDialogKeepAspect");
-	wxCheckBox* scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
-	wxCheckBox* panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
-
-	keepAspect->Connect(wxEVT_CHECKBOX, 
-		wxCommandEventHandler(OrthoBackgroundPanel::_onOptionToggled), NULL, this);
-	scaleWithViewport->Connect(wxEVT_CHECKBOX, 
-		wxCommandEventHandler(OrthoBackgroundPanel::_onOptionToggled), NULL, this);
-	panWithViewport->Connect(wxEVT_CHECKBOX, 
-		wxCommandEventHandler(OrthoBackgroundPanel::_onOptionToggled), NULL, this);
-
-	makeLabelBold(this, "OverlayDialogLabelFile");
-	makeLabelBold(this, "OverlayDialogLabelTrans");
-	makeLabelBold(this, "OverlayDialogLabelScale");
-	makeLabelBold(this, "OverlayDialogLabelHOffset");
-	makeLabelBold(this, "OverlayDialogLabelVOffset");
-	makeLabelBold(this, "OverlayDialogLabelOptions");
+    _cb.keepAspect->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
+    _cb.scaleWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
+    _cb.panWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
 }
 
 void OrthoBackgroundPanel::initialiseWidgets()
 {
-	wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
-	useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+    wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
+    useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 
-	// Image filename
-	wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
-	filepicker->SetFileName(wxFileName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)));
+    // Image filename
+    _filePicker->SetFileName(wxFileName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)));
 
-	wxSlider* transSlider = findNamedObject<wxSlider>(this, "OverlayDialogTransparencySlider");
+    _slider.opacity->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSPARENCY) * 100.0);
 
-	transSlider->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSPARENCY) * 100.0);
+    _spinScale->SetValue(registry::getValue<double>(RKEY_OVERLAY_SCALE));
+    _spinHorizOffset->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSLATIONX));
+    _spinVertOffset->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSLATIONY));
 
-	_spinScale->SetValue(registry::getValue<double>(RKEY_OVERLAY_SCALE));
-	_spinHorizOffset->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSLATIONX));
-	_spinVertOffset->SetValue(registry::getValue<double>(RKEY_OVERLAY_TRANSLATIONY));
-
-	wxCheckBox* keepAspect = findNamedObject<wxCheckBox>(this, "OverlayDialogKeepAspect");
-	wxCheckBox* scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
-	wxCheckBox* panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
-
-	keepAspect->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PROPORTIONAL));
-	scaleWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY));
-	panWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PAN_WITH_XY));
+    _cb.keepAspect->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PROPORTIONAL));
+    _cb.scaleWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY));
+    _cb.panWithViewport->SetValue(registry::getValue<bool>(RKEY_OVERLAY_PAN_WITH_XY));
 
     updateSensitivity();
 }
 
 void OrthoBackgroundPanel::updateSensitivity()
 {
-	// If the "Use image" toggle is disabled, desensitise all the other widgets
-	wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
+    // If the "Use image" toggle is disabled, desensitise all the other widgets
+    wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
 
-	wxPanel* controls = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
-	controls->Enable(useImageBtn->GetValue());
+    wxPanel* controls = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
+    controls->Enable(useImageBtn->GetValue());
 
-	assert(controls->IsEnabled() == registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+    assert(controls->IsEnabled() == registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 }
 
-void OrthoBackgroundPanel::_onOptionToggled(wxCommandEvent& ev)
+void OrthoBackgroundPanel::onOptionToggled()
 {
-	if (_callbackActive) return;
+    if (_callbackActive) return;
 
-	_callbackActive = true;
-
-	wxCheckBox* keepAspect = findNamedObject<wxCheckBox>(this, "OverlayDialogKeepAspect");
-	wxCheckBox* scaleWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogZoomWithViewport");
-	wxCheckBox* panWithViewport = findNamedObject<wxCheckBox>(this, "OverlayDialogPanWithViewport");
-
-	registry::setValue<bool>(RKEY_OVERLAY_PROPORTIONAL, keepAspect->GetValue());
-	registry::setValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY, scaleWithViewport->GetValue());
-	registry::setValue<bool>(RKEY_OVERLAY_PAN_WITH_XY, panWithViewport->GetValue());
-
-	_callbackActive = false;
+    util::ScopedBoolLock lock(_callbackActive);
+    registry::setValue<bool>(RKEY_OVERLAY_PROPORTIONAL, _cb.keepAspect->GetValue());
+    registry::setValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY, _cb.scaleWithViewport->GetValue());
+    registry::setValue<bool>(RKEY_OVERLAY_PAN_WITH_XY, _cb.panWithViewport->GetValue());
 }
 
-void OrthoBackgroundPanel::_onToggleUseImage(wxCommandEvent& ev)
+void OrthoBackgroundPanel::onToggleUseImage(wxCommandEvent& ev)
 {
-	wxCheckBox* useImageBtn = static_cast<wxCheckBox*>(ev.GetEventObject());
+    wxCheckBox* useImageBtn = static_cast<wxCheckBox*>(ev.GetEventObject());
 
     registry::setValue(RKEY_OVERLAY_VISIBLE, useImageBtn->GetValue());
-	updateSensitivity();
+    updateSensitivity();
 
-	// Refresh
-	GlobalSceneGraph().sceneChanged();
+    // Refresh
+    GlobalSceneGraph().sceneChanged();
 }
 
-void OrthoBackgroundPanel::_onFileSelection(wxFileDirPickerEvent& ev)
+void OrthoBackgroundPanel::onFileSelection(wxFileDirPickerEvent& ev)
 {
-	// Set registry key
-	wxFilePickerCtrl* filepicker = findNamedObject<wxFilePickerCtrl>(this, "OverlayDialogFilePicker");
+    // Set registry key
+    GlobalRegistry().set(
+        RKEY_OVERLAY_IMAGE, _filePicker->GetFileName().GetFullPath().ToStdString()
+    );
 
-	GlobalRegistry().set(RKEY_OVERLAY_IMAGE, filepicker->GetFileName().GetFullPath().ToStdString());
-
-	// Refresh display
-	GlobalSceneGraph().sceneChanged();
+    // Refresh display
+    GlobalSceneGraph().sceneChanged();
 }
 
-void OrthoBackgroundPanel::_onScrollChange(wxScrollEvent& ev)
+void OrthoBackgroundPanel::onScrollChange(wxScrollEvent& ev)
 {
-	if (_callbackActive) return;
+    if (_callbackActive) return;
 
-	_callbackActive = true;
+    util::ScopedBoolLock lock(_callbackActive);
 
-	// Update spin controls on slider change
-	wxSlider* transSlider = findNamedObject<wxSlider>(this, "OverlayDialogTransparencySlider");
+    // Update spin controls on slider change
+    _spinScale->SetValue(_slider.scale->GetValue() / 100.0);
+    _spinHorizOffset->SetValue(_slider.hOffset->GetValue() / 100.0);
+    _spinVertOffset->SetValue(_slider.vOffset->GetValue() / 100.0);
 
-	wxSlider* scaleSlider = findNamedObject<wxSlider>(this, "OverlayDialogScaleSlider");
-	_spinScale->SetValue(scaleSlider->GetValue() / 100.0);
+    registry::setValue<double>(RKEY_OVERLAY_TRANSPARENCY, _slider.opacity->GetValue() / 100.0);
+    registry::setValue<double>(RKEY_OVERLAY_SCALE, _spinScale->GetValue());
+    registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONX, _spinHorizOffset->GetValue());
+    registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONY, _spinVertOffset->GetValue());
 
-	wxSlider* hOffsetSlider = findNamedObject<wxSlider>(this, "OverlayDialogHorizOffsetSlider");
-	_spinHorizOffset->SetValue(hOffsetSlider->GetValue() / 100.0);
-
-	wxSlider* vOffsetSlider = findNamedObject<wxSlider>(this, "OverlayDialogVertOffsetSlider");
-	_spinVertOffset->SetValue(vOffsetSlider->GetValue() / 100.0);
-
-	registry::setValue<double>(RKEY_OVERLAY_TRANSPARENCY, transSlider->GetValue() / 100.0);
-	registry::setValue<double>(RKEY_OVERLAY_SCALE, _spinScale->GetValue());
-	registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONX, _spinHorizOffset->GetValue());
-	registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONY, _spinVertOffset->GetValue());
-
-	// Refresh display
-	GlobalSceneGraph().sceneChanged();
-
-	_callbackActive = false;
+    // Refresh display
+    GlobalSceneGraph().sceneChanged();
 }
 
-void OrthoBackgroundPanel::_onSpinChange(wxSpinDoubleEvent& ev)
+void OrthoBackgroundPanel::onSpinChange(wxSpinDoubleEvent& ev)
 {
-	if (_callbackActive) return;
+    if (_callbackActive) return;
 
-	_callbackActive = true;
+    util::ScopedBoolLock lock(_callbackActive);
 
-	// Update sliders on spin control change
-	wxSlider* transSlider = findNamedObject<wxSlider>(this, "OverlayDialogTransparencySlider");
+    // Update sliders on spin control change
+    _slider.scale->SetValue(_spinScale->GetValue()*100);
+    _slider.hOffset->SetValue(_spinHorizOffset->GetValue()*100);
+    _slider.vOffset->SetValue(_spinVertOffset->GetValue()*100);
 
-	wxSlider* scaleSlider = findNamedObject<wxSlider>(this, "OverlayDialogScaleSlider");
-	scaleSlider->SetValue(_spinScale->GetValue()*100);
+    registry::setValue<double>(RKEY_OVERLAY_TRANSPARENCY, _slider.opacity->GetValue() / 100.0);
+    registry::setValue<double>(RKEY_OVERLAY_SCALE, _spinScale->GetValue());
+    registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONX, _spinHorizOffset->GetValue());
+    registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONY, _spinVertOffset->GetValue());
 
-	wxSlider* hOffsetSlider = findNamedObject<wxSlider>(this, "OverlayDialogHorizOffsetSlider");
-	hOffsetSlider->SetValue(_spinHorizOffset->GetValue()*100);
-
-	wxSlider* vOffsetSlider = findNamedObject<wxSlider>(this, "OverlayDialogVertOffsetSlider");
-	vOffsetSlider->SetValue(_spinVertOffset->GetValue()*100);
-
-	registry::setValue<double>(RKEY_OVERLAY_TRANSPARENCY, transSlider->GetValue() / 100.0);
-	registry::setValue<double>(RKEY_OVERLAY_SCALE, _spinScale->GetValue());
-	registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONX, _spinHorizOffset->GetValue());
-	registry::setValue<double>(RKEY_OVERLAY_TRANSLATIONY, _spinVertOffset->GetValue());
-
-	// Refresh display
-	GlobalSceneGraph().sceneChanged();
-
-	_callbackActive = false;
+    // Refresh display
+    GlobalSceneGraph().sceneChanged();
 }
 
 } // namespace ui

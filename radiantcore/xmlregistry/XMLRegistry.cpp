@@ -344,14 +344,10 @@ void XMLRegistry::onAutoSaveTimerIntervalReached()
 {
     {
         std::lock_guard<std::mutex> lock(_writeLock);
-
-        if (_changesSinceLastSave == 0)
-        {
+        if (_changesSinceLastSave == 0) {
             return;
         }
     }
-
-    rMessage() << "Auto-saving registry to user settings path." << std::endl;
 
     saveToDisk();
 }

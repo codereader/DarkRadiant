@@ -7,41 +7,59 @@
 class wxFileDirPickerEvent;
 class wxSpinDoubleEvent;
 class wxSpinCtrlDouble;
+class wxCheckBox;
+class wxSlider;
+class wxFilePickerCtrl;
 
 namespace ui
 {
 
-/**
- * Panel to configure the background image overlay options for the ortho view.
- */
+/// Panel to configure the background image overlay options for the ortho view.
 class OrthoBackgroundPanel :
-	public wxutil::DockablePanel,
-	private wxutil::XmlResourceBasedWidget
+    public wxutil::DockablePanel,
+    private wxutil::XmlResourceBasedWidget
 {
-private:
-	wxSpinCtrlDouble* _spinScale;
-	wxSpinCtrlDouble* _spinHorizOffset;
-	wxSpinCtrlDouble* _spinVertOffset;
+    // Widgets
+    wxSpinCtrlDouble* _spinScale = nullptr;
+    wxSpinCtrlDouble* _spinHorizOffset = nullptr;
+    wxSpinCtrlDouble* _spinVertOffset = nullptr;
+    wxFilePickerCtrl* _filePicker = nullptr;
 
-	// TRUE, if a widget update is in progress (to avoid callback loops)
-	bool _callbackActive;
+    // Sliders
+    struct {
+        wxSlider* opacity = nullptr;
+        wxSlider* hOffset = nullptr;
+        wxSlider* vOffset = nullptr;
+        wxSlider* scale = nullptr;
+    } _slider;
+
+    // Checkboxes
+    struct {
+        wxCheckBox* useImage = nullptr;
+        wxCheckBox* keepAspect = nullptr;
+        wxCheckBox* scaleWithViewport = nullptr;
+        wxCheckBox* panWithViewport = nullptr;
+    } _cb;
+
+    // TRUE, if a widget update is in progress (to avoid callback loops)
+    bool _callbackActive = false;
 
 public:
-	OrthoBackgroundPanel(wxWindow* parent);
+    OrthoBackgroundPanel(wxWindow* parent);
 
 private:
-	// Widget construction helpers
-	void setupDialog();
+    // Widget construction helpers
+    void setupDialog();
+    wxSpinCtrlDouble* makeSpinner(wxWindow* parent, float min, float max, float increment);
+    void initialiseWidgets();
+    void updateSensitivity();
 
-	void initialiseWidgets();
-	void updateSensitivity();
-
-	// callbacks
-	void _onFileSelection(wxFileDirPickerEvent& ev);
-	void _onToggleUseImage(wxCommandEvent& ev);
-	void _onOptionToggled(wxCommandEvent& ev);
-	void _onScrollChange(wxScrollEvent& ev);
-	void _onSpinChange(wxSpinDoubleEvent& ev);
+    // callbacks
+    void onFileSelection(wxFileDirPickerEvent& ev);
+    void onToggleUseImage(wxCommandEvent& ev);
+    void onOptionToggled();
+    void onScrollChange(wxScrollEvent& ev);
+    void onSpinChange(wxSpinDoubleEvent& ev);
 };
 
 }
