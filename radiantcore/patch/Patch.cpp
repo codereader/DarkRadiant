@@ -725,48 +725,42 @@ void Patch::appendPoints(bool columns, bool beginning) {
     controlPointsChanged();
 }
 
-Patch* Patch::MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool bFirst)
+Patch* Patch::MakeCap(Patch* patch, patch::CapType capType, EMatrixMajor matrixMajor, bool front)
 {
-  std::size_t i, width, height;
+    auto width = matrixMajor == ROW ? _width : _height;
+    auto height = matrixMajor == ROW ? _height : _width;
 
-  switch(mt)
-  {
-  case ROW:
-    width = _width;
-    height = _height;
-    break;
-  case COL:
-    width = _height;
-    height = _width;
-    break;
-  default:
-    ERROR_MESSAGE("neither row-major nor column-major");
-    return 0;
-  }
+    std::vector<Vector3> points(width);
 
-  std::vector<Vector3> p(width);
+    auto index = front ? 0 : height-1;
 
-  std::size_t nIndex = (bFirst) ? 0 : height-1;
-  if(mt == ROW)
-  {
-    for (i=0; i<width; i++)
+    for (auto i = 0; i < width; i++)
     {
-      p[(bFirst) ? i : (width-1) - i] = ctrlAt(nIndex, i).vertex;
+        const auto& ctrl = matrixMajor == ROW ? ctrlAt(index, i) : ctrlAt(i, index);
+        points[front ? i : width - 1 - i] = ctrl.vertex;
     }
-  }
-  else
-  {
-    for (i=0; i<width; i++)
+
+    // Inherit the same fixed tesselation as the source patch
+    if (subdivisionsFixed())
     {
-      p[(bFirst) ? i : (width-1) - i] = ctrlAt(i, nIndex).vertex;
+        const auto& subdivisions = getSubdivisions();
+        switch (capType)
+        {
+        case patch::CapType::InvertedEndCap:
+            patch->setFixedSubdivisions(true, subdivisions);
+            break;
+
+        default:
+            // Flip the subdivision X/Y values for all other cap types
+            patch->setFixedSubdivisions(true, { subdivisions.y(), subdivisions.x() });
+        }
     }
-  }
 
-  patch->constructSeam(eType, p, width);
+    patch->constructSeam(capType, points, width);
 
-  // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
-  patch->scaleTextureNaturally();
-  return patch;
+    // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
+    patch->scaleTextureNaturally();
+    return patch;
 }
 
 void Patch::flipTexture(int nAxis)
