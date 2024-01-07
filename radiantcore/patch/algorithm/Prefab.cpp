@@ -263,18 +263,18 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const
         throw cmd::ExecutionFailure(_("Cannot create cylinder-cap, patch must have a width of 9."));
     }
 
-    assert(parent != NULL);
+    assert(parent);
 
     // We do this once for the front and once for the back patch
     for (auto front : { true, false })
     {
-        scene::INodePtr cap(GlobalPatchModule().createPatch(PatchDefType::Def2));
+        auto cap = GlobalPatchModule().createPatch(PatchDefType::Def2);
         parent->addChildNode(cap);
 
         auto capPatch = Node_getPatch(cap);
         assert(capPatch);
 
-        patch.MakeCap(capPatch, type, ROW, front);
+        patch.constructCap(*capPatch, type, front);
 
         capPatch->setShader(shader);
 
