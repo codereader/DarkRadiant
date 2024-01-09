@@ -1,7 +1,5 @@
 #pragma once
 
-#include "wxutil/XmlResourceBasedWidget.h"
-
 #include "wxutil/DockablePanel.h"
 
 class wxFileDirPickerEvent;
@@ -15,15 +13,14 @@ namespace ui
 {
 
 /// Panel to configure the background image overlay options for the ortho view.
-class OrthoBackgroundPanel :
-    public wxutil::DockablePanel,
-    private wxutil::XmlResourceBasedWidget
+class OrthoBackgroundPanel: public wxutil::DockablePanel
 {
     // Widgets
     wxSpinCtrlDouble* _spinScale = nullptr;
     wxSpinCtrlDouble* _spinHorizOffset = nullptr;
     wxSpinCtrlDouble* _spinVertOffset = nullptr;
     wxFilePickerCtrl* _filePicker = nullptr;
+    wxPanel* _controlsPanel = nullptr; // everything under "Use image" checkbox
 
     // Sliders
     struct {
