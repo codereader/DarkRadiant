@@ -50,6 +50,7 @@ wxSpinCtrlDouble* OrthoBackgroundPanel::makeSpinner(wxWindow* parent, float min,
     auto* spinner = new wxSpinCtrlDouble(parent, wxID_ANY);
     spinner->SetRange(min, max);
     spinner->SetIncrement(increment);
+    spinner->SetDigits(2); // decimal places
     spinner->Bind(wxEVT_SPINCTRLDOUBLE, [this](wxSpinDoubleEvent& ev) {
         onSpinChange(ev);
     });
@@ -108,7 +109,9 @@ void OrthoBackgroundPanel::setupDialog()
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
     _spinHorizOffset = makeSpinner(_controlsPanel, -20, 20, 0.01);
-    addSliderRow(_controlsPanel, *cpanelSizer, "<b>Horz. offset</b>", _slider.hOffset, _spinHorizOffset);
+    addSliderRow(
+        _controlsPanel, *cpanelSizer, "<b>Horz. offset</b>", _slider.hOffset, _spinHorizOffset
+    );
 
     // Vertical Offset slider and spinner
     _slider.vOffset = new wxSlider(_controlsPanel, wxID_ANY, 0, -2000, 2000);
@@ -116,7 +119,9 @@ void OrthoBackgroundPanel::setupDialog()
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
     _spinVertOffset = makeSpinner(_controlsPanel, -20, 20, 0.01);
-    addSliderRow(_controlsPanel, *cpanelSizer, "<b>Vert. offset</b>", _slider.vOffset, _spinVertOffset);
+    addSliderRow(
+        _controlsPanel, *cpanelSizer, "<b>Vert. offset</b>", _slider.vOffset, _spinVertOffset
+    );
 
     // Options checkboxes
     cpanelSizer->Add(makeLabel(_controlsPanel, "<b>Options</b>"), 0, wxALL, LABEL_INDENT);
