@@ -56,7 +56,7 @@ To compile DarkRadiant a number of libraries (with development headers) and a st
 * libjpeg-dev 
 * libwxgtk3.0-dev 
 * libxml2-dev 
-* libsigc++-2.0-dev 
+* libsigc++-3.0-dev 
 * libpng-dev 
 * libftgl-dev 
 * libglew-dev 
