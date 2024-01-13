@@ -37,7 +37,7 @@ private:
 	typedef std::map<CounterType, CounterPtr> CounterMap;
 	CounterMap _counters;
 
-	sigc::signal<void> _signalCountersChanged;
+	sigc::signal<void()> _signalCountersChanged;
 
 public:
 	CounterManager();
@@ -46,7 +46,7 @@ public:
 
 	ICounter& getCounter(CounterType counter) override;
 
-	sigc::signal<void>& signal_countersChanged() override;
+	sigc::signal<void()>& signal_countersChanged() override;
 
 	void onCounterChanged();
 

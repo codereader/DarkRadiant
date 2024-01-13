@@ -35,7 +35,7 @@ private:
     // Current model to display
     scene::INodePtr _modelNode;
 
-    sigc::signal<void, const model::ModelNodePtr&> _modelLoadedSignal;
+    sigc::signal<void(const model::ModelNodePtr&)> _modelLoadedSignal;
     sigc::connection _skinDeclChangedConn;
 
 public:
@@ -67,7 +67,7 @@ public:
     }
 
     // Signal emitted when the preview is done loading a new model
-    sigc::signal<void, const model::ModelNodePtr&>& signal_ModelLoaded();
+    sigc::signal<void(const model::ModelNodePtr&)>& signal_ModelLoaded();
 
 protected:
     void prepareScene() override;

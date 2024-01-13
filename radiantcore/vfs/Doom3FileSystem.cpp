@@ -395,7 +395,7 @@ void Doom3FileSystem::initPakFile(const std::string& filename)
     }
 }
 
-sigc::signal<void>& Doom3FileSystem::signal_Initialised()
+sigc::signal<void()>& Doom3FileSystem::signal_Initialised()
 {
     return _sigInitialised;
 }

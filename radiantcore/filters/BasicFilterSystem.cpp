@@ -332,12 +332,12 @@ void BasicFilterSystem::shutdownModule()
 	_filterConfigChangedSignal.clear();
 }
 
-sigc::signal<void> BasicFilterSystem::filterConfigChangedSignal() const
+sigc::signal<void()> BasicFilterSystem::filterConfigChangedSignal() const
 {
     return _filterConfigChangedSignal;
 }
 
-sigc::signal<void> BasicFilterSystem::filterCollectionChangedSignal() const
+sigc::signal<void()> BasicFilterSystem::filterCollectionChangedSignal() const
 {
 	return _filterCollectionChangedSignal;
 }

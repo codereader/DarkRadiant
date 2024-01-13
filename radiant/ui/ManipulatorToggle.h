@@ -21,7 +21,7 @@ public:
 	ManipulatorToggle()
 	{
 		_activeManipulatorChanged = GlobalSelectionSystem().signal_activeManipulatorChanged()
-			.connect(sigc::mem_fun(this, &ManipulatorToggle::onActiveManipulatorChanged));
+			.connect(sigc::mem_fun(*this, &ManipulatorToggle::onActiveManipulatorChanged));
 
 		GlobalEventManager().addToggle("ToggleClipper", [this](bool)
 		{

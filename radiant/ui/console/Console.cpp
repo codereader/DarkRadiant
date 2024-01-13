@@ -29,7 +29,7 @@ Console::Console(wxWindow* parent) :
     _clearConsoleHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::ClearConsole,
         radiant::TypeListener<radiant::ClearConsoleMessage>(
-            sigc::mem_fun(this, &Console::clear)));
+            sigc::mem_fun(*this, &Console::clear)));
 }
 
 Console::~Console()

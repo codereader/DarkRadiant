@@ -62,7 +62,7 @@ CameraSettings::CameraSettings() :
 void CameraSettings::observeKey(const std::string& key)
 {
     GlobalRegistry().signalForKey(key).connect(
-        sigc::mem_fun(this, &CameraSettings::keyChanged)
+        sigc::mem_fun(*this, &CameraSettings::keyChanged)
     );
 }
 

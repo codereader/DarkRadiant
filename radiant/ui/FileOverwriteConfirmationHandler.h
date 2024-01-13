@@ -19,7 +19,7 @@ public:
 		_msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
             radiant::IMessage::Type::FileOverwriteConfirmation,
 			radiant::TypeListener<radiant::FileOverwriteConfirmation>(
-				sigc::mem_fun(this, &FileOverwriteConfirmationHandler::handleRequest)));
+				sigc::mem_fun(*this, &FileOverwriteConfirmationHandler::handleRequest)));
 	}
 
 	~FileOverwriteConfirmationHandler()

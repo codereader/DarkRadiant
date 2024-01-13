@@ -10,7 +10,7 @@ class FakeClipboardModule :
 {
 private:
     std::string _contents;
-    sigc::signal<void> _changedSignal;
+    sigc::signal<void()> _changedSignal;
 
 public:
     std::string getString() override
@@ -24,7 +24,7 @@ public:
         _changedSignal.emit();
     }
 
-    sigc::signal<void>& signal_clipboardContentChanged() override
+    sigc::signal<void()>& signal_clipboardContentChanged() override
     {
         return _changedSignal;
     }

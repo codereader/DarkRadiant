@@ -21,13 +21,13 @@ MapTextureBrowser::MapTextureBrowser(wxWindow* parent) :
     onSettingsChanged();
 
     GlobalMaterialManager().signal_activeShadersChanged().connect(
-        sigc::mem_fun(this, &MapTextureBrowser::onActiveShadersChanged));
+        sigc::mem_fun(*this, &MapTextureBrowser::onActiveShadersChanged));
 }
 
 void MapTextureBrowser::observeRegistryKey(const std::string& key)
 {
     GlobalRegistry().signalForKey(key).connect(
-        sigc::mem_fun(this, &MapTextureBrowser::onSettingsChanged)
+        sigc::mem_fun(*this, &MapTextureBrowser::onSettingsChanged)
     );
 }
 

@@ -880,9 +880,9 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 	return true;
 }
 
-sigc::signal<void>& Brush::signal_faceShaderChanged()
+sigc::signal<void()>& Brush::signal_faceShaderChanged()
 {
-	static sigc::signal<void> _sigFaceShaderChanged;
+	static sigc::signal<void()> _sigFaceShaderChanged;
 	return _sigFaceShaderChanged;
 }
 

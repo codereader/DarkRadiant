@@ -1003,15 +1003,15 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
     pivotChanged();
 
     _sigSelectionChanged.connect(
-        sigc::mem_fun(this, &RadiantSelectionSystem::pivotChangedSelection)
+        sigc::mem_fun(*this, &RadiantSelectionSystem::pivotChangedSelection)
     );
 
 	_sigSelectionChanged.connect(
-		sigc::mem_fun(this, &RadiantSelectionSystem::checkComponentModeSelectionMode)
+		sigc::mem_fun(*this, &RadiantSelectionSystem::checkComponentModeSelectionMode)
     );
 
     GlobalGrid().signal_gridChanged().connect(
-        sigc::mem_fun(this, &RadiantSelectionSystem::pivotChanged)
+        sigc::mem_fun(*this, &RadiantSelectionSystem::pivotChanged)
     );
 
     GlobalCommandSystem().addCommand("ToggleManipulatorMode",
@@ -1043,7 +1043,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(
-        sigc::mem_fun(this, &RadiantSelectionSystem::onSceneBoundsChanged)
+        sigc::mem_fun(*this, &RadiantSelectionSystem::onSceneBoundsChanged)
     );
 
     GlobalRenderSystem().attachRenderable(*this);

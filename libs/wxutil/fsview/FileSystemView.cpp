@@ -235,7 +235,7 @@ void FileSystemView::OnTreeStorePopulationFinished(TreeModel::PopulationFinished
     _signalTreePopulated.emit();
 }
 
-sigc::signal<void>& FileSystemView::signal_TreePopulated()
+sigc::signal<void()>& FileSystemView::signal_TreePopulated()
 {
     return _signalTreePopulated;
 }

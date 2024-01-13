@@ -81,10 +81,10 @@ void EntityNode::construct()
     // Observe model-related keys
     static_assert(std::is_base_of_v<sigc::trackable, EntityNode>);
     static_assert(std::is_base_of_v<sigc::trackable, ModelKey>);
-	observeKey("model", sigc::mem_fun(this, &EntityNode::_modelKeyChanged));
+	observeKey("model", sigc::mem_fun(*this, &EntityNode::_modelKeyChanged));
 	observeKey("skin", sigc::mem_fun(_modelKey, &ModelKey::skinChanged));
 
-    observeKey("noshadows", sigc::mem_fun(this, &EntityNode::_onNoShadowsSettingsChanged));
+    observeKey("noshadows", sigc::mem_fun(*this, &EntityNode::_onNoShadowsSettingsChanged));
 
 	_shaderParms.addKeyObservers();
 

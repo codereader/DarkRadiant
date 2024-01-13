@@ -17,11 +17,11 @@ class ParticlesManager :
 private:
     // Reloaded signal
     sigc::connection _defsReloadedConn;
-    sigc::signal<void> _particlesReloadedSignal;
+    sigc::signal<void()> _particlesReloadedSignal;
 
 public:
 	// IParticlesManager implementation
-    sigc::signal<void>& signal_particlesReloaded() override;
+    sigc::signal<void()>& signal_particlesReloaded() override;
 
     void forEachParticleDef(const ParticleDefVisitor& visitor) override;
 

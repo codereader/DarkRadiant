@@ -706,13 +706,13 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
     }
 }
 
-sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)
+sigc::signal<void()>& DeclarationManager::signal_DeclsReloading(Type type)
 {
     std::lock_guard lock(_signalAddLock);
     return _declsReloadingSignals.try_emplace(type).first->second;
 }
 
-sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
+sigc::signal<void()>& DeclarationManager::signal_DeclsReloaded(Type type)
 {
     std::lock_guard lock(_signalAddLock);
     return _declsReloadedSignals.try_emplace(type).first->second;

@@ -323,7 +323,7 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection);
 
 	// Static signal holder, signal is emitted after any patch texture has changed
-	static sigc::signal<void>& signal_patchTextureChanged();
+	static sigc::signal<void()>& signal_patchTextureChanged();
 
     void updateTesselation(bool force = false) override;
     void queueTesselationUpdate();

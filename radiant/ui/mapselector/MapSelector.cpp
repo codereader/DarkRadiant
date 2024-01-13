@@ -113,7 +113,7 @@ void MapSelector::setupTreeView(wxWindow* parent)
     _treeView = wxutil::FileSystemView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
     _treeView->Bind(wxutil::EV_FSVIEW_SELECTION_CHANGED, &MapSelector::onSelectionChanged, this);
     _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MapSelector::onItemActivated, this);;
-    _treeView->signal_TreePopulated().connect(sigc::mem_fun(this, &MapSelector::onFileViewTreePopulated));
+    _treeView->signal_TreePopulated().connect(sigc::mem_fun(*this, &MapSelector::onFileViewTreePopulated));
 
     // Get the extensions from all possible patterns (e.g. *.map or *.mapx)
     FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_MAP);

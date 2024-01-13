@@ -47,7 +47,7 @@ private:
 
 	std::vector<sigc::connection> _registryConnections;
 
-	sigc::signal<void> _signalSettingsChanged;
+	sigc::signal<void()> _signalSettingsChanged;
 
 	// Private constructor
 	EntitySettings();
@@ -143,7 +143,7 @@ public:
 		onSettingsChanged();
 	}
 
-	sigc::signal<void>& signal_settingsChanged() override
+	sigc::signal<void()>& signal_settingsChanged() override
 	{
 		return _signalSettingsChanged;
 	}

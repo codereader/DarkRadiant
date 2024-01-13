@@ -89,7 +89,7 @@ public:
     //  * restart game starts/ends
     //  * any mode starts/ends
     // GUI should update itself every time it is triggered.
-    sigc::signal<void, int> signal_StatusChanged;
+    sigc::signal<void(int)> signal_StatusChanged;
 
     //RegisterableModule implementation
     const std::string& getName() const override;

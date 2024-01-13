@@ -350,7 +350,7 @@ void TextureThumbnailBrowser::loadScaleFromRegistry()
 void TextureThumbnailBrowser::observeKey(const std::string& key)
 {
     GlobalRegistry().signalForKey(key).connect(
-        sigc::mem_fun(this, &TextureThumbnailBrowser::keyChanged)
+        sigc::mem_fun(*this, &TextureThumbnailBrowser::keyChanged)
     );
 }
 

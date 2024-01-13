@@ -99,12 +99,12 @@ ModelSelector::ModelSelector() :
 
 	// Connect to the model cache event to get notified on reloads
 	_modelsReloadedConn = GlobalModelCache().signal_modelsReloaded().connect(
-		sigc::mem_fun(this, &ModelSelector::onSkinsOrModelsReloaded));
+		sigc::mem_fun(*this, &ModelSelector::onSkinsOrModelsReloaded));
 
 	_skinsReloadedConn = GlobalModelSkinCache().signal_skinsReloaded().connect(
-		sigc::mem_fun(this, &ModelSelector::onSkinsOrModelsReloaded));
+		sigc::mem_fun(*this, &ModelSelector::onSkinsOrModelsReloaded));
 
-	_modelPreview->signal_ModelLoaded().connect(sigc::mem_fun(this, &ModelSelector::onModelLoaded));
+	_modelPreview->signal_ModelLoaded().connect(sigc::mem_fun(*this, &ModelSelector::onModelLoaded));
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)

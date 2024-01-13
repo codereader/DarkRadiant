@@ -42,10 +42,10 @@ void AutoSaveTimer::initialise()
     Bind(wxEVT_TIMER, &AutoSaveTimer::onIntervalReached, this);
 
     GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
-        sigc::mem_fun(this, &AutoSaveTimer::registryKeyChanged)
+        sigc::mem_fun(*this, &AutoSaveTimer::registryKeyChanged)
     );
     GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
-        sigc::mem_fun(this, &AutoSaveTimer::registryKeyChanged)
+        sigc::mem_fun(*this, &AutoSaveTimer::registryKeyChanged)
     );
 
     // Refresh all values from the registry right now (this might also start the timer)

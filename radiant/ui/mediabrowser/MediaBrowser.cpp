@@ -91,17 +91,17 @@ void MediaBrowser::connectListeners()
 
     // The tree view will be re-populated once the first map loaded signal is fired
     _mapLoadedConn = GlobalMapModule().signal_mapEvent().connect(
-        sigc::mem_fun(this, &MediaBrowser::onMapEvent)
+        sigc::mem_fun(*this, &MediaBrowser::onMapEvent)
     );
 
     _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
-        sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)
+        sigc::mem_fun(*this, &MediaBrowser::onShaderClipboardSourceChanged)
     );
 
     _focusMaterialHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::FocusMaterialRequest,
         radiant::TypeListener<FocusMaterialRequest>(
-            sigc::mem_fun(this, &MediaBrowser::focusMaterial)));
+            sigc::mem_fun(*this, &MediaBrowser::focusMaterial)));
 }
 
 void MediaBrowser::disconnectListeners()

@@ -488,7 +488,7 @@ public:
     virtual ParseResult updateFromSourceText(const std::string& sourceText) = 0;
 
     // Signal emitted when this material is modified
-    virtual sigc::signal<void>& sig_materialChanged() = 0;
+    virtual sigc::signal<void()>& sig_materialChanged() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;
@@ -575,7 +575,7 @@ public:
     virtual void foreachMaterial(const std::function<void(const MaterialPtr&)>& func) = 0;
 
     // Set the callback to be invoked when the active shaders list has changed
-	virtual sigc::signal<void> signal_activeShadersChanged() const = 0;
+	virtual sigc::signal<void()> signal_activeShadersChanged() const = 0;
 
     // Is invoked when a new material is inserted into the resource tree, passing the name as argument
     virtual sigc::signal<void, const std::string&>& signal_materialCreated() = 0;

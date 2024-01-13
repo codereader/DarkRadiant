@@ -244,7 +244,7 @@ void MapResource::setRootNode(const scene::IMapRootNodePtr& root)
     if (_mapRoot)
     {
         _mapChangeCountListener = _mapRoot->getUndoChangeTracker().signal_changed().connect(
-            sigc::mem_fun(this, &MapResource::onMapChanged)
+            sigc::mem_fun(*this, &MapResource::onMapChanged)
         );
     }
 }

@@ -19,7 +19,7 @@ public:
         _msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
             radiant::IMessage::Type::FileSaveConfirmation,
             radiant::TypeListener<radiant::FileSaveConfirmation>(
-                sigc::mem_fun(this, &FileSaveConfirmationHandler::handleRequest)));
+                sigc::mem_fun(*this, &FileSaveConfirmationHandler::handleRequest)));
     }
 
     ~FileSaveConfirmationHandler()

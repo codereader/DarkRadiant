@@ -52,7 +52,7 @@ private:
 	typedef std::vector<std::string> ArgumentList;
 	ArgumentList _arguments;
 
-	sigc::signal<void> _sigChanged;
+	sigc::signal<void()> _sigChanged;
 
 public:
 
@@ -263,7 +263,7 @@ public:
 	}
 
 	// Allow client code to be notified on change events
-	sigc::signal<void> signal_Changed() const
+	sigc::signal<void()> signal_Changed() const
 	{
 		return _sigChanged;
 	}

@@ -36,7 +36,7 @@ public:
     {
         // Subscribe to get notified as soon as Radiant is fully initialised
         GlobalMainFrame().signal_MainFrameConstructed().connect(
-            sigc::mem_fun(this, &FavouritesUserInterfaceModule::onMainFrameConstructed)
+            sigc::mem_fun(*this, &FavouritesUserInterfaceModule::onMainFrameConstructed)
         );
 
         GlobalUserInterface().registerControl(std::make_shared<FavouritesBrowserControl>());

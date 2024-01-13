@@ -44,7 +44,7 @@ public:
 	virtual ValueType evaluate() = 0;
 
 	// Value changed signal 
-	virtual sigc::signal<void>& signal_valueChanged() = 0;
+	virtual sigc::signal<void()>& signal_valueChanged() = 0;
 };
 
 // An expression representing a constant value
@@ -55,7 +55,7 @@ class ConstantExpression :
 private:
 	ValueType _value;
 
-	sigc::signal<void> _sigValueChanged;
+	sigc::signal<void()> _sigValueChanged;
 
 public:
 	ConstantExpression(const ValueType& value) :
@@ -68,7 +68,7 @@ public:
 	}
 
 	// Provide a value changed signal, though it's never invoked
-	sigc::signal<void>& signal_valueChanged() override
+	sigc::signal<void()>& signal_valueChanged() override
 	{
 		return _sigValueChanged;
 	}
@@ -85,13 +85,13 @@ public:
 class IWindowVariable
 {
 private:
-	sigc::signal<void> _changedSignal;
+	sigc::signal<void()> _changedSignal;
 
 public:
 	virtual ~IWindowVariable() {}
 
 	// value-changed signal, to get notified when this value changes
-	sigc::signal<void>& signal_variableChanged()
+	sigc::signal<void()>& signal_variableChanged()
 	{
 		return _changedSignal;
 	}
@@ -306,7 +306,7 @@ public:
 
 	// Retrieve a changed signal for the given key, which is invoked 
 	// whenever setStateString() is called
-	virtual sigc::signal<void>& getChangedSignalForState(const std::string& key) = 0;
+	virtual sigc::signal<void()>& getChangedSignalForState(const std::string& key) = 0;
 
 	// Returns the state string "gui::<key>" or an empty string if non-existent
 	virtual std::string getStateString(const std::string& key) = 0;

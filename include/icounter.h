@@ -39,7 +39,7 @@ public:
 	// Returns the Counter object of the given type
 	virtual ICounter& getCounter(CounterType counter) = 0;
 
-	virtual sigc::signal<void>& signal_countersChanged() = 0;
+	virtual sigc::signal<void()>& signal_countersChanged() = 0;
 };
 
 inline ICounterManager& GlobalCounters()

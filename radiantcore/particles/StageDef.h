@@ -85,7 +85,7 @@ class StageDef : public IStageDef
     // whether this stage is visible, used within the particle editor only
     bool _visible;
 
-    sigc::signal<void> _changedSignal;
+    sigc::signal<void()> _changedSignal;
 
 private:
 
@@ -125,7 +125,7 @@ public:
     static Ptr Parse(parser::DefTokeniser& tok);
 
     /// Signal emitted when some property of the particle stage has changed
-    sigc::signal<void> signal_changed() const
+    sigc::signal<void()> signal_changed() const
     {
         return _changedSignal;
     }

@@ -67,7 +67,7 @@ public:
 	/**
 	 * Signal fired when the available set of scripts has been reloaded
 	 */
-	virtual sigc::signal<void>& signal_onScriptsReloaded() = 0;
+	virtual sigc::signal<void()>& signal_onScriptsReloaded() = 0;
 };
 typedef std::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 

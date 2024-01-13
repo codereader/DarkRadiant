@@ -74,9 +74,9 @@ void PatchInspector::connectEventHandlers()
     GlobalSelectionSystem().addObserver(this);
 
     _undoHandler = GlobalMapModule().signal_postUndo().connect(
-        sigc::mem_fun(this, &PatchInspector::queueUpdate));
+        sigc::mem_fun(*this, &PatchInspector::queueUpdate));
     _redoHandler = GlobalMapModule().signal_postRedo().connect(
-        sigc::mem_fun(this, &PatchInspector::queueUpdate));
+        sigc::mem_fun(*this, &PatchInspector::queueUpdate));
 }
 
 void PatchInspector::disconnectEventHandlers()

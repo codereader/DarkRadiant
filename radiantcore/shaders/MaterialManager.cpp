@@ -123,7 +123,7 @@ TexturePtr MaterialManager::getDefaultInteractionTexture(IShaderLayer::Type type
     return defaultTex;
 }
 
-sigc::signal<void> MaterialManager::signal_activeShadersChanged() const
+sigc::signal<void()> MaterialManager::signal_activeShadersChanged() const
 {
     return _signalActiveShadersChanged;
 }
@@ -302,7 +302,7 @@ void MaterialManager::initialiseModule(const IApplicationContext& ctx)
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "materials/", ".mtr");
 
     _materialsReloadedSignal = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
-        .connect(sigc::mem_fun(this, &MaterialManager::onMaterialDefsReloaded));
+        .connect(sigc::mem_fun(*this, &MaterialManager::onMaterialDefsReloaded));
 
     construct();
 

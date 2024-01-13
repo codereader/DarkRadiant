@@ -406,7 +406,7 @@ void CShader::revertModifications()
     _sigMaterialModified.emit();
 }
 
-sigc::signal<void>& CShader::sig_materialChanged()
+sigc::signal<void()>& CShader::sig_materialChanged()
 {
     return _sigMaterialModified;
 }

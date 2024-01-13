@@ -37,7 +37,7 @@ private:
 
 	bool _visible;
 
-    sigc::signal<void> _sigMaterialModified;
+    sigc::signal<void()> _sigMaterialModified;
 
 public:
 	/*
@@ -150,7 +150,7 @@ public:
 
     void commitModifications();
     void revertModifications() override;
-    sigc::signal<void>& sig_materialChanged() override;
+    sigc::signal<void()>& sig_materialChanged() override;
 
     void refreshImageMaps() override;
 

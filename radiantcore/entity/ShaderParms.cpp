@@ -32,7 +32,7 @@ void ShaderParms::addKeyObservers()
 	{
         _keyObserverMap.observeKey(
             "shaderParm" + string::to_string(i),
-            sigc::bind<0>(sigc::mem_fun(this, &ShaderParms::onShaderParmKeyValueChanged), i)
+            sigc::bind<0>(sigc::mem_fun(*this, &ShaderParms::onShaderParmKeyValueChanged), i)
         );
     }
 }

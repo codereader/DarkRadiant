@@ -75,7 +75,7 @@ public:
 	virtual void removeSceneObserver(Observer* observer) = 0;
 
     /// Accessor for the signal emitted when bounds are changed
-    virtual sigc::signal<void> signal_boundsChanged() const = 0;
+    virtual sigc::signal<void()> signal_boundsChanged() const = 0;
 
 	/// \brief Invokes all bounds-changed callbacks. Called when the bounds of any instance in the scene change.
 	/// \todo Move to a separate class.

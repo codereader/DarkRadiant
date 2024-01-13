@@ -99,7 +99,7 @@ public:
 	virtual void deleteXPath(const std::string& path) = 0;
 
     /// Return a signal which will be emitted when a given key changes
-    virtual sigc::signal<void> signalForKey(const std::string& key) const = 0;
+    virtual sigc::signal<void()> signalForKey(const std::string& key) const = 0;
 };
 typedef std::shared_ptr<Registry> RegistryPtr;
 

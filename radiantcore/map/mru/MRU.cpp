@@ -22,7 +22,7 @@ namespace
 	const std::string RKEY_MRU_LENGTH = RKEY_MAP_ROOT + "/numMRU";
 }
 
-sigc::signal<void>& MRU::signal_MapListChanged()
+sigc::signal<void()>& MRU::signal_MapListChanged()
 {
 	return _signalMapListChanged;
 }

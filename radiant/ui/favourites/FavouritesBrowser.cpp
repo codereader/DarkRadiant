@@ -89,7 +89,7 @@ void FavouritesBrowser::connectListeners()
     {
         _changedConnections.emplace_back(
             GlobalFavouritesManager().getSignalForType(category.typeName).connect(
-                sigc::mem_fun(this, &FavouritesBrowser::onFavouritesChanged)
+                sigc::mem_fun(*this, &FavouritesBrowser::onFavouritesChanged)
         ));
     }
 }

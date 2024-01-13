@@ -5,7 +5,7 @@
 namespace selection
 {
 
-sigc::signal<void> SelectionSetManager::signal_selectionSetsChanged() const
+sigc::signal<void()> SelectionSetManager::signal_selectionSetsChanged() const
 {
     return _sigSelectionSetsChanged;
 }

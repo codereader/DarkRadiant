@@ -60,7 +60,7 @@ void FindAndReplaceShader::onPanelDeactivated()
 void FindAndReplaceShader::connectListeners()
 {
     _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
-        sigc::mem_fun(this, &FindAndReplaceShader::onShaderClipboardChanged));
+        sigc::mem_fun(*this, &FindAndReplaceShader::onShaderClipboardChanged));
 }
 
 void FindAndReplaceShader::disconnectListeners()

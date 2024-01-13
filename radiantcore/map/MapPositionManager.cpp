@@ -103,7 +103,7 @@ namespace map
 MapPositionManager::MapPositionManager()
 {
 	_mapEventConn = GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(this, &MapPositionManager::onMapEvent)
+		sigc::mem_fun(*this, &MapPositionManager::onMapEvent)
 	);
 
 	GlobalMapResourceManager().signal_onResourceExporting().connect(sigc::mem_fun(

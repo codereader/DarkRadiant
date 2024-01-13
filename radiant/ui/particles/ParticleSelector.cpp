@@ -13,7 +13,7 @@ ParticleSelector::ParticleSelector(wxWindow* parent) :
     AddPreviewToRightPane(_preview.get());
     
     GlobalParticlesManager().signal_particlesReloaded().connect(
-        sigc::mem_fun(this, &ParticleSelector::reloadParticles)
+        sigc::mem_fun(*this, &ParticleSelector::reloadParticles)
     );
 
     Populate();

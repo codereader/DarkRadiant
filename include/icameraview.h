@@ -93,7 +93,7 @@ public:
 	virtual ICameraView& getActiveView() = 0;
 
 	// Signal emitted when any camera position or angles changed
-	virtual sigc::signal<void>& signal_cameraChanged() = 0;
+	virtual sigc::signal<void()>& signal_cameraChanged() = 0;
 };
 
 }

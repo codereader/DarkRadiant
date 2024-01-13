@@ -171,7 +171,7 @@ public:
     virtual void setMergeLayers(bool enabled) = 0;
 
     // Signal which is emitted when an action is added to this operation
-    virtual sigc::signal<void, const IMergeAction::Ptr&>& sig_ActionAdded() = 0;
+    virtual sigc::signal<void(const IMergeAction::Ptr&)>& sig_ActionAdded() = 0;
 };
 
 }

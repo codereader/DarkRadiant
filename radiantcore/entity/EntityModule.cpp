@@ -287,7 +287,7 @@ void Doom3EntityModule::initialiseModule(const IApplicationContext& ctx)
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3 });
 
     _settingsListener = EntitySettings::InstancePtr()->signal_settingsChanged().connect(
-        sigc::mem_fun(this, &Doom3EntityModule::onEntitySettingsChanged));
+        sigc::mem_fun(*this, &Doom3EntityModule::onEntitySettingsChanged));
 }
 
 void Doom3EntityModule::shutdownModule()

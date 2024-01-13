@@ -211,17 +211,17 @@ public:
 	 * A signal for client code to get notified about layer creation,
 	 * renamings and removal.
 	 */
-	virtual sigc::signal<void> signal_layersChanged() = 0;
+	virtual sigc::signal<void()> signal_layersChanged() = 0;
 
 	/**
 	 * Fired whenever visibility of a layer has been changed.
 	 */
-	virtual sigc::signal<void> signal_layerVisibilityChanged() = 0;
+	virtual sigc::signal<void()> signal_layerVisibilityChanged() = 0;
 
     /**
      * Fired whenever a parent of a layer has been changed.
      */
-    virtual sigc::signal<void> signal_layerHierarchyChanged() = 0;
+    virtual sigc::signal<void()> signal_layerHierarchyChanged() = 0;
 
 	/**
 	 * Public signal to get notified about layer membership changes,
@@ -230,7 +230,7 @@ public:
 	 * without the LayerSystem knowing about this, it is sometimes the
 	 * responsibility of that algorithm code to emit this signal itself.
 	 */
-	virtual sigc::signal<void> signal_nodeMembershipChanged() = 0;
+	virtual sigc::signal<void()> signal_nodeMembershipChanged() = 0;
 };
 
 class ILayerModule :

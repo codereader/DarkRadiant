@@ -25,7 +25,7 @@ private:
     using ShaderMapping = std::map<ShaderPtr, ISurfaceRenderer::Slot>;
     ShaderMapping _shaders;
 
-    sigc::signal<void> _sigBoundsChanged;
+    sigc::signal<void()> _sigBoundsChanged;
 
     // The render entity the adapter is attached to
     IRenderEntity* _renderEntity;
@@ -119,7 +119,7 @@ public:
         shader->renderSurface(slot);
     }
 
-    sigc::signal<void>& signal_boundsChanged() override
+    sigc::signal<void()>& signal_boundsChanged() override
     {
         return _sigBoundsChanged;
     }

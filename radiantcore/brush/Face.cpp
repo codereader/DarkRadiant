@@ -128,7 +128,7 @@ Face::~Face()
     clearRenderables();
 }
 
-sigc::signal<void>& Face::signal_faceDestroyed()
+sigc::signal<void()>& Face::signal_faceDestroyed()
 {
     return _sigDestroyed;
 }
@@ -785,8 +785,8 @@ void Face::updateFaceVisibility()
     }
 }
 
-sigc::signal<void>& Face::signal_texdefChanged()
+sigc::signal<void()>& Face::signal_texdefChanged()
 {
-    static sigc::signal<void> _sigTexdefChanged;
+    static sigc::signal<void()> _sigTexdefChanged;
     return _sigTexdefChanged;
 }

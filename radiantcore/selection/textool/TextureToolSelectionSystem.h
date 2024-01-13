@@ -25,7 +25,7 @@ private:
     sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
     sigc::signal<void, SelectionMode> _sigSelectionModeChanged;
 
-    sigc::signal<void> _sigSelectionChanged;
+    sigc::signal<void()> _sigSelectionChanged;
 
     TextureToolManipulationPivot _manipulationPivot;
 
@@ -48,7 +48,7 @@ public:
     std::size_t countSelected() override;
     std::size_t countSelectedComponentNodes() override;
 
-    sigc::signal<void>& signal_selectionChanged() override;
+    sigc::signal<void()>& signal_selectionChanged() override;
 
     void clearSelection() override;
     void clearComponentSelection() override;

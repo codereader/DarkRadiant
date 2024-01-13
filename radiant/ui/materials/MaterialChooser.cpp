@@ -16,12 +16,12 @@ MaterialChooser::MaterialChooser(wxWindow* parent, MaterialSelector::TextureFilt
 {
     auto* selector = new MaterialSelector(this, filter);
     selector->signal_selectionChanged().connect(
-        sigc::mem_fun(this, &MaterialChooser::shaderSelectionChanged)
+        sigc::mem_fun(*this, &MaterialChooser::shaderSelectionChanged)
     );
     SetSelector(selector);
 }
 
-sigc::signal<void>& MaterialChooser::signal_shaderChanged()
+sigc::signal<void()>& MaterialChooser::signal_shaderChanged()
 {
     return _shaderChangedSignal;
 }

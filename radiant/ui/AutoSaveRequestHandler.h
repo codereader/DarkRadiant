@@ -19,7 +19,7 @@ public:
 		_msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
 			radiant::IMessage::Type::AutomaticMapSaveRequest,
 			radiant::TypeListener<map::AutomaticMapSaveRequest>(
-				sigc::mem_fun(this, &AutoSaveRequestHandler::handleRequest)));
+				sigc::mem_fun(*this, &AutoSaveRequestHandler::handleRequest)));
 	}
 
 	~AutoSaveRequestHandler()

@@ -150,7 +150,7 @@ public:
         AddPreviewToRightPane(_preview.get());
 
         // Models are lazy-loaded, subscribe to the preview's event
-        _preview->signal_ModelLoaded().connect(sigc::mem_fun(this, &SkinSelector::onPreviewModelLoaded));
+        _preview->signal_ModelLoaded().connect(sigc::mem_fun(*this, &SkinSelector::onPreviewModelLoaded));
 
         _materialsList->SetMinClientSize(wxSize(-1, 140));
 

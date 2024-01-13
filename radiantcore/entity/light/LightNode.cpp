@@ -87,12 +87,12 @@ void LightNode::construct()
                sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightRadiusChanged));
     observeKey("light_center",
                sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightCenterChanged));
-    observeKey("light_rotation", sigc::mem_fun(this, &LightNode::lightRotationChanged));
-    observeKey("light_target", sigc::mem_fun(this, &LightNode::lightTargetChanged));
-    observeKey("light_up", sigc::mem_fun(this, &LightNode::lightUpChanged));
-    observeKey("light_right", sigc::mem_fun(this, &LightNode::lightRightChanged));
-    observeKey("light_start", sigc::mem_fun(this, &LightNode::lightStartChanged));
-    observeKey("light_end", sigc::mem_fun(this, &LightNode::lightEndChanged));
+    observeKey("light_rotation", sigc::mem_fun(*this, &LightNode::lightRotationChanged));
+    observeKey("light_target", sigc::mem_fun(*this, &LightNode::lightTargetChanged));
+    observeKey("light_up", sigc::mem_fun(*this, &LightNode::lightUpChanged));
+    observeKey("light_right", sigc::mem_fun(*this, &LightNode::lightRightChanged));
+    observeKey("light_start", sigc::mem_fun(*this, &LightNode::lightStartChanged));
+    observeKey("light_end", sigc::mem_fun(*this, &LightNode::lightEndChanged));
     observeKey("texture", sigc::mem_fun(m_shader, &LightShader::valueChanged));
 
     _projectionChanged = true;

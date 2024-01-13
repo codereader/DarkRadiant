@@ -16,7 +16,7 @@ class NameKey :
 	// Cached "name" keyvalue
 	std::string _name;
 
-    sigc::signal<void> _sigNameChanged;
+    sigc::signal<void()> _sigNameChanged;
 
 public:
     NameKey(SpawnArgs& entity) :
@@ -39,7 +39,7 @@ public:
         _sigNameChanged.emit();
 	}
 
-    sigc::signal<void>& signal_nameChanged()
+    sigc::signal<void()>& signal_nameChanged()
     {
         return _sigNameChanged;
     }

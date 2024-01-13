@@ -150,7 +150,7 @@ OrthoView::OrthoView(wxWindow* parent, XYWndManager& owner)
 
     // greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
     _sigCameraChanged = GlobalCameraManager().signal_cameraChanged().connect(
-        sigc::mem_fun(this, &OrthoView::onCameraMoved));
+        sigc::mem_fun(*this, &OrthoView::onCameraMoved));
 }
 
 int OrthoView::getId() const

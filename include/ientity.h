@@ -501,7 +501,7 @@ public:
     virtual bool getShowEntityAngles() const = 0;
     virtual void setShowEntityAngles(bool value) = 0;
 
-    virtual sigc::signal<void>& signal_settingsChanged() = 0;
+    virtual sigc::signal<void()>& signal_settingsChanged() = 0;
 };
 
 constexpr const char* const MODULE_ENTITY("EntityModule");

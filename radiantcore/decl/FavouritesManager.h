@@ -19,7 +19,7 @@ public:
     void removeFavourite(const std::string& typeName, const std::string& identifier) override;
     bool isFavourite(const std::string& typeName, const std::string& identifier) override;
     std::set<std::string> getFavourites(const std::string& typeName) override;
-    sigc::signal<void>& getSignalForType(const std::string& typeName) override;
+    sigc::signal<void()>& getSignalForType(const std::string& typeName) override;
 
     // RegisterableModule implementation
     const std::string& getName() const override;

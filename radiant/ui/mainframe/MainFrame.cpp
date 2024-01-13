@@ -116,7 +116,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
 
-	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
+	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(*this, &MainFrame::exitCmd));
 
 #ifdef WIN32
 	HMODULE lib = LoadLibrary(L"dwmapi.dll");
@@ -135,7 +135,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 				RKEY_DISABLE_WIN_DESKTOP_COMP);
 
 			GlobalRegistry().signalForKey(RKEY_DISABLE_WIN_DESKTOP_COMP).connect(
-                sigc::mem_fun(this, &MainFrame::keyChanged)
+                sigc::mem_fun(*this, &MainFrame::keyChanged)
             );
 		}
 
@@ -147,11 +147,11 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 #endif
 
 	_mapNameChangedConn = GlobalMapModule().signal_mapNameChanged().connect(
-		sigc::mem_fun(this, &MainFrame::updateTitle)
+		sigc::mem_fun(*this, &MainFrame::updateTitle)
 	);
 
 	_mapModifiedChangedConn = GlobalMapModule().signal_modifiedChanged().connect(
-		sigc::mem_fun(this, &MainFrame::updateTitle)
+		sigc::mem_fun(*this, &MainFrame::updateTitle)
 	);
 
     // When the eclass defs are in progress of being loaded, block all updates
@@ -180,7 +180,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 
 	// Subscribe for the post-module init event
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
-		sigc::mem_fun(this, &MainFrame::postModuleInitialisation));
+		sigc::mem_fun(*this, &MainFrame::postModuleInitialisation));
 }
 
 void MainFrame::shutdownModule()
@@ -580,17 +580,17 @@ void MainFrame::toggleMainControl(const cmd::ArgumentList& args)
     _layout->toggleMainControl(args.at(0).getString());
 }
 
-sigc::signal<void>& MainFrame::signal_MainFrameConstructed()
+sigc::signal<void()>& MainFrame::signal_MainFrameConstructed()
 {
 	return _sigMainFrameConstructed;
 }
 
-sigc::signal<void>& MainFrame::signal_MainFrameReady()
+sigc::signal<void()>& MainFrame::signal_MainFrameReady()
 {
 	return _sigMainFrameReady;
 }
 
-sigc::signal<void>& MainFrame::signal_MainFrameShuttingDown()
+sigc::signal<void()>& MainFrame::signal_MainFrameShuttingDown()
 {
 	return _sigMainFrameShuttingDown;
 }

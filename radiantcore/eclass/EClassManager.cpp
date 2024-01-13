@@ -94,7 +94,7 @@ void EClassManager::initialiseModule(const IApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("ReloadDefs", std::bind(&EClassManager::reloadDefsCmd, this, std::placeholders::_1));
 
     _eclassColoursChanged = GlobalEclassColourManager().sig_overrideColourChanged().connect(
-        sigc::mem_fun(this, &EClassManager::onEclassOverrideColourChanged));
+        sigc::mem_fun(*this, &EClassManager::onEclassOverrideColourChanged));
 }
 
 void EClassManager::shutdownModule()

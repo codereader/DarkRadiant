@@ -321,7 +321,7 @@ void OpenGLRenderSystem::extensionsInitialised()
     _sigExtensionsInitialised();
 }
 
-sigc::signal<void> OpenGLRenderSystem::signal_extensionsInitialised()
+sigc::signal<void()> OpenGLRenderSystem::signal_extensionsInitialised()
 {
     return _sigExtensionsInitialised;
 }
@@ -399,10 +399,10 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
     // until the shared GL context has been created (this
     // happens as soon as the first GL widget has been realised).
     _sharedContextCreated = GlobalOpenGLContext().signal_sharedContextCreated()
-        .connect(sigc::mem_fun(this, &OpenGLRenderSystem::extensionsInitialised));
+        .connect(sigc::mem_fun(*this, &OpenGLRenderSystem::extensionsInitialised));
 
     _sharedContextDestroyed = GlobalOpenGLContext().signal_sharedContextDestroyed()
-        .connect(sigc::mem_fun(this, &OpenGLRenderSystem::unrealise));
+        .connect(sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
 
     GlobalCommandSystem().addCommand("ShowRenderMemoryStats",
         sigc::mem_fun(*this, &OpenGLRenderSystem::showMemoryStats));

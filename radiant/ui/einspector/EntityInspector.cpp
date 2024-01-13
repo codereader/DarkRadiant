@@ -123,13 +123,13 @@ void EntityInspector::construct()
 
     // Connect the signals
     _keyValueAddedHandler = _spawnargs->signal_KeyAdded().connect(
-        sigc::mem_fun(this, &EntityInspector::onKeyAdded)
+        sigc::mem_fun(*this, &EntityInspector::onKeyAdded)
     );
     _keyValueRemovedHandler = _spawnargs->signal_KeyRemoved().connect(
-        sigc::mem_fun(this, &EntityInspector::onKeyRemoved)
+        sigc::mem_fun(*this, &EntityInspector::onKeyRemoved)
     );
     _keyValueSetChangedHandler = _spawnargs->signal_KeyValueSetChanged().connect(
-        sigc::mem_fun(this, &EntityInspector::onKeyValueSetChanged)
+        sigc::mem_fun(*this, &EntityInspector::onKeyValueSetChanged)
     );
 
     _entitySelection = std::make_unique<selection::EntitySelection>(*_spawnargs);
@@ -459,11 +459,11 @@ void EntityInspector::connectListeners()
     GlobalSelectionSystem().addObserver(this);
 
     _defsReloadedHandler = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
-        sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
+        sigc::mem_fun(*this, &EntityInspector::onDefsReloaded)
     );
 
     _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
-        sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
+        sigc::mem_fun(*this, &EntityInspector::onMapEditModeChanged)
     );
 }
 

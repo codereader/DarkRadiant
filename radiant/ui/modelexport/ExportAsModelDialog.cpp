@@ -65,13 +65,13 @@ void ExportAsModelDialog::populateWindow()
 	auto exportButton = findNamedObject<wxButton>(this, "ExportDialogExportButton");
 	auto cancelButton = findNamedObject<wxButton>(this, "ExportDialogCancelButton");
 
-	exportButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &ExportAsModelDialog::onExport));
-	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &ExportAsModelDialog::onCancel));
+	exportButton->Bind(wxEVT_BUTTON, sigc::mem_fun(*this, &ExportAsModelDialog::onExport));
+	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(*this, &ExportAsModelDialog::onCancel));
 
 	auto formatChoice = findNamedObject<wxChoice>(this, "ExportDialogFormatChoice");
 	formatChoice->Clear();
 
-	formatChoice->Bind(wxEVT_CHOICE, sigc::mem_fun(this, &ExportAsModelDialog::onFormatSelection));
+	formatChoice->Bind(wxEVT_CHOICE, sigc::mem_fun(*this, &ExportAsModelDialog::onFormatSelection));
 
 	// Push the available formats to the wxChoice control
 	GlobalModelFormatManager().foreachExporter([&](const model::IModelExporterPtr& exporter)

@@ -39,7 +39,7 @@ public:
 	virtual void setTotalSecondsEdited(unsigned long newValue) = 0;
 
 	// Signal emitted when the timer value changes
-	virtual sigc::signal<void>& sig_TimerChanged() = 0;
+	virtual sigc::signal<void()>& sig_TimerChanged() = 0;
 };
 
 }

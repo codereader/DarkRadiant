@@ -134,7 +134,7 @@ void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
     registerPreferencePage();
 
     _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
-        sigc::mem_fun(this, &TextureBrowserManager::onShaderClipboardSourceChanged)
+        sigc::mem_fun(*this, &TextureBrowserManager::onShaderClipboardSourceChanged)
     );
 
     // Register the texture browser

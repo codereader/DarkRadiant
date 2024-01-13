@@ -2581,9 +2581,9 @@ void Patch::detachObserver(Observer* observer)
     _observers.erase(observer);
 }
 
-sigc::signal<void>& Patch::signal_patchTextureChanged()
+sigc::signal<void()>& Patch::signal_patchTextureChanged()
 {
-    static sigc::signal<void> _sigPatchTextureChanged;
+    static sigc::signal<void()> _sigPatchTextureChanged;
     return _sigPatchTextureChanged;
 }
 

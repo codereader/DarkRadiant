@@ -44,7 +44,7 @@ private:
     wxToolBarToolBase* _testModelTilesButton;
     wxToolBarToolBase* _swapBackgroundMaterialButton;
 
-    sigc::signal<void> _sigSceneChanged;
+    sigc::signal<void()> _sigSceneChanged;
 
 public:
     enum class TestModel
@@ -79,7 +79,7 @@ public:
     static std::string GetTestModelTypeName(TestModel type);
     static TestModel GetTestModelType(const std::string& typeName);
 
-    sigc::signal<void>& signal_SceneChanged();
+    sigc::signal<void()>& signal_SceneChanged();
 
 protected:
     bool canDrawGrid() override;

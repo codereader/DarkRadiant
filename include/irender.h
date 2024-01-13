@@ -688,7 +688,7 @@ public:
     virtual void setMergeModeEnabled(bool enabled) = 0;
 
 	// Subscription to get notified as soon as the openGL extensions have been initialised
-	virtual sigc::signal<void> signal_extensionsInitialised() = 0;
+	virtual sigc::signal<void()> signal_extensionsInitialised() = 0;
 };
 typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 typedef std::weak_ptr<RenderSystem> RenderSystemWeakPtr;

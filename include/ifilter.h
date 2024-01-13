@@ -95,10 +95,10 @@ public:
 
 	// Signal emitted when the state of filters has changed,
 	// filters have been added or removed, or when rules have been altered
-	virtual sigc::signal<void> filterConfigChangedSignal() const = 0;
+	virtual sigc::signal<void()> filterConfigChangedSignal() const = 0;
 
 	// Signal emitted when filters are added, removed or renamed
-	virtual sigc::signal<void> filterCollectionChangedSignal() const = 0;
+	virtual sigc::signal<void()> filterCollectionChangedSignal() const = 0;
 
 	/**
 	 * greebo: Updates all the "Filtered" status of all Instances

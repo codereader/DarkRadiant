@@ -157,7 +157,7 @@ Texturable& ShaderClipboard::getSource()
 	return _source;
 }
 
-sigc::signal<void>& ShaderClipboard::signal_sourceChanged()
+sigc::signal<void()>& ShaderClipboard::signal_sourceChanged()
 {
     return _signalSourceChanged;
 }
@@ -214,17 +214,17 @@ const StringSet& ShaderClipboard::getDependencies() const
 void ShaderClipboard::initialiseModule(const IApplicationContext& ctx)
 {
 	_postUndoConn = GlobalMapModule().signal_postUndo().connect(
-		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
+		sigc::mem_fun(*this, &ShaderClipboard::onUndoRedoOperation));
 	_postRedoConn = GlobalMapModule().signal_postRedo().connect(
-		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
+		sigc::mem_fun(*this, &ShaderClipboard::onUndoRedoOperation));
 
 	_mapEventConn = GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(this, &ShaderClipboard::onMapEvent));
+		sigc::mem_fun(*this, &ShaderClipboard::onMapEvent));
 
 	clear();
 
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
-        sigc::mem_fun(this, &ShaderClipboard::postModuleInitialisation)
+        sigc::mem_fun(*this, &ShaderClipboard::postModuleInitialisation)
     );
 }
 
@@ -242,7 +242,7 @@ void ShaderClipboard::postModuleInitialisation()
     {
         // Subscribe to clipboard changes to check for copied material names
         _clipboardContentsChangedConn = GlobalClipboard().signal_clipboardContentChanged().connect(
-            sigc::mem_fun(this, &ShaderClipboard::onSystemClipboardContentsChanged)
+            sigc::mem_fun(*this, &ShaderClipboard::onSystemClipboardContentsChanged)
         );
     }
 }

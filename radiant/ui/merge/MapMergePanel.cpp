@@ -139,16 +139,16 @@ void MapMergePanel::connectListeners()
     GlobalSelectionSystem().addObserver(this);
 
     _mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
-        sigc::mem_fun(this, &MapMergePanel::onMapEvent)
+        sigc::mem_fun(*this, &MapMergePanel::onMapEvent)
     );
     _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
         [this](auto editMode) { update(); }
     );
 
     _undoHandler = GlobalMapModule().signal_postUndo().connect(
-        sigc::mem_fun(this, &MapMergePanel::queueUpdate));
+        sigc::mem_fun(*this, &MapMergePanel::queueUpdate));
     _redoHandler = GlobalMapModule().signal_postRedo().connect(
-        sigc::mem_fun(this, &MapMergePanel::queueUpdate));
+        sigc::mem_fun(*this, &MapMergePanel::queueUpdate));
 }
 
 void MapMergePanel::disconnectListeners()

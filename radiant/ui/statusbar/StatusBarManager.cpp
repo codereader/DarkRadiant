@@ -51,7 +51,7 @@ const StringSet& StatusBarManager::getDependencies() const
 void StatusBarManager::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-        sigc::mem_fun(this, &StatusBarManager::onMainFrameShuttingDown));
+        sigc::mem_fun(*this, &StatusBarManager::onMainFrameShuttingDown));
 
     // Do a full re-paint when the mainframe is resized
     GlobalMainFrame().signal_MainFrameReady().connect([this]()

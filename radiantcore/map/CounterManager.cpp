@@ -47,7 +47,7 @@ ICounter& CounterManager::getCounter(CounterType counter)
 	return *_counters[counter];
 }
 
-sigc::signal<void>& CounterManager::signal_countersChanged()
+sigc::signal<void()>& CounterManager::signal_countersChanged()
 {
 	return _signalCountersChanged;
 }

@@ -136,7 +136,7 @@ private:
         IGeometryStore::Slot _vertexSlot;
         std::size_t _indexCapacity;
 
-        sigc::signal<void> _sigBoundsChanged;
+        sigc::signal<void()> _sigBoundsChanged;
     public:
         WindingGroup(WindingRenderer& owner, const IRenderEntity* entity, BucketIndex bucketIndex) :
             _owner(owner),
@@ -207,7 +207,7 @@ private:
             return _bounds;
         }
 
-        sigc::signal<void>& signal_boundsChanged() override 
+        sigc::signal<void()>& signal_boundsChanged() override 
         {
             return _sigBoundsChanged;
         }

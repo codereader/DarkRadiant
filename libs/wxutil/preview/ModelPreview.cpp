@@ -175,7 +175,7 @@ AABB ModelPreview::getSceneBounds()
     return _modelNode->localAABB();
 }
 
-sigc::signal<void, const model::ModelNodePtr&>& ModelPreview::signal_ModelLoaded()
+sigc::signal<void(const model::ModelNodePtr&)>& ModelPreview::signal_ModelLoaded()
 {
     return _modelLoadedSignal;
 }

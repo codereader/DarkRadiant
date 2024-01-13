@@ -139,7 +139,7 @@ public:
     virtual Type getClassType() = 0;
 
     /// Signal emitted when entity class contents are changed or reloaded
-    virtual sigc::signal<void>& changedSignal() = 0;
+    virtual sigc::signal<void()>& changedSignal() = 0;
 
     /// Get the parent entity class or NULL if there is no parent
     virtual IEntityClass* getParent() = 0;

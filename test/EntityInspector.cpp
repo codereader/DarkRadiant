@@ -48,13 +48,13 @@ public:
         _selectionTracker.reset(new selection::EntitySelection(*_spawnargs));
 
         _spawnargs->signal_KeyAdded().connect(
-            sigc::mem_fun(this, &KeyValueStore::onKeyAdded)
+            sigc::mem_fun(*this, &KeyValueStore::onKeyAdded)
         );
         _spawnargs->signal_KeyRemoved().connect(
-            sigc::mem_fun(this, &KeyValueStore::onKeyRemoved)
+            sigc::mem_fun(*this, &KeyValueStore::onKeyRemoved)
         );
         _spawnargs->signal_KeyValueSetChanged().connect(
-            sigc::mem_fun(this, &KeyValueStore::onKeyValueSetChanged)
+            sigc::mem_fun(*this, &KeyValueStore::onKeyValueSetChanged)
         );
     }
 

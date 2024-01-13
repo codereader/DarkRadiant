@@ -110,7 +110,7 @@ void RenderableParticle::setParticleDef(const IParticleDef::Ptr& def)
 	{
 		// Start monitoring this particle for reload events
 		_defConnection = _particleDef->signal_changed().connect(
-            sigc::mem_fun(this, &RenderableParticle::setupStages)
+            sigc::mem_fun(*this, &RenderableParticle::setupStages)
         );
 	}
 

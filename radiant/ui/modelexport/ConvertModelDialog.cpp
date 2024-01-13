@@ -66,7 +66,7 @@ void ConvertModelDialog::populateWindow()
 	wxChoice* formatChoice = findNamedObject<wxChoice>(this, "OutputFormatChoice");
 	formatChoice->Clear();
 
-	formatChoice->Bind(wxEVT_CHOICE, sigc::mem_fun(this, &ConvertModelDialog::onFormatSelection));
+	formatChoice->Bind(wxEVT_CHOICE, sigc::mem_fun(*this, &ConvertModelDialog::onFormatSelection));
 
 	// Push the available formats to the wxChoice control
 	GlobalModelFormatManager().foreachExporter([&](const model::IModelExporterPtr& exporter)

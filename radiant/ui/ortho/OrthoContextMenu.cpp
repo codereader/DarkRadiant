@@ -600,7 +600,7 @@ const StringSet& OrthoContextMenu::getDependencies() const
 void OrthoContextMenu::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalMainFrame().signal_MainFrameConstructed().connect(
-        sigc::mem_fun(this, &OrthoContextMenu::constructMenu)
+        sigc::mem_fun(*this, &OrthoContextMenu::constructMenu)
     );
 
     registerDefaultItems();

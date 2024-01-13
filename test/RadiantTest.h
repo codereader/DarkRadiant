@@ -91,12 +91,12 @@ protected:
 		_gameSetupListener = _coreModule->get()->getMessageBus().addListener(
 			radiant::IMessage::Type::GameConfigNeeded,
 			radiant::TypeListener<game::ConfigurationNeeded>(
-				sigc::mem_fun(this, &RadiantTest::handleGameConfigMessage)));
+				sigc::mem_fun(*this, &RadiantTest::handleGameConfigMessage)));
 
 		_notificationListener = _coreModule->get()->getMessageBus().addListener(
 			radiant::IMessage::Type::Notification,
 			radiant::TypeListener<radiant::NotificationMessage>(
-				sigc::mem_fun(this, &RadiantTest::handleNotification)));
+				sigc::mem_fun(*this, &RadiantTest::handleNotification)));
 
 		try
 		{

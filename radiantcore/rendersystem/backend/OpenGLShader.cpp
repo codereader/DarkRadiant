@@ -697,7 +697,7 @@ void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
     _material = material;
 
     _materialChanged = _material->sig_materialChanged().connect(
-        sigc::mem_fun(this, &OpenGLShader::onMaterialChanged));
+        sigc::mem_fun(*this, &OpenGLShader::onMaterialChanged));
 
     // Determine whether we can render this shader in lighting/bump-map mode,
     // and construct the appropriate shader passes

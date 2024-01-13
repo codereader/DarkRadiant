@@ -187,7 +187,7 @@ public:
     virtual std::size_t countSelected() = 0;
     virtual std::size_t countSelectedComponentNodes() = 0;
 
-    virtual sigc::signal<void>& signal_selectionChanged() = 0;
+    virtual sigc::signal<void()>& signal_selectionChanged() = 0;
 
     virtual void clearSelection() = 0;
     virtual void clearComponentSelection() = 0;

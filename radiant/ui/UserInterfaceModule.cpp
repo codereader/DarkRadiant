@@ -213,7 +213,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_execFailedListener = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::IMessage::Type::CommandExecutionFailed,
 		radiant::TypeListener<radiant::CommandExecutionFailedMessage>(
-			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
+			sigc::mem_fun(*this, &UserInterfaceModule::handleCommandExecutionFailure)));
 
 	_notificationListener = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::IMessage::Type::Notification,

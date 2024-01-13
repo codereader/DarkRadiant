@@ -171,7 +171,7 @@ public:
 
     // A signal that is emitted when the VFS has been initialised, i.e. the paths have been
     // set, the archives/directories are known and can be traversed
-    virtual sigc::signal<void>& signal_Initialised() = 0;
+    virtual sigc::signal<void()>& signal_Initialised() = 0;
 
 	// Returns the number of files in the VFS matching the given filename
 	virtual int getFileCount(const std::string& filename) = 0;

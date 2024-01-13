@@ -28,13 +28,13 @@ void SceneManipulationPivot::initialise()
     _defaultPivotLocationIgnoresLightVolumes = registry::getValue<bool>(RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
     GlobalRegistry().signalForKey(RKEY_ENTITY_PIVOT_IS_ORIGIN).connect(
-        sigc::mem_fun(this, &SceneManipulationPivot::onRegistryKeyChanged)
+        sigc::mem_fun(*this, &SceneManipulationPivot::onRegistryKeyChanged)
     );
     GlobalRegistry().signalForKey(RKEY_SNAP_ROTATION_PIVOT_TO_GRID).connect(
-        sigc::mem_fun(this, &SceneManipulationPivot::onRegistryKeyChanged)
+        sigc::mem_fun(*this, &SceneManipulationPivot::onRegistryKeyChanged)
     );
     GlobalRegistry().signalForKey(RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES).connect(
-        sigc::mem_fun(this, &SceneManipulationPivot::onRegistryKeyChanged)
+        sigc::mem_fun(*this, &SceneManipulationPivot::onRegistryKeyChanged)
     );
 }
 

@@ -53,7 +53,7 @@ void EclassModelNode::construct()
     observeKey("angle", sigc::mem_fun(_rotationKey, &RotationKey::angleChanged));
 	observeKey("rotation", sigc::mem_fun(_rotationKey, &RotationKey::rotationChanged));
     observeKey("origin", sigc::mem_fun(_originKey, &OriginKey::onKeyValueChanged));
-    observeKey("noshadows_lit", sigc::mem_fun(this, &EclassModelNode::onNoshadowsLitChanged));
+    observeKey("noshadows_lit", sigc::mem_fun(*this, &EclassModelNode::onNoshadowsLitChanged));
 }
 
 // Snappable implementation

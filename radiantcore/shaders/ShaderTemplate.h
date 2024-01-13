@@ -38,7 +38,7 @@ private:
 	// Temporary current layer (used by the parsing functions)
 	Doom3ShaderLayer::Ptr _currentLayer;
 
-    sigc::signal<void> _sigTemplateChanged;
+    sigc::signal<void()> _sigTemplateChanged;
     bool _suppressChangeSignal;
 
 public:
@@ -571,7 +571,7 @@ public:
         onTemplateChanged();
     }
 
-    sigc::signal<void>& sig_TemplateChanged()
+    sigc::signal<void()>& sig_TemplateChanged()
     {
         return _sigTemplateChanged;
     }

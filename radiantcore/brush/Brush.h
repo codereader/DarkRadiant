@@ -302,7 +302,7 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection);
 
 	// Signal for external code to get notified each time any face of any brush changes
-	static sigc::signal<void>& signal_faceShaderChanged();
+	static sigc::signal<void()>& signal_faceShaderChanged();
 
     const std::vector<Vector3>& getVertices(selection::ComponentSelectionMode mode) const;
 

@@ -31,7 +31,7 @@ class RenderableGeometry: public OpenGLRenderable
         RenderableGeometry& _owner;
         AABB _bounds;
         bool _boundsNeedRecalculation;
-        sigc::signal<void> _sigBoundsChanged;
+        sigc::signal<void()> _sigBoundsChanged;
 
     public:
         RenderAdapter(RenderableGeometry& owner) :
@@ -74,7 +74,7 @@ class RenderableGeometry: public OpenGLRenderable
             signal_boundsChanged().emit();
         }
 
-        sigc::signal<void>& signal_boundsChanged() override
+        sigc::signal<void()>& signal_boundsChanged() override
         {
             return _sigBoundsChanged;
         }

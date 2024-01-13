@@ -23,11 +23,11 @@ MaterialTreeView::MaterialTreeView(wxWindow* parent) :
     GetTreeModel()->SetHasDefaultCompare(false);
 
     _materialCreated = GlobalMaterialManager().signal_materialCreated().connect(
-        sigc::mem_fun(this, &MaterialTreeView::onMaterialCreated));
+        sigc::mem_fun(*this, &MaterialTreeView::onMaterialCreated));
     _materialRenamed = GlobalMaterialManager().signal_materialRenamed().connect(
-        sigc::mem_fun(this, &MaterialTreeView::onMaterialRenamed));
+        sigc::mem_fun(*this, &MaterialTreeView::onMaterialRenamed));
     _materialRemoved = GlobalMaterialManager().signal_materialRemoved().connect(
-        sigc::mem_fun(this, &MaterialTreeView::onMaterialRemoved));
+        sigc::mem_fun(*this, &MaterialTreeView::onMaterialRemoved));
 }
 
 MaterialTreeView::~MaterialTreeView()

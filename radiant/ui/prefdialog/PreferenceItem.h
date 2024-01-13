@@ -18,11 +18,11 @@ protected:
 	wxWindow* _parent;
 	std::string _registryKey;
 	registry::Buffer& _buffer;
-	sigc::signal<void>& _resetSignal;
+	sigc::signal<void()>& _resetSignal;
 
 public:
 	PreferenceItem(wxWindow* parent, const std::string& registryKey, 
-				   registry::Buffer& buffer, sigc::signal<void>& resetSignal) :
+				   registry::Buffer& buffer, sigc::signal<void()>& resetSignal) :
 		_parent(parent),
 		_registryKey(registryKey),
 		_buffer(buffer),

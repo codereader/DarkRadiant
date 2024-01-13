@@ -58,7 +58,7 @@ class OpenGLRenderSystem final
 	// Render time
 	std::size_t _time;
 
-	sigc::signal<void> _sigExtensionsInitialised;
+	sigc::signal<void()> _sigExtensionsInitialised;
 
 	sigc::connection _materialDefsLoaded;
 	sigc::connection _sharedContextCreated;
@@ -105,7 +105,7 @@ public:
     void setShaderProgram(ShaderProgram prog) override;
 
 	void extensionsInitialised() override;
-	sigc::signal<void> signal_extensionsInitialised() override;
+	sigc::signal<void()> signal_extensionsInitialised() override;
 	bool shaderProgramsAvailable() const override;
 
 	typedef std::set<Renderable*> Renderables;

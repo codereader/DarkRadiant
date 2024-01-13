@@ -481,7 +481,7 @@ const StringSet& XYWndManager::getDependencies() const
 void XYWndManager::observeKey(const std::string& key)
 {
     GlobalRegistry().signalForKey(key).connect(
-        sigc::mem_fun(this, &XYWndManager::refreshFromRegistry)
+        sigc::mem_fun(*this, &XYWndManager::refreshFromRegistry)
     );
 }
 

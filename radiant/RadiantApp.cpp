@@ -282,7 +282,7 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	// Register to the modules unloading event, we need to get notified
 	// before the DLLs/SOs are relased to give wxWidgets a chance to clean up
 	_modulesUnloadingHandler = _coreModule->get()->getModuleRegistry().signal_modulesUnloading()
-		.connect(sigc::mem_fun(this, &RadiantApp::onModulesUnloading));
+		.connect(sigc::mem_fun(*this, &RadiantApp::onModulesUnloading));
 
 	try
 	{

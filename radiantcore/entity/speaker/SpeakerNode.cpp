@@ -56,9 +56,9 @@ void SpeakerNode::construct()
 
     // Observe speaker-related spawnargs
     static_assert(std::is_base_of<sigc::trackable, SpeakerNode>::value);
-	observeKey(KEY_S_SHADER, sigc::mem_fun(this, &SpeakerNode::sShaderChanged));
-	observeKey(KEY_S_MINDISTANCE, sigc::mem_fun(this, &SpeakerNode::sMinChanged));
-	observeKey(KEY_S_MAXDISTANCE, sigc::mem_fun(this, &SpeakerNode::sMaxChanged));
+	observeKey(KEY_S_SHADER, sigc::mem_fun(*this, &SpeakerNode::sShaderChanged));
+	observeKey(KEY_S_MINDISTANCE, sigc::mem_fun(*this, &SpeakerNode::sMinChanged));
+	observeKey(KEY_S_MAXDISTANCE, sigc::mem_fun(*this, &SpeakerNode::sMaxChanged));
 }
 
 SpeakerNode::~SpeakerNode()

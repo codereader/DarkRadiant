@@ -56,7 +56,7 @@ camera::ICameraView& CameraManager::getActiveView()
 	return *_cameras.front();
 }
 
-sigc::signal<void>& CameraManager::signal_cameraChanged()
+sigc::signal<void()>& CameraManager::signal_cameraChanged()
 {
 	return _sigCameraChanged;
 }

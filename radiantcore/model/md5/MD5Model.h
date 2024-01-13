@@ -48,9 +48,9 @@ private:
 	// The current state of our animated skeleton
 	MD5Skeleton _skeleton;
 
-    sigc::signal<void> _sigModelAnimationUpdated;
+    sigc::signal<void()> _sigModelAnimationUpdated;
 
-    sigc::signal<void> _sigShadersUpdated;
+    sigc::signal<void()> _sigShadersUpdated;
 
 public:
 	MD5Model();
@@ -91,7 +91,7 @@ public:
 	virtual void applySkin(const decl::ISkin::Ptr& skin) override;
 
     // Signal emitted after the captured shaders have been changed (or cleared)
-    sigc::signal<void>& signal_ShadersChanged();
+    sigc::signal<void()>& signal_ShadersChanged();
 
 	/** Return the number of material surfaces on this model. Each material
 	 * surface consists of a set of polygons sharing the same material.
@@ -126,7 +126,7 @@ public:
 	 */
 	static Vector3 parseVector3(parser::DefTokeniser& tok);
 
-    sigc::signal<void>& signal_ModelAnimationUpdated();
+    sigc::signal<void()>& signal_ModelAnimationUpdated();
 
 private:
 

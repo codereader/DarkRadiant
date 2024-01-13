@@ -33,7 +33,7 @@ private:
 
     std::set<std::string> _fileExtensions;
 
-    sigc::signal<void> _signalTreePopulated;
+    sigc::signal<void()> _signalTreePopulated;
 
 public:
     class SelectionChangedEvent :
@@ -91,7 +91,7 @@ public:
     // Expands the given path, which is relative to the base path (e.g. "maps/")
     void ExpandPath(const std::string& relativePath);
 
-    sigc::signal<void>& signal_TreePopulated();
+    sigc::signal<void()>& signal_TreePopulated();
 
 private:
     TreeModel::Ptr CreateDefaultModel();

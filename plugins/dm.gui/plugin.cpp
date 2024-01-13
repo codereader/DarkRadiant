@@ -63,7 +63,7 @@ public:
 		GlobalCommandSystem().addCommand("ReloadReadables", ui::ReadableReloader::run);
 
 		GlobalMainFrame().signal_MainFrameConstructed().connect(
-            sigc::mem_fun(this, &GuiModule::onMainFrameConstructed)
+            sigc::mem_fun(*this, &GuiModule::onMainFrameConstructed)
         );
 
 		// Create the Readable Editor Preferences

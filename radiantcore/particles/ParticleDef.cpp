@@ -5,7 +5,7 @@
 namespace particles
 {
 
-sigc::signal<void>& ParticleDef::signal_changed()
+sigc::signal<void()>& ParticleDef::signal_changed()
 { 
 	return _changedSignal;
 }
@@ -79,7 +79,7 @@ void ParticleDef::appendStage(const StageDef::Ptr& stage)
     // Add to list and connect the incoming stage's changed signal
     _stages.emplace_back(std::make_pair(
         stage,
-        stage->signal_changed().connect(sigc::mem_fun(this, &ParticleDef::onParticleChanged)))
+        stage->signal_changed().connect(sigc::mem_fun(*this, &ParticleDef::onParticleChanged)))
     );
 
     // This method is only used internally, no signal emission

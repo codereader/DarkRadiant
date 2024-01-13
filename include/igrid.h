@@ -96,7 +96,7 @@ public:
 	virtual GridLook getMinorLook() const = 0;
 
     /// Signal emitted when the grid is changed
-	virtual sigc::signal<void> signal_gridChanged() const = 0;
+	virtual sigc::signal<void()> signal_gridChanged() const = 0;
 };
 
 // This is the accessor for the grid module

@@ -121,7 +121,7 @@ void ModelCache::clear()
 	_enabled = true;
 }
 
-sigc::signal<void> ModelCache::signal_modelsReloaded()
+sigc::signal<void()> ModelCache::signal_modelsReloaded()
 {
 	return _sigModelsReloaded;
 }

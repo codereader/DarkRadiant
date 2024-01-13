@@ -18,7 +18,7 @@ class MergeOperationBase :
 private:
     std::list<IMergeAction::Ptr> _actions;
 
-    sigc::signal<void, const IMergeAction::Ptr&> _sigActionAdded;
+    sigc::signal<void(const IMergeAction::Ptr&)> _sigActionAdded;
 
 public:
     // Executes all active actions defined in this operation
@@ -26,7 +26,7 @@ public:
     virtual bool hasActions() override;
     virtual void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) override;
     virtual void addAction(const IMergeAction::Ptr& action) override;
-    virtual sigc::signal<void, const IMergeAction::Ptr&>& sig_ActionAdded() override;
+    virtual sigc::signal<void(const IMergeAction::Ptr&)>& sig_ActionAdded() override;
 
 protected:
     void clearActions();

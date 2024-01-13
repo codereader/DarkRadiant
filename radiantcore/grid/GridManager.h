@@ -20,12 +20,12 @@ private:
 	// The currently active grid size
 	GridSize _activeGridSize;
 
-	sigc::signal<void> _sigGridChanged;
+	sigc::signal<void()> _sigGridChanged;
 
 public:
 	GridManager();
 
-	sigc::signal<void> signal_gridChanged() const override;
+	sigc::signal<void()> signal_gridChanged() const override;
 
 	void gridUp() override;
 	void gridDown() override;

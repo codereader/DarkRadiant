@@ -59,7 +59,7 @@ void EditingStopwatch::initialiseModule(const IApplicationContext& ctx)
 	);
 
 	GlobalMapResourceManager().signal_onResourceExporting().connect(
-		sigc::mem_fun(this, &EditingStopwatch::onResourceExporting)
+		sigc::mem_fun(*this, &EditingStopwatch::onResourceExporting)
 	);
 
 	_timer.reset(new util::Timer(TIMER_INTERVAL_SECS * 1000,
@@ -166,7 +166,7 @@ void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 	_sigTimerChanged.emit();
 }
 
-sigc::signal<void>& EditingStopwatch::sig_TimerChanged()
+sigc::signal<void()>& EditingStopwatch::sig_TimerChanged()
 {
 	return _sigTimerChanged;
 }

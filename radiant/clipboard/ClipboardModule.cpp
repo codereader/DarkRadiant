@@ -57,7 +57,7 @@ void ClipboardModule::setString(const std::string& str)
 	}
 }
 
-sigc::signal<void>& ClipboardModule::signal_clipboardContentChanged()
+sigc::signal<void()>& ClipboardModule::signal_clipboardContentChanged()
 {
     return _sigContentsChanged;
 }

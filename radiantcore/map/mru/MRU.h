@@ -27,7 +27,7 @@ private:
 	// The list of filenames (encapsulated in the helper class MRUList)
 	std::unique_ptr<MRUList> _list;
 
-	sigc::signal<void> _signalMapListChanged;
+	sigc::signal<void()> _signalMapListChanged;
 
 public:
 	std::size_t getMaxNumberOfItems() const override;
@@ -41,7 +41,7 @@ public:
 	// Returns the filename of the last opened map, or "" if there doesn't exist one
 	std::string getLastMapName() override;
 
-	sigc::signal<void>& signal_MapListChanged() override;
+	sigc::signal<void()>& signal_MapListChanged() override;
 
 	// Saves the current list into the Registry.
 	void saveRecentFiles();

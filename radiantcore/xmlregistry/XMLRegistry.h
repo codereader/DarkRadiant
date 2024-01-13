@@ -40,7 +40,7 @@ class XMLRegistry :
 private:
 	// The map of registry key signals. There is one signal per key, but a
 	// signal can of course be connected to multiple slots.
-	typedef std::map<const std::string, sigc::signal<void> > KeySignals;
+	typedef std::map<const std::string, sigc::signal<void()> > KeySignals;
 	mutable KeySignals _keySignals;
 
 	// The "install" tree, is basically treated as read-only
@@ -122,7 +122,7 @@ public:
 	 */
 	void exportToFile(const std::string& key, const std::string& filename) override;
 
-	sigc::signal<void> signalForKey(const std::string& key) const override;
+	sigc::signal<void()> signalForKey(const std::string& key) const override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

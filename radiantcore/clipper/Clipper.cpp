@@ -270,10 +270,10 @@ void Clipper::initialiseModule(const IApplicationContext& ctx)
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
 
 	GlobalRegistry().signalForKey(RKEY_CLIPPER_USE_CAULK).connect(
-        sigc::mem_fun(this, &Clipper::keyChanged)
+        sigc::mem_fun(*this, &Clipper::keyChanged)
     );
 	GlobalRegistry().signalForKey(RKEY_CLIPPER_CAULK_SHADER).connect(
-        sigc::mem_fun(this, &Clipper::keyChanged)
+        sigc::mem_fun(*this, &Clipper::keyChanged)
     );
 
 	constructPreferences();

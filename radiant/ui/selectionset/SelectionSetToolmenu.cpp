@@ -133,7 +133,7 @@ void SelectionSetToolmenu::connectToMapRoot()
 		auto& setManager = GlobalMapModule().getRoot()->getSelectionSetManager();
 
 		_setsChangedSignal = setManager.signal_selectionSetsChanged().connect(
-			sigc::mem_fun(this, &SelectionSetToolmenu::update));
+			sigc::mem_fun(*this, &SelectionSetToolmenu::update));
 	}
 }
 

@@ -37,12 +37,12 @@ void SharedOpenGLContextModule::setSharedContext(const IGLContext::Ptr& context)
 	}
 }
 
-sigc::signal<void>& SharedOpenGLContextModule::signal_sharedContextCreated()
+sigc::signal<void()>& SharedOpenGLContextModule::signal_sharedContextCreated()
 {
 	return _sigSharedContextCreated;
 }
 
-sigc::signal<void>& SharedOpenGLContextModule::signal_sharedContextDestroyed()
+sigc::signal<void()>& SharedOpenGLContextModule::signal_sharedContextDestroyed()
 {
 	return _sigSharedContextDestroyed;
 }

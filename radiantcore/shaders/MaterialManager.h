@@ -26,7 +26,7 @@ class MaterialManager :
 	GLTextureManagerPtr _textureManager;
 
 	// Active shaders list changed signal
-    sigc::signal<void> _signalActiveShadersChanged;
+    sigc::signal<void()> _signalActiveShadersChanged;
 
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
@@ -91,7 +91,7 @@ public:
     void reloadImages() override;
 
 public:
-    sigc::signal<void> signal_activeShadersChanged() const override;
+    sigc::signal<void()> signal_activeShadersChanged() const override;
 
 	// RegisterableModule implementation
     const std::string& getName() const override;

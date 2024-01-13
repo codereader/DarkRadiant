@@ -146,7 +146,7 @@ void GridManager::constructPreferences()
 }
 
 
-sigc::signal<void> GridManager::signal_gridChanged() const
+sigc::signal<void()> GridManager::signal_gridChanged() const
 {
 	return _sigGridChanged;
 }

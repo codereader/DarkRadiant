@@ -76,7 +76,7 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     _unselectListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::UnselectSelectionRequest,
         radiant::TypeListener<selection::UnselectSelectionRequest>(
-            sigc::mem_fun(this, &TextureToolSelectionSystem::handleUnselectRequest)));
+            sigc::mem_fun(*this, &TextureToolSelectionSystem::handleUnselectRequest)));
 }
 
 void TextureToolSelectionSystem::shutdownModule()
@@ -241,7 +241,7 @@ std::size_t TextureToolSelectionSystem::countSelectedComponentNodes()
     return count;
 }
 
-sigc::signal<void>& TextureToolSelectionSystem::signal_selectionChanged()
+sigc::signal<void()>& TextureToolSelectionSystem::signal_selectionChanged()
 {
     return _sigSelectionChanged;
 }

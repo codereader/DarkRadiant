@@ -11,7 +11,7 @@ class CameraManager :
 	public ICameraViewManager
 {
 private:
-	sigc::signal<void> _sigCameraChanged;
+	sigc::signal<void()> _sigCameraChanged;
 
 	// We keep track of created cameras to be able to
 	// issue focusCamera calls to them
@@ -32,7 +32,7 @@ public:
 
 	ICameraView& getActiveView() override;
 
-	sigc::signal<void>& signal_cameraChanged() override;
+	sigc::signal<void()>& signal_cameraChanged() override;
 
 	void onCameraViewChanged();
 

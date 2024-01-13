@@ -98,7 +98,7 @@ void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 		_root->traverse(instanceWalker);
 
         _undoEventHandler = _root->getUndoSystem().signal_undoEvent().connect(
-            sigc::mem_fun(this, &SceneGraph::onUndoEvent)
+            sigc::mem_fun(*this, &SceneGraph::onUndoEvent)
         );
 	}
 }
@@ -134,7 +134,7 @@ void SceneGraph::boundsChanged()
     _sigBoundsChanged();
 }
 
-sigc::signal<void> SceneGraph::signal_boundsChanged() const
+sigc::signal<void()> SceneGraph::signal_boundsChanged() const
 {
     return _sigBoundsChanged;
 }

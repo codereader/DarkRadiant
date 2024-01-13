@@ -25,7 +25,7 @@ class ThreadedDefLoader
 {
 public:
     using LoadFunction = std::function<ReturnType()>;
-    using FinishedSignal = sigc::signal<void>;
+    using FinishedSignal = sigc::signal<void()>;
 
 private:
     LoadFunction _loadFunc;

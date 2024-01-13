@@ -64,8 +64,8 @@ TexTool::TexTool(wxWindow* parent) :
 
     registry::observeBooleanKey(
         textool::RKEY_GRID_STATE,
-        sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), true),
-        sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), false)
+        sigc::bind(sigc::mem_fun(*this, &TexTool::setGridActive), true),
+        sigc::bind(sigc::mem_fun(*this, &TexTool::setGridActive), false)
     );
 
     _freezePointer.connectMouseEvents(
@@ -221,46 +221,46 @@ void TexTool::connectListeners()
     _manipulatorModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::ManipulatorModeToggleRequest,
         radiant::TypeListener<selection::ManipulatorModeToggleRequest>(
-            sigc::mem_fun(this, &TexTool::handleManipulatorModeToggleRequest)));
+            sigc::mem_fun(*this, &TexTool::handleManipulatorModeToggleRequest)));
 
     _componentSelectionModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::ComponentSelectionModeToggleRequest,
         radiant::TypeListener<selection::ComponentSelectionModeToggleRequest>(
-            sigc::mem_fun(this, &TexTool::handleComponentSelectionModeToggleRequest)));
+            sigc::mem_fun(*this, &TexTool::handleComponentSelectionModeToggleRequest)));
 
     // Get notified about texture changes
     _textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
-            sigc::mem_fun(this, &TexTool::handleTextureChanged)));
+            sigc::mem_fun(*this, &TexTool::handleTextureChanged)));
     
     // Intercept the grid snap message
     _gridSnapHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::GridSnapRequest,
         radiant::TypeListener<selection::GridSnapRequest>(
-            sigc::mem_fun(this, &TexTool::handleGridSnapRequest)));
+            sigc::mem_fun(*this, &TexTool::handleGridSnapRequest)));
 
     _texToolRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::TextureToolRequest,
         radiant::TypeListener<TextureToolRequest>(
-            sigc::mem_fun(this, &TexTool::handleTextureToolRequest)));
+            sigc::mem_fun(*this, &TexTool::handleTextureToolRequest)));
 
 	_undoHandler = GlobalMapModule().signal_postUndo().connect(
-		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
+		sigc::mem_fun(*this, &TexTool::onUndoRedoOperation));
 	_redoHandler = GlobalMapModule().signal_postRedo().connect(
-		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
+		sigc::mem_fun(*this, &TexTool::onUndoRedoOperation));
 
     _manipulatorChanged = GlobalTextureToolSelectionSystem().signal_activeManipulatorChanged().connect(
-        sigc::mem_fun(this, &TexTool::onManipulatorModeChanged)
+        sigc::mem_fun(*this, &TexTool::onManipulatorModeChanged)
     );
     _selectionModeChanged = GlobalTextureToolSelectionSystem().signal_selectionModeChanged().connect(
-        sigc::mem_fun(this, &TexTool::onSelectionModeChanged)
+        sigc::mem_fun(*this, &TexTool::onSelectionModeChanged)
     );
     _selectionChanged = GlobalTextureToolSelectionSystem().signal_selectionChanged().connect(
-        sigc::mem_fun(this, &TexTool::onSelectionChanged)
+        sigc::mem_fun(*this, &TexTool::onSelectionChanged)
     );
 
-    _gridChanged = GlobalGrid().signal_gridChanged().connect(sigc::mem_fun(this, &TexTool::queueDraw));
+    _gridChanged = GlobalGrid().signal_gridChanged().connect(sigc::mem_fun(*this, &TexTool::queueDraw));
 }
 
 bool TexTool::textureToolHasFocus()

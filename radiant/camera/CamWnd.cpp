@@ -135,12 +135,12 @@ void CamWnd::connectEventHandlers()
     GlobalSceneGraph().addSceneObserver(this);
 
     _glExtensionsInitialisedNotifier = GlobalRenderSystem().signal_extensionsInitialised().connect(
-        sigc::mem_fun(this, &CamWnd::onGLExtensionsInitialised));
+        sigc::mem_fun(*this, &CamWnd::onGLExtensionsInitialised));
 
     _textureChangedHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
-            sigc::mem_fun(this, &CamWnd::handleTextureChanged)));
+            sigc::mem_fun(*this, &CamWnd::handleTextureChanged)));
 
     const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
     auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
@@ -148,7 +148,7 @@ void CamWnd::connectEventHandlers()
 
     // Refresh the camera view when shadows are enabled/disabled
     _shadowMappingKeyChangedHandler = registry::connect(
-        RKEY_ENABLE_SHADOW_MAPPING, sigc::mem_fun(this, &CamWnd::queueDraw)
+        RKEY_ENABLE_SHADOW_MAPPING, sigc::mem_fun(*this, &CamWnd::queueDraw)
     );
 }
 
@@ -210,7 +210,7 @@ void CamWnd::constructToolbar()
     // Listen for render-mode changes, and set the correct active button to
     // start with.
     getCameraSettings()->signalRenderModeChanged().connect(
-        sigc::mem_fun(this, &CamWnd::updateActiveRenderModeButton)
+        sigc::mem_fun(*this, &CamWnd::updateActiveRenderModeButton)
     );
     updateActiveRenderModeButton();
 
@@ -262,7 +262,7 @@ void CamWnd::constructToolbar()
     // Handle hiding or showing the toolbar (Preferences/Settings/Camera page)
     updateToolbarVisibility();
     registry::connect(
-        RKEY_SHOW_CAMERA_TOOLBAR, sigc::mem_fun(this, &CamWnd::updateToolbarVisibility)
+        RKEY_SHOW_CAMERA_TOOLBAR, sigc::mem_fun(*this, &CamWnd::updateToolbarVisibility)
     );
 }
 

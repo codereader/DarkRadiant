@@ -61,7 +61,7 @@ private:
     render::RenderableWinding _windingSurfaceSolid;
     render::RenderableWinding _windingSurfaceWireframe;
 
-    sigc::signal<void> _sigDestroyed;
+    sigc::signal<void()> _sigDestroyed;
 
 public:
 
@@ -84,7 +84,7 @@ public:
 
     Brush& getBrushInternal();
 
-    sigc::signal<void>& signal_faceDestroyed() override;
+    sigc::signal<void()>& signal_faceDestroyed() override;
 
 	void planeChanged();
 
@@ -219,7 +219,7 @@ public:
 	void updateFaceVisibility();
 
 	// Signal for external code to get notified each time the texdef of any face changes
-	static sigc::signal<void>& signal_texdefChanged();
+	static sigc::signal<void()>& signal_texdefChanged();
 
 private:
 	void realiseShader();

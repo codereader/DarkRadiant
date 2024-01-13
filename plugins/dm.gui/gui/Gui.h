@@ -32,7 +32,7 @@ private:
 	typedef std::unordered_map<std::string, std::string> GuiState;
 	GuiState _state;
 
-	typedef std::unordered_map<std::string, sigc::signal<void>> GuiStateChangedSignals;
+	typedef std::unordered_map<std::string, sigc::signal<void()>> GuiStateChangedSignals;
 	GuiStateChangedSignals _stateSignals;
 
 public:
@@ -43,7 +43,7 @@ public:
 	void setStateString(const std::string& key, const std::string& value) override;
 
 	// Allocate and/or return the changed signal for the given key
-	sigc::signal<void>& getChangedSignalForState(const std::string& key) override;
+	sigc::signal<void()>& getChangedSignalForState(const std::string& key) override;
 
 	// Returns the state string "gui::<key>" or an empty string if non-existent
 	std::string getStateString(const std::string& key) override;

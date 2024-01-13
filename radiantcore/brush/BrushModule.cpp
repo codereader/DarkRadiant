@@ -115,7 +115,7 @@ void BrushModuleImpl::initialiseModule(const IApplicationContext& ctx) {
 	_textureLockEnabled = registry::getValue<bool>(RKEY_ENABLE_TEXTURE_LOCK);
 
 	GlobalRegistry().signalForKey(RKEY_ENABLE_TEXTURE_LOCK).connect(
-		sigc::mem_fun(this, &BrushModuleImpl::keyChanged)
+		sigc::mem_fun(*this, &BrushModuleImpl::keyChanged)
 	);
 
 	// add the preference settings

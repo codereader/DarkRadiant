@@ -135,7 +135,7 @@ SurfaceInspector::SurfaceInspector(wxWindow* parent) :
 
 	// Be notified upon key changes
 	GlobalRegistry().signalForKey(RKEY_DEFAULT_TEXTURE_SCALE).connect(
-        sigc::mem_fun(this, &SurfaceInspector::keyChanged)
+        sigc::mem_fun(*this, &SurfaceInspector::keyChanged)
     );
 
 	// Get the relevant Events from the Manager and connect the widgets
@@ -177,15 +177,15 @@ void SurfaceInspector::connectEventHandlers()
         [this](const ISelectable&) { doUpdate(); });
 
     _undoHandler = GlobalMapModule().signal_postUndo().connect(
-        sigc::mem_fun(this, &SurfaceInspector::doUpdate));
+        sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
     _redoHandler = GlobalMapModule().signal_postRedo().connect(
-        sigc::mem_fun(this, &SurfaceInspector::doUpdate));
+        sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
 
     // Get notified about texture changes
     _textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
-            sigc::mem_fun(this, &SurfaceInspector::handleTextureChangedMessage)));
+            sigc::mem_fun(*this, &SurfaceInspector::handleTextureChangedMessage)));
 }
 
 void SurfaceInspector::disconnectEventHandlers()
@@ -790,7 +790,7 @@ void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
 	auto* chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular, _shaderEntry);
 
     chooser->signal_shaderChanged().connect(
-        sigc::mem_fun(this, &SurfaceInspector::emitShader)
+        sigc::mem_fun(*this, &SurfaceInspector::emitShader)
     );
 
     if (chooser->ShowModal() == wxID_OK && _shaderEntry->GetValue().ToStdString() != previousShader)

@@ -547,7 +547,7 @@ void GameConnection::setCameraSyncEnabled(bool enable)
 
             _cameraChangedSignal.disconnect();
             _cameraChangedSignal = GlobalCameraManager().signal_cameraChanged().connect(
-                sigc::mem_fun(this, &GameConnection::updateCamera)
+                sigc::mem_fun(*this, &GameConnection::updateCamera)
             );
 
             //sync camera location right now
@@ -899,7 +899,7 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
 
     // Toolbar button(s)
     GlobalMainFrame().signal_MainFrameConstructed().connect(
-        sigc::mem_fun(this, &GameConnection::addToolbarItems)
+        sigc::mem_fun(*this, &GameConnection::addToolbarItems)
     );
 }
 

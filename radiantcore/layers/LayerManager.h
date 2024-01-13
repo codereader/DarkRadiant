@@ -27,10 +27,10 @@ private:
 	// The ID of the active layer
 	int _activeLayer;
 
-	sigc::signal<void> _layersChangedSignal;
-	sigc::signal<void> _layerVisibilityChangedSignal;
-	sigc::signal<void> _layerHierarchyChangedSignal;
-	sigc::signal<void> _nodeMembershipChangedSignal;
+	sigc::signal<void()> _layersChangedSignal;
+	sigc::signal<void()> _layerVisibilityChangedSignal;
+	sigc::signal<void()> _layerHierarchyChangedSignal;
+	sigc::signal<void()> _nodeMembershipChangedSignal;
 
 public:
 	LayerManager(INode& rootNode);
@@ -116,10 +116,10 @@ public:
     void setParentLayer(int childLayerId, int parentLayerId) override;
     bool layerIsChildOf(int candidateLayerId, int parentLayerId) override;
 
-	sigc::signal<void> signal_layersChanged() override;
-	sigc::signal<void> signal_layerVisibilityChanged() override;
-	sigc::signal<void> signal_layerHierarchyChanged() override;
-	sigc::signal<void> signal_nodeMembershipChanged() override;
+	sigc::signal<void()> signal_layersChanged() override;
+	sigc::signal<void()> signal_layerVisibilityChanged() override;
+	sigc::signal<void()> signal_layerHierarchyChanged() override;
+	sigc::signal<void()> signal_nodeMembershipChanged() override;
 
 private:
     // Recursively sets the visibility of the given layer and updates

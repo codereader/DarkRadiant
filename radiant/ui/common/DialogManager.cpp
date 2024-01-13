@@ -43,7 +43,7 @@ const StringSet& DialogManager::getDependencies() const
 void DialogManager::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-        sigc::mem_fun(this, &DialogManager::clear));
+        sigc::mem_fun(*this, &DialogManager::clear));
 }
 
 void DialogManager::clear()

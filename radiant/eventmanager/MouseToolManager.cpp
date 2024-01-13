@@ -74,7 +74,7 @@ const StringSet& MouseToolManager::getDependencies() const
 void MouseToolManager::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalMainFrame().signal_MainFrameConstructed().connect(
-        sigc::mem_fun(this, &MouseToolManager::onMainFrameConstructed));
+        sigc::mem_fun(*this, &MouseToolManager::onMainFrameConstructed));
 }
 
 void MouseToolManager::loadGroupMapping(MouseToolGroup::Type type)

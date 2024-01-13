@@ -23,7 +23,7 @@ namespace particles
 constexpr const char* const PARTICLES_DIR = "particles/";
 constexpr const char* const PARTICLES_EXT = ".prt";
 
-sigc::signal<void>& ParticlesManager::signal_particlesReloaded()
+sigc::signal<void()>& ParticlesManager::signal_particlesReloaded()
 {
     return _particlesReloadedSignal;
 }

@@ -74,7 +74,7 @@ public:
 	/**
 	 * Is emitted when the shader source changes.
 	 */
-	virtual sigc::signal<void>& signal_sourceChanged() = 0;
+	virtual sigc::signal<void()>& signal_sourceChanged() = 0;
 };
 
 } // namespace

@@ -19,7 +19,7 @@ private:
 
 	bool _updatesDisabled;
 
-    sigc::signal<void> _signalSourceChanged;
+    sigc::signal<void()> _signalSourceChanged;
 
 	sigc::connection _postUndoConn;
 	sigc::connection _postRedoConn;
@@ -50,7 +50,7 @@ public:
     /**
      * Is emitted when the shader source changes.
      */
-    sigc::signal<void>& signal_sourceChanged() override;
+    sigc::signal<void()>& signal_sourceChanged() override;
 
 	// IShaderClipboard implementation
 

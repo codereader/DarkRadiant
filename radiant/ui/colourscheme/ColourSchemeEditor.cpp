@@ -368,9 +368,9 @@ void ColourSchemeEditor::DisplayDialog(const cmd::ArgumentList& args)
 	 editor->Destroy();
 }
 
-sigc::signal<void>& ColourSchemeEditor::signal_ColoursChanged()
+sigc::signal<void()>& ColourSchemeEditor::signal_ColoursChanged()
 {
-	static sigc::signal<void> _signal;
+	static sigc::signal<void()> _signal;
 	return _signal;
 }
 

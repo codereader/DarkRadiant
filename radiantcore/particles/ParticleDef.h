@@ -29,7 +29,7 @@ class ParticleDef :
     std::vector<std::pair<IStageDef::Ptr, sigc::connection>> _stages;
 
     // Changed signal
-    sigc::signal<void> _changedSignal;
+    sigc::signal<void()> _changedSignal;
     bool _blockChangedSignal;
 
 public:
@@ -57,7 +57,7 @@ public:
 	}
 
     // IParticleDef implementation
-    sigc::signal<void>& signal_changed() override;
+    sigc::signal<void()>& signal_changed() override;
 
     float getDepthHack() override;
     void setDepthHack(float value) override;

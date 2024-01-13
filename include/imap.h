@@ -171,7 +171,7 @@ public:
 	/**
 	 * Signal fired when the name of this map is changing.
 	 */
-	virtual sigc::signal<void>& signal_mapNameChanged() = 0;
+	virtual sigc::signal<void()>& signal_mapNameChanged() = 0;
 
 	// Returns true if the map has unsaved changes.
 	virtual bool isModified() const = 0;
@@ -182,13 +182,13 @@ public:
 	/**
 	 * Signal fired when the modified status of this map has changed.
 	 */
-	virtual sigc::signal<void>& signal_modifiedChanged() = 0;
+	virtual sigc::signal<void()>& signal_modifiedChanged() = 0;
 
     // Signal emitted when an operation affecting the map has been undone
-    virtual sigc::signal<void>& signal_postUndo() = 0;
+    virtual sigc::signal<void()>& signal_postUndo() = 0;
 
     // Signal emitted when an operation affecting the map has been redone
-    virtual sigc::signal<void>& signal_postRedo() = 0;
+    virtual sigc::signal<void()>& signal_postRedo() = 0;
 
     // Accessor to the undo system of the main scene. 
     // Throws std::runtime_error if no map resource has been loaded.

@@ -50,7 +50,7 @@ public:
      * Signal emitted when the list of selection sets has been changed, by
      * deletion or addition.
      */
-    virtual sigc::signal<void> signal_selectionSetsChanged() const = 0;
+    virtual sigc::signal<void()> signal_selectionSetsChanged() const = 0;
 
 	class Visitor
 	{

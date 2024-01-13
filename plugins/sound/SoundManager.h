@@ -19,7 +19,7 @@ private:
 	// The helper class for playing the sounds
 	std::unique_ptr<SoundPlayer> _soundPlayer;
 
-    sigc::signal<void> _sigSoundShadersReloaded;
+    sigc::signal<void()> _sigSoundShadersReloaded;
 
 public:
 	SoundManager();

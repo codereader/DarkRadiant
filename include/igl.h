@@ -36,10 +36,10 @@ public:
     virtual void setSharedContext(const IGLContext::Ptr& context) = 0;
 
     // Fired right after the shared context instance has been registered
-    virtual sigc::signal<void>& signal_sharedContextCreated() = 0;
+    virtual sigc::signal<void()>& signal_sharedContextCreated() = 0;
 
     // Fired when the shared context instance has been destroyed
-    virtual sigc::signal<void>& signal_sharedContextDestroyed() = 0;
+    virtual sigc::signal<void()>& signal_sharedContextDestroyed() = 0;
 };
 
 }

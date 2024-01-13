@@ -323,7 +323,7 @@ const StringSet& AutoMapSaver::getDependencies() const
 void AutoMapSaver::initialiseModule(const IApplicationContext& ctx)
 {
 	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
-		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+		sigc::mem_fun(*this, &AutoMapSaver::registryKeyChanged)
 	));
 
 	// Get notified when the map is loaded afresh

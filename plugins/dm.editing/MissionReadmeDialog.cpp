@@ -84,8 +84,8 @@ void MissionReadmeDialog::populateWindow()
 	wxButton* saveButton = findNamedObject<wxButton>(this, "MissionInfoReadmeDialogSaveButton");
 	wxButton* cancelButton = findNamedObject<wxButton>(this, "MissionInfoReadmeDialogCancelButton");
 
-	saveButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionReadmeDialog::onSave));
-	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionReadmeDialog::onCancel));
+	saveButton->Bind(wxEVT_BUTTON, sigc::mem_fun(*this, &MissionReadmeDialog::onSave));
+	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(*this, &MissionReadmeDialog::onCancel));
 
 	// Wire up the text entry boxes to update the preview
 	setupNamedEntryBox("MissionInfoReadmeContentsEntry");

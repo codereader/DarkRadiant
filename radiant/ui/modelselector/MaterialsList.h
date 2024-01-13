@@ -28,7 +28,7 @@ private:
     // Render system to update
     RenderSystemPtr _renderSystem;
 
-    sigc::signal<void> _visibilityChangedSignal;
+    sigc::signal<void()> _visibilityChangedSignal;
 
     wxutil::PopupMenuPtr _contextMenu;
 
@@ -62,7 +62,7 @@ public:
      * This indicates that a redraw will be needed based on the new material
      * visibility.
      */
-    sigc::signal<void>& signal_visibilityChanged()
+    sigc::signal<void()>& signal_visibilityChanged()
     {
         return _visibilityChangedSignal;
     }

@@ -318,7 +318,7 @@ void Map::setMapName(const std::string& newName)
     }
 }
 
-sigc::signal<void>& Map::signal_mapNameChanged()
+sigc::signal<void()>& Map::signal_mapNameChanged()
 {
     return _mapNameChangedSignal;
 }
@@ -510,17 +510,17 @@ void Map::setModified(bool modifiedFlag)
     _mapSaveTimer.restart();
 }
 
-sigc::signal<void>& Map::signal_modifiedChanged()
+sigc::signal<void()>& Map::signal_modifiedChanged()
 {
     return _mapModifiedChangedSignal;
 }
 
-sigc::signal<void>& Map::signal_postUndo()
+sigc::signal<void()>& Map::signal_postUndo()
 {
     return _mapPostUndoSignal;
 }
 
-sigc::signal<void>& Map::signal_postRedo()
+sigc::signal<void()>& Map::signal_postRedo()
 {
     return _mapPostRedoSignal;
 }
@@ -1295,7 +1295,7 @@ void Map::createMergeActions()
         }
     });
 
-    _mergeOperationListener = _mergeOperation->sig_ActionAdded().connect(sigc::mem_fun(this, &Map::onMergeActionAdded));
+    _mergeOperationListener = _mergeOperation->sig_ActionAdded().connect(sigc::mem_fun(*this, &Map::onMergeActionAdded));
 
     UndoableCommand cmd("createMergeOperation");
 
@@ -1547,13 +1547,13 @@ void Map::initialiseModule(const IApplicationContext& ctx)
 
     // Free the map right before all modules are shut down
     module::GlobalModuleRegistry().signal_modulesUninitialising().connect(
-        sigc::mem_fun(this, &Map::freeMap)
+        sigc::mem_fun(*this, &Map::freeMap)
     );
 
     _shutdownListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::ApplicationShutdownRequest,
         radiant::TypeListener<radiant::ApplicationShutdownRequest>(
-            sigc::mem_fun(this, &Map::handleShutdownRequest)));
+            sigc::mem_fun(*this, &Map::handleShutdownRequest)));
 }
 
 void Map::shutdownModule()

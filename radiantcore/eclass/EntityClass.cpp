@@ -55,7 +55,7 @@ vfs::Visibility EntityClass::getVisibility()
         vfs::Visibility::HIDDEN : _visibility.get();
 }
 
-sigc::signal<void>& EntityClass::changedSignal()
+sigc::signal<void()>& EntityClass::changedSignal()
 {
     return _changedSignal;
 }
@@ -330,7 +330,7 @@ void EntityClass::resolveInheritance()
         // we only have a single connection to the parent's changed signal.
         _parentChangedConnection.disconnect();
         _parentChangedConnection = _parent->changedSignal().connect(
-            sigc::mem_fun(this, &EntityClass::resetColour)
+            sigc::mem_fun(*this, &EntityClass::resetColour)
         );
     }
 }

@@ -67,7 +67,7 @@ public:
         };
 
         GlobalCommandSystem().addCommand("SwitchTextureToolColourScheme",
-            sigc::mem_fun(this, &ColourSchemeManager::setColourScheme), { cmd::ARGTYPE_STRING });
+            sigc::mem_fun(*this, &ColourSchemeManager::setColourScheme), { cmd::ARGTYPE_STRING });
     }
 
     ColourScheme getActiveScheme() const override

@@ -47,7 +47,7 @@ Overlay::Overlay()
 void Overlay::observeKey(const std::string& key)
 {
     GlobalRegistry().signalForKey(key).connect(
-        sigc::mem_fun(this, &Overlay::keyChanged)
+        sigc::mem_fun(*this, &Overlay::keyChanged)
     );
 }
 

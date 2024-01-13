@@ -19,7 +19,7 @@ private:
 	// Flag to disable the cache on demand (used during clear())
 	bool _enabled;
 
-	sigc::signal<void> _sigModelsReloaded;
+	sigc::signal<void()> _sigModelsReloaded;
 
 public:
 	ModelCache();
@@ -40,7 +40,7 @@ public:
 	void refreshSelectedModels(bool blockScreenUpdates = true) override;
 
 	// Public events
-	sigc::signal<void> signal_modelsReloaded() override;
+	sigc::signal<void()> signal_modelsReloaded() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

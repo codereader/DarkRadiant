@@ -43,7 +43,7 @@ public:
 
     // Returns the changed signal for the given type - will be fired when the set changes
     // Requesting a signal for an empty typename will trigger a std::invalid_argument exception
-    virtual sigc::signal<void>& getSignalForType(const std::string& typeName) = 0;
+    virtual sigc::signal<void()>& getSignalForType(const std::string& typeName) = 0;
 };
 
 }

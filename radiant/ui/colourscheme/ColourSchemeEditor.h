@@ -41,7 +41,7 @@ public:
 	int ShowModal();
 
 	// Signal for client code to get notified on colour changes
-	static sigc::signal<void>& signal_ColoursChanged();
+	static sigc::signal<void()>& signal_ColoursChanged();
 
 private:
 	// private helper functions

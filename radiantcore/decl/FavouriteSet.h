@@ -14,7 +14,7 @@ private:
     std::string _typeName;
     std::set<std::string> _set;
 
-    sigc::signal<void> _sigSetChanged;
+    sigc::signal<void()> _sigSetChanged;
 
 public:
     FavouriteSet() :
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    sigc::signal<void>& signal_setChanged()
+    sigc::signal<void()>& signal_setChanged()
     {
         return _sigSetChanged;
     }

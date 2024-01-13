@@ -86,7 +86,7 @@ void TargetKeyCollection::onKeyErase(const std::string& key, EntityKeyValue& val
     _owner.onTargetKeyCollectionChanged();
 }
 
-sigc::signal<void>& TargetKeyCollection::signal_TargetPositionChanged()
+sigc::signal<void()>& TargetKeyCollection::signal_TargetPositionChanged()
 {
     return _sigTargetPositionChanged;
 }

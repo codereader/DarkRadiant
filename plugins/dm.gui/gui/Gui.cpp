@@ -54,7 +54,7 @@ void Gui::setStateString(const std::string& key, const std::string& value)
 	}
 }
 
-sigc::signal<void>& Gui::getChangedSignalForState(const std::string& key)
+sigc::signal<void()>& Gui::getChangedSignalForState(const std::string& key)
 {
 	GuiStateChangedSignals::iterator i = _stateSignals.find(key);
 
@@ -65,7 +65,7 @@ sigc::signal<void>& Gui::getChangedSignalForState(const std::string& key)
 
 	// Insert a new signal
 	std::pair<GuiStateChangedSignals::iterator, bool> result =
-		_stateSignals.insert(std::make_pair(key, sigc::signal<void>()));
+		_stateSignals.insert(std::make_pair(key, sigc::signal<void()>()));
 
 	return result.first->second;
 }

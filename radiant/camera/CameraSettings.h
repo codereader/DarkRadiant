@@ -73,7 +73,7 @@ class CameraSettings: public sigc::trackable
 	int _gridSpacing;
 
     // Signals
-    sigc::signal<void> _sigRenderModeChanged;
+    sigc::signal<void()> _sigRenderModeChanged;
 
 private:
     void observeKey(const std::string& key);
@@ -120,7 +120,7 @@ public:
     /* SIGNALS */
 
     /// Emitted when the render mode is changed, e.g. by the F3 key.
-    sigc::signal<void> signalRenderModeChanged()
+    sigc::signal<void()> signalRenderModeChanged()
     {
         return _sigRenderModeChanged;
     }

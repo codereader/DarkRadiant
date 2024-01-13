@@ -31,7 +31,7 @@ protected:
 	AABB _bounds;
 
 	Callback _boundsChanged;
-    sigc::signal<void> _sigCurveChanged;
+    sigc::signal<void()> _sigCurveChanged;
 
 public:
 	Curve(const IEntityNode& entity, const Callback& boundsChanged);
@@ -43,7 +43,7 @@ public:
 	const AABB& getBounds() const;
 
     /// Signal emitted when curve changes
-    sigc::signal<void>& signal_curveChanged()
+    sigc::signal<void()>& signal_curveChanged()
     {
         return _sigCurveChanged;
     }

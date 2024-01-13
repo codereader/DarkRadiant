@@ -12,7 +12,7 @@ TargetLineNode::TargetLineNode(EntityNode& owner) :
     _targetLines(_owner, _owner.getTargetKeys())
 {
     _owner.getTargetKeys().signal_TargetPositionChanged().connect(
-        sigc::mem_fun(this, &TargetLineNode::queueRenderableUpdate)
+        sigc::mem_fun(*this, &TargetLineNode::queueRenderableUpdate)
     );
 }
 
@@ -22,7 +22,7 @@ TargetLineNode::TargetLineNode(TargetLineNode& other) :
     _targetLines(_owner, _owner.getTargetKeys())
 {
     _owner.getTargetKeys().signal_TargetPositionChanged().connect(
-        sigc::mem_fun(this, &TargetLineNode::queueRenderableUpdate)
+        sigc::mem_fun(*this, &TargetLineNode::queueRenderableUpdate)
     );
 }
 

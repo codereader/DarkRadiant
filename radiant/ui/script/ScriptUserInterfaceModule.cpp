@@ -56,11 +56,11 @@ public:
 
 		// Subscribe to get notified as soon as Radiant is fully initialised
 		GlobalMainFrame().signal_MainFrameConstructed().connect(
-			sigc::mem_fun(this, &ScriptUserInterfaceModule::onMainFrameConstructed)
+			sigc::mem_fun(*this, &ScriptUserInterfaceModule::onMainFrameConstructed)
 		);
 
 		_scriptsReloadedConn = GlobalScriptingSystem().signal_onScriptsReloaded()
-			.connect(sigc::mem_fun(this, &ScriptUserInterfaceModule::onScriptsReloaded));
+			.connect(sigc::mem_fun(*this, &ScriptUserInterfaceModule::onScriptsReloaded));
 
         GlobalUserInterface().registerControl(std::make_shared<ScriptPanel>());
 	}

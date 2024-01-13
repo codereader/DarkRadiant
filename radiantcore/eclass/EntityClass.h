@@ -63,7 +63,7 @@ private:
     bool _inheritanceResolved = false;
 
     // Emitted when contents are reloaded
-    sigc::signal<void> _changedSignal;
+    sigc::signal<void()> _changedSignal;
     bool _blockChangeSignal = false;
     sigc::connection _parentChangedConnection;
 
@@ -102,7 +102,7 @@ public:
     // IEntityClass implementation
     IEntityClass* getParent() override;
     vfs::Visibility getVisibility() override;
-    sigc::signal<void>& changedSignal() override;
+    sigc::signal<void()>& changedSignal() override;
     bool isFixedSize() override;
     AABB getBounds() override;
     bool isLight() override;

@@ -457,22 +457,22 @@ bool LayerManager::layerIsChildOf(int candidateLayerId, int parentLayerId)
     return false;
 }
 
-sigc::signal<void> LayerManager::signal_layersChanged()
+sigc::signal<void()> LayerManager::signal_layersChanged()
 {
 	return _layersChangedSignal;
 }
 
-sigc::signal<void> LayerManager::signal_layerVisibilityChanged()
+sigc::signal<void()> LayerManager::signal_layerVisibilityChanged()
 {
 	return _layerVisibilityChangedSignal;
 }
 
-sigc::signal<void> LayerManager::signal_layerHierarchyChanged()
+sigc::signal<void()> LayerManager::signal_layerHierarchyChanged()
 {
 	return _layerHierarchyChangedSignal;
 }
 
-sigc::signal<void> LayerManager::signal_nodeMembershipChanged()
+sigc::signal<void()> LayerManager::signal_nodeMembershipChanged()
 {
 	return _nodeMembershipChangedSignal;
 }

@@ -98,10 +98,10 @@ const StringSet& OpenGLModule::getDependencies() const
 void OpenGLModule::initialiseModule(const IApplicationContext& ctx)
 {
 	_contextCreated = GlobalOpenGLContext().signal_sharedContextCreated().connect(
-		sigc::mem_fun(this, &OpenGLModule::sharedContextCreated));
+		sigc::mem_fun(*this, &OpenGLModule::sharedContextCreated));
 
 	_contextDestroyed = GlobalOpenGLContext().signal_sharedContextDestroyed().connect(
-		sigc::mem_fun(this, &OpenGLModule::sharedContextDestroyed));
+		sigc::mem_fun(*this, &OpenGLModule::sharedContextDestroyed));
 }
 
 void OpenGLModule::shutdownModule()

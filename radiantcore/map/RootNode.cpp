@@ -31,7 +31,7 @@ RootNode::RootNode(const std::string& name) :
     assert(_undoSystem);
 
     _undoEventHandler = _undoSystem->signal_undoEvent().connect(
-        sigc::mem_fun(this, &RootNode::onUndoEvent)
+        sigc::mem_fun(*this, &RootNode::onUndoEvent)
     );
 }
 

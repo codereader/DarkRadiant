@@ -45,8 +45,8 @@ void SpacePartitionRenderer::initialiseModule(const IApplicationContext& ctx)
 {
     registry::observeBooleanKey(
         RKEY_RENDER_SPACE_PARTITION,
-        sigc::mem_fun(this, &SpacePartitionRenderer::installRenderer),
-        sigc::mem_fun(this, &SpacePartitionRenderer::uninstallRenderer)
+        sigc::mem_fun(*this, &SpacePartitionRenderer::installRenderer),
+        sigc::mem_fun(*this, &SpacePartitionRenderer::uninstallRenderer)
     );
 
 	if (registry::getValue<bool>(RKEY_RENDER_SPACE_PARTITION))

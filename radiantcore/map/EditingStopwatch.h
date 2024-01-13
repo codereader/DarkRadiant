@@ -28,7 +28,7 @@ private:
 	// Helper object to get called per second
 	std::unique_ptr<util::Timer> _timer;
 
-	sigc::signal<void> _sigTimerChanged;
+	sigc::signal<void()> _sigTimerChanged;
 
 	std::recursive_mutex _timingMutex;
 
@@ -46,7 +46,7 @@ public:
 	unsigned long getTotalSecondsEdited() override;
 	void setTotalSecondsEdited(unsigned long newValue) override;
 
-	sigc::signal<void>& sig_TimerChanged() override;
+	sigc::signal<void()>& sig_TimerChanged() override;
 
 private:
 	bool applicationIsActive();

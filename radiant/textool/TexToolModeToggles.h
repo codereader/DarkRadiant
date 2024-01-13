@@ -20,10 +20,10 @@ public:
     TexToolModeToggles()
     {
         _activeManipulatorChanged = GlobalTextureToolSelectionSystem().signal_activeManipulatorChanged()
-            .connect(sigc::mem_fun(this, &TexToolModeToggles::onActiveManipulatorChanged));
+            .connect(sigc::mem_fun(*this, &TexToolModeToggles::onActiveManipulatorChanged));
 
         _activeSelectionModeChanged = GlobalTextureToolSelectionSystem().signal_selectionModeChanged()
-            .connect(sigc::mem_fun(this, &TexToolModeToggles::onSelectionModeChanged));
+            .connect(sigc::mem_fun(*this, &TexToolModeToggles::onSelectionModeChanged));
 
         // Manipulator mode toggles
         GlobalEventManager().addToggle("TextureToolRotateMode", [this](bool)

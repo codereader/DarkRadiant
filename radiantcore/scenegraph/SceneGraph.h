@@ -28,7 +28,7 @@ private:
 	typedef std::list<Graph::Observer*> ObserverList;
 	ObserverList _sceneObservers;
 
-    sigc::signal<void> _sigBoundsChanged;
+    sigc::signal<void()> _sigBoundsChanged;
 
 	// The root-element, the scenegraph starts here
     IMapRootNodePtr _root;
@@ -78,7 +78,7 @@ public:
     void boundsChanged() override;
 
     /// Return the boundsChanged signal
-    sigc::signal<void> signal_boundsChanged() const override;
+    sigc::signal<void()> signal_boundsChanged() const override;
 
     void insert(const INodePtr& node) override;
     void erase(const INodePtr& node) override;

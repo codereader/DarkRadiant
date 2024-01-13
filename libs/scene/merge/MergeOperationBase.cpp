@@ -14,7 +14,7 @@ void MergeOperationBase::addAction(const IMergeAction::Ptr& action)
     _sigActionAdded.emit(action);
 }
 
-sigc::signal<void, const IMergeAction::Ptr&>& MergeOperationBase::sig_ActionAdded()
+sigc::signal<void(const IMergeAction::Ptr&)>& MergeOperationBase::sig_ActionAdded()
 {
     return _sigActionAdded;
 }

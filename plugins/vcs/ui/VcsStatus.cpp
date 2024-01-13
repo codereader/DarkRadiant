@@ -55,18 +55,18 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     _panel->Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
 
     GlobalRegistry().signalForKey(RKEY_AUTO_FETCH_ENABLED).connect(
-        sigc::mem_fun(this, &VcsStatus::restartFetchTimer)
+        sigc::mem_fun(*this, &VcsStatus::restartFetchTimer)
     );
     GlobalRegistry().signalForKey(RKEY_AUTO_FETCH_INTERVAL).connect(
-        sigc::mem_fun(this, &VcsStatus::restartFetchTimer)
+        sigc::mem_fun(*this, &VcsStatus::restartFetchTimer)
     );
 
     GlobalMapModule().signal_modifiedChanged().connect(
-        sigc::mem_fun(this, &VcsStatus::updateMapFileStatus)
+        sigc::mem_fun(*this, &VcsStatus::updateMapFileStatus)
     );
 
     GlobalMapModule().signal_mapEvent().connect(
-        sigc::mem_fun(this, &VcsStatus::onMapEvent)
+        sigc::mem_fun(*this, &VcsStatus::onMapEvent)
     );
 
     createPopupMenu();

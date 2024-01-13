@@ -26,7 +26,7 @@ private:
 
 	// A signal chain all registry key-bound widgets are connected with
 	// when emitted, the widgets reload the values from the registry.
-	sigc::signal<void> _resetValuesSignal;
+	sigc::signal<void()> _resetValuesSignal;
 
 	// The table this page is adding the widgets to
 	wxFlexGridSizer* _table;

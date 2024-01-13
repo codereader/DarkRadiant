@@ -44,10 +44,10 @@ private:
 	// The name of the last "save copy as" filename
 	std::string _lastCopyMapName;
 
-	sigc::signal<void> _mapNameChangedSignal;
-	sigc::signal<void> _mapModifiedChangedSignal;
-    sigc::signal<void> _mapPostUndoSignal;
-    sigc::signal<void> _mapPostRedoSignal;
+	sigc::signal<void()> _mapNameChangedSignal;
+	sigc::signal<void()> _mapModifiedChangedSignal;
+    sigc::signal<void()> _mapPostUndoSignal;
+    sigc::signal<void()> _mapPostRedoSignal;
 	sigc::signal<void, EditMode> _mapEditModeChangedSignal;
 
 	// Pointer to the resource for this map
@@ -112,7 +112,7 @@ public:
 	bool isUnnamed() const override;
 	void setMapName(const std::string& newName);
 	std::string getMapName() const override;
-	sigc::signal<void>& signal_mapNameChanged() override;
+	sigc::signal<void()>& signal_mapNameChanged() override;
     void forEachPointfile(PointfileFunctor func) const override;
     void showPointFile(const fs::path& filePath) override;
     bool isPointTraceVisible() const override;
@@ -193,9 +193,9 @@ public:
 	// Sets the modified status of this map
 	void setModified(bool modifiedFlag) override;
 
-	sigc::signal<void>& signal_modifiedChanged() override;
-    sigc::signal<void>& signal_postUndo() override;
-    sigc::signal<void>& signal_postRedo() override;
+	sigc::signal<void()>& signal_modifiedChanged() override;
+    sigc::signal<void()>& signal_postUndo() override;
+    sigc::signal<void()>& signal_postRedo() override;
 
     IUndoSystem& getUndoSystem() override;
 

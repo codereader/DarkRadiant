@@ -34,7 +34,7 @@ public:
         updateCachedValue();
 
         GlobalRegistry().signalForKey(key).connect(
-            sigc::mem_fun(this, &CachedKey<T>::updateCachedValue)
+            sigc::mem_fun(*this, &CachedKey<T>::updateCachedValue)
         );
     }
 

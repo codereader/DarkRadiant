@@ -130,8 +130,8 @@ void MissionInfoEditDialog::populateWindow()
 	wxButton* saveButton = findNamedObject<wxButton>(this, "MissionInfoEditDialogSaveButton");
 	wxButton* cancelButton = findNamedObject<wxButton>(this, "MissionInfoEditDialogCancelButton");
 
-	saveButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionInfoEditDialog::onSave));
-	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionInfoEditDialog::onCancel));
+	saveButton->Bind(wxEVT_BUTTON, sigc::mem_fun(*this, &MissionInfoEditDialog::onSave));
+	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(*this, &MissionInfoEditDialog::onCancel));
 	
 	// Popup Menu
 	_missionTitlesContextMenu.reset(new wxutil::PopupMenu);
@@ -155,7 +155,7 @@ void MissionInfoEditDialog::populateWindow()
 
 	// Setup the event for the readme.txt button
 	wxButton* editReadmeButton = findNamedObject<wxButton>(this, "MissionInfoEditDialogEditReadmeButton");
-	editReadmeButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionInfoEditDialog::onEditReadme));
+	editReadmeButton->Bind(wxEVT_BUTTON, sigc::mem_fun(*this, &MissionInfoEditDialog::onEditReadme));
 
 	Layout();
 	Fit();

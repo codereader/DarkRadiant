@@ -179,12 +179,12 @@ void StaticModel::captureShaders()
     _sigShadersChanged.emit();
 }
 
-sigc::signal<void>& StaticModel::signal_ShadersChanged()
+sigc::signal<void()>& StaticModel::signal_ShadersChanged()
 {
     return _sigShadersChanged;
 }
 
-sigc::signal<void>& StaticModel::signal_SurfaceScaleApplied()
+sigc::signal<void()>& StaticModel::signal_SurfaceScaleApplied()
 {
     return _sigSurfaceScaleApplied;
 }

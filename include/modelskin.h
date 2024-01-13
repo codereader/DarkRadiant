@@ -148,7 +148,7 @@ public:
 	virtual void refresh() = 0;
 
 	/// Signal emitted after skins are reloaded
-	virtual sigc::signal<void> signal_skinsReloaded() = 0;
+	virtual sigc::signal<void()> signal_skinsReloaded() = 0;
 };
 
 } // namespace

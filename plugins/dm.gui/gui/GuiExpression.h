@@ -16,7 +16,7 @@ typedef std::shared_ptr<GuiExpression> GuiExpressionPtr;
 class GuiExpression
 {
 protected:
-	sigc::signal<void> _sigValueChanged;
+	sigc::signal<void()> _sigValueChanged;
 
 public:
 	GuiExpression();
@@ -25,7 +25,7 @@ public:
 	virtual std::string getStringValue() = 0;
 
 	// Sub-expressions or clients can subscribe to get notified about changes
-	sigc::signal<void>& signal_valueChanged()
+	sigc::signal<void()>& signal_valueChanged()
 	{
 		return _sigValueChanged;
 	}
@@ -86,7 +86,7 @@ class TypedExpression :
 private:
 	GuiExpressionPtr _contained;
 
-	sigc::signal<void> _sigValueChanged;
+	sigc::signal<void()> _sigValueChanged;
 
 public:
 	TypedExpression(const GuiExpressionPtr& contained) :
@@ -110,7 +110,7 @@ public:
 		return string::convert<ValueType>(_contained->getStringValue());
 	}
 
-	sigc::signal<void>& signal_valueChanged() override
+	sigc::signal<void()>& signal_valueChanged() override
 	{
 		return _sigValueChanged;
 	}
@@ -125,7 +125,7 @@ class TypedExpression<bool> :
 private:
 	GuiExpressionPtr _contained;
 
-	sigc::signal<void> _sigValueChanged;
+	sigc::signal<void()> _sigValueChanged;
 
 public:
 	TypedExpression(const GuiExpressionPtr& contained) :
@@ -147,7 +147,7 @@ public:
 		return _contained->getFloatValue() != 0.0f;
 	}
 
-	sigc::signal<void>& signal_valueChanged() override
+	sigc::signal<void()>& signal_valueChanged() override
 	{
 		return _sigValueChanged;
 	}
@@ -161,7 +161,7 @@ class Vector4Expression :
 private:
 	std::vector<GuiExpressionPtr> _vec;
 
-	sigc::signal<void> _sigValueChanged;
+	sigc::signal<void()> _sigValueChanged;
 
 public:
 	Vector4Expression(const GuiExpressionPtr& x, const GuiExpressionPtr& y, 
@@ -190,7 +190,7 @@ public:
 			_vec[2]->getFloatValue(), _vec[3]->getFloatValue());
 	}
 
-	sigc::signal<void>& signal_valueChanged() override
+	sigc::signal<void()>& signal_valueChanged() override
 	{
 		return _sigValueChanged;
 	}

@@ -113,7 +113,7 @@ void XMLRegistry::exportToFile(const std::string& key, const std::string& filena
     _userTree.exportToFile(key, filename);
 }
 
-sigc::signal<void> XMLRegistry::signalForKey(const std::string& key) const
+sigc::signal<void()> XMLRegistry::signalForKey(const std::string& key) const
 {
     return _keySignals[key]; // will return existing or default-construct
 }
@@ -324,10 +324,10 @@ void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
 
     // Subscribe to the post-module-shutdown signal to save changes to disk
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(
-        sigc::mem_fun(this, &XMLRegistry::shutdown));
+        sigc::mem_fun(*this, &XMLRegistry::shutdown));
 
     _autosaveTimer.reset(new util::Timer(2000,
-        sigc::mem_fun(this, &XMLRegistry::onAutoSaveTimerIntervalReached)));
+        sigc::mem_fun(*this, &XMLRegistry::onAutoSaveTimerIntervalReached)));
 
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect([this]()
     {

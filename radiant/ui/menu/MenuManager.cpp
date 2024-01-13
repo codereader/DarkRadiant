@@ -268,7 +268,7 @@ void MenuManager::initialiseModule(const IApplicationContext& ctx)
     loadFromRegistry();
 
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-        sigc::mem_fun(this, &MenuManager::clear)
+        sigc::mem_fun(*this, &MenuManager::clear)
     );
 }
 

@@ -73,7 +73,7 @@ inline void bindWidget(wxToggleButton* toggleButton, const std::string& key)
 // ------------- Variants supporting registry::Buffer ---------------------
 
 inline void bindWidgetToBufferedKey(wxCheckBox* checkbox, const std::string& key,
-							 Buffer& buffer, sigc::signal<void>& resetSignal)
+							 Buffer& buffer, sigc::signal<void()>& resetSignal)
 {
 	// Set initial value then connect to changed signal
 	checkbox->SetValue(registry::getValue<std::string>(key) == "1");
@@ -88,7 +88,7 @@ inline void bindWidgetToBufferedKey(wxCheckBox* checkbox, const std::string& key
 }
 
 inline void bindWidgetToBufferedKey(wxSlider* slider, const std::string& key,
-							 Buffer& buffer, sigc::signal<void>& resetSignal, int factor)
+							 Buffer& buffer, sigc::signal<void()>& resetSignal, int factor)
 {
 	// Set initial value then connect to changed signal
 	slider->SetValue(registry::getValue<float>(key) * factor);
@@ -114,7 +114,7 @@ inline void bindWidgetToBufferedKey(wxSlider* slider, const std::string& key,
 }
 
 inline void bindWidgetToBufferedKey(wxChoice* choice, const std::string& key,
-							 Buffer& buffer, sigc::signal<void>& resetSignal, bool storeValueNotIndex)
+							 Buffer& buffer, sigc::signal<void()>& resetSignal, bool storeValueNotIndex)
 {
 	// Set initial value then connect to changed signal
 	choice->Select(storeValueNotIndex ?
@@ -147,7 +147,7 @@ inline void bindWidgetToBufferedKey(wxChoice* choice, const std::string& key,
 }
 
 inline void bindWidgetToBufferedKey(wxTextCtrl* entry, const std::string& key,
-							 Buffer& buffer, sigc::signal<void>& resetSignal)
+							 Buffer& buffer, sigc::signal<void()>& resetSignal)
 {
 	// Set initial value then connect to changed signal
 	if (GlobalRegistry().keyExists(key))
@@ -171,7 +171,7 @@ inline void bindWidgetToBufferedKey(wxTextCtrl* entry, const std::string& key,
 }
 
 inline void bindWidgetToBufferedKey(wxSpinCtrl* spinCtrl, const std::string& key,
-							 Buffer& buffer, sigc::signal<void>& resetSignal)
+							 Buffer& buffer, sigc::signal<void()>& resetSignal)
 {
 	// Set initial value then connect to changed signal
 	if (GlobalRegistry().keyExists(key))
@@ -195,7 +195,7 @@ inline void bindWidgetToBufferedKey(wxSpinCtrl* spinCtrl, const std::string& key
 }
 
 inline void bindWidgetToBufferedKey(wxSpinCtrlDouble* spinCtrl, const std::string& key,
-							 Buffer& buffer, sigc::signal<void>& resetSignal)
+							 Buffer& buffer, sigc::signal<void()>& resetSignal)
 {
 	// Set initial value then connect to changed signal
 	if (GlobalRegistry().keyExists(key))

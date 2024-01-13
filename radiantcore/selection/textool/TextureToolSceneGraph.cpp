@@ -33,13 +33,13 @@ const StringSet& TextureToolSceneGraph::getDependencies() const
 void TextureToolSceneGraph::initialiseModule(const IApplicationContext& ctx)
 {
     _sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-        sigc::mem_fun(this, &TextureToolSceneGraph::onSceneSelectionChanged)
+        sigc::mem_fun(*this, &TextureToolSceneGraph::onSceneSelectionChanged)
     );
 
     _textureChangedHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
-            sigc::mem_fun(this, &TextureToolSceneGraph::onTextureChanged)));
+            sigc::mem_fun(*this, &TextureToolSceneGraph::onTextureChanged)));
 }
 
 void TextureToolSceneGraph::shutdownModule()

@@ -113,7 +113,7 @@ void ScriptingSystem::foreachScriptCommand(const std::function<void(const IScrip
 	}
 }
 
-sigc::signal<void>& ScriptingSystem::signal_onScriptsReloaded()
+sigc::signal<void()>& ScriptingSystem::signal_onScriptsReloaded()
 {
 	return _sigScriptsReloaded;
 }
@@ -295,7 +295,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	module::GlobalModuleRegistry().signal_allModulesInitialised()
-		.connect(sigc::mem_fun(this, &ScriptingSystem::initialise));
+		.connect(sigc::mem_fun(*this, &ScriptingSystem::initialise));
 
 	// Construct the script path
 	_scriptPath = ctx.getRuntimeDataPath() + "scripts/";

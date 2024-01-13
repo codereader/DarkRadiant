@@ -22,13 +22,13 @@ namespace
 EditingStopwatchStatus::EditingStopwatchStatus()
 {
 	_conn = GlobalMapEditStopwatch().sig_TimerChanged().connect(
-		sigc::mem_fun(this, &EditingStopwatchStatus::onTimerChanged)
+		sigc::mem_fun(*this, &EditingStopwatchStatus::onTimerChanged)
 	);
 
 	_msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::IMessage::Type::ApplicationIsActiveQuery,
 		radiant::TypeListener<radiant::ApplicationIsActiveRequest>(
-			sigc::mem_fun(this, &EditingStopwatchStatus::handleRequest)));
+			sigc::mem_fun(*this, &EditingStopwatchStatus::handleRequest)));
 
 	// Add the status bar element
 	GlobalStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "stopwatch.png",

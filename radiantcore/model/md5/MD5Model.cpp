@@ -157,7 +157,7 @@ void MD5Model::applySkin(const decl::ISkin::Ptr& skin)
     _sigShadersUpdated.emit();
 }
 
-sigc::signal<void>& MD5Model::signal_ShadersChanged()
+sigc::signal<void()>& MD5Model::signal_ShadersChanged()
 {
     return _sigShadersUpdated;
 }
@@ -334,7 +334,7 @@ void MD5Model::updateAnim(std::size_t time)
     signal_ModelAnimationUpdated().emit();
 }
 
-sigc::signal<void>& MD5Model::signal_ModelAnimationUpdated()
+sigc::signal<void()>& MD5Model::signal_ModelAnimationUpdated()
 {
     return _sigModelAnimationUpdated;
 }

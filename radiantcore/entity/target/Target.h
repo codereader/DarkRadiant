@@ -29,7 +29,7 @@ class Target :
 	// The actual node this Target refers to (can be NULL)
 	const scene::INode* _node;
 
-    sigc::signal<void> _sigPositionChanged;
+    sigc::signal<void()> _sigPositionChanged;
 
 public:
 	Target() :
@@ -100,7 +100,7 @@ public:
         signal_TargetChanged().emit();
 	}
 
-    sigc::signal<void>& signal_TargetChanged()
+    sigc::signal<void()>& signal_TargetChanged()
 	{
         return _sigPositionChanged;
 	}

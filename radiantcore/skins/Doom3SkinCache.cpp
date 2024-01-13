@@ -113,7 +113,7 @@ void Doom3SkinCache::ensureCacheIsUpdated()
     _skinsPendingReparse.clear();
 }
 
-sigc::signal<void> Doom3SkinCache::signal_skinsReloaded()
+sigc::signal<void()> Doom3SkinCache::signal_skinsReloaded()
 {
 	return _sigSkinsReloaded;
 }
@@ -149,17 +149,17 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
     GlobalFiletypes().registerPattern("skin", FileTypePattern(_("Skin File"), "skin", "*.skin"));
 
     _declsReloadedConnection = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Skin).connect(
-        sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclsReloaded)
+        sigc::mem_fun(*this, &Doom3SkinCache::onSkinDeclsReloaded)
     );
 
     _declCreatedConnection = GlobalDeclarationManager().signal_DeclCreated().connect(
-        sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclCreated)
+        sigc::mem_fun(*this, &Doom3SkinCache::onSkinDeclCreated)
     );
     _declRemovedConnection = GlobalDeclarationManager().signal_DeclRemoved().connect(
-        sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclRemoved)
+        sigc::mem_fun(*this, &Doom3SkinCache::onSkinDeclRemoved)
     );
     _declRenamedConnection = GlobalDeclarationManager().signal_DeclRenamed().connect(
-        sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclRenamed)
+        sigc::mem_fun(*this, &Doom3SkinCache::onSkinDeclRenamed)
     );
 }
 

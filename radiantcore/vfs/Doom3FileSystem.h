@@ -29,7 +29,7 @@ private:
 
     std::list<ArchiveDescriptor> _archives;
 
-    sigc::signal<void> _sigInitialised;
+    sigc::signal<void()> _sigInitialised;
 
 public:
 	void initialise(const SearchPaths& vfsSearchPaths, const std::set<std::string>& allowedExtensions) override;
@@ -64,7 +64,7 @@ public:
 	std::string findFile(const std::string& name) override;
 	std::string findRoot(const std::string& name) override;
 
-    sigc::signal<void>& signal_Initialised() override;
+    sigc::signal<void()>& signal_Initialised() override;
 
 	const SearchPaths& getVfsSearchPaths() override;
     FileInfo getFileInfo(const std::string& vfsRelativePath) override;

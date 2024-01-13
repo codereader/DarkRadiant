@@ -29,7 +29,7 @@ public:
 	// Returns the filename of the last opened map, or "" if there doesn't exist one
 	virtual std::string getLastMapName() = 0;
 
-	virtual sigc::signal<void>& signal_MapListChanged() = 0;
+	virtual sigc::signal<void()>& signal_MapListChanged() = 0;
 };
 
 }

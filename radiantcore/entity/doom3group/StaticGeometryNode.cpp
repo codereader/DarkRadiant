@@ -80,7 +80,7 @@ void StaticGeometryNode::construct()
     observeKey("origin", sigc::mem_fun(m_originKey, &OriginKey::onKeyValueChanged));
     observeKey("angle", sigc::mem_fun(m_rotationKey, &RotationKey::angleChanged));
     observeKey("rotation", sigc::mem_fun(m_rotationKey, &RotationKey::rotationChanged));
-    observeKey("name", sigc::mem_fun(this, &StaticGeometryNode::nameChanged));
+    observeKey("name", sigc::mem_fun(*this, &StaticGeometryNode::nameChanged));
 
     // Observe curve-related spawnargs
     static_assert(std::is_base_of<sigc::trackable, CurveNURBS>::value);

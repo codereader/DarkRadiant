@@ -18,10 +18,10 @@ public:
 	SelectionModeToggle()
 	{
 		_selectionModeChanged = GlobalSelectionSystem().signal_selectionModeChanged()
-			.connect(sigc::mem_fun(this, &SelectionModeToggle::onSelectionModeChanged));
+			.connect(sigc::mem_fun(*this, &SelectionModeToggle::onSelectionModeChanged));
 
 		_componentModeChanged = GlobalSelectionSystem().signal_componentModeChanged()
-			.connect(sigc::mem_fun(this, &SelectionModeToggle::onComponentModeChanged));
+			.connect(sigc::mem_fun(*this, &SelectionModeToggle::onComponentModeChanged));
 
 		GlobalEventManager().addToggle("DragVertices", [this](bool)
 		{

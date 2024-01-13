@@ -47,8 +47,8 @@ public:
         // Register to get notified on key changes
         _registryConn = registry::observeBooleanKey(
             _registryKey,
-            sigc::bind(sigc::mem_fun(this, &RegistryToggle::setState), true),
-            sigc::bind(sigc::mem_fun(this, &RegistryToggle::setState), false)
+            sigc::bind(sigc::mem_fun(*this, &RegistryToggle::setState), true),
+            sigc::bind(sigc::mem_fun(*this, &RegistryToggle::setState), false)
         );
     }
 

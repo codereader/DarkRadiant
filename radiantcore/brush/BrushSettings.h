@@ -13,7 +13,7 @@ private:
 	Vector3 _vertexColour; 
     Vector3 _selectedVertexColour;
 
-	sigc::signal<void> _signalSettingsChanged;
+	sigc::signal<void()> _signalSettingsChanged;
 public:
 	BrushSettings() :
 		_vertexColour(0, 1, 0),
@@ -44,7 +44,7 @@ public:
         _signalSettingsChanged.emit();
     }
 
-	sigc::signal<void>& signal_settingsChanged() override
+	sigc::signal<void()>& signal_settingsChanged() override
 	{
 		return _signalSettingsChanged;
 	}

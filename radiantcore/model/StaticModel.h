@@ -89,8 +89,8 @@ private:
 	// Undoable stuff
 	IUndoStateSaver* _undoStateSaver;
 
-    sigc::signal<void> _sigShadersChanged;
-    sigc::signal<void> _sigSurfaceScaleApplied;
+    sigc::signal<void()> _sigShadersChanged;
+    sigc::signal<void()> _sigSurfaceScaleApplied;
 
 private:
 
@@ -126,10 +126,10 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
     // A signal that is emitted after the captured shaders have been changed (or cleared)
-    sigc::signal<void>& signal_ShadersChanged();
+    sigc::signal<void()>& signal_ShadersChanged();
 
     // Signal emitted when any surface scale has been changed
-    sigc::signal<void>& signal_SurfaceScaleApplied();
+    sigc::signal<void()>& signal_SurfaceScaleApplied();
 
 	/**
 	 * Return the number of surfaces in this model.

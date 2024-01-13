@@ -13,7 +13,7 @@ private:
 	Vector3 _vertexColourCorner;
 	Vector3 _vertexColourInside;
 
-	sigc::signal<void> _signalSettingsChanged;
+	sigc::signal<void()> _signalSettingsChanged;
 
 	std::vector<Vector3> _vertexColours;
 public:
@@ -38,7 +38,7 @@ public:
 		_signalSettingsChanged.emit();
 	}
 
-	sigc::signal<void>& signal_settingsChanged() override
+	sigc::signal<void()>& signal_settingsChanged() override
 	{
 		return _signalSettingsChanged;
 	}

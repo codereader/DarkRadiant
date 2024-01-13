@@ -66,9 +66,9 @@ void LightInspector::connectListeners()
 {
     // Register self as observer to receive events
     _undoHandler = GlobalMapModule().signal_postUndo().connect(
-        sigc::mem_fun(this, &LightInspector::update));
+        sigc::mem_fun(*this, &LightInspector::update));
     _redoHandler = GlobalMapModule().signal_postRedo().connect(
-        sigc::mem_fun(this, &LightInspector::update));
+        sigc::mem_fun(*this, &LightInspector::update));
 
     // Register self to the SelSystem to get notified upon selection changes.
     _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
@@ -182,7 +182,7 @@ void LightInspector::setupTextureWidgets()
     _texSelector = new MaterialSelector(parent,
                                         MaterialSelector::TextureFilter::Lights);
     _texSelector->signal_selectionChanged().connect(
-        sigc::mem_fun(this, &LightInspector::shaderSelectionChanged)
+        sigc::mem_fun(*this, &LightInspector::shaderSelectionChanged)
     );
     parent->GetSizer()->Add(_texSelector, 1, wxEXPAND);
 }

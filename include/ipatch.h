@@ -261,7 +261,7 @@ public:
 	virtual const Vector3& getVertexColour(PatchEditVertexType type) const = 0;
 	virtual void setVertexColour(PatchEditVertexType type, const Vector3& value) = 0;
 
-	virtual sigc::signal<void>& signal_settingsChanged() = 0;
+	virtual sigc::signal<void()>& signal_settingsChanged() = 0;
 };
 
 enum class PatchDefType

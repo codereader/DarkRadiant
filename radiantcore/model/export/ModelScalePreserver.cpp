@@ -22,15 +22,15 @@ ModelScalePreserver::ModelScalePreserver() :
 	// and check for any models that still have a modified scale on it.
 	// That scale value is then written to the hosting entity's spawnargs.
 	GlobalMapResourceManager().signal_onResourceExporting().connect(
-		sigc::mem_fun(this, &ModelScalePreserver::onResourceExporting)
+		sigc::mem_fun(*this, &ModelScalePreserver::onResourceExporting)
 	);
 	GlobalMapResourceManager().signal_onResourceExported().connect(
-		sigc::mem_fun(this, &ModelScalePreserver::onResourceExported)
+		sigc::mem_fun(*this, &ModelScalePreserver::onResourceExported)
 	);
 
 	// After map loading this class will try to reconstruct the scale
 	GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(this, &ModelScalePreserver::onMapEvent)
+		sigc::mem_fun(*this, &ModelScalePreserver::onMapEvent)
 	);
 }
 

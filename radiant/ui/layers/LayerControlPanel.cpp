@@ -70,7 +70,7 @@ void LayerControlPanel::connectListeners()
     connectToMapRoot();
 
     _mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
-        sigc::mem_fun(this, &LayerControlPanel::onMapEvent)
+        sigc::mem_fun(*this, &LayerControlPanel::onMapEvent)
     );
 }
 
@@ -470,15 +470,15 @@ void LayerControlPanel::connectToMapRoot()
 
 		// Layer creation/addition/removal triggers a refresh
 		_layersChangedSignal = layerSystem.signal_layersChanged().connect(
-			sigc::mem_fun(this, &LayerControlPanel::queueRefresh));
+			sigc::mem_fun(*this, &LayerControlPanel::queueRefresh));
 
 		// Visibility change doesn't repopulate the dialog
 		_layerVisibilityChangedSignal = layerSystem.signal_layerVisibilityChanged().connect(
-			sigc::mem_fun(this, &LayerControlPanel::queueUpdate));
+			sigc::mem_fun(*this, &LayerControlPanel::queueUpdate));
 
         // Hierarchy changes trigger a tree rebuild
         _layerHierarchyChangedSignal = layerSystem.signal_layerHierarchyChanged().connect(
-            sigc::mem_fun(this, &LayerControlPanel::queueRefresh));
+            sigc::mem_fun(*this, &LayerControlPanel::queueRefresh));
 
 		// Node membership triggers a selection rescan
 		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()

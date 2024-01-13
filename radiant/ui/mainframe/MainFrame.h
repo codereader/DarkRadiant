@@ -30,9 +30,9 @@ private:
 	sigc::connection _mapNameChangedConn;
 	sigc::connection _mapModifiedChangedConn;
 
-	sigc::signal<void> _sigMainFrameConstructed;
-	sigc::signal<void> _sigMainFrameReady;
-	sigc::signal<void> _sigMainFrameShuttingDown;
+	sigc::signal<void()> _sigMainFrameConstructed;
+	sigc::signal<void()> _sigMainFrameReady;
+	sigc::signal<void()> _sigMainFrameShuttingDown;
 
 	sigc::connection _defsLoadingSignal;
 	sigc::connection _defsLoadedSignal;
@@ -66,9 +66,9 @@ public:
 
     void addControl(const std::string& controlName, const ControlSettings& defaultSettings) override;
 
-	sigc::signal<void>& signal_MainFrameConstructed() override;
-	sigc::signal<void>& signal_MainFrameReady() override;
-	sigc::signal<void>& signal_MainFrameShuttingDown() override;
+	sigc::signal<void()>& signal_MainFrameConstructed() override;
+	sigc::signal<void()>& signal_MainFrameReady() override;
+	sigc::signal<void()>& signal_MainFrameShuttingDown() override;
 
 	// Command to toggle the current layout's camera fullscreen mode
 	void toggleFullscreenCameraView(const cmd::ArgumentList& args);

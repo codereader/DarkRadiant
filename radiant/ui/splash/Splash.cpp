@@ -88,7 +88,7 @@ Splash::Splash() :
 
     // Subscribe to the post-module init event to destroy ourselves
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
-        sigc::hide_return(sigc::mem_fun(this, &Splash::Destroy)));
+        sigc::hide_return(sigc::mem_fun(*this, &Splash::Destroy)));
 }
 
 void Splash::queueDraw()

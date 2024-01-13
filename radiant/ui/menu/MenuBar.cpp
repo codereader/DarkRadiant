@@ -74,7 +74,7 @@ void MenuBar::construct()
 	_menuBar = new wxMenuBar;
 
 	// Set up the listener ensuring that the opened menu is up to date
-	_menuBar->Bind(wxEVT_MENU_OPEN, sigc::mem_fun(this, &MenuBar::onMenuOpen));
+	_menuBar->Bind(wxEVT_MENU_OPEN, sigc::mem_fun(*this, &MenuBar::onMenuOpen));
 
 	MenuElement::constructChildren();
 }

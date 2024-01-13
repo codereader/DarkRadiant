@@ -22,7 +22,7 @@ CommandStatus::CommandStatus() :
     _mapOperationListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::MapOperationFinished,
         radiant::TypeListener<map::OperationMessage>(
-            sigc::mem_fun(this, &CommandStatus::onOperationFinished)));
+            sigc::mem_fun(*this, &CommandStatus::onOperationFinished)));
 
     // Add the status bar element
     GlobalStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "", StandardPosition::Commands, "");

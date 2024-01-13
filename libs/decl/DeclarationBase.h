@@ -39,7 +39,7 @@ private:
     bool _parsed;
     std::string _parseErrors;
 
-    sigc::signal<void> _changedSignal;
+    sigc::signal<void()> _changedSignal;
 
 protected:
     DeclarationBase(decl::Type type, const std::string& name) :
@@ -121,7 +121,7 @@ public:
         _parseStamp = parseStamp;
     }
 
-    sigc::signal<void>& signal_DeclarationChanged() final
+    sigc::signal<void()>& signal_DeclarationChanged() final
     {
         return _changedSignal;
     }

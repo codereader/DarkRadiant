@@ -75,7 +75,7 @@ std::set<std::string> FavouritesManager::getFavourites(const std::string& typeNa
     return set != _favouritesByType.end() ? set->second.get() : std::set<std::string>();
 }
 
-sigc::signal<void>& FavouritesManager::getSignalForType(const std::string& typeName)
+sigc::signal<void()>& FavouritesManager::getSignalForType(const std::string& typeName)
 {
     if (typeName.empty())
     {

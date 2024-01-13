@@ -30,7 +30,7 @@ class Doom3SkinCache :
 	// which are contained in the main NamedSkinMap.
     std::map<std::string, std::vector<std::string>> _modelSkins;
 
-	sigc::signal<void> _sigSkinsReloaded;
+	sigc::signal<void()> _sigSkinsReloaded;
     sigc::connection _declsReloadedConnection;
     sigc::connection _declCreatedConnection;
     sigc::connection _declRemovedConnection;
@@ -54,7 +54,7 @@ public:
 	void refresh() override;
 
 	// Public events
-	sigc::signal<void> signal_skinsReloaded() override;
+	sigc::signal<void()> signal_skinsReloaded() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

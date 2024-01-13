@@ -213,7 +213,7 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     if (_material)
     {
         _materialChanged = _material->sig_materialChanged().connect(
-            sigc::mem_fun(this, &MaterialPreview::onMaterialChanged));
+            sigc::mem_fun(*this, &MaterialPreview::onMaterialChanged));
     }
 
     _sceneIsReady = false;
@@ -428,7 +428,7 @@ void MaterialPreview::onSwapBackgroundMaterialChanged(wxCommandEvent& ev)
     queueDraw();
 }
 
-sigc::signal<void>& MaterialPreview::signal_SceneChanged()
+sigc::signal<void()>& MaterialPreview::signal_SceneChanged()
 {
     return _sigSceneChanged;
 }

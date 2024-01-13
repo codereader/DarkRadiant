@@ -119,7 +119,7 @@ void RenderPreview::setupToolbars(bool enableAnimation)
 
     // Get notified of filter changes
     GlobalFilterSystem().filterConfigChangedSignal().connect(
-        sigc::mem_fun(this, &RenderPreview::onFilterConfigChanged)
+        sigc::mem_fun(*this, &RenderPreview::onFilterConfigChanged)
     );
 
     wxToolBar* renderToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewRenderModeToolbar");

@@ -53,7 +53,7 @@ void TextureBrowserPanel::onPanelDeactivated()
 void TextureBrowserPanel::connectListeners()
 {
     _favouritesChangedHandler = GlobalFavouritesManager().getSignalForType(decl::getTypeName(decl::Type::Material))
-        .connect(sigc::mem_fun(this, &TextureBrowserPanel::onFavouritesChanged));
+        .connect(sigc::mem_fun(*this, &TextureBrowserPanel::onFavouritesChanged));
 }
 
 void TextureBrowserPanel::disconnectListeners()

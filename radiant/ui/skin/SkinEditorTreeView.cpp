@@ -8,11 +8,11 @@ SkinEditorTreeView::SkinEditorTreeView(wxWindow* parent, const Columns& columns,
     _columns(columns)
 {
     _declCreated = GlobalDeclarationManager().signal_DeclCreated().connect(
-        sigc::mem_fun(this, &SkinEditorTreeView::onDeclarationCreated));
+        sigc::mem_fun(*this, &SkinEditorTreeView::onDeclarationCreated));
     _declRenamed = GlobalDeclarationManager().signal_DeclRenamed().connect(
-        sigc::mem_fun(this, &SkinEditorTreeView::onDeclarationRenamed));
+        sigc::mem_fun(*this, &SkinEditorTreeView::onDeclarationRenamed));
     _declRemoved = GlobalDeclarationManager().signal_DeclRemoved().connect(
-        sigc::mem_fun(this, &SkinEditorTreeView::onDeclarationRemoved));
+        sigc::mem_fun(*this, &SkinEditorTreeView::onDeclarationRemoved));
 }
 
 SkinEditorTreeView::~SkinEditorTreeView()

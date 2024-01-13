@@ -192,7 +192,7 @@ void ModelKey::subscribeToModelDef(const IModelDef::Ptr& modelDef)
 {
     // Monitor this modelDef for potential mesh changes
     _modelDefChanged = modelDef->signal_DeclarationChanged().connect(
-        sigc::mem_fun(this, &ModelKey::onModelDefChanged)
+        sigc::mem_fun(*this, &ModelKey::onModelDefChanged)
     );
     _model.modelDefMonitored = true;
 }

@@ -28,7 +28,7 @@ public:
 		_msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
 			radiant::IMessage::Type::FileSelectionRequest,
 			radiant::TypeListener<radiant::FileSelectionRequest>(
-				sigc::mem_fun(this, &FileSelectionRequestHandler::handleRequest)));
+				sigc::mem_fun(*this, &FileSelectionRequestHandler::handleRequest)));
 
 		// Load the default values
 		_lastDirs[filetype::TYPE_MAP] = GlobalGameManager().getMapPath();

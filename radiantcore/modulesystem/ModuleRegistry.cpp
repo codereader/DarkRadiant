@@ -267,7 +267,7 @@ applog::ILogWriter& ModuleRegistry::getApplicationLogWriter()
 	return coreModule->getLogWriter();
 }
 
-sigc::signal<void>& ModuleRegistry::signal_allModulesInitialised()
+sigc::signal<void()>& ModuleRegistry::signal_allModulesInitialised()
 {
     return _sigAllModulesInitialised;
 }
@@ -277,17 +277,17 @@ ModuleRegistry::ProgressSignal& ModuleRegistry::signal_moduleInitialisationProgr
 	return _sigModuleInitialisationProgress;
 }
 
-sigc::signal<void>& ModuleRegistry::signal_modulesUninitialising()
+sigc::signal<void()>& ModuleRegistry::signal_modulesUninitialising()
 {
 	return _sigModulesUninitialising;
 }
 
-sigc::signal<void>& ModuleRegistry::signal_allModulesUninitialised()
+sigc::signal<void()>& ModuleRegistry::signal_allModulesUninitialised()
 {
     return _sigAllModulesUninitialised;
 }
 
-sigc::signal<void>& ModuleRegistry::signal_modulesUnloading()
+sigc::signal<void()>& ModuleRegistry::signal_modulesUnloading()
 {
     return _sigModulesUnloading;
 }

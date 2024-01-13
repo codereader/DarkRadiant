@@ -36,7 +36,7 @@ void ModelFormatManager::initialiseModule(const IApplicationContext& ctx)
 	_nullModelLoader.reset(new NullModelLoader);
 
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
-		sigc::mem_fun(this, &ModelFormatManager::postModuleInitialisation)
+		sigc::mem_fun(*this, &ModelFormatManager::postModuleInitialisation)
 	);
 
     // Register the built-in model importers

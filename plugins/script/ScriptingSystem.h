@@ -31,7 +31,7 @@ private:
 	// All named script commands (pointing to .py files)
 	ScriptCommandMap _commands;
 
-	sigc::signal<void> _sigScriptsReloaded;
+	sigc::signal<void()> _sigScriptsReloaded;
 
 public:
 	ScriptingSystem();
@@ -65,7 +65,7 @@ public:
 
 	void foreachScriptCommand(const std::function<void(const IScriptCommand&)>& functor) override;
 
-	sigc::signal<void>& signal_onScriptsReloaded() override;
+	sigc::signal<void()>& signal_onScriptsReloaded() override;
 
 	// Runs the named command (or rather the .py file behind it)
 	void executeCommand(const std::string& name);

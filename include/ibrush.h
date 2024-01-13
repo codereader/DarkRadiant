@@ -28,7 +28,7 @@ public:
 	virtual const Vector3& getSelectedVertexColour() const = 0;
 	virtual void setSelectedVertexColour(const Vector3& colour) = 0;
 
-	virtual sigc::signal<void>& signal_settingsChanged() = 0;
+	virtual sigc::signal<void()>& signal_settingsChanged() = 0;
 };
 
 class BrushCreator :
@@ -210,7 +210,7 @@ public:
     virtual void transform(const Matrix4& transformation) = 0;
 
     // Emitted from this IFace's destructor, as last sign of life
-    virtual sigc::signal<void>& signal_faceDestroyed() = 0;
+    virtual sigc::signal<void()>& signal_faceDestroyed() = 0;
 };
 
 // Plane classification info used by splitting and CSG algorithms
