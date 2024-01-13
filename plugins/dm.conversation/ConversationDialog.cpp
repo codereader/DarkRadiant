@@ -276,11 +276,13 @@ void ConversationDialog::onAddEntity(wxCommandEvent& ev)
 
     if (eclass)
     {
+        UndoableCommand addEntityCommand("addConversationEntity");
+
         // Construct a Node of this entity type
         IEntityNodePtr node(GlobalEntityModule().createEntity(eclass));
 
         // Create a random offset
-		node->getEntity().setKeyValue(
+        node->getEntity().setKeyValue(
             "origin", RandomOrigin::generate(128)
         );
 
