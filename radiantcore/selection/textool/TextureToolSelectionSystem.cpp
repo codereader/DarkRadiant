@@ -124,7 +124,7 @@ void TextureToolSelectionSystem::toggleSelectionMode(SelectionMode mode)
     }
 }
 
-sigc::signal<void, SelectionMode>& TextureToolSelectionSystem::signal_selectionModeChanged()
+sigc::signal<void(SelectionMode)>& TextureToolSelectionSystem::signal_selectionModeChanged()
 {
     return _sigSelectionModeChanged;
 }
@@ -465,7 +465,7 @@ void TextureToolSelectionSystem::onManipulationCancelled()
     });
 }
 
-sigc::signal<void, selection::IManipulator::Type>& TextureToolSelectionSystem::signal_activeManipulatorChanged()
+sigc::signal<void(selection::IManipulator::Type)>& TextureToolSelectionSystem::signal_activeManipulatorChanged()
 {
     return _sigActiveManipulatorChanged;
 }

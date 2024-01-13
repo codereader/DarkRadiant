@@ -11,7 +11,7 @@ class EClassColourManager :
 {
 private:
     std::map<std::string, Vector4> _overrides;
-    sigc::signal<void, const std::string&, bool> _overrideChangedSignal;
+    sigc::signal<void(const std::string&, bool)> _overrideChangedSignal;
 
 public:
     // IColourManager implementation
@@ -21,7 +21,7 @@ public:
     void foreachOverrideColour(const std::function<void(const std::string&, const Vector4&)>& functor) override;
     void removeOverrideColour(const std::string& eclass) override;
     void clearOverrideColours() override;
-    sigc::signal<void, const std::string&, bool>& sig_overrideColourChanged() override;
+    sigc::signal<void(const std::string&, bool)>& sig_overrideColourChanged() override;
 
     // RegisterableModule implementation
 

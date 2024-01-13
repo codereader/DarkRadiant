@@ -116,7 +116,7 @@ public:
         const std::string& filePathWithinArchive) = 0;
 
 	// Signal emitted when a MapExport is starting / is finished
-	typedef sigc::signal<void, const scene::IMapRootNodePtr&> ExportEvent;
+	typedef sigc::signal<void(const scene::IMapRootNodePtr&)> ExportEvent;
 
 	// Event sent out right before a scene is sent to the exporter
 	virtual ExportEvent& signal_onResourceExporting() = 0;

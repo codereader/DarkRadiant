@@ -436,7 +436,7 @@ void Map::setEditMode(EditMode mode)
     SceneChangeNotify();
 }
 
-sigc::signal<void, IMap::EditMode>& Map::signal_editModeChanged()
+sigc::signal<void(IMap::EditMode)>& Map::signal_editModeChanged()
 {
     return _mapEditModeChangedSignal;
 }

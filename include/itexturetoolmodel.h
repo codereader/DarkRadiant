@@ -198,7 +198,7 @@ public:
     // Will switch to the given selection mode. If already in mode, this switches back to Default mode (Surface).
     virtual void toggleSelectionMode(SelectionMode mode) = 0;
 
-    virtual sigc::signal<void, SelectionMode>& signal_selectionModeChanged() = 0;
+    virtual sigc::signal<void(SelectionMode)>& signal_selectionModeChanged() = 0;
 
     virtual void selectPoint(SelectionTest& test, selection::SelectionSystem::EModifier modifier) = 0;
     virtual void selectArea(SelectionTest& test, selection::SelectionSystem::EModifier modifier) = 0;
@@ -218,7 +218,7 @@ public:
     // the system will switch back to default mode.
     virtual void toggleManipulatorMode(selection::IManipulator::Type manipulatorType) = 0;
 
-    virtual sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() = 0;
+    virtual sigc::signal<void(selection::IManipulator::Type)>& signal_activeManipulatorChanged() = 0;
 
     virtual Matrix4 getPivot2World() = 0;
     virtual void onManipulationStart() = 0;

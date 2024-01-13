@@ -48,7 +48,7 @@ public:
 
     // Signal invoked when an override of a specific eclass is added, changed or removed
     // function signature: void(const std::string& eclass, bool hasBeenRemoved)
-    virtual sigc::signal<void, const std::string&, bool>& sig_overrideColourChanged() = 0;
+    virtual sigc::signal<void(const std::string&, bool)>& sig_overrideColourChanged() = 0;
 };
 
 }

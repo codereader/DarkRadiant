@@ -150,17 +150,17 @@ TexturePtr MaterialManager::loadTextureFromFile(const std::string& filename)
     return _textureManager->getBinding(filename);
 }
 
-sigc::signal<void, const std::string&>& MaterialManager::signal_materialCreated()
+sigc::signal<void(const std::string&)>& MaterialManager::signal_materialCreated()
 {
     return _sigMaterialCreated;
 }
 
-sigc::signal<void, const std::string&, const std::string&>& MaterialManager::signal_materialRenamed()
+sigc::signal<void(const std::string&, const std::string&)>& MaterialManager::signal_materialRenamed()
 {
     return _sigMaterialRenamed;
 }
 
-sigc::signal<void, const std::string&>& MaterialManager::signal_materialRemoved()
+sigc::signal<void(const std::string&)>& MaterialManager::signal_materialRemoved()
 {
     return _sigMaterialRemoved;
 }

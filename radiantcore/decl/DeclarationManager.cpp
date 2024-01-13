@@ -980,7 +980,7 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
 
     // Finish all pending threads before the modules are shut down
     // The push_front is a counter-action to the Map module subscribing to the same event
-    module::GlobalModuleRegistry().signal_modulesUninitialising().slots().push_front([this]()
+    module::GlobalModuleRegistry().signal_modulesUninitialising().connect_first([this]()
     {
         waitForTypedParsersToFinish();
         waitForSignalInvokersToFinish();

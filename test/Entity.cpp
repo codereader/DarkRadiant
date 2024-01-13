@@ -1704,7 +1704,7 @@ TEST_F(EntityTest, EntityNodeObserveKeyAutoDisconnect)
 
     // Observe key before creating it
     entityNode->observeKey(TEST_KEY,
-                           sigc::mem_fun(observer, &TestKeyObserver::onKeyValueChanged));
+                           sigc::mem_fun(*observer, &TestKeyObserver::onKeyValueChanged));
     EXPECT_EQ(observer->invocationCount, 1);
     EXPECT_EQ(observer->receivedValue, "");
 

@@ -39,7 +39,7 @@ private:
 
 	SelectionInfo _selectionInfo;
 
-    sigc::signal<void, const ISelectable&> _sigSelectionChanged;
+    sigc::signal<void(const ISelectable&)> _sigSelectionChanged;
 
     std::map<std::size_t, ISceneManipulator::Ptr> _manipulators;
 
@@ -63,9 +63,9 @@ private:
 
 	bool nothingSelected() const;
 
-	sigc::signal<void, IManipulator::Type> _sigActiveManipulatorChanged;
-	sigc::signal<void, SelectionMode> _sigSelectionModeChanged;
-	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
+	sigc::signal<void(IManipulator::Type)> _sigActiveManipulatorChanged;
+	sigc::signal<void(SelectionMode)> _sigSelectionModeChanged;
+	sigc::signal<void(ComponentSelectionMode)> _sigComponentModeChanged;
 
     bool _selectionFocusActive;
     std::set<scene::INodePtr> _selectionFocusPool;
@@ -94,8 +94,8 @@ public:
 	void SetComponentMode(ComponentSelectionMode mode) override;
     ComponentSelectionMode ComponentMode() const override;
 
-	sigc::signal<void, SelectionMode>& signal_selectionModeChanged() override;
-	sigc::signal<void, ComponentSelectionMode>& signal_componentModeChanged() override;
+	sigc::signal<void(SelectionMode)>& signal_selectionModeChanged() override;
+	sigc::signal<void(ComponentSelectionMode)>& signal_componentModeChanged() override;
 
 	// Returns the ID of the registered manipulator
 	std::size_t registerManipulator(const ISceneManipulator::Ptr& manipulator) override;
@@ -105,7 +105,7 @@ public:
 	const ISceneManipulator::Ptr& getActiveManipulator() override;
 	void setActiveManipulator(std::size_t manipulatorId) override;
 	void setActiveManipulator(IManipulator::Type manipulatorType) override;
-	sigc::signal<void, IManipulator::Type>& signal_activeManipulatorChanged() override;
+	sigc::signal<void(IManipulator::Type)>& signal_activeManipulatorChanged() override;
 
 	std::size_t countSelected() const override;
 	std::size_t countSelectedComponents() const override;

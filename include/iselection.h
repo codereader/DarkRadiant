@@ -26,7 +26,7 @@ typedef BasicVector4<double> Vector4;
 class Matrix4;
 class Quaternion;
 
-typedef sigc::signal<void, const ISelectable&> SelectionChangedSignal;
+typedef sigc::signal<void(const ISelectable&)> SelectionChangedSignal;
 typedef std::function<void(const ISelectable&)> SelectionChangedSlot;
 
 class SelectionInfo;
@@ -103,7 +103,7 @@ public:
 	virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
 	virtual void setActiveManipulator(IManipulator::Type manipulatorType) = 0;
 
-	virtual sigc::signal<void, IManipulator::Type>& signal_activeManipulatorChanged() = 0;
+	virtual sigc::signal<void(IManipulator::Type)>& signal_activeManipulatorChanged() = 0;
 
 	virtual const SelectionInfo& getSelectionInfo() = 0;
 
@@ -113,8 +113,8 @@ public:
     virtual void SetComponentMode(ComponentSelectionMode mode) = 0;
     virtual ComponentSelectionMode ComponentMode() const = 0;
 
-	virtual sigc::signal<void, SelectionMode>& signal_selectionModeChanged() = 0;
-	virtual sigc::signal<void, ComponentSelectionMode>& signal_componentModeChanged() = 0;
+	virtual sigc::signal<void(SelectionMode)>& signal_selectionModeChanged() = 0;
+	virtual sigc::signal<void(ComponentSelectionMode)>& signal_componentModeChanged() = 0;
 
   virtual std::size_t countSelected() const = 0;
   virtual std::size_t countSelectedComponents() const = 0;

@@ -31,18 +31,18 @@ class MaterialManager :
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
 
-    sigc::signal<void, const std::string&> _sigMaterialCreated;
-    sigc::signal<void, const std::string&, const std::string&> _sigMaterialRenamed;
-    sigc::signal<void, const std::string&> _sigMaterialRemoved;
+    sigc::signal<void(const std::string&)> _sigMaterialCreated;
+    sigc::signal<void(const std::string&, const std::string&)> _sigMaterialRenamed;
+    sigc::signal<void(const std::string&)> _sigMaterialRemoved;
 
     sigc::connection _materialsReloadedSignal;
 
 public:
     MaterialManager();
 
-    sigc::signal<void, const std::string&>& signal_materialCreated() override;
-    sigc::signal<void, const std::string&, const std::string&>& signal_materialRenamed() override;
-    sigc::signal<void, const std::string&>& signal_materialRemoved() override;
+    sigc::signal<void(const std::string&)>& signal_materialCreated() override;
+    sigc::signal<void(const std::string&, const std::string&)>& signal_materialRenamed() override;
+    sigc::signal<void(const std::string&)>& signal_materialRemoved() override;
 
 	// Return a shader by name
     MaterialPtr getMaterial(const std::string& name) override;

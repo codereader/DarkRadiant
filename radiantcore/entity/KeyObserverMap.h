@@ -50,7 +50,7 @@ class KeyObserverMap :
     // Signals for each key observed with observeKey(). This is a map, not a
     // multimap, since each signal can be connected to an arbitrary number of
     // slots.
-    using KeySignal = sigc::signal<void, std::string>;
+    using KeySignal = sigc::signal<void(std::string)>;
     using KeySignals = std::map<std::string, KeySignal, string::ILess>;
     KeySignals _keySignals;
 

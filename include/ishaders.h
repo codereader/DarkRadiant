@@ -578,13 +578,13 @@ public:
 	virtual sigc::signal<void()> signal_activeShadersChanged() const = 0;
 
     // Is invoked when a new material is inserted into the resource tree, passing the name as argument
-    virtual sigc::signal<void, const std::string&>& signal_materialCreated() = 0;
+    virtual sigc::signal<void(const std::string&)>& signal_materialCreated() = 0;
 
     // Is called when a material name is changed, passing the old and the new name as arguments
-    virtual sigc::signal<void, const std::string&, const std::string&>& signal_materialRenamed() = 0;
+    virtual sigc::signal<void(const std::string&, const std::string&)>& signal_materialRenamed() = 0;
 
     // Is emitted when a named material is removed from the library
-    virtual sigc::signal<void, const std::string&>& signal_materialRemoved() = 0;
+    virtual sigc::signal<void(const std::string&)>& signal_materialRemoved() = 0;
 
     /**
      * Enable or disable active shaders updates (for performance).

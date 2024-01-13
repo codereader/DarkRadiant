@@ -107,7 +107,7 @@ MapPositionManager::MapPositionManager()
 	);
 
 	GlobalMapResourceManager().signal_onResourceExporting().connect(sigc::mem_fun(
-		this, &MapPositionManager::onPreMapExport
+		*this, &MapPositionManager::onPreMapExport
 	));
 
 	// Create the MapPosition objects and add the commands to the eventmanager

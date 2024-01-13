@@ -11,8 +11,8 @@ namespace registry
 namespace detail
 {
     inline void invokeFromBoolean(const std::string& key,
-                                  sigc::slot<void> trueCallback,
-                                  sigc::slot<void> falseCallback)
+        const sigc::slot<void()>& trueCallback,
+        const sigc::slot<void()>& falseCallback)
     {
         if (getValue<bool>(key))
             trueCallback();
@@ -28,8 +28,7 @@ namespace detail
  * value changes to false.
  */
 inline sigc::connection observeBooleanKey(const std::string& key,
-                              sigc::slot<void> trueCallback,
-                              sigc::slot<void> falseCallback)
+    sigc::slot<void()> trueCallback, sigc::slot<void()> falseCallback)
 {
     return GlobalRegistry().signalForKey(key).connect(
         sigc::bind(sigc::ptr_fun(&detail::invokeFromBoolean),

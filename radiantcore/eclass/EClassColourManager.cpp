@@ -54,7 +54,7 @@ void EClassColourManager::clearOverrideColours()
     }
 }
 
-sigc::signal<void, const std::string&, bool>& EClassColourManager::sig_overrideColourChanged()
+sigc::signal<void(const std::string&, bool)>& EClassColourManager::sig_overrideColourChanged()
 {
     return _overrideChangedSignal;
 }

@@ -22,8 +22,8 @@ private:
     selection::ITextureToolManipulator::Ptr _activeManipulator;
     selection::IManipulator::Type _defaultManipulatorType;
 
-    sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
-    sigc::signal<void, SelectionMode> _sigSelectionModeChanged;
+    sigc::signal<void(selection::IManipulator::Type)> _sigActiveManipulatorChanged;
+    sigc::signal<void(SelectionMode)> _sigSelectionModeChanged;
 
     sigc::signal<void()> _sigSelectionChanged;
 
@@ -40,7 +40,7 @@ public:
     SelectionMode getSelectionMode() const override;
     void setSelectionMode(SelectionMode mode) override;
     void toggleSelectionMode(SelectionMode mode) override;
-    sigc::signal<void, SelectionMode>& signal_selectionModeChanged() override;
+    sigc::signal<void(SelectionMode)>& signal_selectionModeChanged() override;
 
     void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) override;
     void foreachSelectedComponentNode(const std::function<bool(const INode::Ptr&)>& functor) override;
@@ -66,7 +66,7 @@ public:
     void setActiveManipulator(selection::IManipulator::Type manipulatorType) override;
     void toggleManipulatorMode(selection::IManipulator::Type manipulatorType) override;
 
-    sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() override;
+    sigc::signal<void(selection::IManipulator::Type)>& signal_activeManipulatorChanged() override;
 
     Matrix4 getPivot2World() override;
     void onManipulationStart() override;

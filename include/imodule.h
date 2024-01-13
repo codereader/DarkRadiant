@@ -293,7 +293,7 @@ public:
 	 * The float value passed to the signal indicates the overall progress and
 	 * will be in the range [0.0f..1.0f].
 	 */
-	typedef sigc::signal<void, const std::string&, float> ProgressSignal;
+	typedef sigc::signal<void(const std::string&, float)> ProgressSignal;
 	virtual ProgressSignal& signal_moduleInitialisationProgress() = 0;
 
 	/**

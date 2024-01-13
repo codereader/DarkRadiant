@@ -48,7 +48,7 @@ private:
 	sigc::signal<void()> _mapModifiedChangedSignal;
     sigc::signal<void()> _mapPostUndoSignal;
     sigc::signal<void()> _mapPostRedoSignal;
-	sigc::signal<void, EditMode> _mapEditModeChangedSignal;
+	sigc::signal<void(EditMode)> _mapEditModeChangedSignal;
 
 	// Pointer to the resource for this map
 	IMapResourcePtr _resource;
@@ -93,7 +93,7 @@ public:
     EditMode getEditMode() override;
     void setEditMode(EditMode mode) override;
 
-    sigc::signal<void, EditMode>& signal_editModeChanged() override;
+    sigc::signal<void(EditMode)>& signal_editModeChanged() override;
 
 	const scene::INodePtr& getWorldspawn() override;
 	const scene::INodePtr& findOrInsertWorldspawn() override;

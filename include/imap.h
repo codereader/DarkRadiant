@@ -120,7 +120,7 @@ public:
 		MapMergeOperationFinished,		// emitted after a merge operation has been finished
 	};
 
-	typedef sigc::signal<void, MapEvent> MapEventSignal;
+	typedef sigc::signal<void(MapEvent)> MapEventSignal;
 
 	/// Returns the signal that is emitted on various events
 	virtual MapEventSignal signal_mapEvent() const = 0;
@@ -138,7 +138,7 @@ public:
     virtual void setEditMode(EditMode mode) = 0;
 
     // Signal fired when the map edit mode has been changed
-    virtual sigc::signal<void, EditMode>& signal_editModeChanged() = 0;
+    virtual sigc::signal<void(EditMode)>& signal_editModeChanged() = 0;
 
 	/**
 	 * Returns the worldspawn node of this map. The worldspawn

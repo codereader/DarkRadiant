@@ -247,12 +247,12 @@ ComponentSelectionMode RadiantSelectionSystem::ComponentMode() const
     return _componentMode;
 }
 
-sigc::signal<void, SelectionMode>& RadiantSelectionSystem::signal_selectionModeChanged()
+sigc::signal<void(SelectionMode)>& RadiantSelectionSystem::signal_selectionModeChanged()
 {
     return _sigSelectionModeChanged;
 }
 
-sigc::signal<void, ComponentSelectionMode>& RadiantSelectionSystem::signal_componentModeChanged()
+sigc::signal<void(ComponentSelectionMode)>& RadiantSelectionSystem::signal_componentModeChanged()
 {
     return _sigComponentModeChanged;
 }
@@ -349,7 +349,7 @@ void RadiantSelectionSystem::setActiveManipulator(IManipulator::Type manipulator
 	rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
 }
 
-sigc::signal<void, selection::IManipulator::Type>& RadiantSelectionSystem::signal_activeManipulatorChanged()
+sigc::signal<void(selection::IManipulator::Type)>& RadiantSelectionSystem::signal_activeManipulatorChanged()
 {
     return _sigActiveManipulatorChanged;
 }
