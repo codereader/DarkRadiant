@@ -60,7 +60,7 @@ void ClassnamePropertyEditor::_onBrowseButton(wxCommandEvent& ev)
 
 void ClassnamePropertyEditor::_onShowDefinition(wxCommandEvent& ev)
 {
-    auto currentEclass = _entities.getSharedKeyValue(_key->getFullKey(), false);
+    auto currentEclass = _entities.getSharedKeyValue(_key->getFullKey(), true);
     auto eclass = GlobalEntityClassManager().findClass(currentEclass);
 
     if (eclass)
