@@ -55,6 +55,7 @@ add_executable(darkradiant
                ui/einspector/EntityPropertyEditor.cpp
                ui/einspector/FloatPropertyEditor.cpp
                ui/einspector/FxPropertyEditor.cpp
+               ui/einspector/InheritPropertyEditor.cpp
                ui/einspector/ModelPropertyEditor.cpp
                ui/einspector/PropertyEditor.cpp
                ui/einspector/PropertyEditorFactory.cpp

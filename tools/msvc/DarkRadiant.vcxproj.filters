@@ -718,6 +718,9 @@
     <ClCompile Include="..\..\radiant\xyview\OrthoView.cpp">
       <Filter>src\xyview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\InheritPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1442,6 +1445,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\OrthoView.h">
       <Filter>src\xyview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\InheritPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

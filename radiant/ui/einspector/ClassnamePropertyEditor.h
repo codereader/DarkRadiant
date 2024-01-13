@@ -9,7 +9,7 @@ namespace ui
 {
 
 /**
- * PropertyEditor displaying a single browse button to allow the selection of
+ * PropertyEditor displaying a browse button to allow the selection of
  * an EntityClass using the EntityClassChooser dialog.
  */
 class ClassnamePropertyEditor : 

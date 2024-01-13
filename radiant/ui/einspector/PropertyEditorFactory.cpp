@@ -13,6 +13,7 @@
 #include "ClassnamePropertyEditor.h"
 #include "AnglePropertyEditor.h"
 #include "FxPropertyEditor.h"
+#include "InheritPropertyEditor.h"
 
 #include <regex>
 
@@ -47,6 +48,7 @@ void PropertyEditorFactory::registerBuiltinTypes()
     _peMap["float"] = FloatPropertyEditor::CreateNew;
     _peMap["model"] = ModelPropertyEditor::CreateNew;
     _peMap["classname"] = ClassnamePropertyEditor::CreateNew;
+    _peMap["inherit"] = InheritPropertyEditor::CreateNew;
     _peMap["angle"] = AnglePropertyEditor::CreateNew;
     _peMap["fx"] = FxPropertyEditor::CreateNew;
 
