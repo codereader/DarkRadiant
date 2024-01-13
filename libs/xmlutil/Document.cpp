@@ -14,7 +14,7 @@ Document::Document(xmlDocPtr doc):
 {}
 
 Document::Document(const std::string& filename) :
-	_xmlDoc(xmlParseFile(filename.c_str()))
+	_xmlDoc(xmlReadFile(filename.c_str(), nullptr, 0))
 {}
 
 Document::Document(std::istream& stream) :

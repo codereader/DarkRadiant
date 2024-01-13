@@ -29,10 +29,10 @@ private:
 
 	mutable std::mutex _lock;
 
-public:
     // Construct a Document using the provided xmlDocPtr.
 	Document(xmlDocPtr doc);
 
+public:
 	// Construct a xml::Document from the given filename (must be the full path).
 	// Use the isValid() method to check if the load was successful.
 	Document(const std::string& filename);
