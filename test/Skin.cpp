@@ -685,4 +685,21 @@ TEST_F(ModelSkinTest, SkinIsListedAfterSkinRename)
         << "Old skin name should not be associated";
 }
 
+void expectModelDefHasMeshAndSkin(const std::string& modelDef, const std::string& expectedMesh, const std::string& expectedSkin)
+{
+    auto model = GlobalEntityClassManager().findModel(modelDef);
+    EXPECT_EQ(model->getMesh(), expectedMesh) << "Expected mesh to be " << expectedMesh << " on modelDef " << modelDef;
+    EXPECT_EQ(model->getSkin(), expectedSkin) << "Expected skin to be " << expectedSkin << " on modelDef " << modelDef;
+}
+
+// Variations of modelDefs, all of them have a mesh, some of them define a skin, some inherit a skin, some override a skin
+TEST_F(ModelSkinTest, ModelDefSkinKeword)
+{
+    expectModelDefHasMeshAndSkin("some_base_modeldef_without_skin", "models/md5/flag01.md5mesh", "");
+    expectModelDefHasMeshAndSkin("some_base_modeldef_with_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_caulk");
+    expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_only", "models/md5/flag01.md5mesh", "");
+    expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_and_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_caulk");
+    expectModelDefHasMeshAndSkin("some_modeldef_overriding_inherited_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_nodraw");
+}
+
 }

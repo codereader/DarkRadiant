@@ -1,0 +1,36 @@
+model some_base_modeldef_without_skin
+{
+	mesh		models/md5/flag01.md5mesh
+}
+
+model some_base_modeldef_with_skin
+{
+	skin		swap_flag_pirate_with_caulk
+	mesh		models/md5/flag01.md5mesh
+}
+
+model some_modeldef_inheriting_model_only
+{
+	inherit		some_base_modeldef_without_skin
+}
+
+model some_modeldef_inheriting_model_and_skin
+{
+	inherit		some_base_modeldef_with_skin
+}
+
+model some_modeldef_overriding_inherited_skin
+{
+	inherit		some_base_modeldef_with_skin
+	skin		swap_flag_pirate_with_nodraw
+}
+
+skin swap_flag_pirate_with_caulk
+{
+	flag_pirate textures/common/caulk
+}
+
+skin swap_flag_pirate_with_nodraw
+{
+	flag_pirate textures/common/nodraw
+}
