@@ -692,6 +692,44 @@ void expectModelDefHasMeshAndSkin(const std::string& modelDef, const std::string
     EXPECT_EQ(model->getSkin(), expectedSkin) << "Expected skin to be " << expectedSkin << " on modelDef " << modelDef;
 }
 
+IEntityNodePtr createStaticEntityWithModel(const std::string& model)
+{
+    auto funcStaticClass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(funcStaticClass);
+    entity->getEntity().setKeyValue("model", model);
+    return entity;
+}
+
+void expectEntityHasSkinnedModel(const IEntityNodePtr& entity, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+{
+    // Check the skinned model node beneath it
+    SkinnedModelPtr foundModelNode;
+    entity->foreachNode([&](const auto& child)
+        {
+            auto model = std::dynamic_pointer_cast<SkinnedModel>(child);
+            if (!foundModelNode && model)
+            {
+                foundModelNode = model;
+            }
+            return true;
+        });
+
+    EXPECT_TRUE(foundModelNode) << "Failed to find the skinned model node";
+    EXPECT_EQ(foundModelNode->getSkin(), expectedSkin) << "Expected skin to be " << expectedSkin << " on entity with model " << entity->getEntity().getKeyValue("model");
+
+    auto modelNode = std::dynamic_pointer_cast<model::ModelNode>(foundModelNode);
+
+    EXPECT_TRUE(modelNode) << "Cast to ModelNode failed";
+    EXPECT_EQ(modelNode->getIModel().getActiveMaterials().size(), expectedMaterials.size()) << "Mismatching number of materials";
+    EXPECT_TRUE(modelNode->getIModel().getActiveMaterials() == expectedMaterials) << "Material list mismatch";
+}
+
+void expectEntityHasSkinnedModel(const std::string& modelKeyValue, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+{
+    auto entity = createStaticEntityWithModel(modelKeyValue);
+    expectEntityHasSkinnedModel(entity, expectedSkin, expectedMaterials);
+}
+
 // Variations of modelDefs, all of them have a mesh, some of them define a skin, some inherit a skin, some override a skin
 TEST_F(ModelSkinTest, ModelDefSkinKeword)
 {
@@ -700,6 +738,16 @@ TEST_F(ModelSkinTest, ModelDefSkinKeword)
     expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_only", "models/md5/flag01.md5mesh", "");
     expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_and_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_caulk");
     expectModelDefHasMeshAndSkin("some_modeldef_overriding_inherited_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_nodraw");
+}
+
+// Test the resulting skinned model attached to an entity node using the given modelDef as "model"
+TEST_F(ModelSkinTest, EntityUsingModelDef)
+{
+    expectEntityHasSkinnedModel("some_base_modeldef_without_skin", "", { "flag_pirate", "flag_pirate" });
+    expectEntityHasSkinnedModel("some_base_modeldef_with_skin", "swap_flag_pirate_with_caulk", { "textures/common/caulk", "textures/common/caulk" });
+    expectEntityHasSkinnedModel("some_modeldef_inheriting_model_only", "", { "flag_pirate", "flag_pirate" });
+    expectEntityHasSkinnedModel("some_modeldef_inheriting_model_and_skin", "swap_flag_pirate_with_caulk", { "textures/common/caulk", "textures/common/caulk" });
+    expectEntityHasSkinnedModel("some_modeldef_overriding_inherited_skin", "swap_flag_pirate_with_nodraw", { "textures/common/nodraw", "textures/common/nodraw" });
 }
 
 }

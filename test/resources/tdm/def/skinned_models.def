@@ -1,12 +1,12 @@
 model some_base_modeldef_without_skin
 {
-	mesh		models/md5/flag01.md5mesh
+	mesh		models/md5/testflag.md5mesh
 }
 
 model some_base_modeldef_with_skin
 {
 	skin		swap_flag_pirate_with_caulk
-	mesh		models/md5/flag01.md5mesh
+	mesh		models/md5/testflag.md5mesh
 }
 
 model some_modeldef_inheriting_model_only
@@ -34,3 +34,29 @@ skin swap_flag_pirate_with_nodraw
 {
 	flag_pirate textures/common/nodraw
 }
+
+entityDef entity_using_modeldef
+{
+	"inherit"				"atdm:ai_humanoid"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"spawnclass"			"idAI"
+	"model"					"some_base_modeldef_without_skin"
+}
+
+entityDef entity_using_modeldef_with_skin_keyvalue
+{
+	"inherit"	"entity_using_modeldef"
+	"skin"		"swap_flag_pirate_with_caulk"
+}
+
+entityDef entity_using_skinned_modeldef
+{
+	"inherit"	"entity_using_modeldef"
+	"model"		"some_modeldef_with_skin"
+}
+
+
