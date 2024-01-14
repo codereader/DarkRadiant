@@ -37,6 +37,7 @@ private:
 	PropertyListColumns _propertyColumns;
 	wxutil::TreeModel::Ptr _propertyStore;
 	wxutil::TreeView* _propertyView;
+    std::string _eclassToPreselect;
 
 	// Private constructor, traverses the entity classes
 	EClassTree();
@@ -48,6 +49,8 @@ public:
 private:
 	// Constructs and adds all the dialog widgets
 	void populateWindow();
+
+    void setClassNameToPreselect(const std::string& className);
 
 	wxWindow* createEClassTreeView(wxWindow* parent); // EClass Tree
 	void createPropertyTreeView(wxWindow* parent); // Property Tree

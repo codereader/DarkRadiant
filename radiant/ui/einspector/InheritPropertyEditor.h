@@ -21,6 +21,7 @@ private:
 private:
 
     void _onShowDefinition(wxCommandEvent& ev);
+    void _onShowInDefTree(wxCommandEvent& ev);
 
 public:
     InheritPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);

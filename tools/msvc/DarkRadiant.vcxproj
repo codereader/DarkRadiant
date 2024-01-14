@@ -241,6 +241,7 @@
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />
+    <ClCompile Include="..\..\radiant\ui\einspector\Algorithm.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\EntityInspectorModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\FxPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\InheritPropertyEditor.cpp" />
@@ -440,6 +441,7 @@
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />
+    <ClInclude Include="..\..\radiant\ui\einspector\Algorithm.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\EntityInspectorModule.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\FxPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\InheritPropertyEditor.h" />

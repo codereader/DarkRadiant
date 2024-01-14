@@ -46,6 +46,7 @@ add_executable(darkradiant
                ui/eclasstree/EClassTreeBuilder.cpp
                ui/eclasstree/EClassTree.cpp
                ui/einspector/AddPropertyDialog.cpp
+               ui/einspector/Algorithm.cpp
                ui/einspector/AnglePropertyEditor.cpp
                ui/einspector/BooleanPropertyEditor.cpp
                ui/einspector/ClassnamePropertyEditor.cpp
