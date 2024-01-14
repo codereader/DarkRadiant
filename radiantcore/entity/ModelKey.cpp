@@ -103,9 +103,12 @@ void ModelKey::attachModelNode()
     if (modelDef)
     {
         // Set the default skin to the one defined in the modelDef
-        if (auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node); skinned)
+        auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
+
+        if (skinned && !modelDef->getSkin().empty())
         {
             skinned->setDefaultSkin(modelDef->getSkin());
+            skinned->skinChanged(std::string()); // trigger a remap
         }
 
         scene::applyIdlePose(_model.node, modelDef);
