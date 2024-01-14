@@ -700,21 +700,29 @@ IEntityNodePtr createStaticEntityWithModel(const std::string& model)
     return entity;
 }
 
+SkinnedModelPtr getSkinnedModel(const IEntityNodePtr& entity)
+{
+    SkinnedModelPtr foundModelNode;
+
+    entity->foreachNode([&](const auto& child)
+    {
+        auto model = std::dynamic_pointer_cast<SkinnedModel>(child);
+        if (!foundModelNode && model)
+        {
+            foundModelNode = model;
+        }
+        return true;
+    });
+
+    EXPECT_TRUE(foundModelNode) << "Failed to find the skinned model node";
+
+    return foundModelNode;
+}
+
 void expectEntityHasSkinnedModel(const IEntityNodePtr& entity, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
 {
     // Check the skinned model node beneath it
-    SkinnedModelPtr foundModelNode;
-    entity->foreachNode([&](const auto& child)
-        {
-            auto model = std::dynamic_pointer_cast<SkinnedModel>(child);
-            if (!foundModelNode && model)
-            {
-                foundModelNode = model;
-            }
-            return true;
-        });
-
-    EXPECT_TRUE(foundModelNode) << "Failed to find the skinned model node";
+    auto foundModelNode = getSkinnedModel(entity);
     EXPECT_EQ(foundModelNode->getSkin(), expectedSkin) << "Expected skin to be " << expectedSkin << " on entity with model " << entity->getEntity().getKeyValue("model");
 
     auto modelNode = std::dynamic_pointer_cast<model::ModelNode>(foundModelNode);
@@ -730,24 +738,155 @@ void expectEntityHasSkinnedModel(const std::string& modelKeyValue, const std::st
     expectEntityHasSkinnedModel(entity, expectedSkin, expectedMaterials);
 }
 
+void expectEntityClassHasSkinnedModel(const std::string& eclassName, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+{
+    auto eclass = GlobalEntityClassManager().findClass(eclassName);
+    EXPECT_TRUE(eclass) << "Unable to locate entityDef " << eclassName;
+    auto entity = GlobalEntityModule().createEntity(eclass);
+    expectEntityHasSkinnedModel(entity, expectedSkin, expectedMaterials);
+}
+
+void setSkinKeyAndCheckModel(const IEntityNodePtr& entity, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+{
+    // Save the data to do a before/after test
+    auto model = getSkinnedModel(entity);
+    auto modelNode = std::dynamic_pointer_cast<model::ModelNode>(model);
+
+    auto skinBeforeSettingKey = model->getSkin();
+    auto materialsBeforeSettingKey = modelNode->getIModel().getActiveMaterials();
+
+    entity->getEntity().setKeyValue("skin", expectedSkin);
+    expectEntityHasSkinnedModel(entity, expectedSkin, expectedMaterials);
+
+    // Remove the skin key again, it should be as before
+    entity->getEntity().setKeyValue("skin", "");
+    expectEntityHasSkinnedModel(entity, skinBeforeSettingKey, materialsBeforeSettingKey);
+}
+
+// An entity using a certain modelDef as "model" and explicitly setting the "skin" spawnarg
+void expectEntityWithSkinKeyHasSkinnedModel(const std::string& modelKeyValue, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+{
+    auto entity = createStaticEntityWithModel(modelKeyValue);
+    setSkinKeyAndCheckModel(entity, expectedSkin, expectedMaterials);
+}
+
+void expectEntityClassWithSkinKeyHasSkinnedModel(const std::string& eclassName, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+{
+    auto eclass = GlobalEntityClassManager().findClass(eclassName);
+    EXPECT_TRUE(eclass) << "Unable to locate entityDef " << eclassName;
+
+    auto entity = GlobalEntityModule().createEntity(eclass);
+    setSkinKeyAndCheckModel(entity, expectedSkin, expectedMaterials);
+}
+
+namespace
+{
+    const std::vector<std::string> flagPirateSet = { "flag_pirate", "flag_pirate" };
+    const std::string caulkSkin = "swap_flag_pirate_with_caulk";
+    const std::vector<std::string> caulkSet = { "textures/common/caulk", "textures/common/caulk" };
+    const std::string nodrawSkin = "swap_flag_pirate_with_nodraw";
+    const std::vector<std::string> nodrawSet = { "textures/common/nodraw", "textures/common/nodraw" };
+    const std::string visportalSkin = "swap_flag_pirate_with_visportal";
+    const std::vector<std::string> visportalSet = { "textures/editor/visportal", "textures/editor/visportal" };
+    const std::string aasSolidSkin = "swap_flag_pirate_with_aassolid";
+    const std::vector<std::string> aasSolidSet = { "textures/editor/aassolid", "textures/editor/aassolid" };
+}
+
 // Variations of modelDefs, all of them have a mesh, some of them define a skin, some inherit a skin, some override a skin
 TEST_F(ModelSkinTest, ModelDefSkinKeword)
 {
-    expectModelDefHasMeshAndSkin("some_base_modeldef_without_skin", "models/md5/flag01.md5mesh", "");
-    expectModelDefHasMeshAndSkin("some_base_modeldef_with_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_caulk");
-    expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_only", "models/md5/flag01.md5mesh", "");
-    expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_and_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_caulk");
-    expectModelDefHasMeshAndSkin("some_modeldef_overriding_inherited_skin", "models/md5/flag01.md5mesh", "swap_flag_pirate_with_nodraw");
+    expectModelDefHasMeshAndSkin("some_base_modeldef_without_skin", "models/md5/testflag.md5mesh", "");
+    expectModelDefHasMeshAndSkin("some_base_modeldef_with_skin", "models/md5/testflag.md5mesh", caulkSkin);
+    expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_only", "models/md5/testflag.md5mesh", "");
+    expectModelDefHasMeshAndSkin("some_modeldef_inheriting_model_and_skin", "models/md5/testflag.md5mesh", caulkSkin);
+    expectModelDefHasMeshAndSkin("some_modeldef_overriding_inherited_skin", "models/md5/testflag.md5mesh", nodrawSkin);
 }
 
 // Test the resulting skinned model attached to an entity node using the given modelDef as "model"
 TEST_F(ModelSkinTest, EntityUsingModelDef)
 {
-    expectEntityHasSkinnedModel("some_base_modeldef_without_skin", "", { "flag_pirate", "flag_pirate" });
-    expectEntityHasSkinnedModel("some_base_modeldef_with_skin", "swap_flag_pirate_with_caulk", { "textures/common/caulk", "textures/common/caulk" });
-    expectEntityHasSkinnedModel("some_modeldef_inheriting_model_only", "", { "flag_pirate", "flag_pirate" });
-    expectEntityHasSkinnedModel("some_modeldef_inheriting_model_and_skin", "swap_flag_pirate_with_caulk", { "textures/common/caulk", "textures/common/caulk" });
-    expectEntityHasSkinnedModel("some_modeldef_overriding_inherited_skin", "swap_flag_pirate_with_nodraw", { "textures/common/nodraw", "textures/common/nodraw" });
+    expectEntityHasSkinnedModel("some_base_modeldef_without_skin", "", flagPirateSet);
+    expectEntityHasSkinnedModel("some_base_modeldef_with_skin", caulkSkin, caulkSet);
+    expectEntityHasSkinnedModel("some_modeldef_inheriting_model_only", "", flagPirateSet);
+    expectEntityHasSkinnedModel("some_modeldef_inheriting_model_and_skin", caulkSkin, caulkSet);
+    expectEntityHasSkinnedModel("some_modeldef_overriding_inherited_skin", nodrawSkin, nodrawSet);
+
+    // Try again with the "skin" keyword set as entity key value, overriding all inherited skin settings
+    expectEntityWithSkinKeyHasSkinnedModel("some_base_modeldef_without_skin", nodrawSkin, nodrawSet);
+    expectEntityWithSkinKeyHasSkinnedModel("some_base_modeldef_with_skin", nodrawSkin, nodrawSet);
+    expectEntityWithSkinKeyHasSkinnedModel("some_modeldef_inheriting_model_only", nodrawSkin, nodrawSet);
+    expectEntityWithSkinKeyHasSkinnedModel("some_modeldef_inheriting_model_and_skin", nodrawSkin, nodrawSet);
+    expectEntityWithSkinKeyHasSkinnedModel("some_modeldef_overriding_inherited_skin", nodrawSkin, nodrawSet);
+}
+
+// Test the resulting skinned model attached to an entity node using a certain entityDef (which in turn is using a modelDef as "model" keyword)
+TEST_F(ModelSkinTest, EntityClassUsingModelDef)
+{
+    // Go through all the crazy combinations of entityDefs defined in the skinned_models.def file
+
+    expectEntityClassHasSkinnedModel("entity_using_some_base_modeldef_without_skin", "", flagPirateSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_base_modeldef_with_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_modeldef_inheriting_model_only", "", flagPirateSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_modeldef_inheriting_model_and_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_modeldef_overriding_inherited_skin", nodrawSkin, nodrawSet);
+
+    expectEntityClassHasSkinnedModel("entity_inheriting_some_base_modeldef_without_skin", "", flagPirateSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_with_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_only", "", flagPirateSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin", nodrawSkin, nodrawSet);
+
+    expectEntityClassHasSkinnedModel("entity_inheriting_some_base_modeldef_without_skin_overriding_skin", nodrawSkin, nodrawSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_with_skin_overriding_skin", nodrawSkin, nodrawSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_only_overriding_skin", nodrawSkin, nodrawSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin_overriding_skin", nodrawSkin, nodrawSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin_overriding_skin", nodrawSkin, nodrawSet);
+
+    expectEntityClassHasSkinnedModel("entity_using_some_base_modeldef_without_skin_overriding_skin", visportalSkin, visportalSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_base_modeldef_with_skin_overriding_skin", visportalSkin, visportalSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_modeldef_inheriting_model_only_overriding_skin", visportalSkin, visportalSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_modeldef_inheriting_model_and_skin_only_overriding_skin", visportalSkin, visportalSet);
+    expectEntityClassHasSkinnedModel("entity_using_some_modeldef_overriding_inherited_skin_overriding_skin", visportalSkin, visportalSet);
+
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_without_skin_overriding_skin_overriding_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_with_skin_overriding_skin_overriding_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_only_overriding_skin_overriding_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin_only_overriding_skin_overriding_skin", caulkSkin, caulkSet);
+    expectEntityClassHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin_overriding_skin_overriding_skin", caulkSkin, caulkSet);
+}
+
+TEST_F(ModelSkinTest, EntityClassUsingModelDefCustomSkinKey)
+{
+    // Go through all the entityDefs defined in the skinned_models.def file, but set a custom "skin" keyword on the entity
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_base_modeldef_without_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_base_modeldef_with_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_modeldef_inheriting_model_only", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_modeldef_inheriting_model_and_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_modeldef_overriding_inherited_skin", aasSolidSkin, aasSolidSet);
+
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_some_base_modeldef_without_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_with_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_only", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin", aasSolidSkin, aasSolidSet);
+
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_some_base_modeldef_without_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_with_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_only_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_base_modeldef_without_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_base_modeldef_with_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_modeldef_inheriting_model_only_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_modeldef_inheriting_model_and_skin_only_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_using_some_modeldef_overriding_inherited_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_without_skin_overriding_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_base_modeldef_with_skin_overriding_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_only_overriding_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin_only_overriding_skin_overriding_skin", aasSolidSkin, aasSolidSet);
+    expectEntityClassWithSkinKeyHasSkinnedModel("entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin_overriding_skin_overriding_skin", aasSolidSkin, aasSolidSet);
 }
 
 }
