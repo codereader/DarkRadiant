@@ -102,6 +102,12 @@ void ModelKey::attachModelNode()
     // Assign idle pose to modelDef meshes
     if (modelDef)
     {
+        // Set the default skin to the one defined in the modelDef
+        if (auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node); skinned)
+        {
+            skinned->setDefaultSkin(modelDef->getSkin());
+        }
+
         scene::applyIdlePose(_model.node, modelDef);
     }
 
@@ -129,7 +135,7 @@ void ModelKey::attachModelNodeKeepinSkin()
     if (_model.node)
     {
         // Check if we have a skinnable model and remember the skin
-	    SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
+	    auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
 
 	    std::string skin = skinned ? skinned->getSkin() : "";
 	

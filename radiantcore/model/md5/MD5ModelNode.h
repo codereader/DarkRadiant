@@ -27,6 +27,9 @@ class MD5ModelNode :
 	// The name of this model's skin
 	std::string _skin;
 
+    // The default skin in case _skin is set to an empty string
+	std::string _defaultSkin;
+
     sigc::connection _animationUpdateConnection;
     sigc::connection _modelShadersChangedConnection;
 
@@ -36,7 +39,7 @@ class MD5ModelNode :
 
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
-    virtual ~MD5ModelNode();
+    ~MD5ModelNode() override;
 
 	// ModelNode implementation
 	const model::IModel& getIModel() const override;
@@ -49,9 +52,9 @@ public:
 	const MD5ModelPtr& getModel() const;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const override;
+	const AABB& localAABB() const override;
 
-	virtual std::string name() const override;
+	std::string name() const override;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test) override;
@@ -63,8 +66,9 @@ public:
     void onPreRender(const VolumeTest& volume) override;
 
 	// Returns the name of the currently active skin
-	virtual std::string getSkin() const override;
+	std::string getSkin() const override;
 	void skinChanged(const std::string& newSkinName) override;
+    void setDefaultSkin(const std::string& defaultSkin) override;
 
 protected:
     void createRenderableSurfaces() override;

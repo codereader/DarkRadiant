@@ -700,9 +700,9 @@ IEntityNodePtr createStaticEntityWithModel(const std::string& model)
     return entity;
 }
 
-SkinnedModelPtr getSkinnedModel(const IEntityNodePtr& entity)
+SkinnedModel::Ptr getSkinnedModel(const IEntityNodePtr& entity)
 {
-    SkinnedModelPtr foundModelNode;
+    SkinnedModel::Ptr foundModelNode;
 
     entity->foreachNode([&](const auto& child)
     {

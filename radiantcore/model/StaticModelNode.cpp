@@ -108,7 +108,6 @@ bool StaticModelNode::getIntersection(const Ray& ray, Vector3& intersection)
     return _model->getIntersection(ray, intersection, localToWorld());
 }
 
-// Skin changed notify
 void StaticModelNode::skinChanged(const std::string& newSkinName)
 {
     // The new skin name is stored locally
@@ -116,16 +115,20 @@ void StaticModelNode::skinChanged(const std::string& newSkinName)
 
     // greebo: Acquire the ModelSkin reference from the SkinCache (might return null)
     // Applying the skin might trigger onModelShadersChanged()
-    _model->applySkin(GlobalModelSkinCache().findSkin(_skin));
+    _model->applySkin(GlobalModelSkinCache().findSkin(getSkin()));
 
     // Refresh the scene (TODO: get rid of that)
     GlobalSceneGraph().sceneChanged();
 }
 
-// Returns the name of the currently active skin
 std::string StaticModelNode::getSkin() const
 {
-    return _skin;
+    return !_skin.empty() ? _skin : _defaultSkin;
+}
+
+void StaticModelNode::setDefaultSkin(const std::string& defaultSkin)
+{
+    _defaultSkin = defaultSkin;
 }
 
 void StaticModelNode::_onTransformationChanged()

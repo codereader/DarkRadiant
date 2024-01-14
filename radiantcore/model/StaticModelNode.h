@@ -38,6 +38,9 @@ private:
 	// The name of this model's skin
 	std::string _skin;
 
+    // The default skin used when no skin has otherwise been set from the outside
+	std::string _defaultSkin;
+
 public:
     typedef std::shared_ptr<StaticModelNode> Ptr;
 
@@ -58,6 +61,7 @@ public:
 	void skinChanged(const std::string& newSkinName) override;
 	// Returns the name of the currently active skin
 	std::string getSkin() const override;
+    void setDefaultSkin(const std::string& defaultSkin) override;
 
 	// Bounded implementation
 	const AABB& localAABB() const override;
