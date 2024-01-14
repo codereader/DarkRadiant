@@ -908,4 +908,6 @@ TEST_F(ModelSkinTest, ChangingModelOnEntityUsingModelDef)
     EXPECT_EQ(model->getSkin(), "swap_flag_pirate_with_nodraw") << "Skin should be 'swap_flag_pirate_with_nodraw' as defined in the new modelDef";
 }
 
+// TODO TEST: Change a modelDef's skin and hit reload Decls
+
 }

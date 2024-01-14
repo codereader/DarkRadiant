@@ -23,6 +23,7 @@ private:
 	{
 		scene::INodePtr node;
 		std::string path;
+        std::string explicitSkin;
         bool modelDefMonitored;
 	};
 
@@ -69,7 +70,7 @@ private:
     void detachModelNode();
 
     // Attaches a model node, making sure that the skin setting is kept
-    void attachModelNodeKeepinSkin();
+    void attachModelNodeKeepingSkin();
 
 	void importState(const ModelNodeAndPath& data);
 
