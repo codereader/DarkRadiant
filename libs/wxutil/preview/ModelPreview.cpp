@@ -138,6 +138,15 @@ void ModelPreview::prepareScene()
         // Apply the idle pose if possible
         if (modelDef)
         {
+            // Set the default skin to the one defined in the modelDef
+            auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+
+            if (skinned && !modelDef->getSkin().empty())
+            {
+                skinned->setDefaultSkin(modelDef->getSkin());
+                skinned->skinChanged(std::string()); // trigger a remap
+            }
+
             scene::applyIdlePose(_modelNode, modelDef);
         }
 
