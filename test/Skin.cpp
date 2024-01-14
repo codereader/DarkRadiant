@@ -891,7 +891,7 @@ TEST_F(ModelSkinTest, EntityClassUsingModelDefCustomSkinKey)
 
 // Changing the model key on an entity that has otherwise no "skin" defined on it
 // This is to check that the previous default skin is not carried over to the new model
-TEST_F(ModelSkinTest, ChangingModelOnEntityUsingModelDef)
+TEST_F(ModelSkinTest, DefaultSkinAppliedWhenChangingModelDef)
 {
     auto eclass = GlobalEntityClassManager().findClass("entity_using_some_base_modeldef_with_skin");
     auto entity = GlobalEntityModule().createEntity(eclass);
@@ -908,6 +908,30 @@ TEST_F(ModelSkinTest, ChangingModelOnEntityUsingModelDef)
     EXPECT_EQ(model->getSkin(), "swap_flag_pirate_with_nodraw") << "Skin should be 'swap_flag_pirate_with_nodraw' as defined in the new modelDef";
 }
 
+// Changing the model key to a different value with a skin spawnarg set on the entity
+TEST_F(ModelSkinTest, ExplicitSkinPreservedWhenChangingModelDef)
+{
+    auto eclass = GlobalEntityClassManager().findClass("entity_using_some_base_modeldef_with_skin");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    // Check the skin, it should be "swap_flag_pirate_with_caulk" as defined in the modelDef
+    expectEntityHasSkinnedModel(entity, caulkSkin, caulkSet);
+
+    // Set the "skin" key to override the model default
+    entity->getEntity().setKeyValue("skin", aasSolidSkin);
+    expectEntityHasSkinnedModel(entity, aasSolidSkin, aasSolidSet);
+
+    // Now change the modelDef, this should would have the "swap_flag_pirate_with_nodraw" skin
+    // but it's still overridden by the entity
+    entity->getEntity().setKeyValue("model", "some_modeldef_overriding_inherited_skin");
+    expectEntityHasSkinnedModel(entity, aasSolidSkin, aasSolidSet);
+
+    // Remove the "skin" key value, it should fall back to the model's default
+    entity->getEntity().setKeyValue("skin", "");
+    expectEntityHasSkinnedModel(entity, nodrawSkin, nodrawSet);
+}
+
 // TODO TEST: Change a modelDef's skin and hit reload Decls
+
 
 }
