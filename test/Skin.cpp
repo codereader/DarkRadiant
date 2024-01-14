@@ -931,6 +931,29 @@ TEST_F(ModelSkinTest, ExplicitSkinPreservedWhenChangingModelDef)
     expectEntityHasSkinnedModel(entity, nodrawSkin, nodrawSet);
 }
 
+// Changing the model key to a different value with a skin spawnarg set on the entityDef
+TEST_F(ModelSkinTest, ExplicitInheritedSkinPreservedWhenChangingModelDef)
+{
+    auto eclass = GlobalEntityClassManager().findClass("entity_using_some_base_modeldef_with_skin_overriding_skin");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    // Check the skin, it should be "swap_flag_pirate_with_visportal" as defined in the entityDef
+    expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
+
+    // Just swap the modelDef without defining any skin (this would have nodraw as default skin)
+    entity->getEntity().setKeyValue("model", "some_modeldef_overriding_inherited_skin");
+    // This should still use the inherited "skin" property as defined in the entityDef
+    expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
+
+    // Set the "skin" key to override the model default
+    entity->getEntity().setKeyValue("skin", aasSolidSkin);
+    expectEntityHasSkinnedModel(entity, aasSolidSkin, aasSolidSet);
+
+    // Remove the "skin" key value, it should fall back to the inherited entityDef
+    entity->getEntity().setKeyValue("skin", "");
+    expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
+}
+
 // TODO TEST: Change a modelDef's skin and hit reload Decls
 
 
