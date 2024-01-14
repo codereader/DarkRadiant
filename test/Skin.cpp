@@ -954,7 +954,50 @@ TEST_F(ModelSkinTest, ExplicitInheritedSkinPreservedWhenChangingModelDef)
     expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
 }
 
-// TODO TEST: Change a modelDef's skin and hit reload Decls
+// Change a modelDef's skin and hit reload Decls
+TEST_F(ModelSkinTest, SkinChangeDetectionOnReloadDecls)
+{
+    auto eclass = GlobalEntityClassManager().findClass("entity_using_some_base_modeldef_with_skin");
+    auto entity = GlobalEntityModule().createEntity(eclass);
 
+    // Check the skin, it should be "swap_flag_pirate_with_caulk" as defined in the modelDef
+    expectEntityHasSkinnedModel(entity, caulkSkin, caulkSet);
+
+    // Hit reload decls globally, this shouldn't have any effect
+    GlobalDeclarationManager().reloadDeclarations();
+    expectEntityHasSkinnedModel(entity, caulkSkin, caulkSet);
+
+    // Change the def contents, which should trigger a modelDefChanged signal on the entity
+    auto modelDef = GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, "some_base_modeldef_with_skin");
+    auto syntax = modelDef->getBlockSyntax();
+    string::replace_first(syntax.contents, caulkSkin, visportalSkin);
+    modelDef->setBlockSyntax(syntax);
+
+    expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
+}
+
+// Changing a modelDef's skin should be ignore if the entity has an explicit "skin" property set
+TEST_F(ModelSkinTest, SkinChangeInDefOverriddenWithSkinProperty)
+{
+    auto eclass = GlobalEntityClassManager().findClass("entity_using_some_base_modeldef_with_skin_overriding_skin");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    // Check the skin, it should be "swap_flag_pirate_with_visportal" as defined in the entityDef
+    expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
+
+    // Hit reload decls globally, this shouldn't have any effect
+    GlobalDeclarationManager().reloadDeclarations();
+    expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
+
+    // Change the def contents, which should trigger a modelDefChanged signal on the entity
+    // => shouldn't do anything, since the entity is overriding it
+    auto modelDef = GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, "some_base_modeldef_with_skin");
+    auto syntax = modelDef->getBlockSyntax();
+    string::replace_first(syntax.contents, visportalSkin, aasSolidSkin);
+    modelDef->setBlockSyntax(syntax);
+
+    // Still visportal skinned
+    expectEntityHasSkinnedModel(entity, visportalSkin, visportalSet);
+}
 
 }
