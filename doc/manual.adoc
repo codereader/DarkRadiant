@@ -266,6 +266,40 @@ The appearance of the grid can be customised using the options in the *Grid* tab
 *Big Dots*
 |===
 
+=== Adding a background image
+
+The 2D view is capable of showing a background image, which may be useful to show image
+references, or sketched 2D maps to guide the placement of level geometry.
+
+To show a background image, choose *View -> Background image...* which will show the
+background image configuration dialog.
+
+*Use background image*:: Master toggle to show or hide the background image.
+
+*Image file*:: Click on the widget to show a file chooser which allows you to find and
+*select the background image to show.
+
+*Opacity*:: Drag the slider to control the opacity of the image, from fully transparent
+*(invisible) to fully opaque.
+
+*Scale*:: Adjusts the size of the image.
+
+*Horiz. offset*:: Adjusts the position of the image from left to right.
+
+*Vert. offset*:: Adjusts the position of the image from top to bottom.
+
+*Keep aspect*:: If checked, the image will always be displayed at its native aspect ratio.
+If unchecked, the image will have the same aspect ratio as the containing 2D view.
+
+*Zoom with viewport*:: If checked, the image will change size as the 2D view is zoomed in or
+out. If unchecked, the image will always have the same size regardless of the 2D window
+zoom.
+
+*Pan with viewport*:: If checked, the image will be anchored in 2D space, and will stay in
+the same position relative to the world as the 2D view is panned. If unchecked, the image
+will always have the same position relative to the window, and the world geometry will pan
+around it.
+
 [[Using3DCameraView]]
 === Using the 3D camera view
 
