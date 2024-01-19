@@ -100,7 +100,7 @@ void OrthoBackgroundPanel::setupDialog()
     _slider.scale->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    _spinScale = makeSpinner(_controlsPanel, 0, 20, 0.01);
+    _spinScale = makeSpinner(_controlsPanel, 0, 20, 0.01f);
     addSliderRow(_controlsPanel, *cpanelSizer, "<b>Scale</b>", _slider.scale, _spinScale);
 
     // Horizontal Offset slider and spinner
@@ -108,7 +108,7 @@ void OrthoBackgroundPanel::setupDialog()
     _slider.hOffset->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    _spinHorizOffset = makeSpinner(_controlsPanel, -20, 20, 0.01);
+    _spinHorizOffset = makeSpinner(_controlsPanel, -20, 20, 0.01f);
     addSliderRow(
         _controlsPanel, *cpanelSizer, "<b>Horz. offset</b>", _slider.hOffset, _spinHorizOffset
     );
@@ -118,7 +118,7 @@ void OrthoBackgroundPanel::setupDialog()
     _slider.vOffset->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    _spinVertOffset = makeSpinner(_controlsPanel, -20, 20, 0.01);
+    _spinVertOffset = makeSpinner(_controlsPanel, -20, 20, 0.01f);
     addSliderRow(
         _controlsPanel, *cpanelSizer, "<b>Vert. offset</b>", _slider.vOffset, _spinVertOffset
     );
