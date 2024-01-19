@@ -1,5 +1,6 @@
 #include "OrthoBackgroundPanel.h"
 
+#include "i18n.h"
 #include "iscenegraph.h"
 
 #include "registry/registry.h"
@@ -8,6 +9,7 @@
 #include <wx/filepicker.h>
 #include <wx/slider.h>
 #include <wx/spinctrl.h>
+#include <wx/stattext.h>
 
 #include "OverlayRegistryKeys.h"
 #include "util/ScopedBoolLock.h"
@@ -17,10 +19,6 @@ namespace ui
 
 OrthoBackgroundPanel::OrthoBackgroundPanel(wxWindow* parent): DockablePanel(parent)
 {
-    auto panel = loadNamedPanel(this, "OverlayDialogMainPanel");
-    SetSizer(new wxBoxSizer(wxVERTICAL));
-    GetSizer()->Add(panel, 1, wxEXPAND);
-
     setupDialog();
     initialiseWidgets();
 }
@@ -52,6 +50,7 @@ wxSpinCtrlDouble* OrthoBackgroundPanel::makeSpinner(wxWindow* parent, float min,
     auto* spinner = new wxSpinCtrlDouble(parent, wxID_ANY);
     spinner->SetRange(min, max);
     spinner->SetIncrement(increment);
+    spinner->SetDigits(2); // decimal places
     spinner->Bind(wxEVT_SPINCTRLDOUBLE, [this](wxSpinDoubleEvent& ev) {
         onSpinChange(ev);
     });
@@ -61,62 +60,76 @@ wxSpinCtrlDouble* OrthoBackgroundPanel::makeSpinner(wxWindow* parent, float min,
 
 void OrthoBackgroundPanel::setupDialog()
 {
-    wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
-    useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
-    useImageBtn->Connect(wxEVT_CHECKBOX,
-        wxCommandEventHandler(OrthoBackgroundPanel::onToggleUseImage), NULL, this);
+    // Top-level vbox
+    auto* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-    wxPanel* cpanel = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
-    auto* cpanelSizer = cpanel->GetSizer();
+    // "Use image" checkbox
+    _cb.useImage = new wxCheckBox(this, wxID_ANY, _("Use background image"));
+    _cb.useImage->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+    _cb.useImage->Connect(
+        wxEVT_CHECKBOX, wxCommandEventHandler(OrthoBackgroundPanel::onToggleUseImage), NULL,
+        this
+    );
+    mainSizer->Add(_cb.useImage, 0, wxEXPAND | wxALL, 12);
+
+    // Sub-panel for all the other controls, which will become enabled or disabled based on
+    // the state of the main checkbox.
+    _controlsPanel = new wxPanel(this);
+    auto* cpanelSizer = new wxFlexGridSizer(2, 6, 6);
+    cpanelSizer->AddGrowableCol(1);
 
     // File picker
-    _filePicker = new wxFilePickerCtrl(cpanel, wxID_ANY);
+    _filePicker = new wxFilePickerCtrl(_controlsPanel, wxID_ANY);
     _filePicker->Connect(
         wxEVT_FILEPICKER_CHANGED,
         wxFileDirPickerEventHandler(OrthoBackgroundPanel::onFileSelection), NULL, this
     );
-    cpanelSizer->Add(makeLabel(cpanel, "<b>Image file</b>"), 0, wxALL, LABEL_INDENT);
+    cpanelSizer->Add(makeLabel(_controlsPanel, "<b>Image file</b>"), 0, wxALL, LABEL_INDENT);
     cpanelSizer->Add(_filePicker, 1, wxEXPAND);
 
     // Opacity slider
-    _slider.opacity = new wxSlider(cpanel, wxID_ANY, 50, 0, 100);
+    _slider.opacity = new wxSlider(_controlsPanel, wxID_ANY, 50, 0, 100);
     _slider.opacity->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    cpanelSizer->Add(makeLabel(cpanel, "<b>Opacity</b>"), 0, wxALL, LABEL_INDENT);
+    cpanelSizer->Add(makeLabel(_controlsPanel, "<b>Opacity</b>"), 0, wxALL, LABEL_INDENT);
     cpanelSizer->Add(_slider.opacity, 1, wxEXPAND);
 
     // Scale slider and spinner
-    _slider.scale = new wxSlider(cpanel, wxID_ANY, 100, 0, 2000);
+    _slider.scale = new wxSlider(_controlsPanel, wxID_ANY, 100, 0, 2000);
     _slider.scale->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    _spinScale = makeSpinner(cpanel, 0, 20, 0.01);
-    addSliderRow(cpanel, *cpanelSizer, "<b>Scale</b>", _slider.scale, _spinScale);
+    _spinScale = makeSpinner(_controlsPanel, 0, 20, 0.01);
+    addSliderRow(_controlsPanel, *cpanelSizer, "<b>Scale</b>", _slider.scale, _spinScale);
 
     // Horizontal Offset slider and spinner
-    _slider.hOffset = new wxSlider(cpanel, wxID_ANY, 0, -2000, 2000);
+    _slider.hOffset = new wxSlider(_controlsPanel, wxID_ANY, 0, -2000, 2000);
     _slider.hOffset->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    _spinHorizOffset = makeSpinner(cpanel, -20, 20, 0.01);
-    addSliderRow(cpanel, *cpanelSizer, "<b>Horz. offset</b>", _slider.hOffset, _spinHorizOffset);
+    _spinHorizOffset = makeSpinner(_controlsPanel, -20, 20, 0.01);
+    addSliderRow(
+        _controlsPanel, *cpanelSizer, "<b>Horz. offset</b>", _slider.hOffset, _spinHorizOffset
+    );
 
     // Vertical Offset slider and spinner
-    _slider.vOffset = new wxSlider(cpanel, wxID_ANY, 0, -2000, 2000);
+    _slider.vOffset = new wxSlider(_controlsPanel, wxID_ANY, 0, -2000, 2000);
     _slider.vOffset->Connect(
         wxEVT_SLIDER, wxScrollEventHandler(OrthoBackgroundPanel::onScrollChange), NULL, this
     );
-    _spinVertOffset = makeSpinner(cpanel, -20, 20, 0.01);
-    addSliderRow(cpanel, *cpanelSizer, "<b>Vert. offset</b>", _slider.vOffset, _spinVertOffset);
+    _spinVertOffset = makeSpinner(_controlsPanel, -20, 20, 0.01);
+    addSliderRow(
+        _controlsPanel, *cpanelSizer, "<b>Vert. offset</b>", _slider.vOffset, _spinVertOffset
+    );
 
     // Options checkboxes
-    cpanelSizer->Add(makeLabel(cpanel, "<b>Options</b>"), 0, wxALL, LABEL_INDENT);
+    cpanelSizer->Add(makeLabel(_controlsPanel, "<b>Options</b>"), 0, wxALL, LABEL_INDENT);
 
     auto* checkboxSizer = new wxBoxSizer(wxVERTICAL);
-    _cb.keepAspect = new wxCheckBox(cpanel, wxID_ANY, "Keep aspect");
-    _cb.scaleWithViewport = new wxCheckBox(cpanel, wxID_ANY, "Zoom with viewport");
-    _cb.panWithViewport = new wxCheckBox(cpanel, wxID_ANY, "Pan with viewport");
+    _cb.keepAspect = new wxCheckBox(_controlsPanel, wxID_ANY, "Keep aspect");
+    _cb.scaleWithViewport = new wxCheckBox(_controlsPanel, wxID_ANY, "Zoom with viewport");
+    _cb.panWithViewport = new wxCheckBox(_controlsPanel, wxID_ANY, "Pan with viewport");
     checkboxSizer->Add(_cb.keepAspect);
     checkboxSizer->Add(_cb.scaleWithViewport);
     checkboxSizer->Add(_cb.panWithViewport);
@@ -125,12 +138,15 @@ void OrthoBackgroundPanel::setupDialog()
     _cb.keepAspect->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
     _cb.scaleWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
     _cb.panWithViewport->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) { onOptionToggled(); });
+
+    _controlsPanel->SetSizerAndFit(cpanelSizer);
+    mainSizer->Add(_controlsPanel, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
+    SetSizerAndFit(mainSizer);
 }
 
 void OrthoBackgroundPanel::initialiseWidgets()
 {
-    wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
-    useImageBtn->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+    _cb.useImage->SetValue(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 
     // Image filename
     _filePicker->SetFileName(wxFileName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)));
@@ -151,12 +167,9 @@ void OrthoBackgroundPanel::initialiseWidgets()
 void OrthoBackgroundPanel::updateSensitivity()
 {
     // If the "Use image" toggle is disabled, desensitise all the other widgets
-    wxCheckBox* useImageBtn = findNamedObject<wxCheckBox>(this, "OverlayDialogUseBackgroundImage");
+    _controlsPanel->Enable(_cb.useImage->GetValue());
 
-    wxPanel* controls = findNamedObject<wxPanel>(this, "OverlayDialogControlPanel");
-    controls->Enable(useImageBtn->GetValue());
-
-    assert(controls->IsEnabled() == registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+    assert(_controlsPanel->IsEnabled() == registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 }
 
 void OrthoBackgroundPanel::onOptionToggled()
@@ -171,9 +184,7 @@ void OrthoBackgroundPanel::onOptionToggled()
 
 void OrthoBackgroundPanel::onToggleUseImage(wxCommandEvent& ev)
 {
-    wxCheckBox* useImageBtn = static_cast<wxCheckBox*>(ev.GetEventObject());
-
-    registry::setValue(RKEY_OVERLAY_VISIBLE, useImageBtn->GetValue());
+    registry::setValue(RKEY_OVERLAY_VISIBLE, _cb.useImage->GetValue());
     updateSensitivity();
 
     // Refresh
