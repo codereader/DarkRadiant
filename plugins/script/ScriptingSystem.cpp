@@ -1,7 +1,6 @@
 #include "ScriptingSystem.h"
 
 #include "itextstream.h"
-#include "ui/imainframe.h"
 #include "iundo.h"
 
 #include "interfaces/MathInterface.h"
@@ -42,6 +41,15 @@
 namespace script 
 {
 
+namespace
+{
+    constexpr const char* const EXAMPLE_SCRIPT_NAME = "Example";
+    constexpr const char* const INIT_SCRIPT_FILENAME = "init.py";
+    constexpr const char* const PYTHON_FILE_EXTENSION = "py";
+    constexpr const char* const SCRIPT_PATH = "scripts/"; // relative to the runtime data folder
+    constexpr const char* const COMMAND_PATH = "commands/"; // relative to SCRIPT_PATH
+}
+
 ScriptingSystem::ScriptingSystem() :
 	_initialised(false)
 {}
@@ -70,7 +78,7 @@ void ScriptingSystem::foreachScriptCommand(const std::function<void(const IScrip
 {
 	for (const auto& pair : _commands)
 	{
-		if (pair.first == "Example") continue; // skip the example script
+		if (pair.first == EXAMPLE_SCRIPT_NAME) continue; // skip the example script
 
 		functor(*pair.second);
 	}
@@ -89,7 +97,7 @@ void ScriptingSystem::initialise()
 	_initialised = true;
 
 	// Start the init script
-	executeScriptFile("init.py");
+	executeScriptFile(INIT_SCRIPT_FILENAME);
 
 	// Search script folder for commands
 	reloadScripts();
@@ -116,27 +124,27 @@ void ScriptingSystem::reloadScriptsCmd(const cmd::ArgumentList& args)
 
 void ScriptingSystem::executeCommand(const std::string& name)
 {
-	// Sanity check
-	if (!_initialised)
-	{
-		rError() << "Cannot execute script command " << name
-			<< ", ScriptingSystem not initialised yet." << std::endl;
-		return;
-	}
+    // Sanity check
+    if (!_initialised)
+    {
+        rError() << "Cannot execute script command " << name
+            << ", ScriptingSystem not initialised yet." << std::endl;
+        return;
+    }
 
-	// Lookup the name
-	auto found = _commands.find(name);
+    // Lookup the name
+    auto found = _commands.find(name);
 
-	if (found == _commands.end())
-	{
-		rError() << "Couldn't find command " << name << std::endl;
-		return;
-	}
+    if (found == _commands.end())
+    {
+        rError() << "Couldn't find command " << name << std::endl;
+        return;
+    }
 
     UndoableCommand cmd("runScriptCommand " + name);
 
-	// Execute the script file behind this command
-	executeScriptFile(found->second->getFilename(), true);
+    // Execute the script file behind this command
+    executeScriptFile(found->second->getFilename(), true);
 }
 
 void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
@@ -171,7 +179,7 @@ void ScriptingSystem::reloadScripts()
 	_commands.clear();
 
 	// Initialise the search's starting point
-	fs::path start = fs::path(_scriptPath) / "commands/";
+	fs::path start = fs::path(_scriptPath) / COMMAND_PATH;
 
 	if (!fs::exists(start))
 	{
@@ -190,7 +198,7 @@ void ScriptingSystem::reloadScripts()
 		std::string extension = os::getExtension(candidate.string());
 		string::to_lower(extension);
 
-		if (extension != "py") continue;
+		if (extension != PYTHON_FILE_EXTENSION) continue;
 
 		// Script file found, construct a new command
 		loadCommandScript(os::getRelativePath(candidate.generic_string(), _scriptPath));
@@ -224,10 +232,10 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	module::GlobalModuleRegistry().signal_allModulesInitialised()
-		.connect(sigc::mem_fun(this, &ScriptingSystem::initialise));
+		.connect(sigc::mem_fun(*this, &ScriptingSystem::initialise));
 
 	// Construct the script path
-	_scriptPath = ctx.getRuntimeDataPath() + "scripts/";
+	_scriptPath = ctx.getRuntimeDataPath() + SCRIPT_PATH;
 
 	// Set up the python interpreter
     _pythonModule.reset(new PythonModule);
