@@ -20,12 +20,8 @@
 namespace test
 {
 
-/**
- * Test fixture setting up the application context and
- * the radiant core module.
- */
-class RadiantTest :
-	public ::testing::Test
+/// Test fixture setting up the application context and the radiant core module.
+class RadiantTest: public ::testing::Test
 {
 protected:
 	// The RadiantApp owns the ApplicationContext which is then passed to the
