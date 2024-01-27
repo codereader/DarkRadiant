@@ -1,5 +1,3 @@
-#include "itextstream.h"
-
 #include "ScriptingSystem.h"
 #include "debugging/debugging.h"
 
@@ -11,5 +9,5 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	module::performDefaultInitialisation(registry);
 
-	registry.registerModule(script::ScriptingSystemPtr(new script::ScriptingSystem));
+	registry.registerModule(std::make_shared<script::ScriptingSystem>());
 }

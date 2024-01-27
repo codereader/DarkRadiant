@@ -1,11 +1,10 @@
 #pragma once
 
 #include <map>
-#include <vector>
+#include <sigc++/signal.h>
 
 #include "iscript.h"
 #include "iscriptinterface.h"
-#include "PythonConsoleWriter.h"
 #include "icommandsystem.h"
 #include "PythonModule.h"
 
@@ -82,7 +81,9 @@ private:
 	void reloadScripts();
 
 	void loadCommandScript(const std::string& scriptFilename);
+
+    void registerBuiltInCommands();
+    void initialiseBuiltInCommandFile(const std::string& scriptFilename);
 };
-typedef std::shared_ptr<ScriptingSystem> ScriptingSystemPtr;
 
 } // namespace script

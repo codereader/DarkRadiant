@@ -220,6 +220,7 @@
     <ClInclude Include="..\..\plugins\script\interfaces\DeclarationManagerInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\FxManagerInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\LayerInterface.h" />
+    <ClInclude Include="..\..\plugins\script\interfaces\ScriptingSystemInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\SelectionGroupInterface.h" />
     <ClInclude Include="..\..\plugins\script\precompiled.h" />
     <ClInclude Include="..\..\plugins\script\PythonConsoleWriter.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="..\..\plugins\script\interfaces\FxManagerInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\LayerInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\SceneGraphInterface.cpp" />
+    <ClCompile Include="..\..\plugins\script\interfaces\ScriptingSystemInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\SelectionGroupInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -17,6 +17,7 @@ add_library(script MODULE
             interfaces/PatchInterface.cpp
             interfaces/RadiantInterface.cpp
             interfaces/SceneGraphInterface.cpp
+            interfaces/ScriptingSystemInterface.cpp
             interfaces/SelectionGroupInterface.cpp
             interfaces/SelectionInterface.cpp
             interfaces/SelectionSetInterface.cpp

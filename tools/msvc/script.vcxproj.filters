@@ -103,6 +103,9 @@
     <ClInclude Include="..\..\plugins\script\interfaces\FxManagerInterface.h">
       <Filter>src\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\ScriptingSystemInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp">
@@ -193,6 +196,9 @@
       <Filter>src\interfaces</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\script\interfaces\FxManagerInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\ScriptingSystemInterface.cpp">
       <Filter>src\interfaces</Filter>
     </ClCompile>
   </ItemGroup>

@@ -28,6 +28,7 @@
 #include "interfaces/LayerInterface.h"
 #include "interfaces/DeclarationManagerInterface.h"
 #include "interfaces/FxManagerInterface.h"
+#include "interfaces/ScriptingSystemInterface.h"
 
 #include "PythonModule.h"
 
@@ -48,6 +49,7 @@ namespace
     constexpr const char* const PYTHON_FILE_EXTENSION = "py";
     constexpr const char* const SCRIPT_PATH = "scripts/"; // relative to the runtime data folder
     constexpr const char* const COMMAND_PATH = "commands/"; // relative to SCRIPT_PATH
+    constexpr const char* const BUILTIN_COMMAND_PATH = "builtin/"; // relative to SCRIPT_PATH
 }
 
 ScriptingSystem::ScriptingSystem() :
@@ -209,6 +211,34 @@ void ScriptingSystem::reloadScripts()
 	_sigScriptsReloaded.emit();
 }
 
+void ScriptingSystem::registerBuiltInCommands()
+{
+    fs::path start = fs::path(_scriptPath) / BUILTIN_COMMAND_PATH;
+
+    if (!fs::exists(start))
+    {
+        rWarning() << "Couldn't find built-in scripts folder: " << start.string() << std::endl;
+        return;
+    }
+
+    for (fs::recursive_directory_iterator it(start); it != fs::recursive_directory_iterator(); ++it)
+    {
+        // Get the candidate
+        const fs::path& candidate = *it;
+
+        if (fs::is_directory(candidate)) continue;
+
+        if (string::to_lower_copy(os::getExtension(candidate.string())) != PYTHON_FILE_EXTENSION) continue;
+
+        initialiseBuiltInCommandFile(os::getRelativePath(candidate.generic_string(), _scriptPath));
+    }
+}
+
+void ScriptingSystem::initialiseBuiltInCommandFile(const std::string& scriptFilename)
+{
+    //_pythonModule->createScriptCommand(_scriptPath, scriptFilename);
+}
+
 // RegisterableModule implementation
 const std::string& ScriptingSystem::getName() const
 {
@@ -240,7 +270,8 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	// Set up the python interpreter
     _pythonModule.reset(new PythonModule);
 
-	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
+	// Add the built-in interfaces (the order is important, as we don't have dependency resolution yet)
+	addInterface("ScriptingSystem", std::make_shared<ScriptingSystemInterface>(*this));
 	addInterface("Math", std::make_shared<MathInterface>());
 	addInterface("GameManager", std::make_shared<GameInterface>());
 	addInterface("CommandSystem", std::make_shared<CommandSystemInterface>());
@@ -283,6 +314,9 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 		std::bind(&ScriptingSystem::runScriptCommand, this, std::placeholders::_1),
 		{ cmd::ARGTYPE_STRING }
 	);
+
+    // Initialise the python script files containing built-in commands
+    registerBuiltInCommands();
 
 	SceneNodeBuffer::Instance().clear();
 }

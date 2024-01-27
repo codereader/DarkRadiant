@@ -10,6 +10,7 @@
 #include <pybind11/attr.h>
 #include <pybind11/eval.h>
 
+#include "PythonConsoleWriter.h"
 #include "itextstream.h"
 #include "os/file.h"
 #include "os/path.h"
