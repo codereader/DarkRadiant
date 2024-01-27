@@ -29,7 +29,7 @@ private:
 	std::string _scriptPath;
 
 	// All named script commands (pointing to .py files)
-	ScriptCommandMap _commands;
+    std::map<std::string, ScriptCommand::Ptr> _commands;
 
 	sigc::signal<void> _sigScriptsReloaded;
 

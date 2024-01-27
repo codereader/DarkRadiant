@@ -1,12 +1,6 @@
 #include "ScriptingSystem.h"
 
-#include <pybind11/pybind11.h>
-#include <pybind11/attr.h>
-#include <pybind11/eval.h>
-
-#include "i18n.h"
 #include "itextstream.h"
-#include "iradiant.h"
 #include "ui/imainframe.h"
 #include "iundo.h"
 
@@ -41,7 +35,6 @@
 #include "SceneNodeBuffer.h"
 
 #include "os/fs.h"
-#include "os/file.h"
 #include "os/path.h"
 #include <functional>
 #include "string/case_conv.h"
@@ -65,37 +58,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename)
 
 void ScriptingSystem::executeScriptFile(const std::string& filename, bool setExecuteCommandAttr)
 {
-	try
-	{
-        std::string filePath = _scriptPath + filename;
-
-        // Prevent calling exec_file with a non-existent file, we would
-        // get crashes during Py_Finalize later on.
-        if (!os::fileOrDirExists(filePath))
-        { 
-            rError() << "Error: File " << filePath << " doesn't exist." << std::endl;
-            return;
-        }
-
-		py::dict locals;
-
-		if (setExecuteCommandAttr)
-		{
-			locals["__executeCommand__"] = true;
-		}
-
-		// Attempt to run the specified script
-		py::eval_file(filePath, _pythonModule->getGlobals(), locals);
-	}
-    catch (std::invalid_argument& e)
-    {
-        rError() << "Error trying to execute file " << filename << ": " << e.what() << std::endl;
-    }
-	catch (const py::error_already_set& ex)
-	{
-		rError() << "Error while executing file: " << filename << ": " << std::endl;
-		rError() << ex.what() << std::endl;
-	}
+    _pythonModule->executeScriptFile(_scriptPath, filename, setExecuteCommandAttr);
 }
 
 ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptString)
@@ -162,7 +125,7 @@ void ScriptingSystem::executeCommand(const std::string& name)
 	}
 
 	// Lookup the name
-	ScriptCommandMap::iterator found = _commands.find(name);
+	auto found = _commands.find(name);
 
 	if (found == _commands.end())
 	{
@@ -178,62 +141,28 @@ void ScriptingSystem::executeCommand(const std::string& name)
 
 void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 {
-	try
-	{
-		// Create a new dictionary for the initialisation routine
-		py::dict locals;
+    auto command = _pythonModule->createScriptCommand(_scriptPath, scriptFilename);
 
-		// Disable the flag for initialisation, just for sure
-		locals["__executeCommand__"] = false;
+    if (!command)
+    {
+        // The python module already emitted some errors to the log, just exit
+        return;
+    }
 
-		// Attempt to run the specified script
-		py::eval_file(_scriptPath + scriptFilename, _pythonModule->getGlobals(), locals);
+    // Try to register this named command
+    auto result = _commands.emplace(command->getName(), command);
 
-		std::string cmdName;
-		std::string cmdDisplayName;
-
-		if (locals.contains("__commandName__"))
-		{
-			cmdName = locals["__commandName__"].cast<std::string>();
-		}
-
-		if (locals.contains("__commandDisplayName__"))
-		{
-			cmdDisplayName = locals["__commandDisplayName__"].cast<std::string>();
-		}
-
-		if (!cmdName.empty())
-		{
-			if (cmdDisplayName.empty())
-			{
-				cmdDisplayName = cmdName;
-			}
-
-			// Successfully retrieved the command
-			auto cmd = std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, scriptFilename);
-
-			// Try to register this named command
-			auto result = _commands.insert(std::make_pair(cmdName, cmd));
-
-			// Result.second is TRUE if the insert succeeded
-			if (result.second) 
-			{
-				rMessage() << "Registered script file " << scriptFilename
-					<< " as " << cmdName << std::endl;
-			}
-			else 
-			{
-				rError() << "Error in " << scriptFilename << ": Script command "
-					<< cmdName << " has already been registered in "
-					<< _commands[cmdName]->getFilename() << std::endl;
-			}
-		}
-	}
-	catch (const py::error_already_set& ex)
-	{
-		rError() << "Script file " << scriptFilename << " is not a valid command:" << std::endl;
-		rError() << ex.what() << std::endl;
-	}
+    // Result.second is TRUE if the insert succeeded
+    if (result.second)
+    {
+        rMessage() << "Registered script file " << scriptFilename << " as " << command->getName() << std::endl;
+    }
+    else
+    {
+        rError() << "Error in " << scriptFilename << ": Script command "
+            << command->getName() << " has already been registered in "
+            << _commands[command->getName()]->getFilename() << std::endl;
+    }
 }
 
 void ScriptingSystem::reloadScripts()

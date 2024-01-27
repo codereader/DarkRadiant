@@ -2,7 +2,6 @@
 
 #include "iscript.h"
 #include <string>
-#include <map>
 #include <memory>
 
 namespace script 
@@ -25,11 +24,13 @@ private:
 	std::string _scriptFilename;
 
 public:
+    using Ptr = std::shared_ptr<ScriptCommand>;
+
 	ScriptCommand(const std::string& name,
 				  const std::string& displayName,
 				  const std::string& scriptFilename);
 
-	virtual ~ScriptCommand();
+	~ScriptCommand() override;
 
     const std::string& getName() const override
     {
@@ -46,9 +47,5 @@ public:
 		return _displayName;
 	}
 };
-typedef std::shared_ptr<ScriptCommand> ScriptCommandPtr;
-
-// A mapping of named script commands
-typedef std::map<std::string, ScriptCommandPtr> ScriptCommandMap;
 
 } // namespace script
