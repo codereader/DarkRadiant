@@ -97,11 +97,7 @@ std::string exportDefaultBrushUsingFormat(const std::string& gameType, const std
 
     EXPECT_TRUE(fs::exists(exportPath)) << "File still doesn't exist";
 
-    std::ifstream tempFile(exportPath);
-    std::stringstream content;
-    content << tempFile.rdbuf();
-
-    return content.str();
+    return algorithm::loadFileToString(exportPath);
 }
 
 TEST_F(MapExportTest, exportDoom3Brush)
@@ -320,11 +316,9 @@ void runExportWithEmptyFileExtension(const std::string& temporaryDataPath,const 
 
     EXPECT_TRUE(fs::exists(tempPath)) << "File still doesn't exist";
 
-    std::ifstream tempFile(tempPath);
-    std::stringstream content;
-    content << tempFile.rdbuf();
+    auto content = algorithm::loadFileToString(tempPath);
 
-    EXPECT_NE(content.str().find("brushDef3"), std::string::npos) << "Couldn't find the brush keyword in the export";
+    EXPECT_NE(content.find("brushDef3"), std::string::npos) << "Couldn't find the brush keyword in the export";
 }
 
 }

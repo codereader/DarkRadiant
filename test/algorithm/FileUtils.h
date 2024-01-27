@@ -87,12 +87,8 @@ inline std::string loadFileToString(const fs::path& path)
 // True if the file (full physical path) contains the given text (ignoring CRLF vs. LF line break differences)
 inline bool fileContainsText(const fs::path& path, const std::string& textToFind)
 {
-    std::stringstream contentStream;
-    std::ifstream input(path);
-
-    contentStream << input.rdbuf();
-
-    std::string contents = string::replace_all_copy(contentStream.str(), "\r\n", "\n");
+    auto rawContents = loadFileToString(path);
+    auto contents = string::replace_all_copy(rawContents, "\r\n", "\n");
 
     return contents.find(textToFind) != std::string::npos;
 }
