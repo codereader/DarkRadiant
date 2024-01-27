@@ -36,6 +36,10 @@ PythonModule::~PythonModule()
     _globals.reset();
 
     py::finalize_interpreter();
+
+    // The memory allocated to initialise the module_def structure
+    // needs to stay alive until the interpreter is finalised
+    _moduleDef.reset();
 }
 
 void PythonModule::initialise()
@@ -153,8 +157,8 @@ PyObject* PythonModule::initialiseModule()
 {
 	try
 	{
-        static py::module::module_def _moduleDef;
-        _module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", &_moduleDef);
+        _moduleDef = std::make_unique<py::module::module_def>();
+        _module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", _moduleDef.get());
 
         // Add the registered interfaces
         for (const auto& i : _namedInterfaces)

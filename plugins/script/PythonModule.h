@@ -16,6 +16,8 @@ namespace script
 class PythonModule final
 {
 private:
+    std::unique_ptr<py::module::module_def> _moduleDef;
+
 	// Python module and global dictionary
 	py::module _module;
 	std::unique_ptr<py::dict> _globals;
