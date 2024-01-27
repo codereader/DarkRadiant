@@ -14,10 +14,12 @@ namespace map
 namespace
 {
 
-// Escape the line break characters in the given input string to \n
-inline std::string escapeLineBreaks(const std::string& input)
+// Escape line breaks and quotes in the given input string
+inline std::string escapeEntityKeyValue(const std::string& input)
 {
-	return string::replace_all_copy(input, "\n", "\\n");
+    auto result = string::replace_all_copy(input, "\n", "\\n");
+    string::replace_all(result, "\"", "\\\""); // replace " with \"
+    return result;
 }
 
 }
@@ -55,7 +57,7 @@ void Doom3MapWriter::writeEntityKeyValues(const IEntityNodePtr& entity, std::ost
 	// Export the entity key values
     entity->getEntity().forEachKeyValue([&](const std::string& key, const std::string& value)
     {
-        stream << "\"" << key << "\" \"" << escapeLineBreaks(value) << "\"" << std::endl;
+        stream << "\"" << escapeEntityKeyValue(key) << "\" \"" << escapeEntityKeyValue(value) << "\"" << std::endl;
     });
 }
 
