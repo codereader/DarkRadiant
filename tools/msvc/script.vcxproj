@@ -108,7 +108,7 @@
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -139,7 +139,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <BrowseInformation>
       </BrowseInformation>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -166,7 +166,7 @@
       <AdditionalOptions>%(AdditionalOptions) /Zm200</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -197,7 +197,7 @@
     <ClCompile>
       <AdditionalOptions>%(AdditionalOptions) /Zm200</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
