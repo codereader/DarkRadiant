@@ -101,6 +101,9 @@ void ScriptingSystem::initialise()
 	// Start the init script
 	executeScriptFile(INIT_SCRIPT_FILENAME);
 
+    // Initialise the python script files containing built-in commands
+    registerBuiltInCommands();
+
 	// Search script folder for commands
 	reloadScripts();
 }
@@ -221,6 +224,8 @@ void ScriptingSystem::registerBuiltInCommands()
         return;
     }
 
+    _pythonModule->registerBuiltInModulePath(start.string());
+
     for (fs::recursive_directory_iterator it(start); it != fs::recursive_directory_iterator(); ++it)
     {
         // Get the candidate
@@ -236,7 +241,7 @@ void ScriptingSystem::registerBuiltInCommands()
 
 void ScriptingSystem::initialiseBuiltInCommandFile(const std::string& scriptFilename)
 {
-    //_pythonModule->createScriptCommand(_scriptPath, scriptFilename);
+    _pythonModule->initialiseBuiltInModule(scriptFilename);
 }
 
 // RegisterableModule implementation
@@ -315,8 +320,10 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 		{ cmd::ARGTYPE_STRING }
 	);
 
-    // Initialise the python script files containing built-in commands
-    registerBuiltInCommands();
+    GlobalCommandSystem().addCommand(
+        "RefreshScriptModules",
+        [this](const auto& args) { _pythonModule->refreshBuiltInModules(); }
+    );
 
 	SceneNodeBuffer::Instance().clear();
 }

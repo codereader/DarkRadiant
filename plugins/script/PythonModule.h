@@ -26,6 +26,8 @@ private:
     // List of registered interfaces
 	NamedInterfaces _namedInterfaces;
 
+    std::vector<py::module_> _builtInModules;
+
     PythonModule(const PythonModule& other) = delete;
     PythonModule& operator=(const PythonModule& other) = delete;
 
@@ -62,6 +64,10 @@ public:
     // Attempts to create a script command from the given .py file
     // Will return an empty object if the file path is not a valid file
     ScriptCommand::Ptr createScriptCommand(const std::string& scriptBasePath, const std::string& relativeScriptPath);
+
+    void registerBuiltInModulePath(const std::string& scriptBasePath);
+    void initialiseBuiltInModule(const std::string& moduleFilename);
+    void refreshBuiltInModules();
 
 private:
     // Register the darkradiant module with the inittab pointing to InitModule

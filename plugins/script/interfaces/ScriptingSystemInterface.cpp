@@ -3,9 +3,14 @@
 namespace script
 {
 
-void ScriptingSystemInterface::registerBuiltinScriptCommand()
+void ScriptingSystemInterface::registerBuiltinScriptCommand(py::object& cls)
 {
-    
+    auto inspect = py::module::import("inspect");
+
+    auto execute = cls.attr("execute");
+
+    auto result = inspect.attr("signature")(execute);
+    py::print(result);
 }
 
 void ScriptingSystemInterface::registerInterface(py::module& scope, py::dict& globals)
@@ -17,6 +22,9 @@ void ScriptingSystemInterface::registerInterface(py::module& scope, py::dict& gl
 
     // Now point the Python variable "GlobalScriptingSystem" to this instance
     globals["GlobalScriptingSystem"] = this;
+
+    // Define a ScriptingSystem property in the darkradiant module
+    scope.attr("ScriptingSystem") = this;
 }
 
 }

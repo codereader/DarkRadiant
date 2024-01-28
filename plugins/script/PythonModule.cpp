@@ -35,6 +35,14 @@ PythonModule::~PythonModule()
 {
     _namedInterfaces.clear();
 
+    for (auto& module : _builtInModules)
+    {
+        module.dec_ref();
+        module.release();
+    }
+
+    _builtInModules.clear();
+
     // Release the references to trigger the internal cleanup before Py_Finalize
     _module.dec_ref();
     _module.release();
@@ -321,6 +329,36 @@ ScriptCommand::Ptr PythonModule::createScriptCommand(const std::string& scriptBa
         rError() << "Script file " << relativeScriptPath << " is not a valid command:" << std::endl;
         rError() << ex.what() << std::endl;
         return {};
+    }
+}
+
+void PythonModule::registerBuiltInModulePath(const std::string& scriptBasePath)
+{
+    // Import module from the base path
+    auto sys = py::module::import("sys");
+    sys.attr("path").attr("insert")(1, os::getDirectory(scriptBasePath));
+}
+
+void PythonModule::initialiseBuiltInModule(const std::string& moduleFilename)
+{
+    try
+    {
+        auto moduleName = os::removeExtension(os::getFilename(moduleFilename));
+        auto builtInModule = py::module::import(moduleName.c_str());
+        _builtInModules.push_back(builtInModule);
+    }
+    catch (const py::error_already_set& ex)
+    {
+        rError() << "Script file " << moduleFilename << " is not a valid command:" << std::endl;
+        rError() << ex.what() << std::endl;
+    }
+}
+
+void PythonModule::refreshBuiltInModules()
+{
+    for (auto& module : _builtInModules)
+    {
+        module.reload();
     }
 }
 

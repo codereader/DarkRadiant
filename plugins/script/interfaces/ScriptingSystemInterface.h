@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iscriptinterface.h"
+#include <pybind11/pybind11.h>
 
 namespace script
 {
@@ -21,7 +22,7 @@ public:
         _scriptingSystem(scriptingSystem)
     {}
 
-    void registerBuiltinScriptCommand();
+    void registerBuiltinScriptCommand(py::object& cls);
 
     // IScriptInterface implementation
     void registerInterface(py::module& scope, py::dict& globals) override;
