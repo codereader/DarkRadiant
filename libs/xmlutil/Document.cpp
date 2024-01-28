@@ -14,7 +14,12 @@ Document::Document(xmlDocPtr doc):
 {}
 
 Document::Document(const std::string& filename) :
+// switching to xmlReadFile seems to have broken XPath queries, reverting this change in non-Windows platforms for now
+#if WIN32
 	_xmlDoc(xmlReadFile(filename.c_str(), nullptr, 0))
+#else
+    _xmlDoc(xmlParseFile(filename.c_str()))
+#endif
 {}
 
 Document::Document(std::istream& stream) :
