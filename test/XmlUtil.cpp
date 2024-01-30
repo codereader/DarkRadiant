@@ -34,7 +34,7 @@ protected:
     std::string getResourcePath() const
     {
 #if defined(TEST_BASE_PATH)
-        return std::string(TEST_BASE_PATH) + "/resources/";
+        return std::string(TEST_BASE_PATH) + "/resources/xml/";
 #else
         return _context.getTestResourcePath();
 #endif
@@ -42,7 +42,7 @@ protected:
 };
 
 // Relative to the resource folder
-constexpr const char* const TEST_XML_FILE = "xml/testfile.xml";
+constexpr const char* const TEST_XML_FILE = "testfile.xml";
 
 TEST_F(XmlTest, CreateEmptyDocument)
 {
@@ -450,6 +450,30 @@ TEST_F(XmlTest, EraseNode)
 
     EXPECT_EQ(document.findXPath("//colourscheme").size(), 1);
     EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']").size(), 0);
+}
+
+TEST_F(XmlTest, LoadGameFile)
+{
+    xml::Document game(getResourcePath() + "darkmod.game");
+    EXPECT_TRUE(game.isValid());
+
+    auto nodes = game.findXPath("//game");
+    EXPECT_EQ(nodes.size(), 1);
+    EXPECT_EQ(nodes[0].getName(), "game");
+    EXPECT_EQ(nodes[0].getAttributeValue("name"), "The Dark Mod 2.0 (Standalone)");
+    EXPECT_EQ(nodes[0].getAttributeValue("index"), "10");
+
+    auto nodes1 = game.findXPath("//game[@name='The Dark Mod 2.0 (Standalone)']");
+    EXPECT_EQ(nodes1.size(), 1);
+}
+
+TEST_F(XmlTest, LoadInputFile)
+{
+    xml::Document input(getResourcePath() + "input.xml");
+    EXPECT_TRUE(input.isValid());
+
+    auto nodes = input.findXPath("//input/mouseToolMappings/mouseToolMapping[@name='OrthoView']");
+    EXPECT_EQ(nodes.size(), 1);
 }
 
 }
