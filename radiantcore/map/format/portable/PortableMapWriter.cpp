@@ -53,8 +53,7 @@ PortableMapWriter::PortableMapWriter() :
 	_entityCount(0),
 	_primitiveCount(0),
 	_document(xml::Document::create()),
-	_map(_document.addTopLevelNode("map")),
-	_curEntityPrimitives(nullptr, nullptr)
+	_map(_document.addTopLevelNode("map"))
 {
 	// Export name and version tag
 	_map.setAttributeValue(ATTR_VERSION, string::to_string(PortableMapFormat::Version));
@@ -162,7 +161,7 @@ void PortableMapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostrea
 	// Reset the primitive count again
 	_primitiveCount = 0;
 
-	_curEntityPrimitives = xml::Node(nullptr, nullptr);
+	_curEntityPrimitives = xml::Node();
 }
 
 void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ostream& stream)

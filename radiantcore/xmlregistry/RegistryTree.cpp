@@ -77,15 +77,12 @@ xml::Node RegistryTree::createKeyWithName(const std::string& path,
 	// Add the toplevel node to the path if required
 	std::string fullPath = prepareKey(path);
 
-	xml::Node insertPoint(nullptr, nullptr);
-
 	// Check if the insert point <path> exists, create it otherwise
-	if (!keyExists(fullPath))
-	{
+	xml::Node insertPoint;
+	if (!keyExists(fullPath)) {
 		insertPoint = createKey(fullPath);
 	}
-	else
-	{
+	else {
 		xml::NodeList nodeList = _tree.findXPath(fullPath);
 		insertPoint = nodeList[0];
 	}
@@ -111,10 +108,10 @@ xml::Node RegistryTree::createKey(const std::string& key)
 	if (parts.empty())
 	{
 		rMessage() << "XMLRegistry: Cannot insert key/path without slashes." << std::endl;
-		return xml::Node(nullptr, nullptr);
+		return {};
 	}
 
-	xml::Node createdNode(nullptr, nullptr);
+	xml::Node createdNode;
 
 	// The temporary path variable for walking through the hierarchy
 	std::string path("");

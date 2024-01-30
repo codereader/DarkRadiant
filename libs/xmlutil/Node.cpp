@@ -8,25 +8,18 @@
 namespace xml
 {
 
-Node::Node(const Document* owner, xmlNodePtr node) :
-    _owner(owner),
-    _xmlNode(node)
-{}
-
 bool Node::isValid() const
 {
-    return _xmlNode != nullptr;
+    return _xmlNode;
 }
 
 std::string Node::getName() const
 {
     std::lock_guard lock(_owner->getLock());
 
-	if (_xmlNode)
-    {
-		return std::string(reinterpret_cast<const char*>(_xmlNode->name));
-	}
-
+    if (_xmlNode) {
+        return _xmlNode.name();
+    }
     return {};
 }
 
@@ -36,25 +29,10 @@ NodeList Node::getChildren() const
     std::lock_guard lock(_owner->getLock());
 
     NodeList retval;
-
-    for (auto child = _xmlNode->children; child != nullptr; child = child->next)
-    {
-        retval.emplace_back(_owner, child);
+    for (pugi::xml_node_iterator i = _xmlNode.begin(); i != _xmlNode.end(); ++i) {
+        retval.emplace_back(_owner, *i);
     }
-
     return retval;
-}
-
-namespace
-{
-    // RAII XML string wrapper
-    struct XMLString
-    {
-        xmlChar* ptr;
-
-        XMLString(const std::string& text) { ptr = xmlCharStrdup(text.c_str()); }
-        ~XMLString() { xmlFree(ptr); }
-    };
 }
 
 Node Node::createChild(const std::string& name)
@@ -62,8 +40,7 @@ Node Node::createChild(const std::string& name)
     std::lock_guard lock(_owner->getLock());
 
     // Create a new child under the contained node
-    XMLString nodeName(name);
-    xmlNodePtr newChild = xmlNewChild(_xmlNode, nullptr, nodeName.ptr, nullptr);
+    auto newChild = _xmlNode.append_child(name.c_str());
 
     // Create a new xml::Node out of this pointer and return it
     return Node(_owner, newChild);
@@ -75,13 +52,11 @@ NodeList Node::getNamedChildren(const std::string& name) const
 
     NodeList retval;
 
-    // Iterate throught the list of children, adding each child node
-    // to the return list if it matches the requested name
-    for (auto child = _xmlNode->children; child != nullptr; child = child->next)
-    {
-        if (xmlStrcmp(child->name, reinterpret_cast<const xmlChar*>(name.c_str())) == 0)
-        {
-            retval.emplace_back(_owner, child);
+    // Iterate throught the list of children, adding each child node to the return list if
+    // it matches the requested name
+    for (pugi::xml_node_iterator i = _xmlNode.begin(); i != _xmlNode.end(); ++i) {
+        if (i->name() == name) {
+            retval.emplace_back(_owner, *i);
         }
     }
 
@@ -92,97 +67,62 @@ void Node::setAttributeValue(const std::string& key, const std::string& value)
 {
     std::lock_guard lock(_owner->getLock());
 
-    XMLString k(key);
-    XMLString v(value);
+    pugi::xml_attribute attr = _xmlNode.attribute(key.c_str());
+    if (!attr)
+        attr = _xmlNode.append_attribute(key.c_str());
 
-    xmlSetProp(_xmlNode, k.ptr, v.ptr);
+    attr.set_value(value.c_str());
 }
 
 void Node::removeAttribute(const std::string& key)
 {
     std::lock_guard lock(_owner->getLock());
 
-    XMLString k(key);
-    xmlUnsetProp(_xmlNode, k.ptr);
+    _xmlNode.remove_attribute(key.c_str());
 }
-
-// Return the value of a given attribute, or throw AttributeNotFoundException
-// if the attribute does not exist.
 
 std::string Node::getAttributeValue(const std::string& key) const
 {
     std::lock_guard lock(_owner->getLock());
 
-    // Iterate through the chain of attributes to find the requested one.
-    for (auto attr = _xmlNode->properties; attr != nullptr; attr = attr->next)
-    {
-        if (xmlStrcmp(attr->name, reinterpret_cast<const xmlChar*>(key.c_str())) == 0)
-        {
-            return reinterpret_cast<const char*>(attr->children->content);
-        }
-    }
-
-    // Not found, return an empty string
-    return {};
+    pugi::xml_attribute attr = _xmlNode.attribute(key.c_str());
+    if (attr)
+        return attr.value();
+    else
+        return {};
 }
 
 std::string Node::getContent() const
 {
     std::lock_guard lock(_owner->getLock());
 
-	if (_xmlNode->children && _xmlNode->children->content)
-    {
-		return std::string(reinterpret_cast<const char*>(_xmlNode->children->content));
-	}
-
-	return {};
+    return _xmlNode.text().get();
 }
 
 void Node::setContent(const std::string& content)
 {
     std::lock_guard lock(_owner->getLock());
 
-    // Remove all text children first
-    for (xmlNodePtr child = _xmlNode->children; child != nullptr; )
-    {
-        xmlNodePtr next = child->next;
-
-        if (child->type == XML_TEXT_NODE)
-        {
-            xmlUnlinkNode(child);
-	        xmlFreeNode(child);
-        }
-
-        child = next;
-    }
-
-    xmlNodePtr child = xmlNewText(reinterpret_cast<const xmlChar*>(content.c_str()));
-    xmlAddChild(_xmlNode, child);
+    _xmlNode.text() = content.c_str();
 }
 
 void Node::addText(const std::string& text)
 {
     std::lock_guard lock(_owner->getLock());
 
-	// Allocate a new text node
-	auto whitespace = xmlNewText(reinterpret_cast<const xmlChar*>(text.c_str()));
-
-	// Add the newly allocated text as sibling of this node
-    xmlAddNextSibling(_xmlNode, whitespace);
+    // Add a PCDATA node as a sibling following this node
+    auto textNode = _xmlNode.parent().insert_child_after(pugi::node_pcdata, _xmlNode);
+    textNode.set_value(text.c_str());
 }
 
 void Node::erase()
 {
     std::lock_guard lock(_owner->getLock());
 
-	// unlink the node from the list first, otherwise: crashes ahead!
-	xmlUnlinkNode(_xmlNode);
-
-	// All child nodes are freed recursively
-	xmlFreeNode(_xmlNode);
+    _xmlNode.parent().remove_child(_xmlNode);
 }
 
-xmlNodePtr Node::getNodePtr() const
+pugi::xml_node Node::getNodePtr() const
 {
     return _xmlNode;
 }
