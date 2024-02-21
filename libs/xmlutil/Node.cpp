@@ -1,7 +1,6 @@
 #include "Node.h"
 
 #include <mutex>
-#include <libxml/parser.h>
 
 #include "Document.h"
 

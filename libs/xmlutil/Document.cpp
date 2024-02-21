@@ -2,8 +2,6 @@
 #include "XPathException.h"
 
 #include "itextstream.h"
-#include <libxml/parser.h>
-#include <libxml/xpath.h>
 #include <vector>
 #include <fstream>
 
