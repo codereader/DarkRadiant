@@ -1,8 +1,10 @@
+image: asciidoctor/docker-asciidoctor
+
 pages:
   stage: deploy
   script:
   - mkdir .public
-  - cp doc/*.html .public
+  - asciidoctor -a stylesheet=manual.css -D .public $PWD/doc/manual.adoc
   - cp -r doc/img .public
   - mv .public/manual.html .public/index.html
   - gzip -k .public/index.html

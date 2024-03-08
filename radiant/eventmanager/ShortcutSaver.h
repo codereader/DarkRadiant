@@ -18,13 +18,11 @@ namespace ui
  */
 class ShortcutSaver
 {
-private:
     // The node containing all the <shortcut> tags
     xml::Node _shortcutsNode;
 
 public:
-    ShortcutSaver(const std::string& rootKey) :
-        _shortcutsNode(nullptr, nullptr)
+    ShortcutSaver(const std::string& rootKey)
     {
         // Remove any existing shortcut definitions
         GlobalRegistry().deleteXPath(rootKey + "//shortcuts");

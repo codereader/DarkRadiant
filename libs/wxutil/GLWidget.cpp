@@ -14,19 +14,19 @@ namespace wxutil
 const int ATTRIBS [] = {
 	WX_GL_RGBA,
 	WX_GL_DOUBLEBUFFER,
-	WX_GL_DEPTH_SIZE, 16,
+	WX_GL_DEPTH_SIZE, 24,
 	0
 };
 
 GLWidget::GLWidget(wxWindow *parent, const std::function<bool()>& renderCallback, const std::string& name) :
-	wxGLCanvas(parent, wxID_ANY, ATTRIBS, wxDefaultPosition, wxDefaultSize,
+    wxGLCanvas(parent, wxID_ANY, ATTRIBS, wxDefaultPosition, wxDefaultSize,
                wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS,
                wxString(name.c_str(), *wxConvCurrent)),
-	_registered(false),
-	_renderCallback(renderCallback),
-	_privateContext(nullptr)
+    _registered(false),
+    _renderCallback(renderCallback),
+    _privateContext(nullptr)
 {
-	Bind(wxEVT_PAINT, &GLWidget::OnPaint, this);
+    Bind(wxEVT_PAINT, &GLWidget::OnPaint, this);
 }
 
 void GLWidget::SetHasPrivateContext(bool hasPrivateContext)
@@ -97,7 +97,7 @@ void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
 
 	if (_renderCallback())
 	{
-		// Render callback returned true, so drawing took place 
+		// Render callback returned true, so drawing took place
 		// and we can swap the buffers
 		SwapBuffers();
 	}

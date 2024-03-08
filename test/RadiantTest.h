@@ -21,12 +21,8 @@
 namespace test
 {
 
-/**
- * Test fixture setting up the application context and
- * the radiant core module.
- */
-class RadiantTest :
-	public ::testing::Test
+/// Test fixture setting up the application context and the radiant core module.
+class RadiantTest: public ::testing::Test
 {
 protected:
 	// The RadiantApp owns the ApplicationContext which is then passed to the
@@ -78,42 +74,50 @@ protected:
     /// Override this to perform custom actions before the core module starts
     virtual void preStartup() {}
 
-	void SetUp() override
-	{
+    void SetUp() override
+    {
         // Invoke any custom actions needed by subclasses
         preStartup();
 
-		// Set up the test game environment
-		setupGameFolder();
+        // Set up the test game environment
+        setupGameFolder();
         setupTestModules();
 
-		// Wire up the game-config-needed handler, we need to respond
-		_gameSetupListener = _coreModule->get()->getMessageBus().addListener(
-			radiant::IMessage::Type::GameConfigNeeded,
-			radiant::TypeListener<game::ConfigurationNeeded>(
-				sigc::mem_fun(this, &RadiantTest::handleGameConfigMessage)));
+        // Wire up the game-config-needed handler, we need to respond
+        _gameSetupListener = _coreModule->get()->getMessageBus().addListener(
+            radiant::IMessage::Type::GameConfigNeeded,
+            radiant::TypeListener<game::ConfigurationNeeded>(
+                sigc::mem_fun(this, &RadiantTest::handleGameConfigMessage)
+            )
+        );
 
-		_notificationListener = _coreModule->get()->getMessageBus().addListener(
-			radiant::IMessage::Type::Notification,
-			radiant::TypeListener<radiant::NotificationMessage>(
-				sigc::mem_fun(this, &RadiantTest::handleNotification)));
+        _notificationListener = _coreModule->get()->getMessageBus().addListener(
+            radiant::IMessage::Type::Notification,
+            radiant::TypeListener<radiant::NotificationMessage>(
+                sigc::mem_fun(this, &RadiantTest::handleNotification)
+            )
+        );
 
-		try
-		{
-			// Startup the application
-			_coreModule->get()->startup();
-		}
-		catch (const radiant::IRadiant::StartupFailure & ex)
-		{
-			// An unhandled exception during module initialisation => display a popup and exit
-			rError() << "Unhandled Exception: " << ex.what() << std::endl;
-			abort();
-		}
+        try {
+            // Startup the application
+            _coreModule->get()->startup();
+        }
+        catch (const radiant::IRadiant::StartupFailure& ex) {
+            // An unhandled exception during module initialisation => display a popup and exit
+            rError() << "Unhandled Exception: " << ex.what() << std::endl;
+#if defined(__linux__)
+            // abort() isn't very useful on Linux, instead just re-throw the exception so we
+            // can see the error message.
+            throw;
+#else
+            abort();
+#endif
+        }
 
-		_glContextModule->createContext();
+        _glContextModule->createContext();
 
         GlobalMapModule().createNewMap();
-	}
+    }
 
     /// Override this to perform custom actions before the main module shuts down
     virtual void preShutdown() {}
