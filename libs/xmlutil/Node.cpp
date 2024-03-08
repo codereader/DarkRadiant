@@ -28,7 +28,7 @@ NodeList Node::getChildren() const
     std::lock_guard lock(_owner->getLock());
 
     NodeList retval;
-    for (pugi::xml_node_iterator i = _xmlNode.begin(); i != _xmlNode.end(); ++i) {
+    for (auto i = _xmlNode.begin(); i != _xmlNode.end(); ++i) {
         retval.emplace_back(_owner, *i);
     }
     return retval;
@@ -53,7 +53,7 @@ NodeList Node::getNamedChildren(const std::string& name) const
 
     // Iterate throught the list of children, adding each child node to the return list if
     // it matches the requested name
-    for (pugi::xml_node_iterator i = _xmlNode.begin(); i != _xmlNode.end(); ++i) {
+    for (auto i = _xmlNode.begin(); i != _xmlNode.end(); ++i) {
         if (i->name() == name) {
             retval.emplace_back(_owner, *i);
         }
