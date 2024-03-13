@@ -2,9 +2,8 @@
 
 #include "selectionlib.h"
 #include "scene/Node.h"
+#include "scene/SpawnArgs.h"
 #include "entitylib.h"
-
-#include "../SpawnArgs.h"
 
 #include "TargetKeyCollection.h"
 #include "RenderableTargetLines.h"

@@ -7,20 +7,21 @@
 #include <sigc++/signal.h>
 #include "ientity.h"
 #include "i18n.h"
+#include "scene/EntityKeyValue.h"
 
 namespace selection
 {
 
 /**
- * Helper class to keep the Entity Inspector key/value list view up to date 
+ * Helper class to keep the Entity Inspector key/value list view up to date
  * when one or more entities are selected in the scene.
- * 
+ *
  * It not only knows which entity contributes which key value pair,
  * it also tracks the uniqueness of all the values for a given key.
- * 
+ *
  * The signals emitted by this class help the client code (i.e. Entity Inspector)
  * to update only those rows that actually changed their meaning.
- * 
+ *
  * Keys that are now shared but were not listed before => signal_KeyAdded
  * Values that are no longer shared will disappear from the list => signal_KeyRemoved
  * Keys changing their value (shared or not) => signal_KeyValueSetChanged
@@ -149,7 +150,7 @@ public:
                 _sigKeyValueSetChanged.emit(key, "");
             }
         }
-        // The value was not equal for all entities up till now, 
+        // The value was not equal for all entities up till now,
         // but may be this entity is completing the set
         // Only bother checking if the entity count is the same as the value count
         else if (keyValueSet.entities.size() == _keyValuesByEntity.size())
@@ -187,7 +188,7 @@ public:
                 // We have more than one entity check the set
                 checkKeyValueSetAfterChange(entity, key, value, e->second);
             }
-            // We only have one entity with this key, 
+            // We only have one entity with this key,
             // fire the signal only if this is the only entity we know about
             else if (_keyValuesByEntity.size() == 1)
             {
@@ -282,7 +283,7 @@ public:
             auto sharedValue = getKeySharedByAllEntities(key);
 
             keyValueSet.valueIsEqualOnAllEntities = !sharedValue.empty();
-            
+
             // Fire the signal to make that value re-appear
             _sigKeyAdded.emit(key, sharedValue);
 
@@ -431,7 +432,7 @@ private:
         if (!keyValueSet.valueIsEqualOnAllEntities)
         {
             auto sharedValue = getKeySharedByAllEntities(key);
-            
+
             if (!sharedValue.empty())
             {
                 keyValueSet.valueIsEqualOnAllEntities = true;

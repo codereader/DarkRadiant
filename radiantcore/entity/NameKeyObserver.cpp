@@ -2,6 +2,7 @@
 
 #include "inamespace.h"
 #include "ientity.h"
+#include "scene/EntityKeyValue.h"
 
 namespace entity {
 

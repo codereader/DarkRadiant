@@ -2,6 +2,7 @@
 
 #include "TargetManager.h"
 #include "TargetKeyCollection.h"
+#include "scene/EntityKeyValue.h"
 
 namespace entity {
 

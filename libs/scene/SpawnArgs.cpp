@@ -10,7 +10,7 @@ namespace entity
 
 SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
-	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), 
+	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1),
         std::function<void()>(), "EntityKeyValues"),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize()),
@@ -23,7 +23,7 @@ SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
 SpawnArgs::SpawnArgs(const SpawnArgs& other) :
 	Entity(other),
 	_eclass(other.getEntityClass()),
-	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), 
+	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1),
         std::function<void()>(), "EntityKeyValues"),
 	_observerMutex(false),
 	_isContainer(other._isContainer),
@@ -232,7 +232,7 @@ void SpawnArgs::setIsContainer(bool isContainer)
 	_isContainer = isContainer;
 }
 
-void SpawnArgs::notifyInsert(const std::string& key, KeyValue& value)
+void SpawnArgs::notifyInsert(const std::string& key, EntityKeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
@@ -260,7 +260,7 @@ void SpawnArgs::notifyChange(const std::string& k, const std::string& v)
     _observerMutex = false;
 }
 
-void SpawnArgs::notifyErase(const std::string& key, KeyValue& value)
+void SpawnArgs::notifyErase(const std::string& key, EntityKeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
@@ -289,26 +289,26 @@ void SpawnArgs::insert(const std::string& key, const KeyValuePtr& keyValue)
 
 void SpawnArgs::insert(const std::string& key, const std::string& value)
 {
-	// Try to lookup the key in the map
+    // Try to lookup the key in the map
     auto i = find(key);
 
     if (i != _keyValues.end())
     {
         // Key has been found, assign the value
         i->second->assign(value);
-        // Observer notification happens through the lambda callback we passed 
+        // Observer notification happens through the lambda callback we passed
         // to the KeyValue constructor
     }
-	else
-	{
-		// No key with that name found, create a new one
-		_undo.save();
+    else
+    {
+        // No key with that name found, create a new one
+        _undo.save();
 
-		// Allocate a new KeyValue object and insert it into the map
+        // Allocate a new KeyValue object and insert it into the map
         // Capture the key by value in the lambda
-		insert(key, std::make_shared<KeyValue>(value, _eclass->getAttributeValue(key),
+        insert(key, std::make_shared<EntityKeyValue>(value, _eclass->getAttributeValue(key),
             [key, this](const std::string& value) { notifyChange(key, value); }));
-	}
+    }
 }
 
 void SpawnArgs::erase(const KeyValues::iterator& i)

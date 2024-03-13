@@ -18,6 +18,7 @@
 #include "scenelib.h"
 #include "algorithm/Entity.h"
 #include "algorithm/Scene.h"
+#include "scene/EntityKeyValue.h"
 
 namespace test
 {

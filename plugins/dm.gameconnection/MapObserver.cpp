@@ -2,6 +2,7 @@
 #include "inode.h"
 #include "ientity.h"
 
+#include "scene/EntityKeyValue.h"
 
 namespace gameconn
 {
@@ -10,7 +11,7 @@ class EntityNodeCollector : public scene::NodeVisitor
 {
 public:
     std::vector<IEntityNodePtr> foundEntities;
-    
+
     bool pre(const scene::INodePtr& node) override {
         if (auto ptr = std::dynamic_pointer_cast<IEntityNode>(node))
         {

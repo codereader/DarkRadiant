@@ -2,9 +2,9 @@
 
 #include "ieclass.h"
 #include "ientity.h"
-#include "SpawnArgs.h"
+#include "scene/SpawnArgs.h"
 
-namespace entity 
+namespace entity
 {
 
 class NameKey :

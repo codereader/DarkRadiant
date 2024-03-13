@@ -1,36 +1,33 @@
-#include "KeyValue.h"
+#include "EntityKeyValue.h"
 
 #include <functional>
 #include "iundo.h"
 
-namespace entity
-{
-
-KeyValue::KeyValue(const std::string& value, const std::string& empty,
+EntityKeyValue::EntityKeyValue(const std::string& value, const std::string& empty,
                    const std::function<void(const std::string&)>& valueChanged) :
     _value(value),
     _emptyValue(empty),
-    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1),
-        std::bind(&KeyValue::onUndoRedoOperationFinished, this), "KeyValue"),
+    _undo(_value, std::bind(&EntityKeyValue::importState, this, std::placeholders::_1),
+        std::bind(&EntityKeyValue::onUndoRedoOperationFinished, this), "KeyValue"),
     _valueChanged(valueChanged)
 {}
 
-KeyValue::~KeyValue()
+EntityKeyValue::~EntityKeyValue()
 {
 	assert(_observers.empty());
 }
 
-void KeyValue::connectUndoSystem(IUndoSystem& undoSystem)
+void EntityKeyValue::connectUndoSystem(IUndoSystem& undoSystem)
 {
     _undo.connectUndoSystem(undoSystem);
 }
 
-void KeyValue::disconnectUndoSystem(IUndoSystem& undoSystem)
+void EntityKeyValue::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
     _undo.disconnectUndoSystem(undoSystem);
 }
 
-void KeyValue::attach(KeyObserver& observer)
+void EntityKeyValue::attach(KeyObserver& observer)
 {
 	// Store the observer
 	_observers.push_back(&observer);
@@ -39,7 +36,7 @@ void KeyValue::attach(KeyObserver& observer)
 	observer.onKeyValueChanged(get());
 }
 
-void KeyValue::detach(KeyObserver& observer, bool sendEmptyValue)
+void EntityKeyValue::detach(KeyObserver& observer, bool sendEmptyValue)
 {
     // Send final empty value if requested
     if (sendEmptyValue)
@@ -51,13 +48,13 @@ void KeyValue::detach(KeyObserver& observer, bool sendEmptyValue)
 		_observers.erase(found);
 }
 
-const std::string& KeyValue::get() const
+const std::string& EntityKeyValue::get() const
 {
 	// Return the <empty> string if the actual value is ""
 	return (_value.empty()) ? _emptyValue : _value;
 }
 
-void KeyValue::assign(const std::string& other)
+void EntityKeyValue::assign(const std::string& other)
 {
 	if (_value != other)
     {
@@ -67,7 +64,7 @@ void KeyValue::assign(const std::string& other)
 	}
 }
 
-void KeyValue::notify()
+void EntityKeyValue::notify()
 {
 	// Store the name locally, to avoid string-copy operations in the loop below
 	const std::string& value = get();
@@ -81,23 +78,21 @@ void KeyValue::notify()
 	}
 }
 
-void KeyValue::importState(const std::string& string)
+void EntityKeyValue::importState(const std::string& string)
 {
 	// We notify our observers after the entire undo rollback is done
 	_value = string;
 }
 
-void KeyValue::onUndoRedoOperationFinished()
+void EntityKeyValue::onUndoRedoOperationFinished()
 {
 	notify();
 }
 
-void KeyValue::onNameChange(const std::string& oldName, const std::string& newName)
+void EntityKeyValue::onNameChange(const std::string& oldName, const std::string& newName)
 {
 	assert(oldName == _value); // The old name should match
 
 	// Just assign the new name to this keyvalue
 	assign(newName);
 }
-
-} // namespace entity

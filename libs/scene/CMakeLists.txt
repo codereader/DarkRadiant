@@ -1,6 +1,8 @@
 add_library(scenegraph
+            AttachmentData.cpp
             ChildPrimitives.cpp
             InstanceWalkers.cpp
+            EntityKeyValue.cpp
             LayerUsageBreakdown.cpp
             ModelFinder.cpp
             Node.cpp
@@ -11,6 +13,7 @@ add_library(scenegraph
             merge/ThreeWayMergeOperation.cpp
             SelectableNode.cpp
             SelectionIndex.cpp
+            SpawnArgs.cpp
             TraversableNodeSet.cpp
             Traverse.cpp)
 target_compile_options(scenegraph PUBLIC ${SIGC_CFLAGS})

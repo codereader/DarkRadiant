@@ -12,7 +12,7 @@
 
 #include "string/replace.h"
 
-#include "SpawnArgs.h"
+#include "scene/SpawnArgs.h"
 
 #include "light/LightNode.h"
 #include "doom3group/StaticGeometryNode.h"
@@ -83,7 +83,7 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
         return GenericEntityNode::Create(eclass); // Fixed size, no model path
 
 	default:
-        throw std::invalid_argument("Entity class type " + 
+        throw std::invalid_argument("Entity class type " +
             string::to_string(static_cast<int>(eclass->getClassType())) + " is not supported");
     }
 }

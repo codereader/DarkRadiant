@@ -29,42 +29,7 @@ public:
     virtual void onKeyValueChanged(const std::string& newValue) = 0;
 };
 
-/**
- * @brief Object representing a single keyvalue (spawnarg) on an entity.
- *
- * This class exists so that each spawnarg can have its own independent set of
- * KeyObservers responding to changes in its value. For most purposes it is
- * simpler to use Entity::Observer::onKeyChange, Entity::setKeyValue and
- * Entity::getKeyValue to interact with key values.
- */
-class EntityKeyValue: public NameObserver
-{
-public:
-    virtual ~EntityKeyValue() {}
-
-    /// Retrieves the actual value of this key
-    virtual const std::string& get() const = 0;
-
-    /// Sets the value of this key
-    virtual void assign(const std::string& other) = 0;
-
-    /// Attaches a callback to get notified about the key change.
-    virtual void attach(KeyObserver& observer) = 0;
-
-    /**
-     * @brief Detach the given observer from this key value.
-     *
-     * @param observer
-     * Observer to detach. No action will be taken if this observer is not
-     * already attached.
-     *
-     * @param sendEmptyValue
-     * If true (the default), the observer will be invoked with an empty value
-     * before being detached. If false, no final value will be sent.
-     */
-    virtual void detach(KeyObserver& observer, bool sendEmptyValue = true) = 0;
-};
-typedef std::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
+class EntityKeyValue;
 
 /**
  * Interface for a map entity. The Entity is the main building block of a

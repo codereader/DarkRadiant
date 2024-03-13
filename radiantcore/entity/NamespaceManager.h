@@ -4,7 +4,7 @@
 #include "inamespace.h"
 
 #include <map>
-#include "SpawnArgs.h"
+#include "scene/SpawnArgs.h"
 #include "KeyValueObserver.h"
 #include "NameKeyObserver.h"
 #include "util/Noncopyable.h"
@@ -86,7 +86,7 @@ private:
 	 */
 	bool keyIsName(const std::string& key);
 
-	// Some keyvalues are not referring to names, but to entityDefs, those should not 
+	// Some keyvalues are not referring to names, but to entityDefs, those should not
 	// change themselves if an incidentially matching name is changed
 	bool keyIsReferringToEntityDef(const std::string& key);
 

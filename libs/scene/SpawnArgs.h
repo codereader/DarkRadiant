@@ -1,9 +1,9 @@
 #pragma once
 
-#include "AttachmentData.h"
+#include "scene/AttachmentData.h"
+#include "scene/EntityKeyValue.h"
 
 #include <vector>
-#include "KeyValue.h"
 #include <memory>
 
 class IUndoSystem;
@@ -24,7 +24,7 @@ class SpawnArgs: public Entity
 {
 	IEntityClassPtr _eclass;
 
-	typedef std::shared_ptr<KeyValue> KeyValuePtr;
+	typedef std::shared_ptr<EntityKeyValue> KeyValuePtr;
 
 	// A key value pair using a dynamically allocated value
 	typedef std::pair<std::string, KeyValuePtr> KeyValuePair;
@@ -88,9 +88,9 @@ private:
     void parseAttachments();
 
     // Notification functions
-	void notifyInsert(const std::string& key, KeyValue& value);
+	void notifyInsert(const std::string& key, EntityKeyValue& value);
     void notifyChange(const std::string& k, const std::string& v);
-	void notifyErase(const std::string& key, KeyValue& value);
+	void notifyErase(const std::string& key, EntityKeyValue& value);
 
 	void insert(const std::string& key, const KeyValuePtr& keyValue);
 	void insert(const std::string& key, const std::string& value);
