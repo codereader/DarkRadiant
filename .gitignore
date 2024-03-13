@@ -15,6 +15,9 @@ cmake_install.cmake
 *.la
 .deps
 
+# Linux profiling
+perf.data*
+
 # Editor temporary files
 *.swp
 tags
