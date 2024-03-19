@@ -319,7 +319,7 @@ add_library(radiantcore MODULE
             xmlregistry/XMLRegistry.cpp)
 target_include_directories(radiantcore PRIVATE .)
 target_link_libraries(radiantcore PUBLIC
-                      math xmlutil scenegraph wxutil module
+                      math xmlutil scene wxutil module
                       ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 
 # Enable precompiled header for radiantcore

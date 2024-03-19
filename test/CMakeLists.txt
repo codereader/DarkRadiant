@@ -70,7 +70,7 @@ get_filename_component(TEST_BASE_PATH "./" ABSOLUTE)
 add_compile_definitions(TEST_BASE_PATH="${TEST_BASE_PATH}")
 
 target_link_libraries(drtest PUBLIC
-                      math xmlutil scenegraph module
+                      math xmlutil scene module
                       ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES}
                       ${SIGC_LIBRARIES} ${GLEW_LIBRARIES} ${X11_LIBRARIES}
                       PRIVATE Threads::Threads)

@@ -1,4 +1,4 @@
-add_library(scenegraph
+add_library(scene
             AttachmentData.cpp
             ChildPrimitives.cpp
             InstanceWalkers.cpp
@@ -16,5 +16,5 @@ add_library(scenegraph
             SpawnArgs.cpp
             TraversableNodeSet.cpp
             Traverse.cpp)
-target_compile_options(scenegraph PUBLIC ${SIGC_CFLAGS})
-target_link_libraries(scenegraph PUBLIC ${SIGC_LIBRARIES} math)
+target_compile_options(scene PUBLIC ${SIGC_CFLAGS})
+target_link_libraries(scene PUBLIC ${SIGC_LIBRARIES} math)

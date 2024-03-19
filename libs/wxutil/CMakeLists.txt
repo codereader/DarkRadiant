@@ -43,7 +43,7 @@ add_library(wxutil
 target_compile_options(wxutil PUBLIC ${FTGL_CFLAGS})
 target_link_libraries(wxutil PUBLIC
                       math
-                      scenegraph
+                      scene
                       xmlutil
                       ${wxWidgets_LIBRARIES}
                       ${SIGC_LIBRARIES}

@@ -135,7 +135,7 @@ else()
 endif()
 
 # Install main targets
-install(TARGETS darkradiant math xmlutil scenegraph wxutil
+install(TARGETS darkradiant math xmlutil scene wxutil
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION ${PKGLIBDIR})
 install(TARGETS radiantcore script sound
