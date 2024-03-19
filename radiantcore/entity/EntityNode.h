@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sigc++/connection.h>
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "inamespace.h"
 #include "icomparablenode.h"
 #include "Bounded.h"
@@ -46,7 +46,7 @@ protected:
 	IEntityClassPtr _eclass;
 
 	// The actual entity (which contains the key/value pairs)
-	SpawnArgs _spawnArgs;
+	Entity _spawnArgs;
 
     // Transformation applied to this node and its children
     Matrix4 _localToParent = Matrix4::getIdentity();

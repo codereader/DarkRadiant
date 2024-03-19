@@ -2,12 +2,12 @@
 
 #include "generic/callback.h"
 #include "iselectiontest.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "math/curve.h"
 #include "math/AABB.h"
 #include "RenderableCurve.h"
 
-namespace entity 
+namespace entity
 {
 
 /** greebo: This is the base class for the two Doom3-supported curve

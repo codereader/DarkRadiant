@@ -4,7 +4,7 @@
 #include <string>
 #include "math/Vector3.h"
 
-#include <ientity.h>
+#include "scene/EntityAttachment.h"
 
 namespace entity
 {
@@ -111,7 +111,7 @@ public:
             const AttachPos& pos = _positions.at(i->second.posName);
 
             // Construct the functor argument
-            Entity::Attachment a;
+            EntityAttachment a;
             a.eclass = i->second.className;
             a.name = i->second.name;
             a.offset = pos.origin;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "i18n.h"
+#include "scene/Entity.h"
 #include <string>
 
 #include "ConversationEntity.h"

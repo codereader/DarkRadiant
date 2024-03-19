@@ -1,7 +1,7 @@
 #include "RadiantTest.h"
 
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "irender.h"
 #include "ilightnode.h"
 #include "math/Matrix4.h"
@@ -381,7 +381,7 @@ TEST_F(RenderSystemTest, EntityRegistration)
 
     scene::addNodeToContainer(entity2, rootNode);
     EXPECT_EQ(getEntityCount(renderSystem), 2) << "Rendersystem should contain two entities now";
-    
+
     scene::removeNodeFromParent(entity);
     EXPECT_EQ(getEntityCount(renderSystem), 1) << "Rendersystem should contain one entity now";
 
@@ -428,7 +428,7 @@ TEST_F(RenderSystemTest, EntityEnumeration)
 {
     auto rootNode = GlobalMapModule().getRoot();
     auto renderSystem = rootNode->getRenderSystem();
-    
+
     auto entity = createByClassName("func_static");
     scene::addNodeToContainer(entity, rootNode);
 

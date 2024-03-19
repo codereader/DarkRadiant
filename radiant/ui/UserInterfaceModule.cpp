@@ -6,7 +6,7 @@
 #include "i18n.h"
 #include "ilayer.h"
 #include "ifilter.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "imru.h"
 #include "imap.h"
 #include "ibrush.h"

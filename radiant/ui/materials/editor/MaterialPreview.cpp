@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ibrush.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "imodelcache.h"
 #include "ieclass.h"
 #include "ishaders.h"
@@ -77,7 +77,7 @@ void MaterialPreview::setupToolbar()
     _testModelCubeButton = toolbar->AddRadioTool(wxID_ANY, "", wxutil::GetLocalBitmap("cube.png", wxART_TOOLBAR));
     _testModelCubeButton->SetShortHelp(_("Show Cube"));
     toolbar->ToggleTool(_testModelCubeButton->GetId(), true);
-    
+
     _testModelSphereButton = toolbar->AddRadioTool(wxID_ANY, "", wxutil::GetLocalBitmap("sphere.png", wxART_TOOLBAR));
     _testModelSphereButton->SetShortHelp(_("Show Sphere"));
 
@@ -369,7 +369,7 @@ void MaterialPreview::setupRoom()
     _rootNode->addChildNode(roomEntity);
 
     roomEntity->addChildNode(_room);
-    
+
     updateRoomSkin(getRoomMaterial());
 }
 
@@ -452,9 +452,9 @@ void MaterialPreview::setLightClassname(const std::string& className)
 Vector3 MaterialPreview::getLightColour()
 {
     if (!_light) return Vector3(0,0,0);
-    
+
     auto value = Node_getEntity(_light)->getKeyValue("_color");
-    
+
     if (value.empty())
     {
         value = "1 1 1";

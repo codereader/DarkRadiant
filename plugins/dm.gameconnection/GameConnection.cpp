@@ -8,7 +8,7 @@
 #include "icameraview.h"
 #include "inode.h"
 #include "imap.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselection.h"
 #include "ui/iuserinterface.h"
 #include "ui/imenumanager.h"
@@ -102,7 +102,7 @@ void GameConnection::think()
 }
 
 void GameConnection::onTimerEvent(wxTimerEvent& ev)
-{ 
+{
     if (_timerInProgress) return; // avoid double-entering
 
     util::ScopedBoolLock guard(_timerInProgress);

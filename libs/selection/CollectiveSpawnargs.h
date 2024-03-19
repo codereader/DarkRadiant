@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <sigc++/signal.h>
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "i18n.h"
 #include "scene/EntityKeyValue.h"
 

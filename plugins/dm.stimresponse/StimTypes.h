@@ -2,7 +2,7 @@
 
 #include <map>
 #include <string>
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "wxutil/dataview/TreeModel.h"
 
 class wxBitmapComboBox;

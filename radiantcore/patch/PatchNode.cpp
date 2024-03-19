@@ -1,7 +1,7 @@
 #include "PatchNode.h"
 
 #include "ifilter.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iradiant.h"
 #include "icounter.h"
 #include "math/Frustum.h"
@@ -97,7 +97,7 @@ void PatchNode::updateSelectableControls()
 	// The passed callback points back to this class (the member method selectedChangedComponent() is called).
 	for(auto& ctrl : ctrlPoints)
 	{
-		m_ctrl_instances.emplace_back(ctrl, 
+		m_ctrl_instances.emplace_back(ctrl,
             std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1));
 	}
 }
@@ -355,7 +355,7 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     if (m_patch.getWidth() > 0 && m_patch.getHeight() > 0)
     {
         _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
-        _renderableSurfaceWireframe.update(getRenderState() == RenderState::Active ? 
+        _renderableSurfaceWireframe.update(getRenderState() == RenderState::Active ?
             _renderEntity->getWireShader() : _inactiveShader);
         _renderableSurfaceSolid.attachToEntity(_renderEntity);
     }

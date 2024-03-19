@@ -6,7 +6,7 @@
 
 namespace entity {
 
-TargetableNode::TargetableNode(SpawnArgs& entity, EntityNode& node) :
+TargetableNode::TargetableNode(Entity& entity, EntityNode& node) :
 	_d3entity(entity),
     _targetKeys(*this),
 	_node(node),
@@ -68,7 +68,7 @@ void TargetableNode::onKeyValueChanged(const std::string& name)
 }
 
 // Entity::Observer implementation, gets called on key insert
-void TargetableNode::onKeyInsert(const std::string& key, EntityKeyValue& value) 
+void TargetableNode::onKeyInsert(const std::string& key, EntityKeyValue& value)
 {
 	if (key == "name")
 	{
@@ -149,7 +149,7 @@ void TargetableNode::onTargetKeyCollectionChanged()
         if (!_targetLineNode)
         {
             _targetLineNode.reset(new TargetLineNode(_node));
-			
+
 			// Fix #4373: Move the target lines to the same layers as the owning node
 			_targetLineNode->assignToLayers(_node.getLayers());
 

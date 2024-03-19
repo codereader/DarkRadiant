@@ -12,7 +12,7 @@
 #include "../OriginKey.h"
 #include "../AngleKey.h"
 #include "../RotationKey.h"
-#include "scene/SpawnArgs.h"
+#include "scene/Entity.h"
 
 #include "../RenderableArrow.h"
 #include "../RenderableEntityBox.h"

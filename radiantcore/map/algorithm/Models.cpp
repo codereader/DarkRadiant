@@ -5,7 +5,7 @@
 #include "i18n.h"
 #include "inode.h"
 #include "iselection.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "imodel.h"
 #include "imodelcache.h"
 #include "iscenegraph.h"

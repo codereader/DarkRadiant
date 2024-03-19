@@ -5,16 +5,17 @@
 #include "imapmerge.h"
 #include "../Clone.h"
 #include "../scenelib.h"
+#include "scene/Entity.h"
 
 namespace scene
-{ 
+{
 
 namespace merge
 {
 
 // Represents a single step of a merge process, like adding a brush,
 // removing an entity, setting a keyvalue, etc.
-class MergeAction : 
+class MergeAction :
     public virtual IMergeAction
 {
 private:
@@ -142,9 +143,9 @@ protected:
         auto activeLayer = parent->getRootNode()->getLayerManager().getActiveLayer();
 
         _cloneToBeInserted->moveToLayer(activeLayer);
-        _cloneToBeInserted->foreachNode([=](const INodePtr& child) 
-        { 
-            child->moveToLayer(activeLayer); return true; 
+        _cloneToBeInserted->foreachNode([=](const INodePtr& child)
+        {
+            child->moveToLayer(activeLayer); return true;
         });
     }
 
@@ -238,7 +239,7 @@ public:
         assert(_node);
         assert(Node_isEntity(_node));
         assert(!_key.empty());
-        
+
         // Store the existing value, it's reverted when deactivating this action
         _unchangedValue = Node_getEntity(node)->getKeyValue(key);
     }
@@ -335,7 +336,7 @@ public:
 /**
  * A ConflictResolutionAction encapsulates a source change that has a
  * encountered a conflicting target change.
- * 
+ *
  * The source change will only be applied if this action has been
  * told to do so by calling setResolvedByUsingSource(true),
  * otherwise nothing happens and the target change stays in effect.
@@ -448,10 +449,10 @@ public:
         EntityConflictResolutionAction(conflictType, conflictingSourceEntity, conflictingTargetEntity, sourceAction, MergeAction::Ptr())
     {}
 
-    EntityConflictResolutionAction(ConflictType conflictType, 
+    EntityConflictResolutionAction(ConflictType conflictType,
                                    const INodePtr& conflictingSourceEntity,
                                    const INodePtr& conflictingTargetEntity,
-                                   const MergeAction::Ptr& sourceAction, 
+                                   const MergeAction::Ptr& sourceAction,
                                    const MergeAction::Ptr& targetAction) :
         ConflictResolutionAction(conflictType, conflictingSourceEntity, conflictingTargetEntity, sourceAction, targetAction)
     {}
@@ -465,7 +466,7 @@ public:
     EntityKeyValueConflictResolutionAction(ConflictType conflictType,
                                            const INodePtr& conflictingSourceEntity,
                                            const INodePtr& conflictingTargetEntity,
-                                           const MergeAction::Ptr& sourceAction, 
+                                           const MergeAction::Ptr& sourceAction,
                                            const MergeAction::Ptr& targetAction) :
         ConflictResolutionAction(conflictType, conflictingSourceEntity, conflictingTargetEntity, sourceAction, targetAction)
     {}

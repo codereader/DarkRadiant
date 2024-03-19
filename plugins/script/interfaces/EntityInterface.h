@@ -3,12 +3,13 @@
 #include "iscript.h"
 #include "iscriptinterface.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
+#include "scene/Entity.h"
 
 #include "EClassInterface.h"
 #include "SceneGraphInterface.h"
 
-namespace script 
+namespace script
 {
 
 // Visitor object

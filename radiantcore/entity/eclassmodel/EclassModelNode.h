@@ -2,7 +2,7 @@
 
 #include "inamespace.h"
 #include "modelskin.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselection.h"
 #include "editable.h"
 
@@ -74,7 +74,7 @@ public:
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
-    
+
     const Vector3& getWorldPosition() const override;
 
     virtual bool isShadowCasting() const override;

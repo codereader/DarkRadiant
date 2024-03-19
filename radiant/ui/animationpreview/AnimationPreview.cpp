@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "imodel.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "imd5anim.h"
 #include "itextstream.h"
@@ -45,7 +45,7 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 
 	// Ensure that this is an MD5 model node
 	model::ModelNodePtr model = Node_getModel(node);
-	
+
 	if (!model)
 	{
 		rError() << "AnimationPreview::setModelNode: node is not a model." << std::endl;

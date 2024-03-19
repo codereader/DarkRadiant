@@ -1,7 +1,7 @@
 #include "EClassTree.h"
 
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselection.h"
 #include "i18n.h"
 

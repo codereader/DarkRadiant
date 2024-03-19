@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_KEYOBSERVERS_H)
 #define INCLUDED_KEYOBSERVERS_H
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include <map>
 #include <string>
 #include <sigc++/connection.h>
 
-#include "scene/SpawnArgs.h"
+#include "scene/Entity.h"
 #include "KeyObserverDelegate.h"
 
 namespace entity
@@ -60,7 +60,7 @@ class KeyObserverMap :
     std::multimap<KeyObserver*, sigc::connection> _connectionsByObserver;
 
 	// The observed entity
-	SpawnArgs& _entity;
+	Entity& _entity;
 
     void attachObserver(const std::string& key, KeyObserver& observer)
     {
@@ -83,7 +83,7 @@ class KeyObserverMap :
     }
 
 public:
-	KeyObserverMap(SpawnArgs& entity) :
+	KeyObserverMap(Entity& entity) :
 		_entity(entity)
 	{
 		// Start observing the entity

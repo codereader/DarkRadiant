@@ -4,7 +4,7 @@
 
 #include "iselectable.h"
 #include "iselectiontest.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 namespace selection
 {
@@ -96,7 +96,7 @@ public:
 
     // Visit each selectable, entities first, then primitives
     void foreachSelectable(const std::function<void(ISelectable*)>& functor) override
-    { 
+    {
         for (const auto& [_, selectable] : _entityPool)
         {
             functor(selectable);

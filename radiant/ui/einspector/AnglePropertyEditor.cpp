@@ -1,6 +1,6 @@
 #include "AnglePropertyEditor.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "string/convert.h"
 
 #include <wx/bmpbuttn.h>
@@ -34,7 +34,7 @@ AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, IEntitySelection& ent
 
 wxBitmapButton* AnglePropertyEditor::constructAngleButton(wxPanel* parent, const std::string& icon, int angleValue)
 {
-	wxBitmapButton* button = new wxBitmapButton(parent, wxID_ANY, 
+	wxBitmapButton* button = new wxBitmapButton(parent, wxID_ANY,
 		wxutil::GetLocalBitmap(icon));
 
 	button->Bind(wxEVT_BUTTON, &AnglePropertyEditor::_onButtonClick, this);

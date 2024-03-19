@@ -1,7 +1,7 @@
 #include "RadiantTest.h"
 
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "irendersystemfactory.h"
 #include "iselectable.h"
 #include "iselection.h"
@@ -53,13 +53,13 @@ struct TestEntity
 };
 
 // Obtain entity attachments as a simple std::list
-std::list<Entity::Attachment> getAttachments(const IEntityNodePtr& node)
+std::list<EntityAttachment> getAttachments(const IEntityNodePtr& node)
 {
-    std::list<Entity::Attachment> attachments;
+    std::list<EntityAttachment> attachments;
     if (node)
     {
         node->getEntity().forEachAttachment(
-            [&](const Entity::Attachment& a) { attachments.push_back(a); }
+            [&](const EntityAttachment& a) { attachments.push_back(a); }
         );
     }
     return attachments;
@@ -908,7 +908,7 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
     EXPECT_EQ(attachments.size(), 1);
 
     // Examine the properties of the single attachment
-    Entity::Attachment attachment = attachments.front();
+    EntityAttachment attachment = attachments.front();
     EXPECT_EQ(attachment.eclass, spawnArgs.getKeyValue("def_attach"));
     EXPECT_EQ(attachment.offset, Vector3(0, 0, 10));
     EXPECT_EQ(attachment.name, spawnArgs.getKeyValue("name_attach"));

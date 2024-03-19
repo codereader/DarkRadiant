@@ -1,7 +1,7 @@
 #pragma once
 
 #include "inode.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ilightnode.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
@@ -84,7 +84,7 @@ public:
 		{
 			return lightNode->getSelectAABB().getOrigin();
 		}
-		
+
 		return node->worldAABB().getOrigin();
 	}
 

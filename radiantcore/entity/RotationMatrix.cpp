@@ -1,6 +1,6 @@
 #include "RotationMatrix.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "math/Matrix4.h"
 
 void RotationMatrix::setIdentity()

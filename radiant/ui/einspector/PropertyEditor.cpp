@@ -1,6 +1,6 @@
 #include "PropertyEditor.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iundo.h"
 #include <wx/panel.h>
 #include <wx/sizer.h>

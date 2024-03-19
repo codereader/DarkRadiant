@@ -1,6 +1,6 @@
 #include "AngleKey.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "string/convert.h"
 #include "math/Matrix4.h"
 
@@ -35,4 +35,3 @@ float AngleKey::getRotatedValue(float angle, const Quaternion& rotation)
 }
 
 } // namespace
-

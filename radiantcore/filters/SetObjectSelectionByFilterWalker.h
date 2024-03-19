@@ -4,7 +4,7 @@
 #include "ifilter.h"
 #include "ipatch.h"
 #include "ibrush.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselectable.h"
 
 #include "XMLFilter.h"
@@ -49,7 +49,7 @@ public:
 			// If the entity is affected, don't traverse its child nodes
 			return isVisible;
 		}
-		
+
 		// greebo: Check visibility of Patches
 		if (Node_isPatch(node))
 		{

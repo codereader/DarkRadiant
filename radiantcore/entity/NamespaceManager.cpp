@@ -5,7 +5,7 @@
 #include "string/predicate.h"
 #include "gamelib.h"
 
-namespace entity 
+namespace entity
 {
 
 namespace
@@ -13,7 +13,7 @@ namespace
     const char* const NAME_KEY("name");
 }
 
-NamespaceManager::NamespaceManager(SpawnArgs& entity) :
+NamespaceManager::NamespaceManager(Entity& entity) :
     _namespace(nullptr),
     _entity(entity),
     _updateMutex(false),
@@ -23,12 +23,12 @@ NamespaceManager::NamespaceManager(SpawnArgs& entity) :
     _entity.attachObserver(this);
 }
 
-NamespaceManager::~NamespaceManager() 
+NamespaceManager::~NamespaceManager()
 {
     // Detach <self> from the observed Entity
     _entity.detachObserver(this);
 
-    if (_namespace != nullptr) 
+    if (_namespace != nullptr)
     {
         // We're still attached to a namespace, break the connection
         disconnectNameObservers();
@@ -39,17 +39,17 @@ NamespaceManager::~NamespaceManager()
 }
 
 // Gets/sets the namespace of this named object
-void NamespaceManager::setNamespace(INamespace* space) 
+void NamespaceManager::setNamespace(INamespace* space)
 {
     _namespace = space;
 }
 
-INamespace* NamespaceManager::getNamespace() const 
+INamespace* NamespaceManager::getNamespace() const
 {
     return _namespace;
 }
 
-void NamespaceManager::detachNames() 
+void NamespaceManager::detachNames()
 {
     if (_namespace == nullptr) return;
 
@@ -57,7 +57,7 @@ void NamespaceManager::detachNames()
     detachNameKeys();
 }
 
-void NamespaceManager::connectNameObservers() 
+void NamespaceManager::connectNameObservers()
 {
     if (_namespace == nullptr) return;
 
@@ -65,7 +65,7 @@ void NamespaceManager::connectNameObservers()
     attachKeyObservers();
 }
 
-void NamespaceManager::disconnectNameObservers() 
+void NamespaceManager::disconnectNameObservers()
 {
     if (_namespace == nullptr) return;
 
@@ -81,19 +81,19 @@ std::string NamespaceManager::getName() const
     return _entity.getKeyValue(_nameKey);
 }
 
-void NamespaceManager::changeName(const std::string& newName) 
+void NamespaceManager::changeName(const std::string& newName)
 {
     // Set the value, this should trigger the nameChanged() event on all observers
     _entity.setKeyValue(_nameKey, newName);
 }
 
-void NamespaceManager::onKeyInsert(const std::string& key, EntityKeyValue& value) 
+void NamespaceManager::onKeyInsert(const std::string& key, EntityKeyValue& value)
 {
     // avoid double-updates when the keyvalue gets updated during this process
     if (_updateMutex) return;
 
     // Check if the key is relevant
-    if (keyIsName(key)) 
+    if (keyIsName(key))
     {
         // Key is a "name", remember that one
         _nameKeys.insert(std::make_pair(key, &value));
@@ -106,13 +106,13 @@ void NamespaceManager::onKeyInsert(const std::string& key, EntityKeyValue& value
     attachKeyObserver(key, value);
 }
 
-void NamespaceManager::onKeyErase(const std::string& key, EntityKeyValue& value) 
+void NamespaceManager::onKeyErase(const std::string& key, EntityKeyValue& value)
 {
     // avoid double-updates when the keyvalue gets updated during this process
     if (_updateMutex) return;
 
     // Check if the key is relevant
-    if (keyIsName(key)) 
+    if (keyIsName(key))
     {
         // Remove the key from the namespace
         detachKeyFromNamespace(key, value);
@@ -125,7 +125,7 @@ void NamespaceManager::onKeyErase(const std::string& key, EntityKeyValue& value)
     detachKeyObserver(key, value);
 }
 
-bool NamespaceManager::keyIsName(const std::string& key) 
+bool NamespaceManager::keyIsName(const std::string& key)
 {
     // In D3, only "name" spawnargs are actual names
     return key == _nameKey;
@@ -147,7 +147,7 @@ void NamespaceManager::attachNames()
     }
 }
 
-void NamespaceManager::detachNameKeys() 
+void NamespaceManager::detachNameKeys()
 {
     for (const auto& pair : _nameKeys)
     {
@@ -182,7 +182,7 @@ void NamespaceManager::attachKeyToNamespace(const std::string& key, EntityKeyVal
     }
 }
 
-void NamespaceManager::detachKeyFromNamespace(const std::string& key, EntityKeyValue& keyValue) 
+void NamespaceManager::detachKeyFromNamespace(const std::string& key, EntityKeyValue& keyValue)
 {
     if (_namespace == nullptr) return;
 
@@ -224,7 +224,7 @@ void NamespaceManager::attachKeyObservers()
     });
 }
 
-void NamespaceManager::detachKeyObserver(const std::string& key, EntityKeyValue& keyValue) 
+void NamespaceManager::detachKeyObserver(const std::string& key, EntityKeyValue& keyValue)
 {
     if (_namespace == nullptr) return;
 
@@ -240,7 +240,7 @@ void NamespaceManager::detachKeyObserver(const std::string& key, EntityKeyValue&
     }
 }
 
-void NamespaceManager::detachKeyObservers() 
+void NamespaceManager::detachKeyObservers()
 {
     // May not be called with empty namespace
     assert(_namespace);

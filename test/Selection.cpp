@@ -8,7 +8,7 @@
 #include "ilightnode.h"
 #include "ibrush.h"
 #include "ipatch.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
@@ -700,7 +700,7 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveModeFavoursEntities)
     // Assume that the entity is located below the brush
     Vector3 funcStaticOrigin = funcStatic->worldAABB().getOrigin();
     Vector3 originalBrushPosition = brush->worldAABB().getOrigin();
-    EXPECT_LT(funcStaticOrigin.z() + funcStatic->worldAABB().extents.z(), 
+    EXPECT_LT(funcStaticOrigin.z() + funcStatic->worldAABB().extents.z(),
         originalBrushPosition.z() + brush->worldAABB().extents.z()) << "Entity should be located below the brush";
 
     expectNodeSelectionStatus({}, { brush, funcStatic });
@@ -1344,7 +1344,7 @@ TEST_F(OrthoViewSelectionTest, DragManipulateUnselectedBrushVerticesComponentMod
     auto topFace = algorithm::findBrushFaceWithNormal(brush, { 0, 0, 1 });
     auto bottomFace = algorithm::findBrushFaceWithNormal(brush, { 0, 0, -1 });
 
-    EXPECT_TRUE(algorithm::faceHasVertex(topFace, 
+    EXPECT_TRUE(algorithm::faceHasVertex(topFace,
         [&](const WindingVertex& v) { return v.vertex.x() == vertexPosition.x() && v.vertex.y() == vertexPosition.y(); }));
     EXPECT_TRUE(algorithm::faceHasVertex(bottomFace,
         [&](const WindingVertex& v) { return v.vertex.x() == vertexPosition.x() && v.vertex.y() == vertexPosition.y(); }));

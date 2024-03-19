@@ -1,7 +1,7 @@
 #include "PortableMapWriter.h"
 
 #include "igame.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ipatch.h"
 #include "imap.h"
 #include "ibrush.h"

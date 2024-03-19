@@ -2,7 +2,7 @@
 
 #include "iundo.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "string/convert.h"
 #include "util/ScopedBoolLock.h"
 #include <fmt/format.h>
@@ -22,7 +22,7 @@ namespace ui
  * I had to work around it by putting the wxSpinCtrlDouble into
  * a parent wxPanel first.
  */
-class SpawnargLinkedSpinButton : 
+class SpawnargLinkedSpinButton :
 	public wxPanel
 {
 private:
@@ -35,14 +35,14 @@ private:
 	Entity* _entity;
 
 	bool _updateLock;
-	
+
 public:
 	SpawnargLinkedSpinButton(wxWindow* parent,
-							 const std::string& label, 
-						     const std::string& propertyName, 
+							 const std::string& label,
+						     const std::string& propertyName,
 							 double min,
 							 double max,
-						     double increment = 1, 
+						     double increment = 1,
 							 unsigned int digits = 0) :
 		wxPanel(parent, wxID_ANY),
 		_spinCtrl(new wxSpinCtrlDouble(this, wxID_ANY)),
@@ -61,7 +61,7 @@ public:
 		// 6 chars wide
 		_spinCtrl->SetMaxSize(wxSize(GetCharWidth() * 9, -1));
 
-		_spinCtrl->Connect(wxEVT_SPINCTRLDOUBLE, 
+		_spinCtrl->Connect(wxEVT_SPINCTRLDOUBLE,
 			wxSpinDoubleEventHandler(SpawnargLinkedSpinButton::onSpinButtonChanged), NULL, this);
 	}
 
@@ -75,7 +75,7 @@ public:
 	{
 		_entity = entity;
 
-		if (_entity == NULL) 
+		if (_entity == NULL)
 		{
 			SetToolTip("");
 			return;
@@ -93,7 +93,7 @@ public:
 	}
 
 protected:
-	
+
 	void onSpinButtonChanged(wxSpinDoubleEvent& ev)
 	{
 		ev.Skip();

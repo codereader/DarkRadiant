@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 namespace test
 {

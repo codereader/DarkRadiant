@@ -1,12 +1,13 @@
 #pragma once
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "iselection.h"
 #include "iselectiontest.h"
 
 #include "math/AABB.h"
 #include "scenelib.h"
+#include "scene/Entity.h"
 
 #include "imd5anim.h"
 #include "imd5model.h"
@@ -107,7 +108,7 @@ inline Entity* Scene_FindEntityByClass(const std::string& className)
 
 /* Check if a node is the worldspawn.
  */
-inline bool Node_isWorldspawn(const scene::INodePtr& node) 
+inline bool Node_isWorldspawn(const scene::INodePtr& node)
 {
 	Entity* entity = Node_getEntity(node);
 
@@ -151,7 +152,7 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
     // Copy all keyvalues except classname
     oldEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
     {
-        if (key != "classname") 
+        if (key != "classname")
         {
             newEntity.setKeyValue(key, value);
         }
@@ -166,8 +167,8 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	// Traverse the child and reparent all primitives to the new entity node
 	scene::parentPrimitives(oldNode, newNode);
 
-	// Remove the old entity node from the parent. This will disconnect 
-	// oldNode from the scene and the UndoSystem, so it's important to do 
+	// Remove the old entity node from the parent. This will disconnect
+	// oldNode from the scene and the UndoSystem, so it's important to do
 	// this step last, after the primitives have been moved. (#4718)
 	scene::removeNodeFromParent(oldNode);
 

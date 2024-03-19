@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "irender.h"
 
 namespace entity

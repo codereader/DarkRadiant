@@ -2,6 +2,7 @@ add_library(scene
             AttachmentData.cpp
             ChildPrimitives.cpp
             InstanceWalkers.cpp
+            Entity.cpp
             EntityKeyValue.cpp
             LayerUsageBreakdown.cpp
             ModelFinder.cpp
@@ -13,7 +14,6 @@ add_library(scene
             merge/ThreeWayMergeOperation.cpp
             SelectableNode.cpp
             SelectionIndex.cpp
-            SpawnArgs.cpp
             TraversableNodeSet.cpp
             Traverse.cpp)
 target_compile_options(scene PUBLIC ${SIGC_CFLAGS})

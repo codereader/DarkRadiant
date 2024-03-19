@@ -1,12 +1,12 @@
 #pragma once
 
 #include "inode.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselectable.h"
 #include "ipatch.h"
 #include "ibrush.h"
 
-namespace filters 
+namespace filters
 {
 
 // Walker: de-selects a complete subgraph

@@ -3,9 +3,9 @@
 #include <regex>
 #include "Conversation.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 
-namespace conversation 
+namespace conversation
 {
 
 /**

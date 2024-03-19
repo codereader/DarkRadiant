@@ -22,7 +22,7 @@
 // Modules
 #include "iundo.h"
 #include "ui/imainframe.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "imap.h"
 #include "igame.h"
 #include "ui/idialogmanager.h"
@@ -181,7 +181,7 @@ void ReadableEditorDialog::setupPageRelatedInterface()
 	// Delete Button
 	findNamedObject<wxButton>(this, "ReadableEditorDeletePage")->Connect(wxEVT_BUTTON,
 		wxCommandEventHandler(ReadableEditorDialog::onDelete), NULL, this);
-	
+
 	// Page Switcher
 	findNamedObject<wxButton>(this, "ReadableEditorGotoFirstPage")->Connect(wxEVT_BUTTON,
 		wxCommandEventHandler(ReadableEditorDialog::onFirstPage), NULL, this);
@@ -227,7 +227,7 @@ void ReadableEditorDialog::createMenus()
 	_insertMenu->Append(InsertWholePage, _("Insert whole Page"), "");
 	_insertMenu->Append(InsertLeft, _("Insert on left Side"), "");
 	_insertMenu->Append(InsertRight, _("Insert on right Side"), "");
-	
+
 	_insertMenu->Connect(wxEVT_MENU, wxCommandEventHandler(ReadableEditorDialog::onMenuItemClick), NULL, this);
 
 	// Delete Menu
@@ -309,7 +309,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 				refreshWindowTitle();
 				return true;
 			}
-			
+
 			return false; // cancelled
 		}
 		catch (XdFileChooserDialog::ImportFailedException&)
@@ -491,7 +491,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 			std::string newFileName = _mapBasedFilename;
 
 			if (!compPath.empty()) // VFS-path does exist, now check whether it is in another absolute folder.
-			{ 
+			{
 				int fileIdx = 2;
 				compPath += XData::XDATA_DIR + _mapBasedFilename;
 
@@ -519,7 +519,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 	}
 	else
 	{
-		// We are exporting a previously imported XData definition. 
+		// We are exporting a previously imported XData definition.
 		// The _xdFilename itself can be a VFS path or an absolute path, depending on the user's settings
 		if (path_is_absolute(_xdFilename.c_str()))
 		{
@@ -1550,7 +1550,7 @@ void ReadableEditorDialog::showDuplicateDefinitions()
 	{
 		wxutil::Messagebox::Show(
 			_("Duplicated XData definitions"),
-			_("There are no duplicated definitions!"), 
+			_("There are no duplicated definitions!"),
 			ui::IDialog::MESSAGE_CONFIRM, this
 		);
 		return;

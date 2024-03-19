@@ -4,6 +4,7 @@
 #include "ientity.h"
 #include "igroupnode.h"
 
+#include "scene/Entity.h"
 #include "registry/registry.h"
 
 namespace scene

@@ -1,7 +1,7 @@
 #include "ClosestTexturableFinder.h"
 
 #include "ifilter.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "brush/Brush.h"
 #include "patch/Patch.h"
 
@@ -13,7 +13,7 @@
 namespace selection
 {
 
-namespace algorithm 
+namespace algorithm
 {
 
 ClosestTexturableFinder::ClosestTexturableFinder(SelectionTest& test, Texturable& texturable) :

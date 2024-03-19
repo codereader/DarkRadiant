@@ -33,7 +33,7 @@ target_include_directories(script SYSTEM PUBLIC
                            ${CMAKE_SOURCE_DIR}/libs/pybind
                            ${Python_INCLUDE_DIRS})
 target_link_libraries(script PUBLIC
-                      math
+                      math scene
                       ${Python_LIBRARIES} ${SIGC_LIBRARIES})
 
 # Enable precompiled header for script plugin

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "gamelib.h"
 #include "DifficultySettings.h"
 

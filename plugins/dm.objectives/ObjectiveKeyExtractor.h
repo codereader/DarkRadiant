@@ -3,7 +3,7 @@
 #include "Objective.h"
 #include "Specifier.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 
 namespace objectives
 {

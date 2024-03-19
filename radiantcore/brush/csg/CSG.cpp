@@ -7,7 +7,7 @@
 #include "iundo.h"
 #include "igrid.h"
 #include "iselection.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include "scenelib.h"
 #include "shaderlib.h"
@@ -280,7 +280,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 		radiant::NotificationMessage::SendInformation(
 			_("Note: be careful when using the CSG tool, as you might end up\n"
 			"with an unnecessary number of tiny brushes and/or leaks.\n"
-			"This popup will not be shown again."), 
+			"This popup will not be shown again."),
 			_("This Is Not Dromed Warning"));
 
 		// Disable this warning

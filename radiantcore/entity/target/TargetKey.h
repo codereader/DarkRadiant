@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include <sigc++/connection.h>
 
 #include "Target.h"

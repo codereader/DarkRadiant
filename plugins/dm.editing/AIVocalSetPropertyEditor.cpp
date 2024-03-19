@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>

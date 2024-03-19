@@ -3,7 +3,7 @@
 #include "inamespace.h"
 #include "imap.h"
 #include "ilayer.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselectiongroup.h"
 #include "iselectionset.h"
 #include "scene/Node.h"
@@ -13,17 +13,17 @@
 #include "undo/UndoSystem.h"
 #include <sigc++/connection.h>
 
-namespace map 
+namespace map
 {
 
-/** 
+/**
  * greebo: This is the root node of the map, it gets inserted as
  * the top node into the scenegraph. Each entity node is
  * inserted as child node to this.
  *
  * Note: Inserting a child node to this MapRoot automatically
  * triggers an "instantiation" of this child node, which can be
- * seen as "activation" of this node. In contrast to nodes on the 
+ * seen as "activation" of this node. In contrast to nodes on the
  * undo stack which are "not instantiated"/inactive.
  */
 class RootNode :

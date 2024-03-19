@@ -1,6 +1,6 @@
 #include "FloatPropertyEditor.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "i18n.h"
 
 #include "itextstream.h"
@@ -51,7 +51,7 @@ void FloatPropertyEditor::updateFromEntity()
 	if (_spinCtrl == nullptr) return;
 
 	auto value = string::convert<float>(_entities.getSharedKeyValue(_key->getFullKey(), false), 0);
-	
+
 	_spinCtrl->SetValue(value);
 }
 

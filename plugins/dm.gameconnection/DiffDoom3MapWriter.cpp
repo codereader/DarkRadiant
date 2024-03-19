@@ -1,7 +1,7 @@
 #include "DiffDoom3MapWriter.h"
 #include "DiffStatus.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 
 namespace gameconn
 {

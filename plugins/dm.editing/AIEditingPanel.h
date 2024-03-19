@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "ientity.h"
+#include "scene/Entity.h"
 #include <memory>
 
 #include <sigc++/connection.h>
@@ -25,7 +25,7 @@ typedef std::shared_ptr<AIEditingPanel> AIEditingPanelPtr;
 class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;
 
-class AIEditingPanel : 
+class AIEditingPanel :
 	public wxutil::DockablePanel,
 	public Entity::Observer,
 	public sigc::trackable,
@@ -77,7 +77,7 @@ private:
 	void constructWidgets();
 	wxSizer* createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton);
 	wxStaticText* createSectionLabel(const std::string& text);
-	void createChooserRow(wxSizer* table, const std::string& rowLabel, 
+	void createChooserRow(wxSizer* table, const std::string& rowLabel,
 									  const std::string& buttonLabel, const std::string& buttonIcon,
 									  const std::string& key);
 

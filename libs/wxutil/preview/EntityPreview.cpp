@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "ifilter.h"
 #include "scene/BasicRootNode.h"
+#include "scene/Entity.h"
 
 #include "../dialog/MessageBox.h"
 #include "scene/PrefabBoundsAccumulator.h"

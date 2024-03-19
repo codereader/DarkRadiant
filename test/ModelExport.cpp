@@ -4,7 +4,7 @@
 #include "imodelcache.h"
 #include "imap.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ModelExportOptions.h"
 #include "algorithm/Primitives.h"
 #include "algorithm/Scene.h"

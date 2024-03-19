@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ieclass.h"
-#include "ientity.h"
-#include "scene/SpawnArgs.h"
+#include "scene/Entity.h"
+#include "scene/Entity.h"
 
 namespace entity
 {
@@ -11,7 +11,7 @@ class NameKey :
 	public KeyObserver
 {
 	// The reference to the spawnarg structure
-	SpawnArgs& _entity;
+	Entity& _entity;
 
 	// Cached "name" keyvalue
 	std::string _name;
@@ -19,7 +19,7 @@ class NameKey :
     sigc::signal<void> _sigNameChanged;
 
 public:
-    NameKey(SpawnArgs& entity) :
+    NameKey(Entity& entity) :
 		_entity(entity)
 	{}
 

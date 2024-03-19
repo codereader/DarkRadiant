@@ -3,7 +3,7 @@
 #include <list>
 #include "inode.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselection.h"
 #include "iselectable.h"
 #include "CollectiveSpawnargs.h"
@@ -14,18 +14,18 @@ namespace selection
 /**
  * Helper object used by the Entity Inspector to track all selected entities
  * in the scene and keep the list of their spawnargs up to date.
- * 
+ *
  * On update() it rescans the entity selection in the scene, triggering
  * the contained CollectiveSpawnargs object to emit its signals. The signals
- * are emitted such that the listening EntityInspector will show the 
+ * are emitted such that the listening EntityInspector will show the
  * correct set of keys: the ones with shared values will show just that,
  * the keys with differing values will show a placeholder text instead.
- * 
- * This instance will monitor the selected entities to dispatch all 
+ *
+ * This instance will monitor the selected entities to dispatch all
  * key value changes to the CollectiveSpawnargs.
- * Selection updates will not take effect until update() is called, which 
+ * Selection updates will not take effect until update() is called, which
  * ideally should happen in an idle processing loop after a selection change.
- * 
+ *
  * This class keeps weak references to the scene::Nodes to not interfere with
  * node destruction.
  */
@@ -196,12 +196,12 @@ public:
         for (auto& tracked : _trackedEntities)
         {
             auto node = tracked.getNode();
-            
+
             if (!node) continue;
 
             auto entityNode = scene::node_cast<IEntityNode>(node);
             assert(entityNode);
-            
+
             if (entityNode)
             {
                 functor(entityNode);

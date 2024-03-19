@@ -1,7 +1,7 @@
 #include "NameKeyObserver.h"
 
 #include "inamespace.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "scene/EntityKeyValue.h"
 
 namespace entity {

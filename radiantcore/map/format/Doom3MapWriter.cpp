@@ -1,7 +1,7 @@
 #include "Doom3MapWriter.h"
 
 #include "igame.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include "primitivewriters/BrushDef3Exporter.h"
 #include "primitivewriters/PatchDefExporter.h"

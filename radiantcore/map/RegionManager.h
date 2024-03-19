@@ -6,10 +6,10 @@
 #include "math/AABB.h"
 #include "math/Vector2.h"
 #include "iscenegraph.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "imap.h"
 
-/** 
+/**
  * greebo: The RegionManager provides methods to enable/disable
  * the regioning for map editing as well as functions
  * to set the region bounds from brushes/xyview/current selection.
@@ -149,7 +149,7 @@ private:
 	void onMapEvent(IMap::MapEvent ev);
 
 	// Helper to create the actual brushes bounding the region
-	static void constructRegionBrushes(scene::INodePtr brushes[6], 
+	static void constructRegionBrushes(scene::INodePtr brushes[6],
 		const Vector3& region_mins, const Vector3& region_maxs);
 
 	AABB getVisibleBounds();

@@ -4,8 +4,8 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "ientity.h"
-
+#include "scene/Entity.h"
+#include "scene/Entity.h"
 #include "string/convert.h"
 
 #include "ConversationKeyExtractor.h"
@@ -28,7 +28,7 @@ ConversationEntity::ConversationEntity(const scene::INodePtr& node) :
 }
 
 // Delete the entity's world node
-void ConversationEntity::deleteWorldNode() 
+void ConversationEntity::deleteWorldNode()
 {
 	// Try to convert the weak_ptr reference to a shared_ptr
 	scene::INodePtr node = _entityNode.lock();
@@ -50,11 +50,11 @@ int ConversationEntity::getHighestIndex()
 }
 
 // Add a new conversation
-int ConversationEntity::addConversation() 
+int ConversationEntity::addConversation()
 {
 	// Locate the first unused id
 	int index = 1;
-	while (_conversations.find(index) != _conversations.end()) 
+	while (_conversations.find(index) != _conversations.end())
 	{
 		if (index == std::numeric_limits<int>::max())
 		{
@@ -73,12 +73,12 @@ int ConversationEntity::addConversation()
 	return index;
 }
 
-void ConversationEntity::deleteConversation(int index) 
+void ConversationEntity::deleteConversation(int index)
 {
 	// Look up the conversation with the given index
 	auto i = _conversations.find(index);
 
-	if (i == _conversations.end()) 
+	if (i == _conversations.end())
 	{
 		// not found, nothing to do
 		return;
@@ -88,7 +88,7 @@ void ConversationEntity::deleteConversation(int index)
 	_conversations.erase(i++);
 
 	// Then iterate all the way to the highest index
-	while (i != _conversations.end()) 
+	while (i != _conversations.end())
 	{
 		// Decrease the index of this conversation
 		int newIndex = i->first - 1;
@@ -189,7 +189,7 @@ void ConversationEntity::writeToEntity()
 		{
 			std::string cmdPrefix = prefix + "cmd_" + string::to_string(cmd.first) + "_";
 
-			try 
+			try
 			{
 				const auto& cmdInfo = ConversationCommandLibrary::Instance().findCommandInfo(cmd.second->type);
 

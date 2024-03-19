@@ -1,4 +1,5 @@
 #include "AttachmentData.h"
+#include "itextstream.h"
 
 #include <string/predicate.h>
 #include <string/convert.h>

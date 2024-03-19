@@ -2,13 +2,13 @@
 
 #include <pybind11/stl_bind.h>
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "itextstream.h"
 
 #include "../SceneNodeBuffer.h"
 
-namespace script 
+namespace script
 {
 
 // Constructor, checks if the passed node is actually an entity
@@ -135,7 +135,7 @@ struct EntityKeyValuePair :
 	}
 };
 
-void EntityInterface::registerInterface(py::module& scope, py::dict& globals) 
+void EntityInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Add the EntityNode interface
 	py::class_<ScriptEntityNode, ScriptSceneNode> entityNode(scope, "EntityNode");

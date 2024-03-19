@@ -7,7 +7,7 @@
 #include "wxutil/XmlResourceBasedWidget.h"
 
 #include <string>
-#include "ientity.h"
+#include "scene/Entity.h"
 
 class wxDataViewCtrl;
 

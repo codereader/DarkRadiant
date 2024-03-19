@@ -1,7 +1,7 @@
 #include "ParticlePreview.h"
 
 #include "ui/ieventmanager.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "iparticles.h"
 #include "iparticlestage.h"
@@ -45,23 +45,23 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 	wxToolBar* toolbar = new wxToolBar(_mainPanel, wxID_ANY);
 	toolbar->SetToolBitmapSize(wxSize(24, 24));
 
-	_showAxesButton = toolbar->AddCheckTool(TOOL_SHOW_AXES, "", 
+	_showAxesButton = toolbar->AddCheckTool(TOOL_SHOW_AXES, "",
 		wxutil::GetLocalBitmap("axes.png", wxART_TOOLBAR));
 	_showAxesButton->SetShortHelp(_("Show coordinate axes"));
-	toolbar->Connect(_showAxesButton->GetId(), wxEVT_TOOL, 
+	toolbar->Connect(_showAxesButton->GetId(), wxEVT_TOOL,
 		wxCommandEventHandler(ParticlePreview::onToolItemClickRefresh), NULL, this);
 
-	_showWireFrameButton = toolbar->AddCheckTool(TOOL_SHOW_WIREFRAME, "", 
+	_showWireFrameButton = toolbar->AddCheckTool(TOOL_SHOW_WIREFRAME, "",
 		wxutil::GetLocalBitmap("wireframe.png", wxART_TOOLBAR));
 	_showWireFrameButton->SetShortHelp(_("Show wireframe"));
-	toolbar->Connect(_showWireFrameButton->GetId(), wxEVT_TOOL, 
+	toolbar->Connect(_showWireFrameButton->GetId(), wxEVT_TOOL,
 		wxCommandEventHandler(ParticlePreview::onToolItemClickRefresh), NULL, this);
 
-	_automaticLoopButton = toolbar->AddCheckTool(TOOL_AUTO_LOOP, _("Auto Loop"), 
+	_automaticLoopButton = toolbar->AddCheckTool(TOOL_AUTO_LOOP, _("Auto Loop"),
 		wxutil::GetLocalBitmap("loop.png", wxART_TOOLBAR));
 	_automaticLoopButton->SetShortHelp(_("Auto Loop"));
 
-	_reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
+	_reloadButton = toolbar->AddTool(TOOL_REFRESH, "",
 		wxutil::GetLocalBitmap("refresh.png", wxART_TOOLBAR));
     _reloadButton->SetShortHelp(_("Reload Particle Defs"));
     IEventPtr ev = GlobalEventManager().findEvent("ReloadDecls");
@@ -117,7 +117,7 @@ void ParticlePreview::SetPreviewDeclName(const std::string& declName)
         setupSceneGraph();
     }
 
-	if (!_entity) return; // FUNC_EMITTER_CLASS not found 
+	if (!_entity) return; // FUNC_EMITTER_CLASS not found
 
     if (_particleNode)
     {
@@ -175,7 +175,7 @@ void ParticlePreview::setupSceneGraph()
 	try
 	{
         _rootNode = std::make_shared<scene::BasicRootNode>();
-        
+
 		_entity = GlobalEntityModule().createEntity(
 			GlobalEntityClassManager().findClass(FUNC_EMITTER_CLASS));
 

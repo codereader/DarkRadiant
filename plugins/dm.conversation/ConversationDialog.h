@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
 #include "wxutil/dialog/DialogBase.h"
@@ -30,7 +30,7 @@ private:
 	conversation::ConvEntityColumns _convEntityColumns;
 	wxutil::TreeModel::Ptr _entityList;
 	wxutil::TreeView* _entityView;
-	
+
 	// List of conversations on the selected entity
 	conversation::ConversationColumns _convColumns;
 	wxutil::TreeModel::Ptr _convList;

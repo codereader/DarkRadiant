@@ -2,7 +2,7 @@
 
 #include "selectionlib.h"
 #include "scene/Node.h"
-#include "scene/SpawnArgs.h"
+#include "scene/Entity.h"
 #include "entitylib.h"
 
 #include "TargetKeyCollection.h"
@@ -28,7 +28,7 @@ class TargetableNode :
 	public Entity::Observer,
 	public KeyObserver
 {
-	SpawnArgs& _d3entity;
+	Entity& _d3entity;
 	TargetKeyCollection _targetKeys;
 
 	// The current name of this entity (used for comparison in "onKeyValueChanged")
@@ -44,7 +44,7 @@ class TargetableNode :
     TargetLineNodePtr _targetLineNode;
 
 public:
-	TargetableNode(SpawnArgs& entity, EntityNode& node);
+	TargetableNode(Entity& entity, EntityNode& node);
 
     // This might return nullptr if the node is not inserted in a scene
     ITargetManager* getTargetManager();

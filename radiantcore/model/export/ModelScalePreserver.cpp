@@ -1,6 +1,6 @@
 #include "ModelScalePreserver.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "itransformable.h"
 #include "imapresource.h"
 #include "itextstream.h"

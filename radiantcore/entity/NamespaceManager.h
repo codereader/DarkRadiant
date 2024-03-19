@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "inamespace.h"
 
 #include <map>
-#include "scene/SpawnArgs.h"
+#include "scene/Entity.h"
 #include "KeyValueObserver.h"
 #include "NameKeyObserver.h"
 #include "util/Noncopyable.h"
@@ -20,7 +20,7 @@ private:
 	INamespace* _namespace;
 
 	// The attached entity
-	SpawnArgs& _entity;
+	Entity& _entity;
 
 	// All the observed key values of the entity get remembered
 	// This prevents having to traverse all the keyvalues again when changing namespaces
@@ -40,7 +40,7 @@ private:
 	std::string _nameKey;
 
 public:
-	NamespaceManager(SpawnArgs& entity);
+	NamespaceManager(Entity& entity);
 
 	~NamespaceManager();
 

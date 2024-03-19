@@ -6,7 +6,7 @@
 #include "iundo.h"
 #include "itextstream.h"
 #include "igame.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iscenegraph.h"
 #include "os/fs.h"
 #include "os/path.h"
@@ -85,7 +85,7 @@ void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, con
 	std::string outputExtension = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
 	string::to_lower(outputExtension);
 
-	rMessage() << "Model format used for export: " << outputExtension << 
+	rMessage() << "Model format used for export: " << outputExtension <<
 		" (this can be changed in the preferences)" << std::endl;
 
 	// Save the scaled model in the configured format
@@ -121,10 +121,10 @@ void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, con
 
 	fs::path modelKeyValue = entity->getKeyValue("model");
 
-	rMessage() << "Exporting scaled model for entity " << entity->getKeyValue("name") << 
+	rMessage() << "Exporting scaled model for entity " << entity->getKeyValue("name") <<
 		": " << modelKeyValue.string() << std::endl;
 
-	// Generate a new model name, à la "haystack_scaled3.ase"
+	// Generate a new model name, ï¿½ la "haystack_scaled3.ase"
 	std::string modelFilename = generateUniqueModelFilename(targetPath, modelKeyValue, outputExtension);
 
 	// assemble the new model spawnarg
@@ -169,7 +169,7 @@ std::string ScaledModelExporter::generateUniqueModelFilename(
 			return generatedFilename; // break the loop
 		}
 	}
-	
+
 	throw new std::runtime_error("Could not generate a unique model filename.");
 }
 

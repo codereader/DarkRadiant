@@ -2,7 +2,7 @@
 
 #include <limits>
 #include "iselectiongroup.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "string/convert.h"
 #include "string/replace.h"
 #include "parser/DefTokeniser.h"
@@ -116,7 +116,7 @@ void SelectionGroupInfoFileModule::saveNode(const scene::INodePtr& node, std::si
 	{
 		_output << " " << primitiveNum;
 	}
-	
+
 	_output << " )";
 
 	_output << " ( ";
@@ -330,7 +330,7 @@ void SelectionGroupInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr
 
 				if (found == groups.end())
 				{
-					rWarning() << "Invalid group ID " << id << " encountered for node (" << 
+					rWarning() << "Invalid group ID " << id << " encountered for node (" <<
 						mapping.first.first << "," << mapping.first.second << ")" << std::endl;
 					continue;
 				}
@@ -343,7 +343,7 @@ void SelectionGroupInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr
 			failedNodes++;
 		}
 	}
-		
+
 	if (failedNodes > 0)
 	{
 		rWarning() << "Couldn't resolve " << failedNodes << " nodes in group mapping " << std::endl;

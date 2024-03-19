@@ -5,7 +5,7 @@
 #include "iundo.h"
 #include "ieclass.h"
 #include "itransformable.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iorthoview.h"
 
 #include "scenelib.h"

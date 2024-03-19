@@ -2,7 +2,7 @@
 
 #include "icommandsystem.h"
 #include "iscenegraph.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "DiffStatus.h"
 
 namespace gameconn

@@ -6,7 +6,7 @@
 #include "imd5model.h"
 #include "inode.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "imap.h"
 
 namespace ui

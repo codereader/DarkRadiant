@@ -6,12 +6,13 @@
 #include "igroupnode.h"
 #include "iselectiongroup.h"
 #include "iscenegraph.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ipatch.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
+#include "scene/Entity.h"
 
-/** 
+/**
  * @brief A structure containing information about the current Selection.
  *
  * An instance of this is maintained by the RadiantSelectionSystem, and a const reference can be

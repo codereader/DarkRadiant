@@ -1,16 +1,13 @@
-#include "SpawnArgs.h"
+#include "Entity.h"
 
 #include "ieclass.h"
 #include "debugging/debugging.h"
 #include "string/predicate.h"
 #include <functional>
 
-namespace entity
-{
-
-SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
+Entity::Entity(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
-	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1),
+	_undo(_keyValues, std::bind(&Entity::importState, this, std::placeholders::_1),
         std::function<void()>(), "EntityKeyValues"),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize()),
@@ -20,10 +17,9 @@ SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
     parseAttachments();
 }
 
-SpawnArgs::SpawnArgs(const SpawnArgs& other) :
-	Entity(other),
+Entity::Entity(const Entity& other) :
 	_eclass(other.getEntityClass()),
-	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1),
+	_undo(_keyValues, std::bind(&Entity::importState, this, std::placeholders::_1),
         std::function<void()>(), "EntityKeyValues"),
 	_observerMutex(false),
 	_isContainer(other._isContainer),
@@ -36,7 +32,7 @@ SpawnArgs::SpawnArgs(const SpawnArgs& other) :
     }
 }
 
-void SpawnArgs::parseAttachments()
+void Entity::parseAttachments()
 {
     // Parse the keys
     forEachKeyValue(
@@ -49,7 +45,7 @@ void SpawnArgs::parseAttachments()
     _attachments.validateAttachments();
 }
 
-bool SpawnArgs::isModel() const
+bool Entity::isModel() const
 {
 	std::string name = getKeyValue("name");
 	std::string model = getKeyValue("model");
@@ -58,12 +54,12 @@ bool SpawnArgs::isModel() const
 	return (classname == "func_static" && !name.empty() && name != model);
 }
 
-bool SpawnArgs::isOfType(const std::string& className)
+bool Entity::isOfType(const std::string& className)
 {
 	return _eclass->isOfType(className);
 }
 
-void SpawnArgs::importState(const KeyValues& keyValues)
+void Entity::importState(const KeyValues& keyValues)
 {
 	// Remove the entity key values, one by one
 	while (_keyValues.size() > 0)
@@ -77,7 +73,7 @@ void SpawnArgs::importState(const KeyValues& keyValues)
 	}
 }
 
-void SpawnArgs::attachObserver(Observer* observer)
+void Entity::attachObserver(Observer* observer)
 {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be attached during iteration");
 
@@ -91,7 +87,7 @@ void SpawnArgs::attachObserver(Observer* observer)
 	}
 }
 
-void SpawnArgs::detachObserver(Observer* observer)
+void Entity::detachObserver(Observer* observer)
 {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be detached during iteration");
 
@@ -114,7 +110,7 @@ void SpawnArgs::detachObserver(Observer* observer)
 	}
 }
 
-void SpawnArgs::connectUndoSystem(IUndoSystem& undoSystem)
+void Entity::connectUndoSystem(IUndoSystem& undoSystem)
 {
 	for (const auto& keyValue : _keyValues)
 	{
@@ -124,7 +120,7 @@ void SpawnArgs::connectUndoSystem(IUndoSystem& undoSystem)
     _undo.connectUndoSystem(undoSystem);
 }
 
-void SpawnArgs::disconnectUndoSystem(IUndoSystem& undoSystem)
+void Entity::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
 	_undo.disconnectUndoSystem(undoSystem);
 
@@ -134,13 +130,12 @@ void SpawnArgs::disconnectUndoSystem(IUndoSystem& undoSystem)
 	}
 }
 
-IEntityClassPtr SpawnArgs::getEntityClass() const
+IEntityClassPtr Entity::getEntityClass() const
 {
 	return _eclass;
 }
 
-void SpawnArgs::forEachKeyValue(KeyValueVisitFunc func,
-                                bool includeInherited) const
+void Entity::forEachKeyValue(KeyValueVisitFunc func, bool includeInherited) const
 {
     // Visit explicit spawnargs
     for (const KeyValuePair& pair : _keyValues)
@@ -157,7 +152,7 @@ void SpawnArgs::forEachKeyValue(KeyValueVisitFunc func,
     }
 }
 
-void SpawnArgs::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
+void Entity::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
 {
     for (const KeyValuePair& pair : _keyValues)
     {
@@ -165,7 +160,7 @@ void SpawnArgs::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
     }
 }
 
-void SpawnArgs::setKeyValue(const std::string& key, const std::string& value)
+void Entity::setKeyValue(const std::string& key, const std::string& value)
 {
 	if (value.empty())
 	{
@@ -179,7 +174,7 @@ void SpawnArgs::setKeyValue(const std::string& key, const std::string& value)
 	}
 }
 
-std::string SpawnArgs::getKeyValue(const std::string& key) const
+std::string Entity::getKeyValue(const std::string& key) const
 {
 	// Lookup the key in the map
 	KeyValues::const_iterator i = find(key);
@@ -196,7 +191,7 @@ std::string SpawnArgs::getKeyValue(const std::string& key) const
 	}
 }
 
-bool SpawnArgs::isInherited(const std::string& key) const
+bool Entity::isInherited(const std::string& key) const
 {
 	// Check if we have the key in the local keyvalue map
 	bool definedLocally = (find(key) != _keyValues.end());
@@ -205,34 +200,34 @@ bool SpawnArgs::isInherited(const std::string& key) const
 	return (!definedLocally && !_eclass->getAttributeValue(key).empty());
 }
 
-void SpawnArgs::forEachAttachment(AttachmentFunc func) const
+void Entity::forEachAttachment(AttachmentFunc func) const
 {
     _attachments.forEachAttachment(func);
 }
 
-EntityKeyValuePtr SpawnArgs::getEntityKeyValue(const std::string& key)
+EntityKeyValuePtr Entity::getEntityKeyValue(const std::string& key)
 {
 	KeyValues::const_iterator found = find(key);
 
 	return (found != _keyValues.end()) ? found->second : EntityKeyValuePtr();
 }
 
-bool SpawnArgs::isWorldspawn() const
+bool Entity::isWorldspawn() const
 {
 	return getKeyValue("classname") == "worldspawn";
 }
 
-bool SpawnArgs::isContainer() const
+bool Entity::isContainer() const
 {
 	return _isContainer;
 }
 
-void SpawnArgs::setIsContainer(bool isContainer)
+void Entity::setIsContainer(bool isContainer)
 {
 	_isContainer = isContainer;
 }
 
-void SpawnArgs::notifyInsert(const std::string& key, EntityKeyValue& value)
+void Entity::notifyInsert(const std::string& key, EntityKeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
@@ -246,7 +241,7 @@ void SpawnArgs::notifyInsert(const std::string& key, EntityKeyValue& value)
 	_observerMutex = false;
 }
 
-void SpawnArgs::notifyChange(const std::string& k, const std::string& v)
+void Entity::notifyChange(const std::string& k, const std::string& v)
 {
     _observerMutex = true;
 
@@ -260,7 +255,7 @@ void SpawnArgs::notifyChange(const std::string& k, const std::string& v)
     _observerMutex = false;
 }
 
-void SpawnArgs::notifyErase(const std::string& key, EntityKeyValue& value)
+void Entity::notifyErase(const std::string& key, EntityKeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
@@ -273,7 +268,7 @@ void SpawnArgs::notifyErase(const std::string& key, EntityKeyValue& value)
 	_observerMutex = false;
 }
 
-void SpawnArgs::insert(const std::string& key, const KeyValuePtr& keyValue)
+void Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 {
 	// Insert the new key at the end of the list
 	auto& pair = _keyValues.emplace_back(key, keyValue);
@@ -287,7 +282,7 @@ void SpawnArgs::insert(const std::string& key, const KeyValuePtr& keyValue)
 	}
 }
 
-void SpawnArgs::insert(const std::string& key, const std::string& value)
+void Entity::insert(const std::string& key, const std::string& value)
 {
     // Try to lookup the key in the map
     auto i = find(key);
@@ -311,7 +306,7 @@ void SpawnArgs::insert(const std::string& key, const std::string& value)
     }
 }
 
-void SpawnArgs::erase(const KeyValues::iterator& i)
+void Entity::erase(const KeyValues::iterator& i)
 {
 	if (_undo.isConnected())
 	{
@@ -332,7 +327,7 @@ void SpawnArgs::erase(const KeyValues::iterator& i)
 	// as the std::shared_ptr useCount will reach zero.
 }
 
-void SpawnArgs::erase(const std::string& key)
+void Entity::erase(const std::string& key)
 {
 	// Try to lookup the key
 	KeyValues::iterator i = find(key);
@@ -344,7 +339,7 @@ void SpawnArgs::erase(const std::string& key)
 	}
 }
 
-SpawnArgs::KeyValues::const_iterator SpawnArgs::find(const std::string& key) const
+Entity::KeyValues::const_iterator Entity::find(const std::string& key) const
 {
 	for (KeyValues::const_iterator i = _keyValues.begin();
 		 i != _keyValues.end();
@@ -360,7 +355,7 @@ SpawnArgs::KeyValues::const_iterator SpawnArgs::find(const std::string& key) con
 	return _keyValues.end();
 }
 
-SpawnArgs::KeyValues::iterator SpawnArgs::find(const std::string& key)
+Entity::KeyValues::iterator Entity::find(const std::string& key)
 {
 	for (KeyValues::iterator i = _keyValues.begin();
 		 i != _keyValues.end();
@@ -375,5 +370,3 @@ SpawnArgs::KeyValues::iterator SpawnArgs::find(const std::string& key)
 	// Not found
 	return _keyValues.end();
 }
-
-} // namespace entity

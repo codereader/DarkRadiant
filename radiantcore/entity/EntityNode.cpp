@@ -135,7 +135,7 @@ void EntityNode::destruct()
 void EntityNode::createAttachedEntities()
 {
     _spawnArgs.forEachAttachment(
-        [this](const Entity::Attachment& a)
+        [this](const EntityAttachment& a)
         {
             // Since we can't yet handle joint positions, ignore this attachment
             // if it is attached to a joint

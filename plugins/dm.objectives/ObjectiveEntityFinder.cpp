@@ -1,6 +1,7 @@
 #include "ObjectiveEntityFinder.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
+#include "scene/Entity.h"
 
 namespace objectives
 {
@@ -51,6 +52,3 @@ bool ObjectiveEntityFinder::pre(const scene::INodePtr& node)
 }
 
 }
-
-
-

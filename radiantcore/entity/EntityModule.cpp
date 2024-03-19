@@ -12,7 +12,7 @@
 
 #include "string/replace.h"
 
-#include "scene/SpawnArgs.h"
+#include "scene/Entity.h"
 
 #include "light/LightNode.h"
 #include "doom3group/StaticGeometryNode.h"

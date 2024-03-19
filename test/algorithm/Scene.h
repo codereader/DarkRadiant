@@ -3,7 +3,7 @@
 #include <cstddef>
 #include "inode.h"
 #include "iundo.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "imodel.h"
@@ -177,7 +177,7 @@ inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
 }
 
 // Returns the number of children of the given parent node matching the given predicate
-inline std::size_t getChildCount(const scene::INodePtr& parent, 
+inline std::size_t getChildCount(const scene::INodePtr& parent,
     const std::function<bool(const scene::INodePtr&)>& predicate)
 {
     std::size_t count = 0;

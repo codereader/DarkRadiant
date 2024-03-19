@@ -4,7 +4,7 @@
 #include "iundo.h"
 #include "ibrush.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iscenegraphfactory.h"
 #include "imap.h"
 #include "icommandsystem.h"
@@ -59,7 +59,7 @@ TEST_F(UndoTest, BrushCreation)
 
     brush.setShader("textures/numbers/19");
     brush.evaluateBRep();
-    
+
     EXPECT_FALSE(GlobalMapModule().isModified()) << "Map already modified before the change";
 
     {
@@ -204,7 +204,7 @@ TEST_F(UndoTest, MultipleChangesInSingleOperation)
 TEST_F(UndoTest, NodeOutsideScene)
 {
     auto entity = setupTestEntity();
-    
+
     scene::removeNodeFromParent(entity);
 
     EXPECT_FALSE(GlobalMapModule().isModified()) << "Map already modified before the change";
@@ -455,7 +455,7 @@ TEST_F(UndoTest, SceneNodeRemoval)
 
     {
         UndoableCommand cmd("testOperation");
-        
+
         // Remove one of the entities
         scene::removeNodeFromParent(speaker_1);
 
@@ -563,7 +563,7 @@ TEST_F(UndoTest, CreateBrushBasedEntity)
     // The brush should be back at worldspawn
     EXPECT_TRUE(Node_getEntity(brush->getParent())->isWorldspawn());
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1")) << "Worldspawn should have this brush again";
-    
+
     // The entity should be gone
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName)) << "Could look up the entity by name";
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(entity, "textures/numbers/1")) << "The door should have lost this brush";

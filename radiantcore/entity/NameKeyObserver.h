@@ -1,7 +1,7 @@
 #ifndef _NAME_KEY_OBSERVER_H_
 #define _NAME_KEY_OBSERVER_H_
 
-#include "ientity.h"
+#include "scene/Entity.h"
 
 class INamespace;
 

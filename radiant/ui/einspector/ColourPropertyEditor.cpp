@@ -1,6 +1,6 @@
 #include "ColourPropertyEditor.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include <wx/clrpicker.h>
 #include <wx/sizer.h>
@@ -25,11 +25,11 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, IEntitySelection& e
 	setMainWidget(mainVBox);
 
 	// Create the colour button
-    _colorButton = new wxColourPickerCtrl(mainVBox, wxID_ANY, 
-                                          wxColour(0, 0, 0), wxDefaultPosition, 
+    _colorButton = new wxColourPickerCtrl(mainVBox, wxID_ANY,
+                                          wxColour(0, 0, 0), wxDefaultPosition,
                                           wxDefaultSize, wxCLRP_USE_TEXTCTRL);
 
-	_colorButton->Connect(wxEVT_COLOURPICKER_CHANGED, 
+	_colorButton->Connect(wxEVT_COLOURPICKER_CHANGED,
 		wxColourPickerEventHandler(ColourPropertyEditor::_onColorSet), NULL, this);
 
 	mainVBox->GetSizer()->Add(_colorButton, 1, wxEXPAND | wxALL, 15);
@@ -78,4 +78,3 @@ void ColourPropertyEditor::_onColorSet(wxColourPickerEvent& ev)
 
 
 } // namespace ui
-

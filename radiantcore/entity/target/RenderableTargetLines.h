@@ -2,7 +2,7 @@
 
 #include "TargetKeyCollection.h"
 #include "render.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "irenderable.h"
 #include "ivolumetest.h"
 #include "math/Segment.h"
@@ -59,7 +59,7 @@ public:
         _updateNeeded |= worldPosition != _worldPosition;
 
         if (!_updateNeeded) return;
-        
+
         _updateNeeded = false;
 
         // Store the new world position for use in updateGeometry()
