@@ -8,7 +8,7 @@
 #include "icameraview.h"
 #include "inode.h"
 #include "imap.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "iselection.h"
 #include "ui/iuserinterface.h"
 #include "ui/imenumanager.h"

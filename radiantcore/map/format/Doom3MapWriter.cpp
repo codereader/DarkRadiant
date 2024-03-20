@@ -1,7 +1,7 @@
 #include "Doom3MapWriter.h"
 
 #include "igame.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 
 #include "primitivewriters/BrushDef3Exporter.h"
 #include "primitivewriters/PatchDefExporter.h"
@@ -38,7 +38,7 @@ void Doom3MapWriter::endWriteMap(const scene::IMapRootNodePtr& root, std::ostrea
 	// nothing
 }
 
-void Doom3MapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
+void Doom3MapWriter::beginWriteEntity(const EntityNodePtr& entity, std::ostream& stream)
 {
 	// Write out the entity number comment
 	stream << "// entity " << _entityCount++ << std::endl;
@@ -50,7 +50,7 @@ void Doom3MapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostream
 	writeEntityKeyValues(entity, stream);
 }
 
-void Doom3MapWriter::writeEntityKeyValues(const IEntityNodePtr& entity, std::ostream& stream)
+void Doom3MapWriter::writeEntityKeyValues(const EntityNodePtr& entity, std::ostream& stream)
 {
 	// Export the entity key values
     entity->getEntity().forEachKeyValue([&](const std::string& key, const std::string& value)
@@ -59,7 +59,7 @@ void Doom3MapWriter::writeEntityKeyValues(const IEntityNodePtr& entity, std::ost
     });
 }
 
-void Doom3MapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
+void Doom3MapWriter::endWriteEntity(const EntityNodePtr& entity, std::ostream& stream)
 {
 	// Write the closing brace for the entity
 	stream << "}" << std::endl;

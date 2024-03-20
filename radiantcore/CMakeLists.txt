@@ -37,28 +37,15 @@ add_library(radiantcore MODULE
             entity/doom3group/StaticGeometryNode.cpp
             entity/eclassmodel/EclassModelNode.cpp
             entity/EntityModule.cpp
-            entity/EntityNode.cpp
-            entity/EntitySettings.cpp
             entity/generic/GenericEntityNode.cpp
-            entity/KeyValueObserver.cpp
             entity/light/LightNode.cpp
             entity/light/Renderables.cpp
-            entity/ModelKey.cpp
-            entity/NameKeyObserver.cpp
-            entity/NamespaceManager.cpp
             entity/RenderableArrow.cpp
             entity/RenderableEntityBox.cpp
-            entity/RenderableEntityName.cpp
             entity/RotationKey.cpp
             entity/RotationMatrix.cpp
-            entity/ShaderParms.cpp
             entity/speaker/SpeakerNode.cpp
             entity/speaker/SpeakerRenderables.cpp
-            entity/target/TargetableNode.cpp
-            entity/target/TargetKeyCollection.cpp
-            entity/target/TargetKey.cpp
-            entity/target/TargetLineNode.cpp
-            entity/target/TargetManager.cpp
             filetypes/FileTypeRegistry.cpp
             filters/BasicFilterSystem.cpp
             filters/XMLFilter.cpp

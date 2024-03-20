@@ -138,7 +138,7 @@ TEST_F(MapMergeTest, EntityFingerprint)
     auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(entityNode);
     EXPECT_TRUE(comparable) << "EntityNode is not implementing IComparableNode";
 
-    auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
+    auto entity = std::dynamic_pointer_cast<EntityNode>(entityNode);
     auto originalFingerprint = comparable->getFingerprint();
 
     EXPECT_FALSE(originalFingerprint.empty()); // shouldn't be empty
@@ -184,7 +184,7 @@ TEST_F(MapMergeTest, EntityFingerprintConsidersChildNodes)
     auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(entityNode);
     EXPECT_TRUE(comparable) << "EntityNode is not implementing IComparableNode";
 
-    auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
+    auto entity = std::dynamic_pointer_cast<EntityNode>(entityNode);
     auto originalFingerprint = comparable->getFingerprint();
 
     // Add a child patch
@@ -207,14 +207,14 @@ TEST_F(MapMergeTest, EntityFingerprintInsensitiveToChildOrder)
     auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(entityNode);
     EXPECT_TRUE(comparable) << "EntityNode is not implementing IComparableNode";
 
-    auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
+    auto entity = std::dynamic_pointer_cast<EntityNode>(entityNode);
     auto originalFingerprint = comparable->getFingerprint();
 
     // Find the first brush of this func_static
     scene::INodePtr firstChild;
     std::size_t numChildren = 0;
-    entity->foreachNode([&](const scene::INodePtr& node) 
-    { 
+    entity->foreachNode([&](const scene::INodePtr& node)
+    {
         numChildren++;
         if (!firstChild)
         {
@@ -248,7 +248,7 @@ inline ComparisonResult::Ptr performComparison(const std::string& targetMap, con
     return GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
 }
 
-inline std::size_t countPrimitiveDifference(const ComparisonResult::EntityDifference& diff, 
+inline std::size_t countPrimitiveDifference(const ComparisonResult::EntityDifference& diff,
     const ComparisonResult::PrimitiveDifference::Type type)
 {
     std::size_t count = 0;
@@ -264,7 +264,7 @@ inline std::size_t countPrimitiveDifference(const ComparisonResult::EntityDiffer
     return count;
 }
 
-inline bool hasKeyValueDifference(const ComparisonResult::EntityDifference& diff, 
+inline bool hasKeyValueDifference(const ComparisonResult::EntityDifference& diff,
     const std::string& key, const std::string& value, ComparisonResult::KeyValueDifference::Type type)
 {
     for (const auto& difference : diff.differingKeyValues)
@@ -297,7 +297,7 @@ TEST_F(MapMergeTest, DetectMissingEntities)
 
     // The player start has been removed in the changed map
     auto diff = getEntityDifference(result, "info_player_start_1");
-    
+
     EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityMissingInSource);
     EXPECT_TRUE(diff.baseNode);
     EXPECT_FALSE(diff.sourceNode); // source node is missing, so it must be empty
@@ -786,7 +786,7 @@ TEST_F(MapMergeTest, DeactivatedChangePrimitiveActions)
     {
         auto addChildAction = std::dynamic_pointer_cast<AddChildAction>(action);
 
-        if (addChildAction && Node_isEntity(addChildAction->getParent()) && 
+        if (addChildAction && Node_isEntity(addChildAction->getParent()) &&
             Node_getEntity(addChildAction->getParent())->getKeyValue("name") == "func_static_1")
         {
             addChildAction->deactivate();
@@ -800,7 +800,7 @@ TEST_F(MapMergeTest, DeactivatedChangePrimitiveActions)
             removeChildAction->deactivate();
         }
     });
-    
+
     // func_static_1 has 2 brushes, this should stay the same
     // Check prerequisites and execute action
     auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "func_static_1");
@@ -868,7 +868,7 @@ TEST_F(MapMergeTest, FinishMergeOperationWithHiddenNodes)
 
     EXPECT_NE(mergeNodes.size(), 0) << "No merge action nodes found in the scene";
 
-    // Pick and hide every other node 
+    // Pick and hide every other node
     for (auto i = 0; i < mergeNodes.size(); i += 2)
     {
         EXPECT_TRUE(mergeNodes[i]->visible()) << "Node should not be hidden: " << mergeNodes[i]->name();
@@ -891,7 +891,7 @@ TEST_F(MapMergeTest, FinishMergeOperationWithHiddenNodes)
     EXPECT_TRUE(resultAfterExecution->differingEntities.empty());
 }
 
-inline bool hasChange(const std::vector<SelectionGroupMerger::Change>& log, 
+inline bool hasChange(const std::vector<SelectionGroupMerger::Change>& log,
     const std::function<bool(const SelectionGroupMerger::Change&)>& predicate)
 {
     return std::find_if(log.begin(), log.end(), predicate) != log.end();
@@ -926,9 +926,9 @@ inline bool groupContains(const selection::ISelectionGroupPtr& group, const scen
 {
     bool found = false;
 
-    group->foreachNode([&](const scene::INodePtr& member) 
-    { 
-        if (member == node) found = true; 
+    group->foreachNode([&](const scene::INodePtr& member)
+    {
+        if (member == node) found = true;
     });
 
     return found;
@@ -988,7 +988,7 @@ TEST_F(SelectionGroupMergeTest, GroupAdded)
     // 2 new groups in this map
     EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupCreated), 2);
     EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupRemoved), 0);
-    
+
     // Brushes 15/16/17/18 are now in a group
     EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush15)->getGroupIds().size(), 1);
     EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush16)->getGroupIds().size(), 1);
@@ -1059,7 +1059,7 @@ TEST_F(SelectionGroupMergeTest, GroupInsertion)
     EXPECT_TRUE(groupContains(thirdGroup, brush7));
     EXPECT_TRUE(groupContains(thirdGroup, brush17));
     EXPECT_TRUE(groupContains(thirdGroup, funcStatic7));
-    
+
     // Run another merger, it shouldn't find any actions to take
     merger = std::make_unique<SelectionGroupMerger>(merger->getSourceRoot(), merger->getBaseRoot());
     merger->adjustBaseGroups();
@@ -1154,7 +1154,7 @@ TEST_F(SelectionGroupMergeTest, BrushesKeptDuringMerge)
     operation->foreachAction([&](const scene::merge::IMergeAction::Ptr& action)
     {
         auto brush = Node_getIBrush(action->getAffectedNode());
-        
+
         if (brush && brush->hasShader("textures/numbers/8"))
         {
             action->deactivate();
@@ -1242,7 +1242,7 @@ TEST_F(SelectionGroupMergeTest, MergeSelectionGroupsFlagSet)
 
     auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
     auto operation = MergeOperation::CreateFromComparisonResult(*result);
-    
+
     operation->setMergeSelectionGroups(true);
     operation->applyActions();
 
@@ -1293,14 +1293,14 @@ std::unique_ptr<LayerMerger> setupLayerMerger(const std::string& sourceMap, cons
 bool nodeIsMemberOfLayer(const scene::INodePtr& node, const std::set<std::string>& layerNames)
 {
     auto& layerManager = node->getRootNode()->getLayerManager();
-    
+
     std::set<std::string> nodeLayerNames;
 
     for (auto layerId : node->getLayers())
     {
         nodeLayerNames.emplace(layerManager.getLayerName(layerId));
     }
-    
+
     return std::includes(nodeLayerNames.begin(), nodeLayerNames.end(), layerNames.begin(), layerNames.end());
 }
 
@@ -1348,7 +1348,7 @@ TEST_F(LayerMergeTest, AddedLayer)
     EXPECT_EQ(brush0->getLayers().size(), 1); // only part of the active layer
 
     merger->adjustBaseLayers();
-    
+
     EXPECT_FALSE(merger->getChangeLog().empty());
 
     // 1 created layer
@@ -1560,7 +1560,7 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
 }
 
 // Map changelog of source and target against their base (threeway_merge_base.mapx), used in several test cases below:
-// 
+//
 // Source (threeway_merge_source_1.mapx):
 // - light_2 has been added
 // - brush 16 added to worldspawn
@@ -1571,7 +1571,7 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
 // - both brush_6 have been deleted from worldspawn
 // - func_static_5 had two brush_5 added (were part of worldspawn before)
 // - brush_11 got moved to the left
-// 
+//
 // Target Map (threeway_merge_target_1.mapx):
 // - light_3 has been added
 // - brush_17 been added to worldspawn
@@ -1796,7 +1796,7 @@ TEST_F(ThreeWayMergeTest, NonconflictingSpawnargManipulation)
 
     removeAction->applyChanges();
     EXPECT_EQ(Node_getEntity(expandable)->getKeyValue("extra1"), "");
-    
+
     modifyAction->applyChanges();
     EXPECT_EQ(Node_getEntity(expandable)->getKeyValue("extra3"), "value3_changed");
 
@@ -1850,7 +1850,7 @@ TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
 }
 
 // Map changelog of source and target against their base (threeway_merge_base.mapx), used in several test cases below:
-// 
+//
 // Source (threeway_merge_source_2.mapx):
 // - add all brush "2" to func_static_1 (a subset of the target change)
 // - add all brush "4" & "5" to func_static_4
@@ -1861,7 +1861,7 @@ TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
 // - func_static_6 changes its origin to 224 180 32 (CONFLICT)
 // - expandable entity has its spwnarg "extra3" modified to "value3_changed" (CONFLICT)
 // - expandable entity has its spwnarg "extra2" removed (CONFLICT)
-// 
+//
 // Target Map (threeway_merge_target_2.mapx):
 // - add all brush "1" & "2" to func_static_1
 // - add all brush "4" to func_static_4 (a subset of the source change)
@@ -1879,7 +1879,7 @@ TEST_F(ThreeWayMergeTest, MergePrimitiveChangesOfSameEntity)
     // Expected result would be that func_static_1 will not be changed since it contains
     // all changes of the source map, and more
     // func_static_4 should be changed, but only the missing "5" brushes should be added
-    
+
     auto func_static_1 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_1");
     auto func_static_4 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_4");
     auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
@@ -2228,7 +2228,7 @@ inline bool groupContainsNodes(selection::ISelectionGroup& group, const std::vec
 }
 
 // Three-Way Selection Group Merge Scenarios
-// 
+//
 // Base Map Groups:
 // N1-N2-N3
 // [N1-N2-N3]-L1
@@ -2238,7 +2238,7 @@ inline bool groupContainsNodes(selection::ISelectionGroup& group, const std::vec
 // 1-2
 // [1-2]-3
 // 5-6
-// 
+//
 // Target Map Changes:
 // L2 deleted
 // FS1-FS2 group dissolved
@@ -2399,7 +2399,7 @@ TEST_F(ThreeWaySelectionGroupMergeTest, RedundantGroupNotAdded)
 }
 
 // Layer Merge Base map: merging_layers1.mapx
-// 
+//
 // func_static_1 is part of layer 1
 // func_static_X is part of layer X
 // Shared Layer: all func_static_s, expandable entity and light_1
@@ -2417,7 +2417,7 @@ TEST_F(ThreeWaySelectionGroupMergeTest, RedundantGroupNotAdded)
 // Layer "2": Brush 2 removed, Brush "0" added
 // Layer "3": Brush 3 removed (only removals)
 // Layer "4": Brush 4 removed, Brush "0" added
-// 
+//
 // Layer merge Target Map: threeway_merge_layers_target_1
 // --- Deletions ---
 // Layer 6 was not modified

@@ -6,9 +6,8 @@
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "iundo.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 
-#include "scene/Entity.h"
 #include "string/convert.h"
 #include "string/predicate.h"
 #include "string/split.h"

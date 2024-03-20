@@ -35,13 +35,13 @@ private:
     //receives events about entity changes
     void entityUpdated(const std::string& name, const DiffStatus& diff);
     //add/remove entity observers on the set of entity nodes
-    void enableEntityObservers(const std::vector<IEntityNodePtr>& entityNodes);
-    void disableEntityObservers(const std::vector<IEntityNodePtr>& entityNodes);
+    void enableEntityObservers(const std::vector<EntityNodePtr>& entityNodes);
+    void disableEntityObservers(const std::vector<EntityNodePtr>& entityNodes);
 
     //the observer put onto global scene
     std::unique_ptr<scene::Graph::Observer> _sceneObserver;
     //observers put on every entity on scene
-    std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
+    std::map<EntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
     //set of entities with changes since last clear
     DiffEntityStatuses _entityChanges;
 

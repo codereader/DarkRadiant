@@ -3,9 +3,6 @@
 #include "registry/registry.h"
 #include "registry/adaptors.h"
 
-namespace entity
-{
-
 EntitySettings::EntitySettings() :
 	_lightVertexColours(static_cast<std::size_t>(LightEditVertexType::NumberOfVertexTypes))
 {
@@ -59,5 +56,3 @@ void EntitySettings::onSettingsChanged()
 {
 	_signalSettingsChanged.emit();
 }
-
-} // namespace entity

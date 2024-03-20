@@ -4,9 +4,6 @@
 #include "render/RenderableTextBase.h"
 #include "NameKey.h"
 
-namespace entity
-{
-
 class EntityNode;
 
 class RenderableEntityName :
@@ -29,5 +26,3 @@ public:
 
     const Vector4& getColour() override;
 };
-
-}

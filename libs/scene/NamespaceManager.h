@@ -9,8 +9,6 @@
 #include "NameKeyObserver.h"
 #include "util/Noncopyable.h"
 
-namespace entity {
-
 class NamespaceManager :
 	public Entity::Observer,
 	public Namespaced,
@@ -101,5 +99,3 @@ private:
 	void attachKeyObserver(const std::string& key, EntityKeyValue& keyValue);
 	void detachKeyObserver(const std::string& key, EntityKeyValue& keyValue);
 };
-
-} // namespace entity

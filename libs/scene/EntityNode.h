@@ -4,13 +4,14 @@
 #include "scene/Entity.h"
 #include "inamespace.h"
 #include "icomparablenode.h"
+#include "iselectiontest.h"
 #include "Bounded.h"
 
 #include "scene/SelectableNode.h"
 #include "transformlib.h"
 
 #include "NamespaceManager.h"
-#include "target/TargetableNode.h"
+#include "TargetableNode.h"
 #include "NameKey.h"
 #include "ColourKey.h"
 #include "ModelKey.h"
@@ -21,25 +22,27 @@
 #include "RenderableEntityName.h"
 #include "RenderableObjectCollection.h"
 
-namespace entity
-{
-
 const Vector4 INACTIVE_ENTITY_COLOUR(0.73, 0.73, 0.73, 1);
 
 class EntityNode;
 typedef std::shared_ptr<EntityNode> EntityNodePtr;
 
 /**
- * greebo: This is the common base class of all map entities.
+ * \brief Interface for a node which represents an entity.
+ *
+ * As well as providing access to the entity data with getEntity(), every
+ * EntityNode can clone itself and apply a transformation matrix to its
+ * children (which might be brushes, patches or other entities).
  */
-class EntityNode :
-	public IEntityNode,
-	public scene::SelectableNode, // derives from scene::Node
-	public SelectionTestable,
-	public Namespaced,
-	public TargetableNode,
-	public Transformable,
-    public scene::IComparableNode
+class EntityNode: public IRenderEntity,
+                  public scene::Cloneable,
+                  public IMatrixTransform,
+                  public scene::SelectableNode, // derives from scene::Node
+                  public SelectionTestable,
+                  public Namespaced,
+                  public TargetableNode,
+                  public Transformable,
+                  public scene::IComparableNode
 {
 protected:
 	// The entity class
@@ -103,7 +106,7 @@ protected:
     // sure that everything will play nicely with entities as children of other
     // entities, and (2) storing entity node pointers instead of generic node
     // pointers avoids some extra dynamic_casting.
-    using AttachedEntity = std::pair<IEntityNodePtr, Vector3 /* offset */>;
+    using AttachedEntity = std::pair<EntityNodePtr, Vector3 /* offset */>;
     using AttachedEntities = std::list<AttachedEntity>;
     AttachedEntities _attachedEnts;
 
@@ -126,9 +129,16 @@ protected:
 public:
 	virtual ~EntityNode();
 
-	// IEntityNode implementation
-	Entity& getEntity() override;
-	virtual void refreshModel() override;
+    /// Get a modifiable reference to the contained Entity
+	Entity& getEntity();
+
+    /**
+     * greebo: Tells the entity to reload the child model. This usually
+     *         includes removal of the child model node and triggering
+     *         a "skin changed" event.
+     */
+	void refreshModel();
+
     virtual void transformChanged() override;
 
 	// RenderEntity implementation
@@ -184,9 +194,27 @@ public:
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	virtual std::size_t getHighlightFlags() override;
 
-	// IEntityNode implementation
-    void observeKey(const std::string& key, KeyObserverFunc func) override;
-    void foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor) override;
+    /**
+     * @brief Observe key value changes using a callback function.
+     *
+     * This method provides a simpler interface for observing key value changes
+     * via the use of a callback function, rather than requiring a full
+     * KeyObserver object to be constructed and maintained by the calling code.
+     *
+     * @param key
+     * The key to observe.
+     *
+     * @param func
+     * Function to call when the key value changes.
+     */
+    void observeKey(const std::string& key, KeyObserverFunc func);
+
+    /**
+     * Invokes the given function object for each attached entity.
+     * At this point attachment entities are not accessible through the node's children,
+     * they have to be accessed through this method instead.
+     */
+    void foreachAttachment(const std::function<void(const EntityNodePtr&)>& functor);
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
     const ModelKey& getModelKey() const;
@@ -283,4 +311,105 @@ private:
     void detachFromRenderSystem();
 };
 
-} // namespace entity
+inline Entity* Node_getEntity(const scene::INodePtr& node)
+{
+    if (EntityNodePtr entityNode = std::dynamic_pointer_cast<EntityNode>(node); entityNode) {
+        return &(entityNode->getEntity());
+    }
+    return nullptr;
+}
+
+class EntityNodeFindByClassnameWalker :
+	public scene::NodeVisitor
+{
+protected:
+	// Name to search for
+	std::string _name;
+
+	// The search result
+	scene::INodePtr _entityNode;
+
+public:
+	// Constructor
+	EntityNodeFindByClassnameWalker(const std::string& name) :
+		_name(name)
+	{}
+
+	scene::INodePtr getEntityNode() {
+		return _entityNode;
+	}
+
+	Entity* getEntity() {
+		return _entityNode != NULL ? Node_getEntity(_entityNode) : NULL;
+	}
+
+	// Pre-descent callback
+	bool pre(const scene::INodePtr& node) {
+		if (_entityNode == NULL) {
+			// Entity not found yet
+			Entity* entity = Node_getEntity(node);
+
+			if (entity != NULL) {
+				// Got an entity, let's see if the name matches
+				if (entity->getKeyValue("classname") == _name) {
+					_entityNode = node;
+				}
+
+				return false; // don't traverse entities
+			}
+			else {
+				// Not an entity, traverse
+				return true;
+			}
+		}
+		else {
+			// Entity already found, don't traverse any further
+			return false;
+		}
+	}
+};
+
+/* greebo: Finds an entity with the given classname
+ */
+inline Entity* Scene_FindEntityByClass(const std::string& className)
+{
+	// Instantiate a walker to find the entity
+	EntityNodeFindByClassnameWalker walker(className);
+
+	// Walk the scenegraph
+	GlobalSceneGraph().root()->traverse(walker);
+
+	return walker.getEntity();
+}
+
+/**
+ * Tests the current selection and returns true if the selection is suitable
+ * for reparenting the selected primitives to the (last) selected entity.
+ */
+inline bool curSelectionIsSuitableForReparent()
+{
+	// Retrieve the selection information structure
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	if (info.totalCount <= 1 || info.entityCount != 1)
+	{
+		return false;
+	}
+
+	scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
+	Entity* entity = Node_getEntity(lastSelected);
+
+	// Reject non-entities or models
+	if (entity == nullptr || entity->isModel())
+	{
+		return false;
+	}
+
+	// Accept only group nodes as parent
+	if (!Node_getGroupNode(lastSelected))
+	{
+		return false;
+	}
+
+	return true;
+}

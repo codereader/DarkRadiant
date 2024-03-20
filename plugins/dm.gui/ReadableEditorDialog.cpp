@@ -22,7 +22,7 @@
 // Modules
 #include "iundo.h"
 #include "ui/imainframe.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "imap.h"
 #include "igame.h"
 #include "ui/idialogmanager.h"

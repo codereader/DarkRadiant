@@ -5,7 +5,7 @@
 #include "ui/particles/ParticleChooserDialog.h"
 
 #include "i18n.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"
 
@@ -66,7 +66,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 
     UndoableCommand cmd("setModelProperty");
 
-    _entities.foreachEntity([&](const IEntityNodePtr& node)
+    _entities.foreachEntity([&](const EntityNodePtr& node)
     {
         auto& entity = node->getEntity();
         std::string prevModel = entity.getKeyValue(_key->getFullKey());

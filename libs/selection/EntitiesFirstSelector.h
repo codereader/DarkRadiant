@@ -4,7 +4,7 @@
 
 #include "iselectable.h"
 #include "iselectiontest.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 
 namespace selection
 {
@@ -57,7 +57,7 @@ public:
         if (!intersection.isValid()) return; // skip invalid intersections
 
         auto existing = _currentSelectables.find(selectable);
-        auto isEntity = dynamic_cast<IEntityNode*>(selectable) != nullptr;
+        auto isEntity = dynamic_cast<EntityNode*>(selectable) != nullptr;
         auto& pool = isEntity ? _entityPool : _primitivePool;
 
         if (existing != _currentSelectables.end())

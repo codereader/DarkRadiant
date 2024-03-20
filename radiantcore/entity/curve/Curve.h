@@ -34,7 +34,7 @@ protected:
     sigc::signal<void> _sigCurveChanged;
 
 public:
-	Curve(const IEntityNode& entity, const Callback& boundsChanged);
+	Curve(const EntityNode& entity, const Callback& boundsChanged);
 
 	virtual ~Curve() {}
 

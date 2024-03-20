@@ -1,7 +1,7 @@
 #include "RadiantTest.h"
 
 #include "ieclass.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "irender.h"
 #include "ilightnode.h"
 #include "math/Matrix4.h"
@@ -13,7 +13,7 @@ namespace test
 using RendererTest = RadiantTest;
 using RenderSystemTest = RadiantTest;
 
-IEntityNodePtr createByClassName(const std::string& className)
+EntityNodePtr createByClassName(const std::string& className)
 {
     auto cls = GlobalEntityClassManager().findClass(className);
     return GlobalEntityModule().createEntity(cls);
@@ -100,7 +100,7 @@ TEST_F(RendererTest, ConstructRenderVertex)
 // Wrapper for a light entity and its respective node interfaces
 struct Light
 {
-    IEntityNodePtr node;
+    EntityNodePtr node;
     ILightNodePtr iLightNode;
     Entity* entity = nullptr;
 

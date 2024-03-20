@@ -7,7 +7,7 @@
 #include "ilayer.h"
 #include "ibrush.h"
 #include "ieclass.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 
 #include "PortableMapFormat.h"
 #include "Constants.h"

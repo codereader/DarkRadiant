@@ -8,9 +8,6 @@
 #include "irenderableobject.h"
 #include "itextstream.h"
 
-namespace entity
-{
-
 class RenderableObjectCollection :
     public sigc::trackable
 {
@@ -35,7 +32,7 @@ public:
     {
         sigc::connection subscription = object->signal_boundsChanged().connect(
             sigc::mem_fun(*this, &RenderableObjectCollection::onObjectBoundsChanged));
-        
+
         if (!_objects.try_emplace(object, ObjectData{ shader, subscription }).second)
         {
             // We've already been subscribed to this one
@@ -83,7 +80,7 @@ public:
 
         // If the whole collection doesn't intersect, quit early
         if (!_collectionBounds.intersects(bounds)) return;
-        
+
         for (const auto& [object, objectData] : _objects)
         {
             if (objectIntersectsBounds(bounds, *object))
@@ -115,7 +112,7 @@ private:
     void ensureBoundsUpToDate()
     {
         if (!_collectionBoundsNeedUpdate) return;
-        
+
         _collectionBoundsNeedUpdate = false;
 
         _collectionBounds = AABB();
@@ -127,5 +124,3 @@ private:
         }
     }
 };
-
-}

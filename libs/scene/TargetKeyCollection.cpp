@@ -3,8 +3,6 @@
 #include "TargetableNode.h"
 #include "string/predicate.h"
 
-namespace entity {
-
 TargetKeyCollection::TargetKeyCollection(TargetableNode& owner) :
     _owner(owner)
 {}
@@ -40,7 +38,7 @@ bool TargetKeyCollection::empty() const
 	return _targetKeys.empty();
 }
 
-bool TargetKeyCollection::isTargetKey(const std::string& key) 
+bool TargetKeyCollection::isTargetKey(const std::string& key)
 {
 	// A key is a target key if it starts with "target" (any case)
 	return (string::istarts_with(key, "target"));
@@ -95,5 +93,3 @@ void TargetKeyCollection::onTargetPositionChanged()
 {
     _sigTargetPositionChanged.emit();
 }
-
-} // namespace entity

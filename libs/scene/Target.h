@@ -7,8 +7,6 @@
 #include "math/AABB.h"
 #include <sigc++/signal.h>
 
-namespace entity {
-
 /**
  * greebo: This is an abstract representation of a target.
  * In Doom3 maps, a Target can be any map entity, that's
@@ -106,5 +104,3 @@ public:
 	}
 };
 typedef std::shared_ptr<Target> TargetPtr;
-
-} // namespace entity

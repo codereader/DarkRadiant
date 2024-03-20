@@ -6,8 +6,6 @@
 
 class INamespace;
 
-namespace entity {
-
 /**
  * greebo: This class observers a single EntityKeyValue and catches
  * any values that refer to a name in the attached namespace.
@@ -41,7 +39,5 @@ public:
 	void onKeyValueChanged(const std::string& newValue);
 };
 typedef std::shared_ptr<KeyValueObserver> KeyValueObserverPtr;
-
-} // namespace entity
 
 #endif /* _KEY_VALUE_OBSERVER_H_ */

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../OriginKey.h"
+#include "scene/OriginKey.h"
 #include "SpeakerRenderables.h"
 
 #include "isound.h"
@@ -12,8 +12,8 @@
 #include "irenderable.h"
 #include "selectionlib.h"
 #include "dragplanes.h"
-#include "../target/TargetableNode.h"
-#include "../EntityNode.h"
+#include "scene/TargetableNode.h"
+#include "scene/EntityNode.h"
 #include "../RenderableEntityBox.h"
 
 namespace entity

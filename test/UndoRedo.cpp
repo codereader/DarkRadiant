@@ -542,7 +542,7 @@ TEST_F(UndoTest, CreateBrushBasedEntity)
 
     EXPECT_TRUE(GlobalEntityClassManager().findClass("atdm:mover_door_sliding")) << "Need atdm:mover_door_sliding for this test";
 
-    IEntityNodePtr entity;
+    EntityNodePtr entity;
     {
         UndoableCommand command("createEntity");
         entity = GlobalEntityModule().createEntityFromSelection("atdm:mover_door_sliding", Vector3(7.5, 12, 0));

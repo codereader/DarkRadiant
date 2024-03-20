@@ -2,7 +2,7 @@
 
 #include "render/RenderableBox.h"
 
-class IEntityNode;
+class EntityNode;
 
 namespace entity
 {
@@ -11,10 +11,10 @@ class RenderableEntityBox final :
     public render::RenderableBox
 {
 private:
-    const IEntityNode& _entity;
+    const EntityNode& _entity;
 
 public:
-    RenderableEntityBox(const IEntityNode& entity, const AABB& bounds, const Vector3& worldPos);
+    RenderableEntityBox(const EntityNode& entity, const AABB& bounds, const Vector3& worldPos);
 
 protected:
     Vector4 getVertexColour() override;

@@ -7,9 +7,9 @@
 #include "irenderable.h"
 #include "math/Ray.h"
 
-#include "../target/TargetableNode.h"
-#include "../EntityNode.h"
-#include "../OriginKey.h"
+#include "scene/TargetableNode.h"
+#include "scene/EntityNode.h"
+#include "scene/OriginKey.h"
 #include "../AngleKey.h"
 #include "../RotationKey.h"
 #include "scene/Entity.h"

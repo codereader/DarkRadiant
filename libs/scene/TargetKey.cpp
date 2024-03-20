@@ -4,8 +4,6 @@
 #include "TargetKeyCollection.h"
 #include "scene/EntityKeyValue.h"
 
-namespace entity {
-
 TargetKey::TargetKey(TargetKeyCollection& owner) :
     _owner(owner)
 {}
@@ -67,5 +65,3 @@ void TargetKey::onTargetPositionChanged()
 {
     _owner.onTargetPositionChanged();
 }
-
-} // namespace entity

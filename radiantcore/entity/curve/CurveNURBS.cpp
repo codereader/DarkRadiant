@@ -6,7 +6,7 @@ namespace entity {
 		const int NURBS_degree = 3;
 	}
 
-CurveNURBS::CurveNURBS(const IEntityNode& entity, const Callback& callback) :
+CurveNURBS::CurveNURBS(const EntityNode& entity, const Callback& callback) :
 	Curve(entity, callback)
 {}
 

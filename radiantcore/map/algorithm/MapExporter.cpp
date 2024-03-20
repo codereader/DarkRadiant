@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "ibrush.h"
 #include "ipatch.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "imapresource.h"
 #include "imap.h"
 #include "igroupnode.h"
@@ -141,7 +141,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 {
 	try
 	{
-		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+		auto entity = std::dynamic_pointer_cast<EntityNode>(node);
 
 		if (entity)
 		{
@@ -195,7 +195,7 @@ void MapExporter::post(const scene::INodePtr& node)
 {
 	try
 	{
-		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+		auto entity = std::dynamic_pointer_cast<EntityNode>(node);
 
 		if (entity)
 		{

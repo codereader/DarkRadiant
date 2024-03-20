@@ -2,7 +2,7 @@
 
 #include <pybind11/stl_bind.h>
 
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "ieclass.h"
 #include "itextstream.h"
 
@@ -78,7 +78,7 @@ bool ScriptEntityNode::isEntity(const ScriptSceneNode& node) {
 // The returned node is non-NULL if the cast succeeded
 ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 	// Try to cast the node onto a brush
-	IEntityNodePtr entityNode = std::dynamic_pointer_cast<IEntityNode>(
+	EntityNodePtr entityNode = std::dynamic_pointer_cast<EntityNode>(
 		static_cast<scene::INodePtr>(node)
 	);
 

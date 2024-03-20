@@ -4,9 +4,6 @@
 #include "scene/Entity.h"
 #include "scene/Entity.h"
 
-namespace entity
-{
-
 class NameKey :
 	public KeyObserver
 {
@@ -44,5 +41,3 @@ public:
         return _sigNameChanged;
     }
 };
-
-} // namespace

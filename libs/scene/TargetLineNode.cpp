@@ -1,10 +1,7 @@
 #include "TargetLineNode.h"
 
-#include "../EntityNode.h"
+#include "EntityNode.h"
 #include "ilightnode.h"
-
-namespace entity
-{
 
 TargetLineNode::TargetLineNode(EntityNode& owner) :
     scene::Node(),
@@ -125,6 +122,4 @@ Vector3 TargetLineNode::getOwnerPosition() const
 void TargetLineNode::queueRenderableUpdate()
 {
     _targetLines.queueUpdate();
-}
-
 }

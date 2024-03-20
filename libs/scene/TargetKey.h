@@ -5,9 +5,6 @@
 
 #include "Target.h"
 
-namespace entity
-{
-
 class TargetKeyCollection;
 
 /**
@@ -54,5 +51,3 @@ public:
 private:
     void onTargetPositionChanged();
 };
-
-} // namespace entity

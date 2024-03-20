@@ -7,6 +7,7 @@
 #include "ui/imainframe.h"
 #include "iscenegraph.h"
 #include "string/string.h"
+#include "scene/EntityNode.h"
 
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -65,7 +66,7 @@ void ConversationDialog::populateWindow()
 	_entityView->AppendTextColumn("", _convEntityColumns.displayName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_entityView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+	_entityView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
 		wxDataViewEventHandler(ConversationDialog::onEntitySelectionChanged), NULL, this);
 
 	// Wire up button signals
@@ -197,7 +198,7 @@ int ConversationDialog::ShowModal()
 	{
 		save();
 	}
-	
+
 	return returnCode;
 }
 
@@ -277,7 +278,7 @@ void ConversationDialog::onAddEntity(wxCommandEvent& ev)
     if (eclass)
     {
         // Construct a Node of this entity type
-        IEntityNodePtr node(GlobalEntityModule().createEntity(eclass));
+        EntityNodePtr node(GlobalEntityModule().createEntity(eclass));
 
         // Create a random offset
 		node->getEntity().setKeyValue(

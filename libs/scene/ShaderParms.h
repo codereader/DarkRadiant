@@ -4,9 +4,6 @@
 
 #include "KeyObserverDelegate.h"
 
-namespace entity
-{
-
 class ColourKey;
 class KeyObserverMap;
 
@@ -42,5 +39,3 @@ public:
 private:
 	void onShaderParmKeyValueChanged(std::size_t parm, const std::string& value);
 };
-
-} // namespace

@@ -213,7 +213,7 @@ bool OrthoContextMenu::checkMergeEntities()
 
 bool OrthoContextMenu::checkReparentPrimitives()
 {
-    return selection::curSelectionIsSuitableForReparent();
+    return curSelectionIsSuitableForReparent();
 }
 
 bool OrthoContextMenu::checkRevertToWorldspawnPartial()

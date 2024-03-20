@@ -20,7 +20,7 @@ namespace entity {
 
 	} // namespace
 
-Curve::Curve(const IEntityNode& entity, const Callback& boundsChanged) :
+Curve::Curve(const EntityNode& entity, const Callback& boundsChanged) :
     _renderCurve(entity),
 	_boundsChanged(boundsChanged)
 {}
@@ -129,7 +129,7 @@ bool Curve::parseCurve(const std::string& value) {
 	return true;
 }
 
-void Curve::curveChanged() 
+void Curve::curveChanged()
 {
 	// Recalculate the tesselation
 	tesselate();

@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "imodel.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "ieclass.h"
 #include "imd5anim.h"
 #include "itextstream.h"

@@ -32,7 +32,7 @@ namespace
 // global map to enable undo.
 struct TestEntity
 {
-    IEntityNodePtr node;
+    EntityNodePtr node;
     Entity* spawnArgs = nullptr;
 
     // Create an entity with the given class name
@@ -53,7 +53,7 @@ struct TestEntity
 };
 
 // Obtain entity attachments as a simple std::list
-std::list<EntityAttachment> getAttachments(const IEntityNodePtr& node)
+std::list<EntityAttachment> getAttachments(const EntityNodePtr& node)
 {
     std::list<EntityAttachment> attachments;
     if (node)
@@ -672,7 +672,7 @@ TEST_F(EntityTest, ForeachAttachment)
     scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     int attachmentCount = 0;
-    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    torch->foreachAttachment([&](const EntityNodePtr& attachment)
     {
         attachmentCount++;
         EXPECT_TRUE(attachment->getEntity().isOfType("light_cageflame_small"));
@@ -1716,11 +1716,11 @@ TEST_F(EntityTest, EntityNodeObserveKeyAutoDisconnect)
     spawnArgs->setKeyValue(TEST_KEY, "whatever");
 }
 
-inline IEntityNodePtr findPlayerStartEntity()
+inline EntityNodePtr findPlayerStartEntity()
 {
-    IEntityNodePtr found;
+    EntityNodePtr found;
 
-    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](const IEntityNodePtr& entity)
+    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](const EntityNodePtr& entity)
     {
         if (entity->getEntity().getEntityClass()->getDeclName() == "info_player_start")
         {
@@ -1783,8 +1783,8 @@ TEST_F(EntityTest, CreateSpeaker)
     });
 
     // The speaker should be in the map now
-    auto speaker = std::dynamic_pointer_cast<IEntityNode>(
-        algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    auto speaker = std::dynamic_pointer_cast<EntityNode>(
+        algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const EntityNodePtr& entity)
     {
         return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
     }));
@@ -1816,11 +1816,11 @@ TEST_F(EntityTest, MovingSpeakerNotRemovingDistanceArgs)
         cmd::Argument("test/jorge"), cmd::Argument("50 30 47")
     });
 
-    auto node = algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    auto node = algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const EntityNodePtr& entity)
     {
         return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
     });
-    auto speaker = std::dynamic_pointer_cast<IEntityNode>(node);
+    auto speaker = std::dynamic_pointer_cast<EntityNode>(node);
 
     EXPECT_TRUE(speaker);
     EXPECT_NE(speaker->getEntity().getKeyValue("s_mindistance"), "");

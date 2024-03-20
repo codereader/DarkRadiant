@@ -1,7 +1,7 @@
 #include "LightInspector.h"
 
 #include "icameraview.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "ieclass.h"
 #include "ishaders.h"
 #include "iselection.h"

@@ -1,6 +1,6 @@
 #include "ManipulatorComponents.h"
 
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "itransformable.h"
 #include "igrid.h"
 #include "math/FloatTools.h"

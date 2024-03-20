@@ -44,7 +44,7 @@ class RegionManager :
 	scene::INodePtr _brushes[6];
 
 	// The pointer to the info_player_start entity
-	IEntityNodePtr _playerStart;
+	EntityNodePtr _playerStart;
 
 public:
 	RegionManager();

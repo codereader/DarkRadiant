@@ -1,10 +1,9 @@
 #include "TargetableNode.h"
 
 #include "TargetManager.h"
-#include "../EntityNode.h"
+#include "EntityNode.h"
 #include "TargetLineNode.h"
-
-namespace entity {
+#include "scenelib.h"
 
 TargetableNode::TargetableNode(Entity& entity, EntityNode& node) :
 	_d3entity(entity),
@@ -178,5 +177,3 @@ void TargetableNode::onRenderSystemChanged()
         _targetLineNode->onRenderSystemChanged();
     }
 }
-
-} // namespace entity

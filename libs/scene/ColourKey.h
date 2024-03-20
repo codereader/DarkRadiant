@@ -4,9 +4,6 @@
 #include "scene/Entity.h"
 #include "irender.h"
 
-namespace entity
-{
-
 /**
  * greebo: this is a class encapsulating the "_color" spawnarg
  * of entity, observing it and maintaining the corresponding shader.
@@ -87,5 +84,3 @@ private:
 		}
 	}
 };
-
-} // namespace entity

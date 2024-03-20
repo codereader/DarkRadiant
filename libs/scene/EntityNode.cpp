@@ -7,12 +7,10 @@
 #include "imap.h"
 #include "itransformable.h"
 #include "math/Hash.h"
+#include "scenelib.h"
 #include "string/case_conv.h"
 
 #include "EntitySettings.h"
-
-namespace entity
-{
 
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	TargetableNode(_spawnArgs, *this),
@@ -33,7 +31,6 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 }
 
 EntityNode::EntityNode(const EntityNode& other) :
-	IEntityNode(other),
 	SelectableNode(other),
 	SelectionTestable(other),
 	Namespaced(other),
@@ -193,7 +190,7 @@ void EntityNode::observeKey(const std::string& key, KeyObserverFunc func)
     _keyObservers.observeKey(key, func);
 }
 
-void EntityNode::foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor)
+void EntityNode::foreachAttachment(const std::function<void(const EntityNodePtr&)>& functor)
 {
     for (const auto& [node, _] : _attachedEnts)
     {
@@ -605,7 +602,7 @@ void EntityNode::onEntitySettingsChanged()
     }
 
     // Notify all attached entities
-    foreachAttachment([](const IEntityNodePtr& node)
+    foreachAttachment([](const EntityNodePtr& node)
     {
         if (auto attachedEntity = std::dynamic_pointer_cast<EntityNode>(node); attachedEntity)
         {
@@ -645,10 +642,8 @@ void EntityNode::setRenderState(RenderState state)
     SelectableNode::setRenderState(state);
 
     // Propagate to attachments
-    foreachAttachment([=](const IEntityNodePtr& attachment)
+    foreachAttachment([=](const EntityNodePtr& attachment)
     {
         attachment->setRenderState(state);
     });
 }
-
-} // namespace entity

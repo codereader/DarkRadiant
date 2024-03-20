@@ -3,13 +3,9 @@
 #include "selectionlib.h"
 #include "scene/Node.h"
 #include "scene/Entity.h"
-#include "entitylib.h"
 
 #include "TargetKeyCollection.h"
 #include "RenderableTargetLines.h"
-
-namespace entity
-{
 
 class EntityNode;
 
@@ -76,5 +72,3 @@ public:
     void onTransformationChanged();
     void onRenderSystemChanged();
 };
-
-} // namespace entity

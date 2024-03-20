@@ -4,8 +4,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "scene/Entity.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "string/convert.h"
 
 #include "ConversationKeyExtractor.h"

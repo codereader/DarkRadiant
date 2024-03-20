@@ -1,7 +1,7 @@
 #include "GraphComparer.h"
 
 #include <algorithm>
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "i18n.h"
 #include "itextstream.h"
 #include "iselectiongroup.h"

@@ -7,9 +7,6 @@
 #include <functional>
 #include <sigc++/bind.h>
 
-namespace entity
-{
-
 ShaderParms::ShaderParms(KeyObserverMap& keyObserverMap, ColourKey& colourKey) :
 	_keyObserverMap(keyObserverMap),
 	_colourKey(colourKey),
@@ -51,5 +48,3 @@ void ShaderParms::onShaderParmKeyValueChanged(std::size_t parm, const std::strin
 		_parmValues[parm] = string::convert<float>(value);
 	}
 }
-
-} // namespace

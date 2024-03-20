@@ -3,7 +3,8 @@
 #include "igrid.h"
 #include "ishaders.h"
 #include "icolourscheme.h"
-#include "../EntitySettings.h"
+#include "scene/EntitySettings.h"
+#include "entitylib.h"
 #include <functional>
 
 #include "registry/CachedKey.h"
@@ -16,7 +17,7 @@ std::string LightShader::m_defaultShader = "";
 // --------- LightNode implementation ------------------------------------
 
 LightNode::LightNode(const IEntityClassPtr& eclass)
-: EntityNode(eclass), 
+: EntityNode(eclass),
     m_originKey(std::bind(&LightNode::originChanged, this)),
     _originTransformed(ORIGINKEY_IDENTITY),
     m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
@@ -36,7 +37,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
 }
 
 LightNode::LightNode(const LightNode& other)
-: EntityNode(other), ILightNode(other), 
+: EntityNode(other), ILightNode(other),
     m_originKey(std::bind(&LightNode::originChanged, this)),
     _originTransformed(ORIGINKEY_IDENTITY),
     m_rotationKey(std::bind(&LightNode::rotationChanged, this)),

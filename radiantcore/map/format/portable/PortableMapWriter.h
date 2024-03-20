@@ -46,8 +46,8 @@ public:
 	virtual void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
 
 	// Entity export methods
-	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
-	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
+	virtual void beginWriteEntity(const EntityNodePtr& entity, std::ostream& stream) override;
+	virtual void endWriteEntity(const EntityNodePtr& entity, std::ostream& stream) override;
 
 	// Brush export methods
 	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override;

@@ -3,7 +3,7 @@
 #include <list>
 #include "inode.h"
 #include "ieclass.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "iselection.h"
 #include "iselectable.h"
 #include "CollectiveSpawnargs.h"
@@ -150,7 +150,7 @@ public:
         {
             IEntityClassPtr result;
 
-            foreachEntity([&](const IEntityNodePtr& entityNode)
+            foreachEntity([&](const EntityNodePtr& entityNode)
             {
                 auto eclass = entityNode->getEntity().getEntityClass();
 
@@ -180,7 +180,7 @@ public:
         {
             std::set<std::string> values;
 
-            foreachEntity([&](const IEntityNodePtr& entity)
+            foreachEntity([&](const EntityNodePtr& entity)
             {
                 values.emplace(std::move(entity->getEntity().getKeyValue(key)));
             });
@@ -191,7 +191,7 @@ public:
         return _spawnargs.getSharedKeyValue(key);
     }
 
-    void foreachEntity(const std::function<void(const IEntityNodePtr&)>& functor) override
+    void foreachEntity(const std::function<void(const EntityNodePtr&)>& functor) override
     {
         for (auto& tracked : _trackedEntities)
         {
@@ -199,7 +199,7 @@ public:
 
             if (!node) continue;
 
-            auto entityNode = scene::node_cast<IEntityNode>(node);
+            auto entityNode = scene::node_cast<EntityNode>(node);
             assert(entityNode);
 
             if (entityNode)

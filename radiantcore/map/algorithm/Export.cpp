@@ -5,7 +5,7 @@
 #include "ieclass.h"
 #include "ifilesystem.h"
 #include "imodelcache.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "iundo.h"
 #include "itextstream.h"
 

@@ -5,7 +5,7 @@
 #include "iselectiontest.h"
 #include "math/Vector3.h"
 #include "ObservedSelectable.h"
-#include "EntitySettings.h"
+#include "scene/EntitySettings.h"
 
 class VertexInstance :
 	public ISelectable
@@ -23,7 +23,7 @@ public:
 	VertexInstance(Vector3& vertex, const SelectionChangedSlot& observer) :
 		_vertex(vertex),
 		_selectable(observer),
-		_colour(entity::EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Deselected))
+		_colour(EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Deselected))
 	{}
 
 	void setVertex(const Vector3& vertex) {
@@ -37,7 +37,7 @@ public:
 	void setSelected(bool select) {
 		_selectable.setSelected(select);
 		// Change the colour according to the selection
-		_colour = entity::EntitySettings::InstancePtr()->getLightVertexColour(
+		_colour = EntitySettings::InstancePtr()->getLightVertexColour(
 			select ? LightEditVertexType::Selected : LightEditVertexType::Deselected
 		);
 	}

@@ -14,7 +14,7 @@
 #include "iregistry.h"
 #include "ieclass.h"
 #include "igame.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 
 #include "wxutil/dialog/MessageBox.h"
 
@@ -469,7 +469,7 @@ void ObjectivesEditor::_onAddEntity(wxCommandEvent& ev)
     if (eclass)
     {
         // Construct a Node of this entity type
-        IEntityNodePtr node(GlobalEntityModule().createEntity(eclass));
+        EntityNodePtr node(GlobalEntityModule().createEntity(eclass));
 
         // Create a random offset
         node->getEntity().setKeyValue("origin", RandomOrigin::generate(128));

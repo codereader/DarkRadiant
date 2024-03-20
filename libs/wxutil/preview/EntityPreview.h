@@ -23,7 +23,7 @@ private:
     scene::IMapRootNodePtr _rootNode;
 
     // The previewed entity
-    IEntityNodePtr _entity;
+    EntityNodePtr _entity;
 
     AABB _untransformedEntityBounds;
 
@@ -56,8 +56,8 @@ public:
     // defaults to 6.
     void setDefaultCamDistanceFactor(float factor);
 
-    const IEntityNodePtr& getEntity();
-    void setEntity(const IEntityNodePtr& entity);
+    const EntityNodePtr& getEntity();
+    void setEntity(const EntityNodePtr& entity);
 };
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imapformat.h"
+#include "scene/scene_fwd.h"
 
 #include <map>
 
@@ -26,8 +27,8 @@ public:
     void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
 
     // Entity export methods
-    void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
-    void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
+    void beginWriteEntity(const EntityNodePtr& entity, std::ostream& stream) override;
+    void endWriteEntity(const EntityNodePtr& entity, std::ostream& stream) override;
     void writeRemoveEntityStub(const std::string& name, std::ostream& stream);
 
     // Brush export methods

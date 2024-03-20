@@ -30,9 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scene/Entity.h"
 #include "KeyObserverDelegate.h"
 
-namespace entity
-{
-
 /**
  * @brief Map of key observers associated with a particular entity.
  *
@@ -193,7 +190,5 @@ public:
 		}
 	}
 };
-
-} // namespace entity
 
 #endif

@@ -3,9 +3,6 @@
 #include "scene/Entity.h"
 #include <functional>
 
-namespace entity
-{
-
 /**
  * greebo: A KeyObserver wrapping around a function object.
  * The function is called as soon as the onKeyValueChanged
@@ -40,5 +37,3 @@ private:
 	void emptyCallback(const std::string& newValue)
 	{}
 };
-
-} // namespace entity

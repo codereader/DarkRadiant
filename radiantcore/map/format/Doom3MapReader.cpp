@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "ieclass.h"
 #include "igame.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "string/string.h"
 
 #include "Doom3MapFormat.h"
@@ -179,7 +179,7 @@ scene::INodePtr Doom3MapReader::createEntity(const EntityKeyValues& keyValues)
 	}
 
 	// Create the actual entity node
-    IEntityNodePtr node(GlobalEntityModule().createEntity(classPtr));
+    EntityNodePtr node(GlobalEntityModule().createEntity(classPtr));
 
     for (EntityKeyValues::const_iterator i = keyValues.begin();
          i != keyValues.end();

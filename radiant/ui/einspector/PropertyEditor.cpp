@@ -1,6 +1,6 @@
 #include "PropertyEditor.h"
 
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "iundo.h"
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -53,7 +53,7 @@ void PropertyEditor::setKeyValueOnSelection(const std::string& key, const std::s
 
     UndoableCommand cmd("setProperty");
 
-    _entities.foreachEntity([&](const IEntityNodePtr& entity)
+    _entities.foreachEntity([&](const EntityNodePtr& entity)
     {
         entity->getEntity().setKeyValue(key, value);
     });

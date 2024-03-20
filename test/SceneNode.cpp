@@ -2,6 +2,7 @@
 
 #include "scene/BasicRootNode.h"
 #include "scene/Node.h"
+#include "scene/EntityNode.h"
 #include "scenelib.h"
 #include "algorithm/Entity.h"
 
@@ -217,7 +218,7 @@ TEST_F(SceneNodeTest, SetMultipleHideFlags)
 TEST_F(SceneNodeTest, ForcedVisibility)
 {
     std::vector allFlags(allPossibleHideFlags);
-    
+
     // Try all possible hide flags
     for (auto flag : allFlags)
     {
@@ -226,7 +227,7 @@ TEST_F(SceneNodeTest, ForcedVisibility)
 
         node->enable(flag);
         EXPECT_FALSE(node->visible()) << "Should be invisible after setting a flag";
-        
+
         // Set the forced visibility flag
         node->visibilityMethodCalled = false;
         node->setProtectedForcedVisibility(true);
@@ -364,7 +365,7 @@ TEST_F(SceneNodeTest, SetRenderStateAffectsAttachments)
 
     bool hasAttachments = false;
     // All attachments should be there and active
-    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    torch->foreachAttachment([&](const EntityNodePtr& attachment)
     {
         hasAttachments = true;
         EXPECT_EQ(attachment->getRenderState(), scene::INode::RenderState::Active) << "Should be active after construction";
@@ -373,14 +374,14 @@ TEST_F(SceneNodeTest, SetRenderStateAffectsAttachments)
 
     // Set the state of the host entity to inactive
     torch->setRenderState(scene::INode::RenderState::Inactive);
-    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    torch->foreachAttachment([&](const EntityNodePtr& attachment)
     {
         EXPECT_EQ(attachment->getRenderState(), scene::INode::RenderState::Inactive) << "Attachments not set to inactive";
     });
 
     // Back to active
     torch->setRenderState(scene::INode::RenderState::Active);
-    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    torch->foreachAttachment([&](const EntityNodePtr& attachment)
     {
         EXPECT_EQ(attachment->getRenderState(), scene::INode::RenderState::Active) << "Attachments not set to active";
     });

@@ -1,9 +1,6 @@
 #include "RenderableEntityName.h"
 #include "EntityNode.h"
 
-namespace entity
-{
-
 const Vector3& RenderableEntityName::getWorldPosition()
 {
     return _entity.getWorldPosition();
@@ -20,6 +17,4 @@ const Vector4& RenderableEntityName::getColour()
     _colour = _entity.getEntityColour();
 
     return _colour;
-}
-
 }

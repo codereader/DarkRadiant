@@ -5,9 +5,6 @@
 #include "string/predicate.h"
 #include "gamelib.h"
 
-namespace entity
-{
-
 namespace
 {
     const char* const NAME_KEY("name");
@@ -251,5 +248,3 @@ void NamespaceManager::detachKeyObservers()
         detachKeyObserver(key, value);
     });
 }
-
-} // namespace entity

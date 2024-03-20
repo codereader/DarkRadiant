@@ -6,11 +6,9 @@
 #include "igroupnode.h"
 #include "iselectiongroup.h"
 #include "iscenegraph.h"
-#include "scene/Entity.h"
 #include "ipatch.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
-#include "scene/Entity.h"
 
 /**
  * @brief A structure containing information about the current Selection.
@@ -178,38 +176,6 @@ inline void applyShaderToSelection(const std::string& shaderName)
     GlobalSelectionSystem().foreachPatch([&](IPatch& patch) { patch.setShader(shaderName); });
 
     SceneChangeNotify();
-}
-
-/**
- * Tests the current selection and returns true if the selection is suitable
- * for reparenting the selected primitives to the (last) selected entity.
- */
-inline bool curSelectionIsSuitableForReparent()
-{
-	// Retrieve the selection information structure
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-
-	if (info.totalCount <= 1 || info.entityCount != 1)
-	{
-		return false;
-	}
-
-	scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
-	Entity* entity = Node_getEntity(lastSelected);
-
-	// Reject non-entities or models
-	if (entity == nullptr || entity->isModel())
-	{
-		return false;
-	}
-
-	// Accept only group nodes as parent
-	if (!Node_getGroupNode(lastSelected))
-	{
-		return false;
-	}
-
-	return true;
 }
 
 // Replaces the group assignments of the given node with the given groups

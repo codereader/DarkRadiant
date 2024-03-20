@@ -18,6 +18,7 @@
 #include <wx/textctrl.h>
 #include "string/case_conv.h"
 #include "string/split.h"
+#include "scene/EntityNode.h"
 
 #include "selectionlib.h"
 #include "os/path.h"
@@ -57,7 +58,7 @@ void ExportAsModelDialog::populateWindow()
 
 	wxPanel* panel = loadNamedPanel(this, "ExportDialogMainPanel");
 	GetSizer()->Add(panel, 1, wxEXPAND);
-	
+
 	makeLabelBold(this, "ExportDialogOutputLabel");
 	makeLabelBold(this, "ExportDialogOriginLabel");
 	makeLabelBold(this, "ExportDialogOptionLabel");
@@ -118,7 +119,7 @@ void ExportAsModelDialog::populateWindow()
 	// Replace the filepicker control with our own PathEntry
 	wxWindow* existing = findNamedObject<wxWindow>(this, "ExportDialogFilePicker");
 
-	wxutil::PathEntry* pathEntry = new wxutil::PathEntry(existing->GetParent(), 
+	wxutil::PathEntry* pathEntry = new wxutil::PathEntry(existing->GetParent(),
 		filetype::TYPE_MODEL_EXPORT, false, recentFormat);
 
 	pathEntry->setValue(recentPath);
@@ -207,8 +208,8 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
         auto invalidOrigin = Vector3(65536, 65536, 65536);
         if (string::convert<Vector3>(customOrigin, invalidOrigin) == invalidOrigin)
         {
-            wxutil::Messagebox::Show(_("Invalid Origin"), 
-                _("The origin you entered could not be parsed.\nUse the format \"x y z\" (without quotes, separated with spaces)"), 
+            wxutil::Messagebox::Show(_("Invalid Origin"),
+                _("The origin you entered could not be parsed.\nUse the format \"x y z\" (without quotes, separated with spaces)"),
                 IDialog::MessageType::MESSAGE_ERROR);
             return;
         }
@@ -226,7 +227,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
     // Warn the user if the output file extension doesn't match what the format says (#5741)
     if (string::to_lower_copy(os::getExtension(outputFilename)) != string::to_lower_copy(outputFormat) &&
-        wxutil::Messagebox::Show(_("Format/Extension Mismatch"), _("The file extension doesn't match the selected format - continue?"), 
+        wxutil::Messagebox::Show(_("Format/Extension Mismatch"), _("The file extension doesn't match the selected format - continue?"),
             IDialog::MessageType::MESSAGE_ASK) == IDialog::RESULT_NO)
     {
         return; // abort
@@ -234,7 +235,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
 	// Check if the target file already exists
 	if (os::fileOrDirExists(outputFilename) &&
-		wxutil::Messagebox::Show(_("Confirm Replacement"), 
+		wxutil::Messagebox::Show(_("Confirm Replacement"),
 			fmt::format(_("The file {0} already exists.\nReplace this file?"), outputFilename),
 			IDialog::MessageType::MESSAGE_ASK) != IDialog::RESULT_YES)
 	{
@@ -327,13 +328,13 @@ bool ExportAsModelDialog::_onDeleteEvent()
 
 void ExportAsModelDialog::saveOptionsToRegistry()
 {
-	registry::setValue(RKEY_MODEL_EXPORT_OUTPUT_FORMAT, 
+	registry::setValue(RKEY_MODEL_EXPORT_OUTPUT_FORMAT,
 		wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice")));
 
-	registry::setValue(RKEY_MODEL_EXPORT_OUTPUT_PATH, 
+	registry::setValue(RKEY_MODEL_EXPORT_OUTPUT_PATH,
 		findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->getValue());
 
-	registry::setValue(RKEY_MODEL_EXPORT_SKIP_CAULK, 
+	registry::setValue(RKEY_MODEL_EXPORT_SKIP_CAULK,
 		findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue());
 
 	registry::setValue(RKEY_MODEL_EXPORT_EXPORT_ORIGIN, static_cast<int>(getSelectedExportOrigin()));

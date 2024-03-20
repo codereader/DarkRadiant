@@ -5,8 +5,6 @@
 
 class INamespace;
 
-namespace entity {
-
 /**
  * greebo: A NameKeyObserver is attached to all EntityKeyValues
  * which qualify as name in the context of the current game.
@@ -35,7 +33,5 @@ public:
 	void onKeyValueChanged(const std::string& newValue);
 };
 typedef std::shared_ptr<NameKeyObserver> NameKeyObserverPtr;
-
-} // namespace entity
 
 #endif /* _NAME_KEY_OBSERVER_H_ */

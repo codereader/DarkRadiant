@@ -10,11 +10,11 @@
 #include "transformlib.h"
 #include "selectionlib.h"
 #include "render/RenderablePivot.h"
-#include "../target/TargetableNode.h"
-#include "../EntityNode.h"
-#include "../KeyObserverDelegate.h"
+#include "scene/TargetableNode.h"
+#include "scene/EntityNode.h"
+#include "scene/KeyObserverDelegate.h"
 #include "../RotationKey.h"
-#include "../OriginKey.h"
+#include "scene/OriginKey.h"
 
 namespace entity
 {

@@ -12,8 +12,8 @@
 
 #include "dragplanes.h"
 #include "../VertexInstance.h"
-#include "../EntityNode.h"
-#include "../OriginKey.h"
+#include "scene/EntityNode.h"
+#include "scene/OriginKey.h"
 #include "../RotationKey.h"
 #include "Renderables.h"
 #include "LightVertexInstanceSet.h"

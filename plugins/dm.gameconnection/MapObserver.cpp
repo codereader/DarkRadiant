@@ -1,7 +1,6 @@
 #include "MapObserver.h"
 #include "inode.h"
-#include "scene/Entity.h"
-
+#include "scene/EntityNode.h"
 #include "scene/EntityKeyValue.h"
 
 namespace gameconn
@@ -10,10 +9,10 @@ namespace gameconn
 class EntityNodeCollector : public scene::NodeVisitor
 {
 public:
-    std::vector<IEntityNodePtr> foundEntities;
+    std::vector<EntityNodePtr> foundEntities;
 
     bool pre(const scene::INodePtr& node) override {
-        if (auto ptr = std::dynamic_pointer_cast<IEntityNode>(node))
+        if (auto ptr = std::dynamic_pointer_cast<EntityNode>(node))
         {
             // Ignore worldspawn entities
             if (ptr->getEntity().isWorldspawn())
@@ -28,7 +27,7 @@ public:
     }
 };
 
-static std::vector<IEntityNodePtr> getEntitiesInSubgraph(const scene::INodePtr& node)
+static std::vector<EntityNodePtr> getEntitiesInSubgraph(const scene::INodePtr& node)
 {
     EntityNodeCollector visitor;
     if (node)
@@ -82,7 +81,7 @@ public:
         if (node->isRoot()) return; // ignore the map root
 
         auto entityNodes = getEntitiesInSubgraph(node);
-        for (const IEntityNodePtr& entNode : entityNodes)
+        for (const EntityNodePtr& entNode : entityNodes)
             _owner.entityUpdated(entNode->name(), DiffStatus::added());
         _owner.enableEntityObservers(entityNodes);
     }
@@ -92,12 +91,12 @@ public:
 
         auto entityNodes = getEntitiesInSubgraph(node);
         _owner.disableEntityObservers(entityNodes);
-        for (const IEntityNodePtr& entNode : entityNodes)
+        for (const EntityNodePtr& entNode : entityNodes)
             _owner.entityUpdated(entNode->name(), DiffStatus::removed());
     }
 };
 
-void MapObserver::enableEntityObservers(const std::vector<IEntityNodePtr>& entityNodes)
+void MapObserver::enableEntityObservers(const std::vector<EntityNodePtr>& entityNodes)
 {
     for (auto entNode : entityNodes)
     {
@@ -110,7 +109,7 @@ void MapObserver::enableEntityObservers(const std::vector<IEntityNodePtr>& entit
     }
 }
 
-void MapObserver::disableEntityObservers(const std::vector<IEntityNodePtr>& entityNodes)
+void MapObserver::disableEntityObservers(const std::vector<EntityNodePtr>& entityNodes)
 {
     for (auto entNode : entityNodes)
     {

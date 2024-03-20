@@ -1,7 +1,7 @@
 #include "PortableMapWriter.h"
 
 #include "igame.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "ipatch.h"
 #include "imap.h"
 #include "ibrush.h"
@@ -133,7 +133,7 @@ void PortableMapWriter::endWriteMap(const scene::IMapRootNodePtr& root, std::ost
 	stream << _document.saveToString();
 }
 
-void PortableMapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
+void PortableMapWriter::beginWriteEntity(const EntityNodePtr& entity, std::ostream& stream)
 {
 	auto node = _map.createChild(TAG_ENTITY);
 	node.setAttributeValue(ATTR_ENTITY_NUMBER, string::to_string(_entityCount++));
@@ -156,7 +156,7 @@ void PortableMapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostr
 	appendSelectionSetInformation(node, entity);
 }
 
-void PortableMapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
+void PortableMapWriter::endWriteEntity(const EntityNodePtr& entity, std::ostream& stream)
 {
 	// Reset the primitive count again
 	_primitiveCount = 0;

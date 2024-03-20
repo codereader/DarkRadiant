@@ -1,5 +1,6 @@
 #include "SpeakerNode.h"
-#include "../EntitySettings.h"
+#include "scene/EntitySettings.h"
+#include "entitylib.h"
 
 #include "math/Frustum.h"
 #include <functional>

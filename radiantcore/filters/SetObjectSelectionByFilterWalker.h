@@ -4,7 +4,7 @@
 #include "ifilter.h"
 #include "ipatch.h"
 #include "ibrush.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "iselectable.h"
 
 #include "XMLFilter.h"

@@ -8,6 +8,7 @@
 #include "itransformnode.h"
 #include <functional>
 
+#include "scene/scene_fwd.h"
 #include "string/predicate.h"
 
 class IEntityClass;
@@ -29,75 +30,12 @@ public:
     virtual void onKeyValueChanged(const std::string& newValue) = 0;
 };
 
-class EntityKeyValue;
-class Entity;
-
 /// Callback for an entity key value change
 using KeyObserverFunc = sigc::slot<void(const std::string&)>;
 
-/**
- * \brief Interface for a node which represents an entity.
- *
- * As well as providing access to the entity data with getEntity(), every
- * IEntityNode can clone itself and apply a transformation matrix to its
- * children (which might be brushes, patches or other entities).
- */
-class IEntityNode : public IRenderEntity,
-                    public virtual scene::INode,
-                    public scene::Cloneable,
-                    public IMatrixTransform
-{
-public:
-    virtual ~IEntityNode() {}
-
-    /// Get a modifiable reference to the contained Entity
-    virtual Entity& getEntity() = 0;
-
-    /**
-     * @brief Observe key value changes using a callback function.
-     *
-     * This method provides a simpler interface for observing key value changes
-     * via the use of a callback function, rather than requiring a full
-     * KeyObserver object to be constructed and maintained by the calling code.
-     *
-     * @param key
-     * The key to observe.
-     *
-     * @param func
-     * Function to call when the key value changes.
-     */
-    virtual void observeKey(const std::string& key, KeyObserverFunc func) = 0;
-
-    /**
-     * greebo: Tells the entity to reload the child model. This usually
-     *         includes removal of the child model node and triggering
-     *         a "skin changed" event.
-     */
-    virtual void refreshModel() = 0;
-
-    /**
-     * Invokes the given function object for each attached entity.
-     * At this point attachment entities are not accessible through the node's children,
-     * they have to be accessed through this method instead.
-     */
-    virtual void foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor) = 0;
-};
-typedef std::shared_ptr<IEntityNode> IEntityNodePtr;
-
-inline Entity* Node_getEntity(const scene::INodePtr& node)
-{
-    IEntityNodePtr entityNode = std::dynamic_pointer_cast<IEntityNode>(node);
-
-    if (entityNode != NULL) {
-        return &(entityNode->getEntity());
-    }
-
-    return NULL;
-}
-
 inline bool Node_isEntity(const scene::INodePtr& node)
 {
-    //assert(!((std::dynamic_pointer_cast<IEntityNode>(node) != nullptr) ^ (node->getNodeType() == scene::INode::Type::Entity)));
+    //assert(!((std::dynamic_pointer_cast<EntityNode>(node) != nullptr) ^ (node->getNodeType() == scene::INode::Type::Entity)));
     return node->getNodeType() == scene::INode::Type::Entity;
 }
 
@@ -114,7 +52,7 @@ public:
     virtual std::size_t size() const = 0;
 
     // Iterates over each selected entity node, invoking the given functor
-    virtual void foreachEntity(const std::function<void(const IEntityNodePtr&)>& functor) = 0;
+    virtual void foreachEntity(const std::function<void(const EntityNodePtr&)>& functor) = 0;
 
     // Returns the key value shared by all entities in this set, or an empty string
     // if there is no such value.
@@ -262,7 +200,7 @@ public:
     virtual ~IEntityModule() {}
 
     /// Create an entity node with the given entity class.
-    virtual IEntityNodePtr createEntity(const IEntityClassPtr& eclass) = 0;
+    virtual EntityNodePtr createEntity(const IEntityClassPtr& eclass) = 0;
 
     // Constructs a new targetmanager instance (used by root nodes)
     virtual ITargetManagerPtr createTargetManager() = 0;
@@ -274,10 +212,10 @@ public:
      * Create an instance of the given entity at the given position, and return
      * the Node containing the new entity.
      *
-     * @returns: the scene::IEntityNodePtr referring to the new entity.
+     * @returns: the scene::EntityNodePtr referring to the new entity.
      * @throws: cmd::ExecutionFailure if anything goes wrong or the selection is not suitable.
      */
-    virtual IEntityNodePtr createEntityFromSelection(const std::string& name, const Vector3& origin) = 0;
+    virtual EntityNodePtr createEntityFromSelection(const std::string& name, const Vector3& origin) = 0;
 };
 
 inline IEntityModule& GlobalEntityModule()

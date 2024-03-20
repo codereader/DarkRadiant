@@ -6,7 +6,7 @@
 #include "iundo.h"
 #include "itextstream.h"
 #include "igame.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "iscenegraph.h"
 #include "os/fs.h"
 #include "os/path.h"

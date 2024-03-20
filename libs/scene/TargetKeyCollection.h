@@ -4,9 +4,6 @@
 #include <sigc++/signal.h>
 #include "TargetKey.h"
 
-namespace entity
-{
-
 class TargetableNode;
 
 class TargetKeyCollection :
@@ -58,5 +55,3 @@ private:
 	// Returns TRUE if the given key matches the pattern for target keys
 	bool isTargetKey(const std::string& key);
 };
-
-} // namespace entity

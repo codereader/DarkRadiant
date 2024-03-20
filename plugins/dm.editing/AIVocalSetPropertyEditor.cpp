@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ieclass.h"
-#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>
@@ -71,7 +71,7 @@ void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	{
         auto selectedSet = dialog->getSelectedVocalSet();
 
-        _entities.foreachEntity([&](const IEntityNodePtr& entity)
+        _entities.foreachEntity([&](const EntityNodePtr& entity)
         {
             entity->getEntity().setKeyValue(DEF_VOCAL_SET_KEY, selectedSet);
         });

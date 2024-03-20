@@ -7,8 +7,6 @@
 #include <memory>
 #include "math/Vector3.h"
 
-namespace entity {
-
 class EntitySettings;
 typedef std::shared_ptr<EntitySettings> EntitySettingsPtr;
 
@@ -158,5 +156,3 @@ private:
 	void onSettingsChanged();
     void initialiseAndObserveKey(const std::string& key, bool& targetBool);
 };
-
-} // namespace entity

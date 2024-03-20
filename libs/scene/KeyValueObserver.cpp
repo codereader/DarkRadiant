@@ -4,8 +4,6 @@
 #include "scene/Entity.h"
 #include "scene/EntityKeyValue.h"
 
-namespace entity {
-
 KeyValueObserver::KeyValueObserver(EntityKeyValue& keyValue, INamespace* ns) :
 	_keyValue(keyValue),
 	_namespace(ns),
@@ -44,5 +42,3 @@ void KeyValueObserver::onKeyValueChanged(const std::string& newValue)
 		_namespace->addNameObserver(_observedValue, _keyValue);
 	}
 }
-
-} // namespace entity
