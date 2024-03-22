@@ -89,7 +89,15 @@ public:
 };
 
 RadiantApp::RadiantApp()
-{}
+{
+#if defined(__linux__)
+    // The native Wayland backend for GTK does not implement the mouse pointer
+    // warping functions used in the FreezePointer class.  Forcing the backend
+    // to X11 will let us run using XWayland which does provide emulation of
+    // this functionality.
+    setenv("GDK_BACKEND", "x11", 0);
+#endif
+}
 
 RadiantApp::~RadiantApp()
 {}
