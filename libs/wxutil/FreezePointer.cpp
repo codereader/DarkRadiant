@@ -28,7 +28,7 @@ void FreezePointer::startCapture(wxWindow* window,
 
     if (_hidePointer)
     {
-        topLevel->SetCursor(wxCursor(wxCURSOR_BLANK));
+        window->SetCursor(wxCursor(wxCURSOR_BLANK));
     }
 
     // We capture the mouse on the toplevel app, coordinates
@@ -92,7 +92,7 @@ void FreezePointer::endCapture()
 
     if (_hidePointer)
     {
-        topLevel->SetCursor(wxCursor(wxCURSOR_DEFAULT));
+        window->SetCursor(wxCursor(wxCURSOR_DEFAULT));
     }
 
     if (topLevel->HasCapture())

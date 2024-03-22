@@ -423,6 +423,9 @@ bool OrthoView::checkChaseMouse(unsigned int state)
 
 void OrthoView::setCursorType(CursorType type)
 {
+    if (_freezePointer.isCapturing(_wxGLWidget))
+        return;
+
     switch (type)
 	{
     case CursorType::Pointer:
