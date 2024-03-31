@@ -52,10 +52,14 @@ public:
         return std::make_shared<Commit>(commit);
     }
 
-    const git_commit* _get()
-    {
-        return _commit;
-    }
+    #if ( LIBGIT2_VER_MAJOR > 1 ) || ( LIBGIT2_VER_MAJOR == 1 && LIBGIT2_VER_MINOR >= 8 )
+        git_commit* _get()
+    #else
+        const git_commit* _get()
+    #endif
+        {
+            return _commit;
+        }
 };
 
 }

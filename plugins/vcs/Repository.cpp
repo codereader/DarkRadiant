@@ -188,7 +188,7 @@ void Repository::fastForwardToTrackedRemote()
 
         error = git_checkout_tree(_repository, target, &checkoutOptions);
         GitException::ThrowOnError(error);
-        
+
         // Move the target reference to the target OID
         head->setTarget(&targetOid);
 
@@ -336,7 +336,11 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
 
     auto tree = index->writeTree(*this);
 
-    std::vector<const git_commit*> parentCommits;
+    #if ( LIBGIT2_VER_MAJOR > 1 ) || ( LIBGIT2_VER_MAJOR == 1 && LIBGIT2_VER_MINOR >= 8 )
+        std::vector<git_commit*> parentCommits;
+    #else
+        std::vector<const git_commit*> parentCommits;
+    #endif
 
     // It's possible that there is no HEAD yet (first commit in the repo)
     if (head)
@@ -344,11 +348,11 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
         git_oid headOid;
         auto error = git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
         GitException::ThrowOnError(error);
-        
+
         auto parentCommit = Commit::LookupFromOid(_repository, &headOid);
         parentCommits.push_back(parentCommit->_get());
     }
-    
+
     // Check if we have an additional parent
     if (additionalParent)
     {
