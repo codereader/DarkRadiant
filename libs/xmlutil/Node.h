@@ -17,14 +17,14 @@ class Document;
 
 /* Node
  *
- * A representation of an XML node. This class wraps an xmlNodePtr as used
- * by libxml2, and provides certain methods to access properties of the node.
+ * A representation of an XML node. This class wraps a pugixml node
+ * and provides certain methods to access properties of the node.
  */
 class Node
 {
     const Document* _owner = nullptr;
 
-    // The contained xmlNodePtr. This points to part of a wider xmlDoc
+    // The contained pugi::xml_node. This points to part of a wider document
     // structure which is not owned by this Node object.
     pugi::xml_node _xmlNode;
 

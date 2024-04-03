@@ -46,29 +46,21 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
-    <Import Project="properties\libxml2.props" />
-    <Import Project="properties\win_iconv.props" />
     <Import Project="properties\DarkRadiant Static Library.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
-    <Import Project="properties\libxml2.props" />
-    <Import Project="properties\win_iconv.props" />
     <Import Project="properties\DarkRadiant Static Library.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release x64.props" />
-    <Import Project="properties\libxml2.props" />
-    <Import Project="properties\win_iconv.props" />
     <Import Project="properties\DarkRadiant Static Library.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
-    <Import Project="properties\libxml2.props" />
-    <Import Project="properties\win_iconv.props" />
     <Import Project="properties\DarkRadiant Static Library.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -108,14 +100,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\libs\xmlutil\Document.cpp" />
     <ClCompile Include="..\..\libs\xmlutil\Node.cpp" />
-    <ClCompile Include="..\..\libs\xmlutil\XmlModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\xmlutil\Document.h" />
     <ClInclude Include="..\..\libs\xmlutil\InvalidNodeException.h" />
     <ClInclude Include="..\..\libs\xmlutil\MissingXMLNodeException.h" />
     <ClInclude Include="..\..\libs\xmlutil\Node.h" />
-    <ClInclude Include="..\..\libs\xmlutil\XmlModule.h" />
     <ClInclude Include="..\..\libs\xmlutil\XPathException.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

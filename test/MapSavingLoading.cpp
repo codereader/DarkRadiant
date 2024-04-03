@@ -25,6 +25,7 @@
 #include "testutil/FileSelectionHelper.h"
 #include "testutil/FileSaveConfirmationHelper.h"
 #include "registry/registry.h"
+#include "testutil/TemporaryFile.h"
 
 using namespace std::chrono_literals;
 
@@ -1185,11 +1186,9 @@ TEST_F(MapSavingTest, saveWarnsAboutOverwriteAndUserCancels)
     EXPECT_TRUE(overwriteHelper.messageReceived());
 
     // File should not have been replaced
-    std::ifstream writtenFile(tempPath);
-    std::stringstream contents;
-    contents << writtenFile.rdbuf();
+    auto contents = algorithm::loadFileToString(tempPath);
 
-    EXPECT_EQ(contents.str(), tempContents);
+    EXPECT_EQ(contents, tempContents);
 }
 
 // #5729: Autosaver overwrites the stored filename that has been previously used for "Save Copy As"
@@ -1621,6 +1620,44 @@ TEST_F(MapLoadingTest, WarningAboutMissingInfoFile)
     auto infoFilename = infoFilePath.filename().string();
     EXPECT_NE(receiver.getReceivedMessage().find(infoFilename), std::string::npos)
         << "Didn't receive a warning about the missing .darkradiant file";
+}
+
+TEST_F(MapSavingTest, EscapeCharactersInEntityKeyValues)
+{
+    auto mapContent = R"(Version 2
+// entity 0
+{
+"classname" "light"
+"name" "light"
+"origin" "0.160161 72.1389 24.7429"
+"test" "Test \"quoted\" test"
+"with\"quote" "--"
+}
+)";
+    string::replace_all_copy(mapContent, "\r\n", "\n"); // don't be fooled by platform-specific line breaks
+
+    fs::path mapPath = _context.getTemporaryDataPath();
+    mapPath /= "keyvalue_escaping.map";
+    TemporaryFile tempFile(mapPath.string(), mapContent);
+
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath.string());
+
+    auto entity = algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](auto&) { return true; });
+
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("name"), "light") << "Wrong entity found after loading";
+
+    // Check the quoted keyvalue pairs
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("with\"quote"), "--") << "Failed to deserialise quoted entity key";
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "Test \"quoted\" test") << "Failed to deserialise quoted entity key value";
+
+    // Save the map
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs", mapPath.string());
+
+    auto savedContent = algorithm::loadFileToString(mapPath);
+
+    // Exact same
+    string::replace_all_copy(savedContent, "\r\n", "\n"); // normalise line breaks
+    EXPECT_EQ(savedContent, mapContent) << "Failed to serialise quoted entity key values";
 }
 
 }

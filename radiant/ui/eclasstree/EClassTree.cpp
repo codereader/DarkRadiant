@@ -11,14 +11,13 @@
 
 #include <wx/sizer.h>
 #include <wx/splitter.h>
-#include "wxutil/Bitmap.h"
 
 namespace ui
 {
 
 namespace
 {
-	constexpr const char* const ECLASSTREE_TITLE = N_("Entity Class Tree");
+	constexpr const char* const ECLASSTREE_TITLE = N_("EntityDef Tree");
 }
 
 EClassTree::EClassTree() :
@@ -35,10 +34,10 @@ EClassTree::EClassTree() :
 
 void EClassTree::onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
 {
-	std::string className;
+	auto className = _eclassToPreselect;
 
 	// Do we have anything selected
-	if (GlobalSelectionSystem().countSelected() > 0)
+	if (className.empty() && GlobalSelectionSystem().countSelected() > 0)
 	{
 		// Get the last selected node and check if it's an entity
 		auto lastSelected = GlobalSelectionSystem().ultimateSelected();
@@ -84,6 +83,11 @@ void EClassTree::populateWindow()
 	FitToScreen(0.8f, 0.8f);
 
 	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.25f));
+}
+
+void EClassTree::setClassNameToPreselect(const std::string& className)
+{
+    _eclassToPreselect = className;
 }
 
 wxWindow* EClassTree::createEClassTreeView(wxWindow* parent)
@@ -163,14 +167,19 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
     }, true);
 }
 
-// Static command target
 void EClassTree::ShowDialog(const cmd::ArgumentList& args)
 {
-	// Construct a new instance, this enters the main loop
-	auto* tree = new EClassTree();
+    // Construct a new instance, this enters the main loop
+    auto tree = new EClassTree();
 
-	tree->ShowModal();
-	tree->Destroy();
+    // Accept a classname to preselect from the argument list
+    if (args.size() == 1)
+    {
+        tree->setClassNameToPreselect(args[0].getString());
+    }
+
+    tree->ShowModal();
+    tree->Destroy();
 }
 
 void EClassTree::handleSelectionChange()

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <map version="1" format="portable">
   <layers>
-    <layer id="0" name="Default"/>
+    <layer id="0" name="Default" parentId="-1" active="true" hidden="false"/>
   </layers>
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="3209"/>
+    <property key="EditTimeInSeconds" value="3290"/>
     <property key="LastCameraAngle" value="-64.5 177.6 0"/>
     <property key="LastCameraPosition" value="480.842 37.4907 699.277"/>
-    <property key="LastShaderClipboardMaterial" value="textures/numbers/10"/>
+    <property key="LastShaderClipboardMaterial" value="textures/numbers/18"/>
   </properties>
   <entity number="0">
     <primitives>
@@ -1965,6 +1965,85 @@
       <keyValue key="classname" value="fixed_size_entity"/>
       <keyValue key="name" value="node_3"/>
       <keyValue key="origin" value="352 352 0"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="14">
+    <primitives>
+      <patch number="0" width="3" height="3" fixedSubdivisions="false">
+        <material name="textures/numbers/18"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="389.000000" y="-224.000000" z="32.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="389.000000" y="-192.000000" z="32.000000" u="0.500000" v="0"/>
+          <controlVertex row="2" column="0" x="389.000000" y="-160.000000" z="32.000000" u="1.000000" v="0"/>
+          <controlVertex row="0" column="1" x="421.000000" y="-224.000000" z="32.000000" u="0" v="0.500000"/>
+          <controlVertex row="1" column="1" x="421.000000" y="-192.000000" z="32.000000" u="0.500000" v="0.500000"/>
+          <controlVertex row="2" column="1" x="421.000000" y="-160.000000" z="32.000000" u="1.000000" v="0.500000"/>
+          <controlVertex row="0" column="2" x="453.000000" y="-224.000000" z="32.000000" u="0" v="1.000000"/>
+          <controlVertex row="1" column="2" x="453.000000" y="-192.000000" z="32.000000" u="0.500000" v="1.000000"/>
+          <controlVertex row="2" column="2" x="453.000000" y="-160.000000" z="32.000000" u="1.000000" v="1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-0.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="2.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-0.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-0.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-66.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-0.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="entity_to_be_moved"/>
+      <keyValue key="model" value="entity_to_be_moved"/>
+      <keyValue key="origin" value="386 -192 32"/>
     </keyValues>
     <layers>
       <layer id="0"/>

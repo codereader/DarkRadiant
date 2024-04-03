@@ -5,6 +5,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "scene/EntityNode.h"
+#include "iundo.h"
 #include "string/convert.h"
 
 #include "ConversationKeyExtractor.h"
@@ -29,13 +30,15 @@ ConversationEntity::ConversationEntity(const scene::INodePtr& node) :
 // Delete the entity's world node
 void ConversationEntity::deleteWorldNode()
 {
-	// Try to convert the weak_ptr reference to a shared_ptr
-	scene::INodePtr node = _entityNode.lock();
+    UndoableCommand deleteCommand("removeConversationEntity");
 
-	if (node && node->getParent())
-	{
-		node->getParent()->removeChildNode(node);
-	}
+    // Try to convert the weak_ptr reference to a shared_ptr
+    auto node = _entityNode.lock();
+
+    if (node && node->getParent())
+    {
+        node->getParent()->removeChildNode(node);
+    }
 }
 
 int ConversationEntity::getHighestIndex()

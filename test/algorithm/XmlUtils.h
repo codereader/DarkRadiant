@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 #include <fstream>
 #include <sstream>
+
+#include "FileUtils.h"
 #include "string/predicate.h"
 #include "string/split.h"
 
@@ -24,11 +26,7 @@ inline void assertStringIsMapxFile(const std::string& content)
 // Very rough check to see if path points to a file that looks like an XML document
 inline void assertFileIsMapxFile(const std::string& path)
 {
-    std::ifstream tempFile(path);
-    std::stringstream content;
-    content << tempFile.rdbuf();
-
-    assertStringIsMapxFile(content.str());
+    assertStringIsMapxFile(loadFileToString(path));
 }
 
 }

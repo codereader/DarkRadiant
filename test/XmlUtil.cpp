@@ -32,12 +32,12 @@ class XmlTest:
 #endif
 {
 protected:
-    std::string getResourcePath() const
+    std::string getXmlTestResourcePath() const
     {
 #if defined(TEST_BASE_PATH)
         return std::string(TEST_BASE_PATH) + "/resources/xml/";
 #else
-        return _context.getTestResourcePath();
+        return _context.getTestResourcePath() + "xml/";
 #endif
     }
 };
@@ -61,7 +61,7 @@ TEST_F(XmlTest, CreateEmptyDocument)
 TEST_F(XmlTest, CreateDocumentFromFile)
 {
     // Create an xmlutil::Document from an existing XML file
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     EXPECT_TRUE(document.isValid()) << "Test file could not be loaded";
     EXPECT_EQ(document.getTopLevelNode().getName(), "testDocument");
@@ -70,7 +70,7 @@ TEST_F(XmlTest, CreateDocumentFromFile)
 TEST_F(XmlTest, CreateDocumentFromStream)
 {
     // Create an xmlutil::Document from an input stream
-    std::ifstream stream(getResourcePath() + TEST_XML_FILE);
+    std::ifstream stream(getXmlTestResourcePath() + TEST_XML_FILE);
 
     xml::Document document(stream);
 
@@ -114,7 +114,7 @@ TEST_F(XmlTest, ImportDocument)
     importDocument.addTopLevelNode("importNode");
 
     // Load an existing file
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Import the <importNode /> into this document
     auto targetNode = document.findXPath("//colourscheme[@name='Black & Green']").at(0);
@@ -147,7 +147,7 @@ TEST_F(XmlTest, CopyNodesIntoDocument)
     targetDocument.addTopLevelNode("importNode");
 
     // Load an existing file
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Copy all colourScheme nodes
     auto importNodes = document.findXPath("//colourscheme");
@@ -165,7 +165,7 @@ TEST_F(XmlTest, DocumentValidityCheck)
 {
     // Test the isValid() method
     // Loading an invalid file will produce an invalid document
-    auto filename = getResourcePath() + "xml/broken_file.xml";
+    auto filename = getXmlTestResourcePath() + "xml/broken_file.xml";
 
     xml::Document broken(filename);
     EXPECT_FALSE(broken.isValid());
@@ -179,7 +179,7 @@ TEST_F(XmlTest, DocumentValidityCheck)
 TEST_F(XmlTest, FindXPathInDocument)
 {
     // Test the findXPath() method
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Find the root element
     EXPECT_EQ(document.findXPath("/testDocument").size(), 1);
@@ -232,8 +232,8 @@ namespace
 TEST_F(XmlTest, SaveDocumentToFile)
 {
     // Test the saveToFile() method
-    auto filename = getResourcePath() + TEST_XML_FILE;
-    auto targetFilePath = getResourcePath() + TEST_XML_FILE + ".tmp";
+    auto filename = getXmlTestResourcePath() + TEST_XML_FILE;
+    auto targetFilePath = getXmlTestResourcePath() + TEST_XML_FILE + ".tmp";
     TemporaryFile targetFile(targetFilePath);
 
     xml::Document document(filename);
@@ -249,7 +249,7 @@ TEST_F(XmlTest, SaveDocumentToFile)
 TEST_F(XmlTest, SaveDocumentToString)
 {
     // Test the saveToString() method
-    auto filename = getResourcePath() + TEST_XML_FILE;
+    auto filename = getXmlTestResourcePath() + TEST_XML_FILE;
     const auto fileContents = algorithm::loadFileToString(filename);
 
     // saveToString() should produce the same file again, except for formatting
@@ -265,7 +265,7 @@ TEST_F(XmlTest, CreateEmptyNode)
 
 TEST_F(XmlTest, NodeName)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Get the root node and check its name
     auto rootNode = document.findXPath("/testDocument").at(0);
@@ -303,7 +303,7 @@ TEST_F(XmlTest, CopyConstructNode)
 
 TEST_F(XmlTest, GetNodeChildren)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Get the root node and check its name
     auto rootNode = document.findXPath("/testDocument").at(0);
@@ -328,7 +328,7 @@ TEST_F(XmlTest, GetNodeChildren)
 
 TEST_F(XmlTest, GetNamedNodeChildren)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Get the root node and check its name
     auto rootNode = document.findXPath("/testDocument").at(0);
@@ -345,7 +345,7 @@ TEST_F(XmlTest, GetNamedNodeChildren)
 
 TEST_F(XmlTest, GetNodeAttributeValue)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Get the root node and check its name
     auto colourNode = document.findXPath("/testDocument//colour[@name='active_view_name']").at(0);
@@ -360,7 +360,7 @@ TEST_F(XmlTest, GetNodeAttributeValue)
 
 TEST_F(XmlTest, SetNodeAttributeValue)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Get the root node and check its name
     auto colourNode = document.findXPath("/testDocument//colour[@name='active_view_name']").at(0);
@@ -383,7 +383,7 @@ TEST_F(XmlTest, SetNodeAttributeValue)
 
 TEST_F(XmlTest, CreateNodeChild)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     EXPECT_EQ(document.findXPath("//colourscheme[@name='Black & Green']").size(), 1);
     EXPECT_EQ(document.findXPath("//colourscheme[@name='Black & Green']/testNode").size(), 0) << "Expected no children";
@@ -406,7 +406,7 @@ TEST_F(XmlTest, CreateNodeChild)
 
 TEST_F(XmlTest, GetNodeContent)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     auto colourNode = document.findXPath("//colourscheme[@name='DarkRadiant Default']/colour[@name='xyview_crosshairs']").at(0);
     EXPECT_EQ(colourNode.getContent(), "") << "Closed XML tag should have an empty content";
@@ -425,7 +425,7 @@ TEST_F(XmlTest, GetNodeContent)
 
 TEST_F(XmlTest, SetNodeContent)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']").size(), 1);
     EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']/specialNode").size(), 1) << "Expected 1 matching node";
@@ -446,7 +446,7 @@ TEST_F(XmlTest, SetNodeContent)
 
 TEST_F(XmlTest, AddTextToNode)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     auto colourscheme = document.findXPath("//colourscheme[@name='DarkRadiant Default']").at(0);
     auto testNode1 = colourscheme.createChild("testNode");
@@ -468,7 +468,7 @@ TEST_F(XmlTest, AddTextToNode)
 
 TEST_F(XmlTest, EraseNode)
 {
-    xml::Document document(getResourcePath() + TEST_XML_FILE);
+    xml::Document document(getXmlTestResourcePath() + TEST_XML_FILE);
 
     // Expect exactly two colour schemes, one with that name
     EXPECT_EQ(document.findXPath("//colourscheme").size(), 2);
@@ -483,7 +483,7 @@ TEST_F(XmlTest, EraseNode)
 
 TEST_F(XmlTest, LoadGameFile)
 {
-    xml::Document game(getResourcePath() + "darkmod.game");
+    xml::Document game(getXmlTestResourcePath() + "darkmod.game");
     EXPECT_TRUE(game.isValid());
 
     auto nodes = game.findXPath("//game");
@@ -498,7 +498,7 @@ TEST_F(XmlTest, LoadGameFile)
 
 TEST_F(XmlTest, LoadInputFile)
 {
-    xml::Document input(getResourcePath() + "input.xml");
+    xml::Document input(getXmlTestResourcePath() + "input.xml");
     EXPECT_TRUE(input.isValid());
 
     auto nodes = input.findXPath("//input/mouseToolMappings/mouseToolMapping[@name='OrthoView']");

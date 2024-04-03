@@ -5,6 +5,7 @@
 #include "iselection.h"
 #include "itransformable.h"
 #include "scenelib.h"
+#include "algorithm/FileUtils.h"
 #include "math/Quaternion.h"
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
@@ -289,11 +290,7 @@ TEST_F(Quake3BrushTest, SaveAxisAlignedBrushWithTransform)
 
     EXPECT_TRUE(fs::exists(tempPath)) << "File still doesn't exist: " << tempPath;
 
-    std::ifstream tempFile(tempPath);
-    std::stringstream content;
-    content << tempFile.rdbuf();
-
-    auto savedContent = content.str();
+    auto savedContent = algorithm::loadFileToString(tempPath);
 
     // This is checking the actual face string as written by the LegacyBrushDefExporter
     // including whitespace and all the syntax details

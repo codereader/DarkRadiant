@@ -12,7 +12,7 @@
   prefix=""
   basegame=""
   archivetypes="pk4"
-  modeltypes="lwo ase md5mesh md3"
+  modeltypes="lwo ase md5mesh md3 obj"
   maptypes="mapdoom3"
   shaders="doom3"
   entityclass="doom3"
@@ -99,6 +99,12 @@
 				match="textures/common/trig(.*)"
 				action="hide" />
 		</filter>
+		<filter name="Location Entities">
+			<filterCriterion type="entityclass" match=".*_location.*" action="hide"/>
+		</filter>
+		<filter name="Player Start Entity">
+			<filterCriterion type="entityclass" match="info_player_start" action="hide"/>
+		</filter>
 		<filter name="Nodraw Textures">
 			<filterCriterion
 				type="texture"
@@ -169,6 +175,7 @@
 	<entityInspector>
 		<property match="origin" category="Basic" type="vector3">The origin of this object in 3D space</property>
 		<property match="classname" category="Basic" type="classname">The classname of this entity. This must be a recognised class defined in one of the DEF files, and governs the overall behaviour of the entity</property>
+		<property match="inherit" category="Basic" type="inherit"></property>
 		<property match="name" category="Basic" type="text">The displayed name of this entity. This can be arbitrary, but must be unique across the entire map</property>
 		<property match="rotation" category="Basic" type="text" />
 		<property match="_color" category="Basic" type="colour" />

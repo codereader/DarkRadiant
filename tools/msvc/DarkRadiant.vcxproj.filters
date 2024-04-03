@@ -346,9 +346,6 @@
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp">
       <Filter>src\xyview</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp">
-      <Filter>src\xyview</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -718,6 +715,15 @@
     <ClCompile Include="..\..\radiant\ui\skin\SkinEditorTreeView.cpp">
       <Filter>src\ui\skin</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\OrthoView.cpp">
+      <Filter>src\xyview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\InheritPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\Algorithm.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -880,9 +886,6 @@
       <Filter>src\xyview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h">
-      <Filter>src\xyview</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\xyview\XYWnd.h">
       <Filter>src\xyview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\PIDFile.h">
@@ -1442,6 +1445,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\skin\MaterialSelectorColumn.h">
       <Filter>src\ui\skin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\OrthoView.h">
+      <Filter>src\xyview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\InheritPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\Algorithm.h">
+      <Filter>src\ui\einspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

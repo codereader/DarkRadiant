@@ -32,7 +32,7 @@ void ModelKey::refreshModel()
 {
 	if (!_model.node) return;
 
-    attachModelNodeKeepinSkin();
+    attachModelNodeKeepingSkin();
 }
 
 // Update the contained model from the provided keyvalues
@@ -54,7 +54,7 @@ void ModelKey::modelChanged(const std::string& value)
     _model.path = newModelName;
 
 	// Call the attach routine, keeping the skin (#4142)
-	attachModelNodeKeepinSkin();
+	attachModelNodeKeepingSkin();
 }
 
 void ModelKey::attachModelNode()
@@ -102,6 +102,15 @@ void ModelKey::attachModelNode()
     // Assign idle pose to modelDef meshes
     if (modelDef)
     {
+        // Set the default skin to the one defined in the modelDef
+        auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
+
+        if (skinned && !modelDef->getSkin().empty())
+        {
+            skinned->setDefaultSkin(modelDef->getSkin());
+            skinned->skinChanged(std::string()); // trigger a remap
+        }
+
         scene::applyIdlePose(_model.node, modelDef);
     }
 
@@ -121,27 +130,20 @@ void ModelKey::detachModelNode()
 
 void ModelKey::onModelDefChanged()
 {
-    attachModelNodeKeepinSkin();
+    attachModelNodeKeepingSkin();
 }
 
-void ModelKey::attachModelNodeKeepinSkin()
+void ModelKey::attachModelNodeKeepingSkin()
 {
     if (_model.node)
     {
-        // Check if we have a skinnable model and remember the skin
-	    SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
+        attachModelNode();
 
-	    std::string skin = skinned ? skinned->getSkin() : "";
-	
-	    attachModelNode();
-	
-	    // Reset the skin to the previous value if we have a model
-	    skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
-
-	    if (skinned)
-	    {
-		    skinned->skinChanged(skin);
-	    }
+        // If we have an explicit skin value, set it on the new model
+        if (auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node); skinned)
+        {
+            skinned->skinChanged(_model.explicitSkin);
+        }
     }
     else
     {
@@ -152,13 +154,14 @@ void ModelKey::attachModelNodeKeepinSkin()
 
 void ModelKey::skinChanged(const std::string& value)
 {
-	// Check if we have a skinnable model
-	auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
+    // Store this value locally
+    _model.explicitSkin = value;
 
-	if (skinned)
-	{
-		skinned->skinChanged(value);
-	}
+    // Check if we have a skinnable model
+    if (auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node); skinned)
+    {
+        skinned->skinChanged(_model.explicitSkin);
+    }
 }
 
 void ModelKey::connectUndoSystem(IUndoSystem& undoSystem)

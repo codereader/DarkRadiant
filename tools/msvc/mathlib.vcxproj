@@ -161,6 +161,7 @@
     <ClInclude Include="..\..\libs\math\Vector4.h" />
     <ClInclude Include="..\..\libs\math\Viewer.h" />
     <ClInclude Include="..\..\libs\math\ViewProjection.h" />
+    <ClInclude Include="..\..\libs\math\XYZ.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="natvis\mathlib.natvis">

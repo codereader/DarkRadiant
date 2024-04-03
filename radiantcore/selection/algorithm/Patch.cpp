@@ -83,7 +83,7 @@ void capPatch(const cmd::ArgumentList& args)
 
 		for (const auto& patchNode : patchNodes)
 		{
-			patch::algorithm::createCaps(patchNode->getPatchInternal(), patchNode->getParent(), 
+			patch::algorithm::createCaps(patchNode->getPatch(), patchNode->getParent(), 
 				capType, GlobalShaderClipboard().getShaderName());
 		}
 	}

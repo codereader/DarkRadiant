@@ -33,8 +33,5 @@ copy ..\..\windeps\ftgl\bin\ftgl%DEBUG_SUFFIX%-%2.dll ..\..\install /Y
 @echo Copying sigc++ library (64 bit)
 copy "..\..\windeps\libsigc++\bin\libsigc++%DEBUG_SUFFIX%-%2.dll" ..\..\install /Y
 
-@echo Copying libxml2 library (64 bit)
-copy ..\..\windeps\libxml2\bin\libxml2%DEBUG_SUFFIX%-%2.dll ..\..\install /Y
-
 @echo Copying libgit2 library (64-bit)
 copy ..\..\windeps\libgit2\bin\libgit2%DEBUG_SUFFIX%.dll ..\..\install /Y

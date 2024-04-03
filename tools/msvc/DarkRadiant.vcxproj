@@ -53,7 +53,6 @@
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\DarkRadiant Main Executable.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
@@ -63,7 +62,6 @@
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\DarkRadiant Main Executable.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
@@ -73,7 +71,6 @@
     <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\DarkRadiant Main Executable.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
@@ -83,7 +80,6 @@
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\DarkRadiant Main Executable.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
@@ -111,7 +107,7 @@
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -134,7 +130,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <BrowseInformation>
       </BrowseInformation>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -153,7 +149,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -174,7 +170,7 @@
     <ClCompile>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -241,8 +237,10 @@
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />
+    <ClCompile Include="..\..\radiant\ui\einspector\Algorithm.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\EntityInspectorModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\FxPropertyEditor.cpp" />
+    <ClCompile Include="..\..\radiant\ui\einspector\InheritPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp" />
     <ClCompile Include="..\..\radiant\ui\favourites\FavouritesBrowser.cpp" />
@@ -369,10 +367,10 @@
     <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
+    <ClCompile Include="..\..\radiant\xyview\OrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
-    <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\ApplicationContext.h" />
@@ -439,8 +437,10 @@
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />
+    <ClInclude Include="..\..\radiant\ui\einspector\Algorithm.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\EntityInspectorModule.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\FxPropertyEditor.h" />
+    <ClInclude Include="..\..\radiant\ui\einspector\InheritPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\TargetKey.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\EntityList.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\EntityListControl.h" />
@@ -604,6 +604,7 @@
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanelControl.h" />
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
+    <ClInclude Include="..\..\radiant\xyview\OrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraMoveTool.h" />
@@ -613,7 +614,6 @@
     <ClInclude Include="..\..\radiant\xyview\tools\XYMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
-    <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
     <ClInclude Include="..\..\radiant\log\PIDFile.h" />
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h" />
   </ItemGroup>

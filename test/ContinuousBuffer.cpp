@@ -6,13 +6,6 @@
 namespace test
 {
 
-namespace
-{
-
-TestBufferObjectProvider _testBufferObjectProvider;
-
-}
-
 template<typename T>
 bool checkData(render::ContinuousBuffer<T>& buffer, typename render::ContinuousBuffer<T>::Handle handle, const std::vector<T>& data)
 {
@@ -638,7 +631,7 @@ TEST(ContinuousBufferTest, SyncToBufferAfterApplyingTransaction)
     });
 
     // Apply this transaction to the first buffer
-    buffer.applyTransactions(transactionLog, buffer2, [&](render::IGeometryStore::Slot slot) { return slot; });
+    buffer.applyTransactions(transactionLog, buffer2, [&](render::IGeometryStore::Slot slot) { return static_cast<uint32_t>(slot); });
 
     // Sync it should modify a subset of the buffer object only
     buffer.syncModificationsToBufferObject(bufferObject);

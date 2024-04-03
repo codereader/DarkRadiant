@@ -7,7 +7,12 @@
 
 #include <pybind11/embed.h>
 #include <pybind11/stl_bind.h>
+#include <pybind11/attr.h>
+#include <pybind11/eval.h>
+
 #include "itextstream.h"
+#include "os/file.h"
+#include "os/path.h"
 
 namespace script
 {
@@ -36,6 +41,10 @@ PythonModule::~PythonModule()
     _globals.reset();
 
     py::finalize_interpreter();
+
+    // The memory allocated to initialise the module_def structure
+    // needs to stay alive until the interpreter is finalised
+    _moduleDef.reset();
 }
 
 void PythonModule::initialise()
@@ -125,6 +134,41 @@ ExecutionResultPtr PythonModule::executeString(const std::string& scriptString)
     return result;
 }
 
+void PythonModule::executeScriptFile(const std::string& scriptBasePath, const std::string& relativeScriptPath, bool setExecuteCommandAttr)
+{
+    try
+    {
+        auto fullPath = scriptBasePath + relativeScriptPath;
+
+        // Prevent calling exec_file with a non-existent file, we would
+        // get crashes during Py_Finalize later on.
+        if (!os::fileOrDirExists(fullPath))
+        {
+            rError() << "Error: File " << fullPath << " doesn't exist." << std::endl;
+            return;
+        }
+
+        py::dict locals;
+
+        if (setExecuteCommandAttr)
+        {
+            locals["__executeCommand__"] = true;
+        }
+
+        // Attempt to run the specified script
+        py::eval_file(fullPath, getGlobals(), locals);
+    }
+    catch (std::invalid_argument& e)
+    {
+        rError() << "Error trying to execute file " << relativeScriptPath << ": " << e.what() << std::endl;
+    }
+    catch (const py::error_already_set& ex)
+    {
+        rError() << "Error while executing file: " << relativeScriptPath << ": " << std::endl;
+        rError() << ex.what() << std::endl;
+    }
+}
+
 py::dict& PythonModule::getGlobals()
 {
     if (!_globals)
@@ -153,8 +197,8 @@ PyObject* PythonModule::initialiseModule()
 {
 	try
 	{
-        static py::module::module_def _moduleDef;
-        _module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", &_moduleDef);
+        _moduleDef = std::make_unique<py::module::module_def>();
+        _module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", _moduleDef.get());
 
         // Add the registered interfaces
         for (const auto& i : _namedInterfaces)
@@ -227,6 +271,56 @@ bool PythonModule::interfaceExists(const std::string& name)
     }
 
     return false;
+}
+
+ScriptCommand::Ptr PythonModule::createScriptCommand(const std::string& scriptBasePath, const std::string& relativeScriptPath)
+{
+    try
+    {
+        auto fullPath = scriptBasePath + relativeScriptPath;
+
+        // Create a new dictionary for the initialisation routine
+        py::dict locals;
+
+        // Disable the flag for initialisation, just to be sure
+        locals["__executeCommand__"] = false;
+
+        // Attempt to run the specified script
+        py::eval_file(fullPath, getGlobals(), locals);
+
+        std::string cmdName;
+        std::string cmdDisplayName;
+
+        if (locals.contains("__commandName__"))
+        {
+            cmdName = locals["__commandName__"].cast<std::string>();
+        }
+
+        if (locals.contains("__commandDisplayName__"))
+        {
+            cmdDisplayName = locals["__commandDisplayName__"].cast<std::string>();
+        }
+
+        if (!cmdName.empty())
+        {
+            if (cmdDisplayName.empty())
+            {
+                cmdDisplayName = cmdName;
+            }
+
+            // Successfully retrieved the command
+            return std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, relativeScriptPath);
+        }
+
+        rError() << "Script file " << relativeScriptPath << " does not export a __commandName__ value" << std::endl;
+        return {};
+    }
+    catch (const py::error_already_set& ex)
+    {
+        rError() << "Script file " << relativeScriptPath << " is not a valid command:" << std::endl;
+        rError() << ex.what() << std::endl;
+        return {};
+    }
 }
 
 PythonModule* PythonModule::_instance = nullptr;

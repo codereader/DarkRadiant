@@ -2,7 +2,10 @@
 <component type="desktop-application">
   <id>net.darkradiant.DarkRadiant</id>
   <name>DarkRadiant</name>
-  <summary>3D level editor for The Dark Mod and Doom 3</summary>
+  <summary>3D level editor for The Dark Mod</summary>
+  <developer id="net.darkradiant">
+    <name>The DarkRadiant Team</name>
+  </developer>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0-or-later</project_license>
   <content_rating type="oars-1.1" />
@@ -31,44 +34,45 @@
     </p>
     <p>
       Feature Highlights include:
-      <ul>
-          <li>Media Browser</li>
-          <li>Surface / Patch / Light Inspector</li>
-          <li>Layers, Grouping and Selection Sets</li>
-          <li>Model Scaling</li>
-          <li>Particle Editor incl. realtime Preview</li>
-          <li>Export entire map sections to ASE, LWO and OBJ format</li>
-          <li>Browsers for Models, Entity Classes, Skins, Sounds</li>
-          <li>Support for most idTech4 shader features</li>
-          <li>TexTool (U/V Editing Tool)</li>
-          <li>MD5 Animation Viewer</li>
-          <li>Curve Editing</li>
-          <li>Drag-Manipulation of Brushes, Patches and Lights (Point and Projected)</li>
-          <li>Python Script Interface</li>
-          <li>Game support for: The Dark Mod 2.0, Doom 3, Quake 4, Quake 3, XreaL</li>
-          <li>Imports all kinds of maps in classic Quake/idTech map formats</li>
-          <li>Exports maps to Doom 3 / Quake4 / Quake 3 format</li>
-          <li>Customisable colour schemes</li>
-          <li>English and German localisation</li>
-      </ul>
     </p>
+    <ul>
+      <li>Media Browser</li>
+      <li>Surface / Patch / Light Inspector</li>
+      <li>Layers, Grouping and Selection Sets</li>
+      <li>Model Scaling</li>
+      <li>Particle Editor incl. realtime Preview</li>
+      <li>Export entire map sections to ASE, LWO and OBJ format</li>
+      <li>Browsers for Models, Entity Classes, Skins, Sounds</li>
+      <li>Support for most idTech4 shader features</li>
+      <li>TexTool (U/V Editing Tool)</li>
+      <li>MD5 Animation Viewer</li>
+      <li>Curve Editing</li>
+      <li>Drag-Manipulation of Brushes, Patches and Lights (Point and Projected)</li>
+      <li>Python Script Interface</li>
+      <li>Game support for: The Dark Mod 2.0, Doom 3, Quake 4, Quake 3, XreaL</li>
+      <li>Imports all kinds of maps in classic Quake/idTech map formats</li>
+      <li>Exports maps to Doom 3 / Quake4 / Quake 3 format</li>
+      <li>Customisable colour schemes</li>
+      <li>English and German localisation</li>
+    </ul>
     <p>
       Our goal is to provide the TDM fan-mission community with a capable and easy-to-use editor. To achieve this, specialised plugins were developed to assist authors in tackling the complex mission creating tasks:
-      <ul>
-        <li>Stim/Response Editor</li>
-        <li>Objectives Editor</li>
-        <li>Difficulty Editor</li>
-        <li>Conversation Editor</li>
-        <li>AI Property Panel</li>
-        <li>Readable Editor incl. Preview</li>
-        <li>AI Head Selector</li>
-      </ul>
     </p>
+    <ul>
+      <li>Stim/Response Editor</li>
+      <li>Objectives Editor</li>
+      <li>Difficulty Editor</li>
+      <li>Conversation Editor</li>
+      <li>AI Property Panel</li>
+      <li>Readable Editor incl. Preview</li>
+      <li>AI Head Selector</li>
+    </ul>
   </description>
   
   <launchable type="desktop-id">net.darkradiant.DarkRadiant.desktop</launchable>
 
   <releases>
+    <release version="3.9.0" date="2024-03-31"/>
     <release version="3.8.0" date="2023-02-03"/>
     <release version="3.7.0" date="2022-11-22"/>
     <release version="3.6.0" date="2022-11-12"/>

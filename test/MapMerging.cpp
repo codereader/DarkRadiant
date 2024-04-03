@@ -1615,6 +1615,11 @@ void verifyTargetChanges1(const scene::IMapRootNodePtr& targetRoot)
     EXPECT_EQ(func_static_3_childCount, 4);
 
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/12")); // brush_12 got moved to the left
+
+    auto entity_to_be_moved = algorithm::getEntityByName(targetRoot, "entity_to_be_moved");
+    EXPECT_EQ(algorithm::getChildCount(entity_to_be_moved), 2) << "entity_to_be_moved should have two child primitives";
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(entity_to_be_moved, "textures/numbers/18")); // one brush with texture 18
+    EXPECT_TRUE(algorithm::findFirstPatchWithMaterial(entity_to_be_moved, "textures/numbers/18")); // one patch with texture 18
 }
 
 TEST_F(ThreeWayMergeTest, NonconflictingEntityAddition)
@@ -1665,6 +1670,55 @@ TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveAddition)
     action->applyChanges();
 
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/16")); // brush_16 added to worldspawn
+
+    verifyTargetChanges1(operation->getTargetRoot());
+}
+
+// A func_static is moved a few units, this results in a new origin spawnarg and all primitives to be removed and re-added
+TEST_F(ThreeWayMergeTest, NonConflictingFuncStaticMove)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges1(operation->getTargetRoot());
+
+    auto entity_to_be_moved = algorithm::getEntityByName(operation->getTargetRoot(), "entity_to_be_moved");
+    EXPECT_EQ(Node_getEntity(entity_to_be_moved)->getKeyValue("origin"), "386 -192 32") << "The entity has an unexpected origin";
+
+    // Check the removals
+    auto brushRemovalCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
+    {
+        return algorithm::brushHasMaterial("textures/numbers/18")(action->getNodeToRemove());
+    });
+    EXPECT_EQ(brushRemovalCount, 1) << "a brush should be removed from entity_to_be_moved";
+
+    auto patchRemovalCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
+    {
+        return algorithm::patchHasMaterial("textures/numbers/18")(action->getNodeToRemove());
+    });
+    EXPECT_EQ(patchRemovalCount, 1) << "a patch should be removed from entity_to_be_moved";
+
+    // Two additions should be scheduled
+    auto brushAdditionCount = countActions<AddChildAction>(operation, [&](const std::shared_ptr<AddChildAction>& action)
+    {
+        return algorithm::brushHasMaterial("textures/numbers/18")(action->getSourceNodeToAdd()) && action->getParent() == entity_to_be_moved;
+    });
+    EXPECT_EQ(brushAdditionCount, 1) << "A brush should be added to entity_to_be_moved";
+
+    auto patchAdditionCount = countActions<AddChildAction>(operation, [&](const std::shared_ptr<AddChildAction>& action)
+    {
+        return algorithm::patchHasMaterial("textures/numbers/18")(action->getSourceNodeToAdd()) && action->getParent() == entity_to_be_moved;
+    });
+    EXPECT_EQ(patchAdditionCount, 1) << "A patch should be added to entity_to_be_moved";
+
+    operation->applyActions();
+
+    // Inspect the entity after the merge
+    entity_to_be_moved = algorithm::getEntityByName(operation->getTargetRoot(), "entity_to_be_moved");
+
+    EXPECT_EQ(algorithm::getChildCount(entity_to_be_moved), 2) << "entity_to_be_moved should have two child primitives after the merge";
+    EXPECT_EQ(Node_getEntity(entity_to_be_moved)->getKeyValue("origin"), "386 -256 32") << "The entity should have a new origin key value";
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(entity_to_be_moved, "textures/numbers/18")); // one brush with texture 18
+    EXPECT_TRUE(algorithm::findFirstPatchWithMaterial(entity_to_be_moved, "textures/numbers/18")); // one patch with texture 18
 
     verifyTargetChanges1(operation->getTargetRoot());
 }

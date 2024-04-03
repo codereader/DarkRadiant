@@ -63,7 +63,6 @@
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\libgit2.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\zlib.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,7 +71,6 @@
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\libgit2.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\zlib.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -81,7 +79,6 @@
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\libgit2.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\zlib.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -90,7 +87,6 @@
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\libgit2.props" />
     <Import Project="properties\wxWidgets.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\zlib.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />

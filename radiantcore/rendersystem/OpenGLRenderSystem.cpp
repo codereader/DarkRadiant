@@ -213,8 +213,8 @@ void OpenGLRenderSystem::realise()
 
     _realised = true;
 
-    // Make sure we realise the shaders even if a shader program is not active to begin with
-    if (shaderProgramsAvailable()) {
+    if (shaderProgramsAvailable() && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
+    {
         _glProgramFactory->realise();
     }
 

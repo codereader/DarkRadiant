@@ -192,8 +192,7 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
     {
         radiant::ScopedLongRunningOperation blocker(_("Loading textures..."));
 
-        GlobalSceneGraph().root()->setRenderSystem(std::dynamic_pointer_cast<RenderSystem>(
-            module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
+        assignRenderSystem(GlobalSceneGraph().root());
     }
 
     // Update layer visibility of all nodes
@@ -217,6 +216,12 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 
     // Clear the modified flag
     setModified(false);
+}
+
+void Map::assignRenderSystem(const scene::IMapRootNodePtr& root)
+{
+    root->setRenderSystem(std::dynamic_pointer_cast<RenderSystem>(
+        module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
 }
 
 void Map::finishMergeOperation()
@@ -1341,6 +1346,8 @@ void Map::startMergeOperation(const std::string& sourceMap)
     {
         if (sourceMapResource->load())
         {
+            assignRenderSystem(sourceMapResource->getRootNode());
+
             // Compare the scenes and get the report
             auto result = scene::merge::GraphComparer::Compare(sourceMapResource->getRootNode(), getRoot());
 
@@ -1383,6 +1390,10 @@ void Map::startMergeOperation(const std::string& sourceMap, const std::string& b
     {
         if (sourceMapResource->load() && baseMapResource->load())
         {
+            // Assign a rendersystem to let all nodes capture their shaders
+            assignRenderSystem(sourceMapResource->getRootNode());
+            assignRenderSystem(baseMapResource->getRootNode());
+
             _mergeOperation = scene::merge::ThreeWayMergeOperation::Create(
                 baseMapResource->getRootNode(), sourceMapResource->getRootNode(), getRoot());
 
@@ -1483,7 +1494,7 @@ void Map::emitMapEvent(MapEvent ev)
     }
     catch (std::runtime_error & ex)
     {
-        radiant::NotificationMessage::SendError(fmt::format(_("Failure running map event {0}:\n{1}"), ev, ex.what()));
+        radiant::NotificationMessage::SendError(fmt::format(_("Failure running map event {0}:\n{1}"), static_cast<int>(ev), ex.what()));
     }
 }
 

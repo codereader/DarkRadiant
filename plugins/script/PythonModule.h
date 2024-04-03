@@ -7,6 +7,7 @@
 #include <pybind11/pybind11.h>
 
 #include "PythonConsoleWriter.h"
+#include "ScriptCommand.h"
 
 namespace py = pybind11;
 
@@ -16,6 +17,8 @@ namespace script
 class PythonModule final
 {
 private:
+    std::unique_ptr<py::module::module_def> _moduleDef;
+
 	// Python module and global dictionary
 	py::module _module;
 	std::unique_ptr<py::dict> _globals;
@@ -48,10 +51,17 @@ public:
 
     ExecutionResultPtr executeString(const std::string& scriptString);
 
+    // Execute the given script file
+    void executeScriptFile(const std::string& scriptBasePath, const std::string& relativeScriptPath, bool setExecuteCommandAttr);
+
 	// Get the global object dictionary of this module
 	py::dict& getGlobals();
 
     void addInterface(const NamedInterface& iface);
+
+    // Attempts to create a script command from the given .py file
+    // Will return an empty object if the file path is not a valid file
+    ScriptCommand::Ptr createScriptCommand(const std::string& scriptBasePath, const std::string& relativeScriptPath);
 
 private:
     // Register the darkradiant module with the inittab pointing to InitModule

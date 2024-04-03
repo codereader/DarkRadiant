@@ -1,0 +1,259 @@
+model some_base_modeldef_without_skin
+{
+	mesh		models/md5/testflag.md5mesh
+}
+
+model some_base_modeldef_with_skin
+{
+	skin		swap_flag_pirate_with_caulk
+	mesh		models/md5/testflag.md5mesh
+}
+
+model some_modeldef_inheriting_model_only
+{
+	inherit		some_base_modeldef_without_skin
+}
+
+model some_modeldef_inheriting_model_and_skin
+{
+	inherit		some_base_modeldef_with_skin
+}
+
+model some_modeldef_overriding_inherited_skin
+{
+	inherit		some_base_modeldef_with_skin
+	skin		swap_flag_pirate_with_nodraw
+}
+
+skin swap_flag_pirate_with_caulk
+{
+	flag_pirate textures/common/caulk
+}
+
+skin swap_flag_pirate_with_nodraw
+{
+	flag_pirate textures/common/nodraw
+}
+
+skin swap_flag_pirate_with_visportal
+{
+	flag_pirate textures/editor/visportal
+}
+
+// This skin is only used in the unit test code
+skin swap_flag_pirate_with_aassolid
+{
+	flag_pirate textures/editor/aassolid
+}
+
+// ============= A couple of entityDefs directly using the modelDefs, no other spawnargs ================
+
+entityDef entity_using_some_base_modeldef_without_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_base_modeldef_without_skin"
+}
+
+entityDef entity_using_some_base_modeldef_with_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_base_modeldef_with_skin"
+}
+
+entityDef entity_using_some_modeldef_inheriting_model_only
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_modeldef_inheriting_model_only"
+}
+
+entityDef entity_using_some_modeldef_inheriting_model_and_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_modeldef_inheriting_model_and_skin"
+}
+
+entityDef entity_using_some_modeldef_overriding_inherited_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_modeldef_overriding_inherited_skin"
+}
+
+// ============= A couple of entityDefs inheriting from the above entityDefs, no other spawnargs ================
+
+entityDef entity_inheriting_some_base_modeldef_without_skin
+{
+	"inherit"				"entity_using_some_base_modeldef_without_skin"
+}
+
+entityDef entity_inheriting_entity_using_some_base_modeldef_with_skin
+{
+	"inherit"				"entity_using_some_base_modeldef_with_skin"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_inheriting_model_only
+{
+	"inherit"				"entity_using_some_modeldef_inheriting_model_only"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin
+{
+	"inherit"				"entity_using_some_modeldef_inheriting_model_and_skin"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin
+{
+	"inherit"				"entity_using_some_modeldef_overriding_inherited_skin"
+}
+
+// ============= A set of entities inheriting from entityDefs using modelDefs, but defining their own "skin" spawnargs
+
+entityDef entity_inheriting_some_base_modeldef_without_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_base_modeldef_without_skin"
+	"skin"					"swap_flag_pirate_with_nodraw"
+}
+
+entityDef entity_inheriting_entity_using_some_base_modeldef_with_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_base_modeldef_with_skin"
+	"skin"					"swap_flag_pirate_with_nodraw"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_inheriting_model_only_overriding_skin
+{
+	"inherit"				"entity_using_some_modeldef_inheriting_model_only"
+	"skin"					"swap_flag_pirate_with_nodraw"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_modeldef_inheriting_model_and_skin"
+	"skin"					"swap_flag_pirate_with_nodraw"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_modeldef_overriding_inherited_skin"
+	"skin"					"swap_flag_pirate_with_nodraw"
+}
+
+// ============= A couple of entities directly using modelDefs, but defining a custom skin spawnarg
+
+entityDef entity_using_some_base_modeldef_without_skin_overriding_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_base_modeldef_without_skin"
+	"skin"					"swap_flag_pirate_with_visportal"
+}
+
+entityDef entity_using_some_base_modeldef_with_skin_overriding_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_base_modeldef_with_skin"
+	"skin"					"swap_flag_pirate_with_visportal"
+}
+
+entityDef entity_using_some_modeldef_inheriting_model_only_overriding_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_modeldef_inheriting_model_only"
+	"skin"					"swap_flag_pirate_with_visportal"
+}
+
+entityDef entity_using_some_modeldef_inheriting_model_and_skin_only_overriding_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_modeldef_inheriting_model_and_skin"
+	"skin"					"swap_flag_pirate_with_visportal"
+}
+
+entityDef entity_using_some_modeldef_overriding_inherited_skin_overriding_skin
+{
+	"inherit"				"func_static"
+
+	"editor_color"			"0 1 0"
+	"editor_mins"			"-32 -32 -32"
+	"editor_maxs"			"32 32 32"
+
+	"model"					"some_modeldef_overriding_inherited_skin"
+	"skin"					"swap_flag_pirate_with_visportal"
+}
+
+// ============ A set of entities inheriting from above entityDefs, but overriding the custom skin with caulk
+
+entityDef entity_inheriting_entity_using_some_base_modeldef_without_skin_overriding_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_base_modeldef_without_skin_overriding_skin"
+	"skin"					"swap_flag_pirate_with_caulk"
+}
+
+entityDef entity_inheriting_entity_using_some_base_modeldef_with_skin_overriding_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_base_modeldef_with_skin_overriding_skin"
+	"skin"					"swap_flag_pirate_with_caulk"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_inheriting_model_only_overriding_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_modeldef_inheriting_model_only_overriding_skin"
+	"skin"					"swap_flag_pirate_with_caulk"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_inheriting_model_and_skin_only_overriding_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_modeldef_inheriting_model_and_skin_only_overriding_skin"
+	"skin"					"swap_flag_pirate_with_caulk"
+}
+
+entityDef entity_inheriting_entity_using_some_modeldef_overriding_inherited_skin_overriding_skin_overriding_skin
+{
+	"inherit"				"entity_using_some_modeldef_overriding_inherited_skin_overriding_skin"
+	"skin"					"swap_flag_pirate_with_caulk"
+}
+
+

@@ -55,7 +55,6 @@
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
@@ -63,7 +62,6 @@
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
@@ -71,7 +69,6 @@
     <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
@@ -79,7 +76,6 @@
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\DarkRadiant Plugin DLL.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\libxml2.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -111,7 +107,7 @@
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -142,7 +138,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <BrowseInformation>
       </BrowseInformation>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -169,7 +165,7 @@
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -200,7 +196,7 @@
     <ClCompile>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>%(PrecompiledHeaderFile)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -11,6 +11,7 @@
 
 #include "TestContext.h"
 #include "TestLogFile.h"
+#include "TestOrthoViewManager.h"
 #include "HeadlessOpenGLContext.h"
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
@@ -169,6 +170,7 @@ protected:
 
 		_coreModule->get()->getModuleRegistry().registerModule(_glContextModule);
 		_coreModule->get()->getModuleRegistry().registerModule(_fakeClipboard);
+		_coreModule->get()->getModuleRegistry().registerModule(std::make_shared<TestOrthoViewManager>());
 	}
 
 	virtual void loadMap(const std::string& mapsRelativePath)

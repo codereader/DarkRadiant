@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 
 #include <fstream>
+
+#include "algorithm/FileUtils.h"
 #include "settings/MajorMinorVersion.h"
 #include "settings/SettingsManager.h"
 #include "module/ApplicationContextBase.h"
@@ -218,11 +220,7 @@ inline std::string loadSettingsFile(const IApplicationContext& context, const st
 
     if (existingFile.empty()) return {};
 
-    std::ifstream file(existingFile);
-    std::stringstream content;
-    content << file.rdbuf();
-
-    return content.str();
+    return algorithm::loadFileToString(existingFile);
 }
 
 // Checks that the version/base settings folders are respecting the version sort order

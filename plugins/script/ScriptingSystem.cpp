@@ -1,13 +1,6 @@
 #include "ScriptingSystem.h"
 
-#include <pybind11/pybind11.h>
-#include <pybind11/attr.h>
-#include <pybind11/eval.h>
-
-#include "i18n.h"
 #include "itextstream.h"
-#include "iradiant.h"
-#include "ui/imainframe.h"
 #include "iundo.h"
 
 #include "interfaces/MathInterface.h"
@@ -41,13 +34,21 @@
 #include "SceneNodeBuffer.h"
 
 #include "os/fs.h"
-#include "os/file.h"
 #include "os/path.h"
 #include <functional>
 #include "string/case_conv.h"
 
 namespace script 
 {
+
+namespace
+{
+    constexpr const char* const EXAMPLE_SCRIPT_NAME = "Example";
+    constexpr const char* const INIT_SCRIPT_FILENAME = "init.py";
+    constexpr const char* const PYTHON_FILE_EXTENSION = "py";
+    constexpr const char* const SCRIPT_PATH = "scripts/"; // relative to the runtime data folder
+    constexpr const char* const COMMAND_PATH = "commands/"; // relative to SCRIPT_PATH
+}
 
 ScriptingSystem::ScriptingSystem() :
 	_initialised(false)
@@ -65,37 +66,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename)
 
 void ScriptingSystem::executeScriptFile(const std::string& filename, bool setExecuteCommandAttr)
 {
-	try
-	{
-        std::string filePath = _scriptPath + filename;
-
-        // Prevent calling exec_file with a non-existent file, we would
-        // get crashes during Py_Finalize later on.
-        if (!os::fileOrDirExists(filePath))
-        { 
-            rError() << "Error: File " << filePath << " doesn't exist." << std::endl;
-            return;
-        }
-
-		py::dict locals;
-
-		if (setExecuteCommandAttr)
-		{
-			locals["__executeCommand__"] = true;
-		}
-
-		// Attempt to run the specified script
-		py::eval_file(filePath, _pythonModule->getGlobals(), locals);
-	}
-    catch (std::invalid_argument& e)
-    {
-        rError() << "Error trying to execute file " << filename << ": " << e.what() << std::endl;
-    }
-	catch (const py::error_already_set& ex)
-	{
-		rError() << "Error while executing file: " << filename << ": " << std::endl;
-		rError() << ex.what() << std::endl;
-	}
+    _pythonModule->executeScriptFile(_scriptPath, filename, setExecuteCommandAttr);
 }
 
 ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptString)
@@ -107,7 +78,7 @@ void ScriptingSystem::foreachScriptCommand(const std::function<void(const IScrip
 {
 	for (const auto& pair : _commands)
 	{
-		if (pair.first == "Example") continue; // skip the example script
+		if (pair.first == EXAMPLE_SCRIPT_NAME) continue; // skip the example script
 
 		functor(*pair.second);
 	}
@@ -126,7 +97,7 @@ void ScriptingSystem::initialise()
 	_initialised = true;
 
 	// Start the init script
-	executeScriptFile("init.py");
+	executeScriptFile(INIT_SCRIPT_FILENAME);
 
 	// Search script folder for commands
 	reloadScripts();
@@ -153,87 +124,53 @@ void ScriptingSystem::reloadScriptsCmd(const cmd::ArgumentList& args)
 
 void ScriptingSystem::executeCommand(const std::string& name)
 {
-	// Sanity check
-	if (!_initialised)
-	{
-		rError() << "Cannot execute script command " << name
-			<< ", ScriptingSystem not initialised yet." << std::endl;
-		return;
-	}
+    // Sanity check
+    if (!_initialised)
+    {
+        rError() << "Cannot execute script command " << name
+            << ", ScriptingSystem not initialised yet." << std::endl;
+        return;
+    }
 
-	// Lookup the name
-	ScriptCommandMap::iterator found = _commands.find(name);
+    // Lookup the name
+    auto found = _commands.find(name);
 
-	if (found == _commands.end())
-	{
-		rError() << "Couldn't find command " << name << std::endl;
-		return;
-	}
+    if (found == _commands.end())
+    {
+        rError() << "Couldn't find command " << name << std::endl;
+        return;
+    }
 
     UndoableCommand cmd("runScriptCommand " + name);
 
-	// Execute the script file behind this command
-	executeScriptFile(found->second->getFilename(), true);
+    // Execute the script file behind this command
+    executeScriptFile(found->second->getFilename(), true);
 }
 
 void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 {
-	try
-	{
-		// Create a new dictionary for the initialisation routine
-		py::dict locals;
+    auto command = _pythonModule->createScriptCommand(_scriptPath, scriptFilename);
 
-		// Disable the flag for initialisation, just for sure
-		locals["__executeCommand__"] = false;
+    if (!command)
+    {
+        // The python module already emitted some errors to the log, just exit
+        return;
+    }
 
-		// Attempt to run the specified script
-		py::eval_file(_scriptPath + scriptFilename, _pythonModule->getGlobals(), locals);
+    // Try to register this named command
+    auto result = _commands.emplace(command->getName(), command);
 
-		std::string cmdName;
-		std::string cmdDisplayName;
-
-		if (locals.contains("__commandName__"))
-		{
-			cmdName = locals["__commandName__"].cast<std::string>();
-		}
-
-		if (locals.contains("__commandDisplayName__"))
-		{
-			cmdDisplayName = locals["__commandDisplayName__"].cast<std::string>();
-		}
-
-		if (!cmdName.empty())
-		{
-			if (cmdDisplayName.empty())
-			{
-				cmdDisplayName = cmdName;
-			}
-
-			// Successfully retrieved the command
-			auto cmd = std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, scriptFilename);
-
-			// Try to register this named command
-			auto result = _commands.insert(std::make_pair(cmdName, cmd));
-
-			// Result.second is TRUE if the insert succeeded
-			if (result.second) 
-			{
-				rMessage() << "Registered script file " << scriptFilename
-					<< " as " << cmdName << std::endl;
-			}
-			else 
-			{
-				rError() << "Error in " << scriptFilename << ": Script command "
-					<< cmdName << " has already been registered in "
-					<< _commands[cmdName]->getFilename() << std::endl;
-			}
-		}
-	}
-	catch (const py::error_already_set& ex)
-	{
-		rError() << "Script file " << scriptFilename << " is not a valid command:" << std::endl;
-		rError() << ex.what() << std::endl;
-	}
+    // Result.second is TRUE if the insert succeeded
+    if (result.second)
+    {
+        rMessage() << "Registered script file " << scriptFilename << " as " << command->getName() << std::endl;
+    }
+    else
+    {
+        rError() << "Error in " << scriptFilename << ": Script command "
+            << command->getName() << " has already been registered in "
+            << _commands[command->getName()]->getFilename() << std::endl;
+    }
 }
 
 void ScriptingSystem::reloadScripts()
@@ -242,7 +179,7 @@ void ScriptingSystem::reloadScripts()
 	_commands.clear();
 
 	// Initialise the search's starting point
-	fs::path start = fs::path(_scriptPath) / "commands/";
+	fs::path start = fs::path(_scriptPath) / COMMAND_PATH;
 
 	if (!fs::exists(start))
 	{
@@ -261,7 +198,7 @@ void ScriptingSystem::reloadScripts()
 		std::string extension = os::getExtension(candidate.string());
 		string::to_lower(extension);
 
-		if (extension != "py") continue;
+		if (extension != PYTHON_FILE_EXTENSION) continue;
 
 		// Script file found, construct a new command
 		loadCommandScript(os::getRelativePath(candidate.generic_string(), _scriptPath));
@@ -295,10 +232,10 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	module::GlobalModuleRegistry().signal_allModulesInitialised()
-		.connect(sigc::mem_fun(this, &ScriptingSystem::initialise));
+		.connect(sigc::mem_fun(*this, &ScriptingSystem::initialise));
 
 	// Construct the script path
-	_scriptPath = ctx.getRuntimeDataPath() + "scripts/";
+	_scriptPath = ctx.getRuntimeDataPath() + SCRIPT_PATH;
 
 	// Set up the python interpreter
     _pythonModule.reset(new PythonModule);

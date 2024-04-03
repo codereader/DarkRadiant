@@ -47,7 +47,7 @@ void ObjectRenderer::submitGeometry(IGeometryStore::Slot slot, GLenum primitiveM
     const auto renderParams = _store.getBufferAddresses(slot);
 
     glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
-        GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
+        GL_UNSIGNED_INT, const_cast<unsigned int*>(renderParams.firstIndex), static_cast<GLint>(renderParams.firstVertex));
 }
 
 void ObjectRenderer::submitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode)
@@ -82,7 +82,7 @@ void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeom
 
     // Build the indices and offsets used for the glMulti draw call
     std::vector<GLsizei> sizes;
-    std::vector<const void*> firstIndices;
+    std::vector<void*> firstIndices;
     std::vector<GLint> firstVertices;
 
     sizes.reserve(surfaceCount);
@@ -95,7 +95,7 @@ void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeom
 
         sizes.push_back(static_cast<GLsizei>(renderParams.indexCount));
         firstVertices.push_back(static_cast<GLint>(renderParams.firstVertex));
-        firstIndices.push_back(renderParams.firstIndex);
+        firstIndices.push_back(const_cast<unsigned int*>(renderParams.firstIndex));
     }
 
     glMultiDrawElementsBaseVertex(primitiveMode, sizes.data(), GL_UNSIGNED_INT,

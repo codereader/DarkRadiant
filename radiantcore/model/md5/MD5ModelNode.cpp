@@ -109,7 +109,7 @@ void MD5ModelNode::onPreRender(const VolumeTest& volume)
 
 std::string MD5ModelNode::getSkin() const
 {
-    return _skin;
+    return !_skin.empty() ? _skin : _defaultSkin;
 }
 
 void MD5ModelNode::skinChanged(const std::string& newSkinName)
@@ -119,10 +119,15 @@ void MD5ModelNode::skinChanged(const std::string& newSkinName)
 
     // greebo: Acquire the ModelSkin reference from the SkinCache (might return null)
     // Applying the skin might trigger onModelShadersChanged()
-    _model->applySkin(GlobalModelSkinCache().findSkin(_skin));
+    _model->applySkin(GlobalModelSkinCache().findSkin(getSkin()));
 
     // Refresh the scene
     GlobalSceneGraph().sceneChanged();
+}
+
+void MD5ModelNode::setDefaultSkin(const std::string& defaultSkin)
+{
+    _defaultSkin = defaultSkin;
 }
 
 void MD5ModelNode::onModelShadersChanged()

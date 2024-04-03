@@ -485,7 +485,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
 
-	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
+	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
 	// ----------------------- Bind Events ---------------------------------------
 

@@ -73,19 +73,24 @@ public:
 class SkinnedModel
 {
 public:
-    // destructor
-	virtual ~SkinnedModel() {}
+    using Ptr = std::shared_ptr<SkinnedModel>;
 
-	// greebo: Updates the model's surface remaps. Pass the new skin name (can be empty).
-	virtual void skinChanged(const std::string& newSkinName) = 0;
+    virtual ~SkinnedModel() {}
 
-	// Returns the name of the currently active skin
-	virtual std::string getSkin() const = 0;
+    // greebo: Updates the model's surface remaps. Pass the new skin name (can be empty).
+    virtual void skinChanged(const std::string& newSkinName) = 0;
+
+    // Returns the name of the currently active skin
+    // If no explicit skin has been defined through skinChanged, this returns the default skin
+    virtual std::string getSkin() const = 0;
+
+    // Define the skin that is active when an empty skin name is active
+    // This is basically referring to the skin value in the modelDefs
+    virtual void setDefaultSkin(const std::string& defaultSkin) = 0;
 };
-typedef std::shared_ptr<SkinnedModel> SkinnedModelPtr;
 
 // Model skinlist typedef
-typedef std::vector<std::string> StringList;
+using StringList = std::vector<std::string>;
 
 constexpr const char* const MODULE_MODELSKINCACHE("ModelSkinCache");
 

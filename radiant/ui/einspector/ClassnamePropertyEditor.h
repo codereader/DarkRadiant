@@ -9,7 +9,7 @@ namespace ui
 {
 
 /**
- * PropertyEditor displaying a single browse button to allow the selection of
+ * PropertyEditor displaying a browse button to allow the selection of
  * an EntityClass using the EntityClassChooser dialog.
  */
 class ClassnamePropertyEditor : 
@@ -23,10 +23,9 @@ private:
 
 	void _onBrowseButton(wxCommandEvent& ev);
     void _onShowDefinition(wxCommandEvent& ev);
+    void _onShowInDefTree(wxCommandEvent& ev);
 
 public:
-
-    // Main constructor
     ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
     static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
