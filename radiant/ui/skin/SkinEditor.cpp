@@ -709,13 +709,14 @@ void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
 
     // Rename the active skin decl
     auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
-
-    GlobalModelSkinCache().renameSkin(_skin->getDeclName(), nameEntry->GetValue().ToStdString());
-    auto item = _skinTreeView->GetTreeModel()->FindString(_skin->getDeclName(), _columns.declName);
+    auto newSkin = nameEntry->GetValue().ToStdString();
+    GlobalModelSkinCache().renameSkin(_skin->getDeclName(), newSkin);
+    auto item = _skinTreeView->GetTreeModel()->FindString(newSkin, _columns.declName);
 
     // Make sure the item is selected again, it will be de-selected by the rename operation
     _skinTreeView->Select(item);
     _skinTreeView->EnsureVisible(item);
+    _skin = getSelectedSkin();
     handleSkinSelectionChanged(); // also updates all controls
 
     nameEntry->SetFocus();

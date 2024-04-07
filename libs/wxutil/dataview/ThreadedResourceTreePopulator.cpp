@@ -30,6 +30,9 @@ ThreadedResourceTreePopulator::~ThreadedResourceTreePopulator()
 
 void ThreadedResourceTreePopulator::ThrowIfCancellationRequested()
 {
+    if (This() != this)
+        return;
+
     if (TestDestroy())
     {
         throw ThreadAbortedException();
