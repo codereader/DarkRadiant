@@ -66,9 +66,12 @@ SkinEditor::SkinEditor() :
         _remappingList->CancelEditing(); // Stop editing when switching tabs
     });
 
-    auto oldInfoPanel = getControl<wxPanel>("SkinEditorSaveNotePanel");
-    auto declFileInfo = new wxutil::DeclFileInfo(oldInfoPanel->GetParent(), decl::Type::Skin);
-    replaceControl(oldInfoPanel, declFileInfo);
+    // Pack in the decl info at the bottom of the window (next to the Close button)
+    wxPanel* saveNotePanelContainer = getControl<wxPanel>("SkinEditorSaveNotePanel");
+    _saveNotePanel = new wxutil::DeclFileInfo(saveNotePanelContainer, decl::Type::Skin);
+    auto sizer = new wxBoxSizer(wxHORIZONTAL);
+    sizer->Add(_saveNotePanel.get(), 1, wxEXPAND | wxLEFT, 12);
+    saveNotePanelContainer->SetSizerAndFit(sizer);
 
     // Set the default size of the window
     FitToScreen(0.9f, 0.9f);
@@ -374,16 +377,12 @@ void SkinEditor::updateSkinControlsFromSelection()
 
 void SkinEditor::updateDeclFileInfo()
 {
-    auto declFileInfo = getControl<wxutil::DeclFileInfo>("SkinEditorSaveNotePanel");
-
-    if (_skin)
-    {
-        declFileInfo->Show();
-        declFileInfo->SetDeclarationName(_skin->getDeclName());
+    if (_skin) {
+        _saveNotePanel->Show();
+        _saveNotePanel->SetDeclarationName(_skin->getDeclName());
     }
-    else
-    {
-        declFileInfo->Hide();
+    else {
+        _saveNotePanel->Hide();
     }
 }
 

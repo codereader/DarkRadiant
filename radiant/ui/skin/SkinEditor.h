@@ -13,17 +13,16 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/sourceview/SourceView.h"
 
+namespace wxutil { class DeclFileInfo; }
 namespace ui
 {
 
 class SkinEditorTreeView;
 class ModelTreeView;
 
-class SkinEditor final :
-    public wxutil::DialogBase,
-    private wxutil::XmlResourceBasedWidget
+/// Graphical editor for .skin files
+class SkinEditor final: public wxutil::DialogBase, private wxutil::XmlResourceBasedWidget
 {
-private:
     decl::ISkin::Ptr _skin;
 
     ModelTreeView* _modelTreeView;
@@ -46,6 +45,7 @@ private:
     SelectedModelColumns _selectedModelColumns;
     wxutil::TreeModel::Ptr _selectedModels;
     wxutil::TreeView* _selectedModelList;
+    wxWindowPtr<wxutil::DeclFileInfo> _saveNotePanel;
 
     struct RemappingColumns :
         public wxutil::TreeModel::ColumnRecord
