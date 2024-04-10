@@ -10,7 +10,7 @@
 				<flag>wxALL|wxEXPAND</flag>
 				<border>12</border>
 				<object class="wxSplitterWindow" name="SkinEditorLeftSplitter">
-					<style>wxSP_3D|wxSP_3DBORDER</style>
+					<style>wxSP_3D|wxSP_3DBORDER|wxSP_LIVE_UPDATE</style>
 					<sashpos>0</sashpos>
 					<gravity>0</gravity>
 					<minsize>0</minsize>

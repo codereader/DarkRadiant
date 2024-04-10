@@ -46,7 +46,7 @@ SkinEditor::SkinEditor() :
     _controlUpdateInProgress(false),
     _skinUpdateInProgress(false)
 {
-    loadNamedPanel(this, "SkinEditorMainPanel");
+    wxPanel* mainPanel = loadNamedPanel(this, "SkinEditorMainPanel");
 
     makeLabelBold(this, "SkinEditorSkinDefinitionsLabel");
     makeLabelBold(this, "SkinEditorEditSkinDefinitionLabel");
@@ -76,8 +76,10 @@ SkinEditor::SkinEditor() :
     // Set the default size of the window
     FitToScreen(0.9f, 0.9f);
 
+    auto* mainPanelSizer = new wxBoxSizer(wxVERTICAL);
+    mainPanelSizer->Add(mainPanel, 1, wxEXPAND, 0);
+    SetSizerAndFit(mainPanelSizer);
     Layout();
-    Fit();
 
     // Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -85,6 +87,8 @@ SkinEditor::SkinEditor() :
     _windowPosition.applyPosition();
 
     auto leftSplitter = getControl<wxSplitterWindow>("SkinEditorLeftSplitter");
+    leftSplitter->SetMinimumPaneSize(50);
+    leftSplitter->SetSashGravity(0.5);
     _leftPanePosition.connect(leftSplitter);
     _leftPanePosition.loadFromPath(RKEY_SPLIT_POS_LEFT);
 
