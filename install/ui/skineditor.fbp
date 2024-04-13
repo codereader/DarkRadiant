@@ -92,7 +92,7 @@
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>
-                        <property name="min_pane_size">0</property>
+                        <property name="min_pane_size">50</property>
                         <property name="min_size"></property>
                         <property name="minimize_button">0</property>
                         <property name="minimum_size"></property>
@@ -105,7 +105,7 @@
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
                         <property name="resize">Resizable</property>
-                        <property name="sashgravity">0.0</property>
+                        <property name="sashgravity">0.5</property>
                         <property name="sashpos">0</property>
                         <property name="sashsize">-1</property>
                         <property name="show">1</property>

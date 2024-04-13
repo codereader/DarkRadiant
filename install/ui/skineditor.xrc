@@ -12,8 +12,8 @@
 				<object class="wxSplitterWindow" name="SkinEditorLeftSplitter">
 					<style>wxSP_3D|wxSP_3DBORDER|wxSP_LIVE_UPDATE</style>
 					<sashpos>0</sashpos>
-					<gravity>0</gravity>
-					<minsize>0</minsize>
+					<gravity>0.5</gravity>
+					<minsize>50</minsize>
 					<orientation>vertical</orientation>
 					<object class="wxPanel" name="SkinEditorLeftArea">
 						<style>wxTAB_TRAVERSAL</style>

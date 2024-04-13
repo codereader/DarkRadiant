@@ -87,8 +87,6 @@ SkinEditor::SkinEditor() :
     _windowPosition.applyPosition();
 
     auto leftSplitter = getControl<wxSplitterWindow>("SkinEditorLeftSplitter");
-    leftSplitter->SetMinimumPaneSize(50);
-    leftSplitter->SetSashGravity(0.5);
     _leftPanePosition.connect(leftSplitter);
     _leftPanePosition.loadFromPath(RKEY_SPLIT_POS_LEFT);
 
