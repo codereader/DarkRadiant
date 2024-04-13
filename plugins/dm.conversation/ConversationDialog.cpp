@@ -55,11 +55,10 @@ ConversationDialog::ConversationDialog() :
 
 void ConversationDialog::populateWindow()
 {
-	loadNamedPanel(this, "ConvDialogMainPanel");
-
-	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ConvDialogEntityPanel");
+	wxPanel* mainPanel = loadNamedPanel(this, "ConvDialogMainPanel");
 
 	// Entity Tree View
+	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ConvDialogEntityPanel");
 	_entityView = wxutil::TreeView::CreateWithModel(entityPanel, _entityList.get(), wxDV_NO_HEADER);
 	entityPanel->GetSizer()->Add(_entityView, 1, wxEXPAND);
 
@@ -128,6 +127,10 @@ void ConversationDialog::populateWindow()
 		wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onCancel), NULL, this);
 	findNamedObject<wxButton>(this, "ConvDialogOkButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onOK), NULL, this);
+
+    wxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer->Add(mainPanel, 1, wxEXPAND, 0);
+    SetSizerAndFit(mainSizer);
 }
 
 void ConversationDialog::save()
