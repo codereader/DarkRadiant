@@ -46,7 +46,7 @@ namespace
 
     void setupFloatingPane(wxAuiPaneInfo& pane)
     {
-        pane.Float().CloseButton(true).MinSize(128, 128);
+        pane.Float().CloseButton(true);
     }
 
     inline bool isCenterPane(const wxAuiPaneInfo& pane)
@@ -316,14 +316,19 @@ void AuiLayout::createPane(const std::string& controlName, const std::string& pa
 
     auto managedWindow = _auiMgr.GetManagedWindow();
 
-    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), MIN_SIZE);
-    pane.name = paneName;
-
     // Create the widget and determine the best default size
     auto widget = control->createWidget(managedWindow);
+    wxSize minSize = MIN_SIZE;
+    if (wxSizer* sizer = widget->GetSizer(); sizer != nullptr) {
+        minSize = sizer->GetMinSize();
+    }
+    else {
+        rWarning() << "wxWindow for '" << controlName
+                   << "' has no sizer; size hints may not be respected." << std::endl;
+    }
 
-    // Fit and determine the floating size automatically
-    widget->Fit();
+    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), minSize);
+    pane.name = paneName;
 
     // Some additional height for the window title bar
     pane.FloatingSize(widget->GetSize().x, widget->GetSize().y + 30);
@@ -354,7 +359,7 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 
         if (defaultSettings != _defaultControlSettings.end())
         {
-            paneInfo.FloatingSize(defaultSettings->second.defaultFloatingWidth, 
+            paneInfo.FloatingSize(defaultSettings->second.defaultFloatingWidth,
                 defaultSettings->second.defaultFloatingHeight);
         }
 
@@ -558,7 +563,7 @@ void AuiLayout::toggleControl(const std::string& controlName)
 
                 ensureControlIsActive(p->control);
             }
-            
+
             _auiMgr.Update();
 
             // Reset the mininum size again to not interfere with any drag operations
@@ -639,7 +644,7 @@ void AuiLayout::toggleMainControl(const std::string& controlName)
             addPane(newControlName, newWidget, DEFAULT_PANE_INFO(control->getDisplayName(), MIN_SIZE).CenterPane());
             ensureControlIsActive(newWidget);
         }
-        
+
         _auiMgr.Update();
         break;
     }
