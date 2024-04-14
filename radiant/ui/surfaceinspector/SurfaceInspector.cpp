@@ -26,20 +26,17 @@ namespace ui
 
 namespace
 {
-    constexpr const char* const LABEL_PROPERTIES = N_("Texture Properties");
-    constexpr const char* const LABEL_OPERATIONS = N_("Texture Operations");
-
     const std::string HSHIFT = "horizshift";
     const std::string VSHIFT = "vertshift";
     const std::string HSCALE = "horizscale";
     const std::string VSCALE = "vertscale";
     const std::string ROTATION = "rotation";
 
-    constexpr const char* const LABEL_HSHIFT = N_("Horiz. Shift:");
-    constexpr const char* const LABEL_VSHIFT = N_("Vert. Shift:");
-    constexpr const char* const LABEL_HSCALE = N_("Horiz. Scale:");
-    constexpr const char* const LABEL_VSCALE = N_("Vert. Scale:");
-    constexpr const char* const LABEL_ROTATION = N_("Rotation:");
+    constexpr const char* const LABEL_HSHIFT = N_("X Shift:");
+    constexpr const char* const LABEL_VSHIFT = N_("Y Shift:");
+    constexpr const char* const LABEL_HSCALE = N_("X Scale:");
+    constexpr const char* const LABEL_VSCALE = N_("Y Scale:");
+    constexpr const char* const LABEL_ROTATION = N_("Rotate:");
     constexpr const char* const LABEL_SHADER = N_("Shader:");
     constexpr const char* const FOLDER_ICON = "treeView16.png";
     constexpr const char* const LABEL_STEP = N_("Step:");
@@ -80,7 +77,7 @@ namespace
 #ifdef __WXMSW__
     constexpr int SPINBOX_WIDTH_CHARS = 7;
 #else
-    constexpr int SPINBOX_WIDTH_CHARS = 16;
+    constexpr int SPINBOX_WIDTH_CHARS = 14;
 #endif
 
     // Minimum pixel size for a widget. Converts to a wxSize of the specified
@@ -382,10 +379,6 @@ void SurfaceInspector::populateWindow()
 {
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
 
-	// Create the title label (bold font)
-	wxStaticText* topLabel = new wxStaticText(this, wxID_ANY, _(LABEL_PROPERTIES));
-	topLabel->SetFont(topLabel->GetFont().Bold());
-
     // Two-column form layout
 	wxutil::FormLayout table(this);
 
@@ -411,8 +404,7 @@ void SurfaceInspector::populateWindow()
 	table.add(_(LABEL_SHADER), shaderHBox);
 
 	// Pack everything into the vbox
-	dialogVBox->Add(topLabel, 0, wxEXPAND | wxBOTTOM, 6);
-	dialogVBox->Add(table.getSizer(), 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
+	dialogVBox->Add(table.getSizer(), 0, wxEXPAND);
 
 	// Initial parameter editing rows
     _manipulators[HSHIFT] = createManipulatorRow(_(LABEL_HSHIFT), table, "arrow_left_blue.png",
@@ -432,9 +424,7 @@ void SurfaceInspector::populateWindow()
 
     // ======================== Texture Operations ====================================
 
-	// Create the texture operations label (bold font)
-	wxStaticText* operLabel = new wxStaticText(this, wxID_ANY, _(LABEL_OPERATIONS));
-	operLabel->SetFont(operLabel->GetFont().Bold());
+    table.addFullWidth(new wxStaticLine(this));
 
     // Setup the table with default spacings
 	// 5x2 table with 12 pixel hspacing and 6 pixels vspacing
@@ -443,8 +433,7 @@ void SurfaceInspector::populateWindow()
 
     // Pack label & table into the dialog
     dialogVBox->AddSpacer(6);
-	dialogVBox->Add(operLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
-	dialogVBox->Add(operTable, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
+	dialogVBox->Add(operTable, 0, wxEXPAND);
 
 	// ------------------------ Fit Texture -----------------------------------
 
