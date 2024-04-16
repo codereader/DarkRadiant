@@ -8,6 +8,10 @@
 
 class wxTopLevelWindow;
 
+/// Utility classes and functions for dealing with wxWidgets
+namespace wxutil
+{
+
 /**
  * greebo: A WindowPosition object keeps track of the window's size and position.
  *
@@ -16,9 +20,6 @@ class wxTopLevelWindow;
  *
  * Use the connect() method to connect a wxTopLevelWindow to this object.
  */
-namespace wxutil
-{
-
 class WindowPosition :
 	public wxEvtHandler,
     public ui::IPersistableObject

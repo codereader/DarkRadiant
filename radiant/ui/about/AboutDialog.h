@@ -5,13 +5,14 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
+/// Core user interface functionality
+namespace ui
+{
+
 /**
  * greebo: The AboutDialog displays information about DarkRadiant and
  * the subsystems OpenGL and GTK+.
  */
-namespace ui
-{
-
 class AboutDialog :
 	public wxutil::DialogBase,
 	private wxutil::XmlResourceBasedWidget
