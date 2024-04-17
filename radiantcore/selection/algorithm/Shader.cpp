@@ -244,7 +244,7 @@ void pasteTextureCoords(SelectionTest& test)
 	radiant::TextureChangedMessage::Send();
 }
 
-void pasteShaderName(SelectionTest& test) 
+void pasteShaderName(SelectionTest& test)
 {
 	// Initialise an empty Texturable structure
 	Texturable target;
@@ -436,12 +436,12 @@ void fitTexture(const double repeatS, const double repeatT)
 {
 	UndoableCommand command("fitTexture");
 
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) 
-    { 
+	GlobalSelectionSystem().foreachFace([&] (IFace& face)
+    {
         face.fitTexture(static_cast<float>(repeatS), static_cast<float>(repeatT));
     });
 	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch)
-    { 
+    {
         patch.fitTexture(static_cast<float>(repeatS), static_cast<float>(repeatT));
     });
 
@@ -506,19 +506,19 @@ void naturalTexture(const cmd::ArgumentList& args)
 	radiant::TextureChangedMessage::Send();
 }
 
-void shiftTexture(const Vector2& shift) 
+void shiftTexture(const Vector2& shift)
 {
 	std::string command("shiftTexture: ");
 	command += "s=" + string::to_string(shift[0]) + ", t=" + string::to_string(shift[1]);
 
 	UndoableCommand undo(command);
 
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) 
-    { 
+	GlobalSelectionSystem().foreachFace([&] (IFace& face)
+    {
         face.shiftTexdefByPixels(static_cast<float>(shift[0]), static_cast<float>(shift[1]));
     });
 	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch)
-    { 
+    {
         patch.translateTexture(static_cast<float>(shift[0]), static_cast<float>(shift[1]));
     });
 
@@ -587,7 +587,7 @@ void scaleTextureUp()
 	scaleTexture(Vector2(0.0f, registry::getValue<float>("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
-void scaleTextureDown() 
+void scaleTextureDown()
 {
     // Correct the factor such that clicking the down and up button in the surface inspector
     // brings us back to the original state
@@ -724,34 +724,23 @@ void alignTexture(EAlignType align)
 
 void alignTextureCmd(const cmd::ArgumentList& args)
 {
-	if (args.size() != 1)
-	{
-		rMessage() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
-		return;
-	}
+    if (args.size() != 1) {
+        rMessage() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
+        return;
+    }
 
-	std::string arg = string::to_lower_copy(args[0].getString());
+    const std::string arg = string::to_lower_copy(args[0].getString());
 
-	if (arg == "top")
-	{
-		alignTexture(ALIGN_TOP);
-	}
-	else if (arg == "bottom")
-	{
-		alignTexture(ALIGN_BOTTOM);
-	}
-	if (arg == "left")
-	{
-		alignTexture(ALIGN_LEFT);
-	}
-	if (arg == "right")
-	{
-		alignTexture(ALIGN_RIGHT);
-	}
-	else
-	{
-		rMessage() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
-	}
+    if (arg == "top")
+        alignTexture(ALIGN_TOP);
+    else if (arg == "bottom")
+        alignTexture(ALIGN_BOTTOM);
+    else if (arg == "left")
+        alignTexture(ALIGN_LEFT);
+    else if (arg == "right")
+        alignTexture(ALIGN_RIGHT);
+    else
+        rMessage() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
 }
 
 void normaliseTexture(const cmd::ArgumentList& args)
