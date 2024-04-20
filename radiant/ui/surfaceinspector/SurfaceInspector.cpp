@@ -445,10 +445,18 @@ void SurfaceInspector::populateWindow()
 
 	_alignTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
 
-	_alignTexture.top = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_TOP));
-	_alignTexture.bottom = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_BOTTOM));
-	_alignTexture.left = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_LEFT));
-	_alignTexture.right = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_RIGHT));
+    _alignTexture.top = new wxBitmapButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap("align_top.png")
+    );
+    _alignTexture.bottom = new wxBitmapButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap("align_bottom.png")
+    );
+    _alignTexture.left = new wxBitmapButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap("align_left.png")
+    );
+    _alignTexture.right = new wxBitmapButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap("align_right.png")
+    );
 
     _alignTexture.top->SetMinSize(PixelSize(20, -1));
     _alignTexture.bottom->SetMinSize(PixelSize(20, -1));
