@@ -65,7 +65,6 @@ class SurfaceInspector :
 
 	struct FlipTextureWidgets
 	{
-		wxStaticText* label;
 		wxButton* flipX;
 		wxButton* flipY;
 	} _flipTexture;
