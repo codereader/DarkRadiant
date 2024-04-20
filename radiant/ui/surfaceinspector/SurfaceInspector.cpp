@@ -41,25 +41,17 @@ namespace
     constexpr const char* const FOLDER_ICON = "treeView16.png";
     constexpr const char* const LABEL_STEP = N_("Step:");
 
-    constexpr const char* LABEL_FIT_TEXTURE = N_("Fit:");
     constexpr const char* LABEL_FIT = N_("Fit");
-
-    constexpr const char* LABEL_ALIGN_TEXTURE = N_("Align:");
-    constexpr const char* LABEL_ALIGN_TOP = N_("Top");
-    constexpr const char* LABEL_ALIGN_BOTTOM = N_("Bottom");
-    constexpr const char* LABEL_ALIGN_RIGHT = N_("Right");
-    constexpr const char* LABEL_ALIGN_LEFT = N_("Left");
-
-    constexpr const char* LABEL_FLIP_TEXTURE = N_("Flip:");
-    constexpr const char* LABEL_FLIPX = N_("Flip Horizontal");
-    constexpr const char* LABEL_FLIPY = N_("Flip Vertical");
-
-    constexpr const char* LABEL_MODIFY_TEXTURE = N_("Modify:");
     constexpr const char* LABEL_NATURAL = N_("Natural");
-    constexpr const char* LABEL_NORMALISE = N_("Normalise");
+    constexpr const char* LABEL_DEFAULT_SCALE = N_("Scale:");
 
-    constexpr const char* LABEL_DEFAULT_SCALE = N_("Default Scale:");
-    constexpr const char* LABEL_TEXTURE_LOCK = N_("Texture Lock");
+    // Tooltips
+    constexpr const char* TT_NATURAL = N_(
+        "Reset the texture to its default alignment"
+    );
+    constexpr const char* TT_DEFAULT_SCALE = N_(
+        "Scale to set when resetting a texture to its natural alignment"
+    );
 
     const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
 
@@ -104,7 +96,6 @@ void SurfaceInspector::ManipulatorRow::setValue(double v)
 
 void SurfaceInspector::FitTextureWidgets::enable(bool enabled)
 {
-    label->Enable(enabled);
     x->Enable(enabled);
     fitButton->Enable(enabled);
     preserveAspectButton->Enable(enabled);
@@ -211,7 +202,6 @@ void SurfaceInspector::connectButtons()
 	_alignTexture.right->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_alignTexture.left->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_modifyTex.natural->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
-	_modifyTex.normalise->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 
 	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
@@ -222,7 +212,6 @@ void SurfaceInspector::connectButtons()
 	wxutil::button::connectToCommand(_flipTexture.flipX, "FlipTextureX");
 	wxutil::button::connectToCommand(_flipTexture.flipY, "FlipTextureY");
 	wxutil::button::connectToCommand(_modifyTex.natural, "TextureNatural");
-	wxutil::button::connectToCommand(_modifyTex.normalise, "NormaliseTexture");
 
 	wxutil::button::connectToCommand(_alignTexture.top, "TexAlignTop");
 	wxutil::button::connectToCommand(_alignTexture.bottom, "TexAlignBottom");
@@ -304,7 +293,6 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
 	auto* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
 
     // Create widgets from left to right
-	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
 	_fitTexture.width = makeFitSpinBox(Axis::X);
     _fitTexture.width->SetToolTip(
         _("Number of whole texture images to fit horizontally. Use the spin "
@@ -340,8 +328,8 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
     widthTimesHeight->Add(_fitTexture.height, 1, wxALIGN_CENTER_VERTICAL);
 
     fitTextureHBox->Add(widthTimesHeight, 1, wxALIGN_CENTER_VERTICAL);
-    fitTextureHBox->Add(_fitTexture.preserveAspectButton, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
-    fitTextureHBox->Add(_fitTexture.fitButton, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    fitTextureHBox->Add(_fitTexture.preserveAspectButton, 0, wxEXPAND | wxLEFT, 6);
+    fitTextureHBox->Add(_fitTexture.fitButton, 0, wxEXPAND | wxLEFT, 6);
 
     return fitTextureHBox;
 }
@@ -428,8 +416,7 @@ void SurfaceInspector::populateWindow()
 
     // Setup the table with default spacings
     // 5x2 table with 12 pixel hspacing and 6 pixels vspacing
-    wxFlexGridSizer* operTable = new wxFlexGridSizer(5, 2, 6, 12);
-    operTable->AddGrowableCol(1);
+    wxBoxSizer* operTable = new wxBoxSizer(wxVERTICAL);
 
     // Pack label & table into the dialog
     dialogVBox->AddSpacer(6);
@@ -438,25 +425,16 @@ void SurfaceInspector::populateWindow()
     // ------------------------ Fit Texture -----------------------------------
 
     wxBoxSizer* fitTextureHBox = createFitTextureRow();
-    operTable->Add(_fitTexture.label, 0, wxALIGN_CENTER_VERTICAL);
-    operTable->Add(fitTextureHBox, 1, wxEXPAND);
+    operTable->Add(fitTextureHBox, 0, wxEXPAND);
 
     // ------------------------ Align Texture -----------------------------------
-
-    _alignTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
 
     _alignTexture.top = wxutil::IconButton(this, "align_top.png");
     _alignTexture.bottom = wxutil::IconButton(this, "align_bottom.png");
     _alignTexture.left = wxutil::IconButton(this, "align_left.png");
     _alignTexture.right = wxutil::IconButton(this, "align_right.png");
-
     _flipTexture.flipX = wxutil::IconButton(this, "flip_horiz.png");
     _flipTexture.flipY = wxutil::IconButton(this, "flip_vert.png");
-
-    _alignTexture.top->SetMinSize(PixelSize(20, -1));
-    _alignTexture.bottom->SetMinSize(PixelSize(20, -1));
-    _alignTexture.left->SetMinSize(PixelSize(20, -1));
-    _alignTexture.right->SetMinSize(PixelSize(20, -1));
 
     auto* alignTextureBox = new wxGridSizer(1, 6, 0, 6);
     alignTextureBox->Add(_alignTexture.top, 1, wxEXPAND);
@@ -466,48 +444,37 @@ void SurfaceInspector::populateWindow()
     alignTextureBox->Add(_flipTexture.flipX, 1, wxEXPAND);
     alignTextureBox->Add(_flipTexture.flipY, 1, wxEXPAND);
 
-    operTable->Add(_alignTexture.label, 0, wxALIGN_CENTER_VERTICAL);
-    operTable->Add(alignTextureBox, 1, wxEXPAND);
+    operTable->Add(alignTextureBox, 0, wxEXPAND | wxTOP, 6);
 
-    // ------------------------ Modify Texture -----------------------------------
-
-    _modifyTex.label = new wxStaticText(this, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
+    // Natural / Scale / Texture lock row
+    wxBoxSizer* modTextureBox = new wxBoxSizer(wxHORIZONTAL);
 
     _modifyTex.natural = new wxButton(this, wxID_ANY, _(LABEL_NATURAL));
-    _modifyTex.normalise = new wxButton(this, wxID_ANY, _(LABEL_NORMALISE));
-
-    wxGridSizer* modTextureBox = new wxGridSizer(1, 2, 0, 6);
-
-    modTextureBox->Add(_modifyTex.natural, 1, wxEXPAND);
-    modTextureBox->Add(_modifyTex.normalise, 1, wxEXPAND);
-
-    operTable->Add(_modifyTex.label, 0, wxALIGN_CENTER_VERTICAL);
-    operTable->Add(modTextureBox, 1, wxEXPAND);
-
-    // ------------------------ Default Scale -----------------------------------
-
+    _modifyTex.natural->SetToolTip(_(TT_NATURAL));
+    modTextureBox->Add(_modifyTex.natural, 0, wxEXPAND);
     wxStaticText* defaultScaleLabel = new wxStaticText(this, wxID_ANY, _(LABEL_DEFAULT_SCALE));
+    modTextureBox->Add(defaultScaleLabel, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
 
     _defaultTexScale = new wxSpinCtrlDouble(this, wxID_ANY);
-    _defaultTexScale->SetMinSize(wxSize(50, -1));
+    _defaultTexScale->SetToolTip(_(TT_DEFAULT_SCALE));
+    _defaultTexScale->SetMinSize(
+        wxSize(_defaultTexScale->GetCharWidth() * SPINBOX_WIDTH_CHARS, -1)
+    );
     _defaultTexScale->SetRange(0.0, 1000.0);
     _defaultTexScale->SetIncrement(0.1);
     _defaultTexScale->SetDigits(3);
+    modTextureBox->Add(_defaultTexScale, 1, wxLEFT, 6);
 
-    // Texture Lock Toggle
-    _texLockButton = new wxToggleButton(this, wxID_ANY, _(LABEL_TEXTURE_LOCK));
+    _texLockButton = new wxBitmapToggleButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap("texture_lock.png")
+    );
+    _texLockButton->SetToolTip(
+        _("Lock texture to face(s) when moving brush or patch (global setting)")
+    );
+    modTextureBox->Add(_texLockButton, 0, wxLEFT | wxEXPAND, 6);
+    operTable->Add(modTextureBox, 0, wxEXPAND | wxTOP, 6);
 
-    wxGridSizer* defaultScaleBox = new wxGridSizer(1, 2, 0, 6);
-
-    wxBoxSizer* texScaleSizer = new wxBoxSizer(wxHORIZONTAL);
-    texScaleSizer->Add(_defaultTexScale, 1, wxALIGN_CENTER_VERTICAL);
-
-    defaultScaleBox->Add(texScaleSizer, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
-    defaultScaleBox->Add(_texLockButton, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
-
-    operTable->Add(defaultScaleLabel, 0, wxALIGN_CENTER_VERTICAL);
-    operTable->Add(defaultScaleBox, 1, wxEXPAND);
-
+    // Top-level sizer to provide margin
     wxBoxSizer* border = new wxBoxSizer(wxVERTICAL);
     border->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
     SetSizerAndFit(border);
@@ -673,16 +640,13 @@ void SurfaceInspector::doUpdate()
 	_alignTexture.left->Enable(haveSelection);
 	_alignTexture.right->Enable(haveSelection);
 	_alignTexture.top->Enable(haveSelection);
-	_alignTexture.label->Enable(haveSelection);
 
 	// The flip texture widget sensitivity
 	_flipTexture.flipX->Enable(haveSelection);
 	_flipTexture.flipY->Enable(haveSelection);
 
 	// The natural/normalise widget sensitivity
-	_modifyTex.label->Enable(haveSelection);
 	_modifyTex.natural->Enable(haveSelection);
-	_modifyTex.normalise->Enable(haveSelection);
 
 	// Current shader name
 	_shaderEntry->SetValue(selection::getShaderFromSelection());
