@@ -268,17 +268,40 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
         // Set default locations of some controls
-        GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false, 330, 480 });
-        GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false, 180, 300 });
-        GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false, 600, 400 });
-        GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false, 280, 480 });
-        GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false, 780, 420 });
-        GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false, 260, 310 });
-        GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false, 380, 440 });
-        GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false, 250, 400 });
-        GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false, 200, 200 });
-        GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false, 350, 200 });
-        GlobalMainFrame().addControl(UserControl::OrthoBackgroundPanel, { IMainFrame::Location::FloatingWindow, false, 480, 350 });
+        using ControlSettings = IMainFrame::ControlSettings;
+        GlobalMainFrame().addControl(
+            UserControl::SurfaceInspector, ControlSettings::floating(330, 400)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::LayerControlPanel, ControlSettings::floating(180, 300)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::TextureTool, ControlSettings::floating(600, 400)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::PatchInspector, ControlSettings::floating(280, 480)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::LightInspector, ControlSettings::floating(780, 420)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::TransformPanel, ControlSettings::floating(260, 310)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::MapMergePanel, ControlSettings::floating(380, 440)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::EntityList, ControlSettings::floating(250, 400)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::AasVisualisationPanel, ControlSettings::floating(200, 200)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::FindAndReplaceMaterial, ControlSettings::floating(350, 200)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::OrthoBackgroundPanel, ControlSettings::floating(480, 350)
+        );
 
         _viewMenu = std::make_unique<ViewMenu>();
     });

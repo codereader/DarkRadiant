@@ -116,6 +116,12 @@ public:
 
         // Default control height when packed in a floating window
         int defaultFloatingHeight = 128;
+
+        /// Convenience constructor for a floating window with a particular default size
+        static ControlSettings floating(int width, int height)
+        {
+            return {Location::FloatingWindow, false, width, height};
+        }
     };
 
     /**
@@ -123,7 +129,7 @@ public:
      * where the control is added to and whether it's visible by default.
      * Persisted user settings might still overrule these default values.
      *
-     * The suitable point in time to call this method is when 
+     * The suitable point in time to call this method is when
      * signal_MainFrameConstructed is invoked. This gives the mainframe
      * time to restore the layout as customised by the user.
      *
