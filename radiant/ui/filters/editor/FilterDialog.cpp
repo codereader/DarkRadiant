@@ -24,8 +24,8 @@ namespace
 	{
 		WIDGET_ADD_FILTER_BUTTON,
 		WIDGET_EDIT_FILTER_BUTTON,
-		WIDGET_VIEW_FILTER_BUTTON, 
-		WIDGET_COPY_FILTER_BUTTON, 
+		WIDGET_VIEW_FILTER_BUTTON,
+		WIDGET_COPY_FILTER_BUTTON,
 		WIDGET_DELETE_FILTER_BUTTON,
 	};
 }
@@ -142,19 +142,20 @@ void FilterDialog::update()
 
 void FilterDialog::populateWindow()
 {
-	loadNamedPanel(this, "FilterDialogMainPanel");
+    wxPanel* panel = loadNamedPanel(this, "FilterDialogMainPanel");
 
-	wxStaticText* label = findNamedObject<wxStaticText>(this, "FilterDialogTopLabel");
-	label->SetFont(label->GetFont().Bold());
+    // Pack the treeview into the main window's vbox
+    createFiltersPanel();
 
-	// Pack the treeview into the main window's vbox
-	createFiltersPanel();
+    wxButton* okButton = findNamedObject<wxButton>(this, "FilterDialogOkButton");
+    wxButton* cancelButton = findNamedObject<wxButton>(this, "FilterDialogCancelButton");
 
-	wxButton* okButton = findNamedObject<wxButton>(this, "FilterDialogOkButton");
-	wxButton* cancelButton = findNamedObject<wxButton>(this, "FilterDialogCancelButton");
-	
-	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onSave), NULL, this);
-	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onCancel), NULL, this);
+    okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onSave), NULL, this);
+    cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onCancel), NULL, this);
+
+    wxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer->Add(panel, 1, wxEXPAND, 0);
+    SetSizerAndFit(mainSizer);
 }
 
 void FilterDialog::createFiltersPanel()
@@ -164,16 +165,16 @@ void FilterDialog::createFiltersPanel()
 	// Create a new treeview
 	_filterView = wxutil::TreeView::CreateWithModel(parent, _filterStore.get());
 
-	_filterView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+	_filterView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
 		wxDataViewEventHandler(FilterDialog::onFilterSelectionChanged), NULL, this);
 
-	parent->GetSizer()->Add(_filterView, 1, wxEXPAND | wxLEFT, 12);
+	parent->GetSizer()->Add(_filterView, 1, wxEXPAND, 0);
 
 	// Display name column with icon
-	_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(), 
+	_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_filterView->AppendTextColumn(_("State"), _columns.state.getColumnIndex(), 
+	_filterView->AppendTextColumn(_("State"), _columns.state.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Action buttons
@@ -203,7 +204,7 @@ void FilterDialog::updateWidgetSensitivity()
 			_buttons[WIDGET_VIEW_FILTER_BUTTON]->Show(i->second->readOnly);
 
 			_buttons[WIDGET_EDIT_FILTER_BUTTON]->GetContainingSizer()->Layout();
-			
+
 			_buttons[WIDGET_DELETE_FILTER_BUTTON]->Enable(!i->second->readOnly);
 			_buttons[WIDGET_EDIT_FILTER_BUTTON]->Enable(!i->second->readOnly);
 			_buttons[WIDGET_VIEW_FILTER_BUTTON]->Enable(i->second->readOnly);

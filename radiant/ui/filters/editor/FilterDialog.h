@@ -12,14 +12,11 @@ class wxButton;
 namespace ui
 {
 
-class FilterDialog :
-	public wxutil::DialogBase,
-	private wxutil::XmlResourceBasedWidget
+/// Dialog for editing filters
+class FilterDialog: public wxutil::DialogBase, private wxutil::XmlResourceBasedWidget
 {
-private:
 	// Treemodel definition
-	struct TreeColumns :
-		public wxutil::TreeModel::ColumnRecord
+	struct TreeColumns: public wxutil::TreeModel::ColumnRecord
 	{
 		TreeColumns() :
 			name(add(wxutil::TreeModel::Column::String)),
