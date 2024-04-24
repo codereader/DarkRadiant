@@ -57,7 +57,9 @@ SkinEditor::SkinEditor() :
     setupPreview();
 
     getControl<wxButton>("SkinEditorCloseButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCloseButton, this);
-    getControl<wxTextCtrl>("SkinEditorSkinName")->Bind(wxEVT_TEXT, &SkinEditor::onSkinNameChanged, this);
+    getControl<wxTextCtrl>("SkinEditorSkinName")->Bind(
+        wxEVT_TEXT_ENTER, &SkinEditor::onSkinNameChanged, this
+    );
 
     getControl<wxNotebook>("SkinEditorNotebook")->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [&](auto& ev)
     {
