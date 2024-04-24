@@ -33,15 +33,6 @@
 										<object class="wxBoxSizer">
 											<orient>wxVERTICAL</orient>
 											<object class="sizeritem">
-												<option>0</option>
-												<flag>wxBOTTOM</flag>
-												<border>6</border>
-												<object class="wxStaticText" name="SkinEditorSkinDefinitionsLabel">
-													<label>Skin Definitions</label>
-													<wrap>-1</wrap>
-												</object>
-											</object>
-											<object class="sizeritem">
 												<option>1</option>
 												<flag>wxEXPAND|wxLEFT</flag>
 												<border>12</border>
@@ -81,7 +72,7 @@
 																		<flag>wxALL|wxEXPAND</flag>
 																		<border>0</border>
 																		<object class="wxButton" name="SkinEditorNewDefButton">
-																			<label>New Skin</label>
+																			<label>New</label>
 																			<default>0</default>
 																			<auth_needed>0</auth_needed>
 																			<markup>0</markup>
@@ -93,7 +84,7 @@
 																		<flag>wxEXPAND|wxTOP</flag>
 																		<border>6</border>
 																		<object class="wxButton" name="SkinEditorCopyDefButton">
-																			<label>Copy Skin</label>
+																			<label>Copy</label>
 																			<default>0</default>
 																			<auth_needed>0</auth_needed>
 																			<markup>0</markup>
@@ -102,10 +93,10 @@
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxTOP</flag>
+																		<flag>wxEXPAND|wxTOP</flag>
 																		<border>6</border>
 																		<object class="wxButton" name="SkinEditorRevertButton">
-																			<label>Discard Changes</label>
+																			<label>Revert</label>
 																			<default>0</default>
 																			<auth_needed>0</auth_needed>
 																			<markup>0</markup>
@@ -117,7 +108,7 @@
 																		<flag>wxEXPAND|wxTOP</flag>
 																		<border>6</border>
 																		<object class="wxButton" name="SkinEditorSaveButton">
-																			<label>Save Skin</label>
+																			<label>Save</label>
 																			<default>0</default>
 																			<auth_needed>0</auth_needed>
 																			<markup>0</markup>
@@ -129,7 +120,7 @@
 																		<flag>wxEXPAND|wxTOP</flag>
 																		<border>6</border>
 																		<object class="wxButton" name="SkinEditorDeleteDefButton">
-																			<label>Delete Skin</label>
+																			<label>Delete</label>
 																			<default>0</default>
 																			<auth_needed>0</auth_needed>
 																			<markup>0</markup>
@@ -154,15 +145,6 @@
 									<orient>wxVERTICAL</orient>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxBOTTOM|wxTOP</flag>
-										<border>6</border>
-										<object class="wxStaticText" name="SkinEditorEditSkinDefinitionLabel">
-											<label>Edit Skin Definition</label>
-											<wrap>-1</wrap>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
 										<flag>wxEXPAND|wxTOP</flag>
 										<border>6</border>
 										<object class="wxBoxSizer">
@@ -172,13 +154,13 @@
 												<flag>wxALIGN_CENTER_VERTICAL</flag>
 												<border>12</border>
 												<object class="wxStaticText" name="SkinEditorSkinNameLabel">
-													<label>Skin Name:</label>
+													<label>Skin:</label>
 													<wrap>-1</wrap>
 												</object>
 											</object>
 											<object class="sizeritem">
 												<option>1</option>
-												<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+												<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND|wxLEFT|wxRIGHT</flag>
 												<border>6</border>
 												<object class="wxTextCtrl" name="SkinEditorSkinName">
 													<value></value>

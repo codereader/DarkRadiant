@@ -48,8 +48,6 @@ SkinEditor::SkinEditor() :
 {
     wxPanel* mainPanel = loadNamedPanel(this, "SkinEditorMainPanel");
 
-    makeLabelBold(this, "SkinEditorSkinDefinitionsLabel");
-    makeLabelBold(this, "SkinEditorEditSkinDefinitionLabel");
     makeLabelBold(this, "SkinEditorDeclarationSourceLabel");
 
     setupModelTreeView();
@@ -141,11 +139,6 @@ void SkinEditor::setupSkinTreeView()
 
     auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _skinTreeView);
     treeToolbar->EnableFavouriteManagement(false);
-
-    auto definitionLabel = getControl<wxStaticText>("SkinEditorSkinDefinitionsLabel");
-    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
-    definitionLabel->Reparent(treeToolbar);
-    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
 
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_skinTreeView, 1, wxEXPAND);
@@ -354,9 +347,6 @@ void SkinEditor::updateSkinControlsFromSelection()
     // Enable/disable notebook tabs independently to allow page switching
     getControl<wxWindow>("SkinEditorTargetModels")->Enable(skinCanBeModified);
     getControl<wxWindow>("SkinEditorRemappings")->Enable(skinCanBeModified);
-
-    getControl<wxWindow>("SkinEditorEditSkinDefinitionLabel")->Enable(skinCanBeModified);
-    getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(skinCanBeModified);
     getControl<wxWindow>("SkinEditorSkinName")->Enable(skinCanBeModified);
 
     updateSourceView(skin);
