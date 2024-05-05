@@ -277,10 +277,10 @@ background image configuration dialog.
 *Use background image*:: Master toggle to show or hide the background image.
 
 *Image file*:: Click on the widget to show a file chooser which allows you to find and
-*select the background image to show.
+select the background image to show.
 
 *Opacity*:: Drag the slider to control the opacity of the image, from fully transparent
-*(invisible) to fully opaque.
+(invisible) to fully opaque.
 
 *Scale*:: Adjusts the size of the image.
 
