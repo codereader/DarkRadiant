@@ -889,17 +889,17 @@ to make changes which will be applied uniformly to all selected faces.
 [cols="1h,3"]
 |===
 |Shader|This shows the full name of the texture applied to the selected
-face(s). You can use the folder button to bring up a new dialog which allows you
+face(s). You can use the tree button to bring up a new dialog which allows you
 to choose a new texture.
-|Horiz/Vert Shift|These text boxes show the current texture shift (translation)
+|X/Y Shift|These text boxes show the current texture shift (translation)
 on the horizontal and vertical axes. The associated arrow buttons will increase
 or decrease the texture shift by the current *Step* value.
-|Horiz/Vert Scale|These show the current texture scale in the horizontal and
+|X/Y Scale|These show the current texture scale in the horizontal and
 vertical directions. The arrow buttons will increase or decrease the scale by
 the current *Step* value.
 |Rotation|Shows the current texture rotation, in degrees. The arrow buttons will
 rotate the texture clockwise or anticlockwise by the current *Step* value.
-|Fit Texture|These controls allow you to fit an exact number of copies of the
+|Fit|These controls allow you to fit an exact number of copies of the
 texture across the face, so that the texture edges correspond to the face edges.
 
 The numeric spin boxes control how many copies of the texture are tiled on each
