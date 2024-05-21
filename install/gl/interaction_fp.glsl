@@ -92,6 +92,15 @@ float getDepthValueForVector(in sampler2D shadowMapTexture, vec4 shadowRect, vec
     return 1 / (1 - d);
 }
 
+// Restore the Z coordinate of a normal vector for which only X and Y were specified
+// (assuming the original was unit length).
+void recoverZ(inout vec4 v)
+{
+    // x^2 + y^2 + z^2 = 1.0
+    // z^2 = 1.0 - x^2 - y^2
+    v.z = sqrt(1.0 - v.x * v.x - v.y * v.y);
+}
+
 void main()
 {
     vec3 totalColor;
@@ -99,7 +108,11 @@ void main()
     // Perform the texture lookups
     vec4 diffuse = texture2D(u_Diffusemap, var_TexDiffuse);
     vec3 specular = texture2D(u_Specularmap, var_TexSpecular).rgb;
-    vec4 bumpTexel = texture2D(u_Bumpmap, var_TexBump) * 2. - 1.;
+
+    // Normal map colours from [0, 255] map to [0.0, 1.0], so remap to [-1.0, 1.0] in each
+    // dimension. Then recover the Z value which may not be in the texture (if it was RGTC).
+    vec4 bumpTexel = texture2D(u_Bumpmap, var_TexBump) * 2.0 - 1.0;
+    recoverZ(bumpTexel);
 
     // Light texture lookups
     vec3 attenuation_xy = vec3(0,0,0);
@@ -120,28 +133,28 @@ void main()
 
         // compute view direction in tangent space
         vec3 localV = normalize(var_mat_os2ts * (u_LocalViewOrigin - var_vertex));
-    
+
         // compute light direction in tangent space
         vec3 localL = normalize(var_mat_os2ts * (u_LocalLightOrigin - var_vertex));
-    
+
         vec3 RawN = normalize(bumpTexel.xyz);
         vec3 N = var_mat_os2ts * RawN;
-    
+
         //must be done in tangent space, otherwise smoothing will suffer (see #4958)
         float NdotL = clamp(dot(RawN, localL), 0.0, 1.0);
         float NdotV = clamp(dot(RawN, localV), 0.0, 1.0);
         float NdotH = clamp(dot(RawN, normalize(localV + localL)), 0.0, 1.0);
-    
+
         // fresnel part
         float fresnelTerm = pow(1.0 - NdotV, fresnelParms2.w);
         float rimLight = fresnelTerm * clamp(NdotL - 0.3, 0.0, fresnelParms.z) * lightParms.y;
         float specularPower = mix(lightParms.z, lightParms.w, specular.z);
         float specularCoeff = pow(NdotH, specularPower) * fresnelParms2.z;
         float fresnelCoeff = fresnelTerm * fresnelParms.y + fresnelParms2.y;
-    
+
         vec3 specularColor = specularCoeff * fresnelCoeff * specular * (diffuse.rgb * 0.25 + vec3(0.75));
         float R2f = clamp(localL.z * 4.0, 0.0, 1.0);
-    
+
         float NdotL_adjusted = NdotL;
         float light = rimLight * R2f + NdotL_adjusted;
 
@@ -177,10 +190,10 @@ void main()
 
         vec3 localNormal = vec3(bumpTexel.x, bumpTexel.y, sqrt(max(1. - bumpTexel.x*bumpTexel.x - bumpTexel.y*bumpTexel.y, 0)));
         vec3 N = normalize(var_mat_os2ts * localNormal);
-        
+
         vec3 light1 = vec3(.5); // directionless half
         light1 += max(dot(N, u_WorldUpLocal) * (1. - specular) * .5, 0);
-        
+
         // Calculate specularity
         vec3 nViewDir = normalize(var_LocalViewerDirection);
         vec3 reflect = - (nViewDir - 2 * N * dot(N, nViewDir));
@@ -188,18 +201,17 @@ void main()
         float spec = max(dot(reflect, u_WorldUpLocal), 0);
         float specPow = clamp((spec * spec), 0.0, 1.1);
         light1 += vec3(spec * specPow * specPow) * specular * 1.0;
-        
+
         // Apply the light's colour (with light scale) and the vertex colour
         light1.rgb *= (u_LightColour * u_LightScale) * var_Colour.rgb;
 
         light.rgb *= diffuse.rgb * light1;
 
         light = max(light, vec4(0)); // avoid negative values, which with floating point render buffers can lead to NaN artefacts
-    
+
         totalColor = light.rgb;
     }
 
 	gl_FragColor.rgb = totalColor;
 	gl_FragColor.a = diffuse.a;
 }
-

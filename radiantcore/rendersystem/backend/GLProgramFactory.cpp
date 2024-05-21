@@ -131,12 +131,13 @@ void assertShaderCompiled(GLuint shader, const std::string& filename)
         std::vector<char> logBuf(logLength + 1, 0);
         glGetShaderInfoLog(shader, static_cast<GLsizei>(logBuf.size()), NULL, &logBuf.front());
 
-        // Convert to string and throw exception
+        // Convert to string and throw exception. Also output the string to console because
+        // we can't always be sure that the exception message will be displayed in a useful
+        // way.
         std::string logStr = std::string(&logBuf.front());
-        throw std::runtime_error(
-            "Failed to compile GLSL shader \"" + filename + "\":\n"
-            + logStr
-        );
+        std::string errStr = "Failed to compile GLSL shader \"" + filename + "\":\n" + logStr;
+        std::cerr << errStr << std::endl;
+        throw std::runtime_error(errStr);
     }
 }
 
