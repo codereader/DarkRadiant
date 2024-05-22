@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ipreferencesystem.h"
+#include "irender.h"
 
 #include "registry/registry.h"
 #include "util/ScopedBoolLock.h"
