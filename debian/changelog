@@ -1,3 +1,14 @@
+darkradiant (3.9.1~jammy1) jammy; urgency=medium
+
+  * Textures with RGTC normal maps no longer show as black in lighting preview
+    mode.
+  * Skin editor no longer crashes when editing the skin name.
+  * Reduced space wastage in Surface Editor.
+  * Several dialogs which could previously be shrunk to zero size no longer do
+    so.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Sat, 25 May 2024 13:10:46 +0100
+
 darkradiant (3.9.0~jammy1) jammy; urgency=medium
 
   * Add "Show definition" button for the "inherit" spawnarg.
