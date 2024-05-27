@@ -963,7 +963,13 @@ bool CamWnd::onRender()
     {
         debug::assertNoGlErrors();
 
-        Cam_Draw();
+        // Do not allow exceptions to escape from the rendering code
+        try {
+            Cam_Draw();
+        }
+        catch (const std::exception& e) {
+            rError() << "Exception occurred during rendering:\n" << e.what() << std::endl;
+        }
 
         debug::assertNoGlErrors();
 
