@@ -40,6 +40,16 @@ log_black_hole(GLogLevelFlags, const GLogField*, gsize, gpointer)
 {
     return G_LOG_WRITER_HANDLED;
 }
+
+// wxWidgets assertion handler
+void assertToConsole(
+    const wxString& file, int line, const wxString& func, const wxString& cond,
+    const wxString& msg
+)
+{
+    std::cerr << "wxASSERT: " << file << ":" << line << ":" << func << ": [" << cond
+              << "]: " << msg;
+}
 #endif
 
 // The startup event which will be queued in App::OnInit()
@@ -117,6 +127,10 @@ bool RadiantApp::OnInit()
     // output for debugging (due to fresh Gtk-CRITICAL messages being emitted
     // several times per second)
     g_log_set_writer_func(log_black_hole, nullptr, nullptr);
+
+    // Avoid assertions from wxWidgets itself (particularly stuff to do with art provider
+    // destruction, which we have no control over).
+    wxSetAssertHandler(assertToConsole);
 #endif
 
 	// Initialise the context (application path / settings path, is
