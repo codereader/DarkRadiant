@@ -339,7 +339,7 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
     #if ( LIBGIT2_VER_MAJOR > 1 ) || ( LIBGIT2_VER_MAJOR == 1 && LIBGIT2_VER_MINOR >= 8 )
         std::vector<git_commit*> parentCommits;
     #else
-        std::vector<const git_commit*> parentCommits;
+        std::vector<git_commit*> parentCommits;
     #endif
 
     // It's possible that there is no HEAD yet (first commit in the repo)
