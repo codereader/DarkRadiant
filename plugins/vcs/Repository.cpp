@@ -333,14 +333,8 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
 
     // Add all working copy changes
     index->updateAll();
-
     auto tree = index->writeTree(*this);
-
-    #if ( LIBGIT2_VER_MAJOR > 1 ) || ( LIBGIT2_VER_MAJOR == 1 && LIBGIT2_VER_MINOR >= 8 )
-        std::vector<git_commit*> parentCommits;
-    #else
-        std::vector<git_commit*> parentCommits;
-    #endif
+    std::vector<git_commit*> parentCommits;
 
     // It's possible that there is no HEAD yet (first commit in the repo)
     if (head)
