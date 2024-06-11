@@ -277,7 +277,7 @@ public:
     virtual CubeMapMode getCubeMapMode() const = 0;
 
     /**
-     * Returns the dimensions specifying the map size for 
+     * Returns the dimensions specifying the map size for
      * stages using the "mirrorRenderMap", "remoteRenderMap" keywords.
      */
     virtual const Vector2& getRenderMapSize() const = 0;
@@ -444,7 +444,7 @@ public:
 
     // Set the stage condition expression
     virtual void setConditionExpressionFromString(const std::string& expression) = 0;
-    
+
     // Sets the texgen type of this stage
     virtual void setTexGenType(TexGenType type) = 0;
 
@@ -469,3 +469,36 @@ public:
     // For stages with map type VideoMap, this is used to update the properties
     virtual void setVideoMapProperties(const std::string& filePath, bool looping) = 0;
 };
+
+inline std::ostream& operator<< (std::ostream& os, IShaderLayer::VertexColourMode mode)
+{
+    switch (mode) {
+    case IShaderLayer::VERTEX_COLOUR_NONE:
+        return os << "noVertexColor";
+    case IShaderLayer::VERTEX_COLOUR_MULTIPLY:
+        return os << "vertexColor";
+    case IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY:
+        return os << "inverseVertexColor";
+    }
+}
+
+inline std::ostream& operator<< (std::ostream& os, IShaderLayer::Type type)
+{
+    switch (type) {
+    case IShaderLayer::BUMP:
+        return os << "bumpmap";
+    case IShaderLayer::DIFFUSE:
+        return os << "diffusemap";
+    case IShaderLayer::SPECULAR:
+        return os << "specularmap";
+    case IShaderLayer::BLEND:
+        return os << "blend";
+    }
+}
+
+inline std::ostream& operator<< (std::ostream& os, IShaderLayer& layer)
+{
+    return os << "IShaderLayer(type=" << layer.getType()
+              << ", map=" << layer.getMapImageFilename()
+              << ", vertexColor=" << layer.getVertexColourMode() << ")";
+}

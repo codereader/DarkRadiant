@@ -86,11 +86,16 @@ private:
             return _interactionDrawCalls;
         }
 
-        void prepare(InteractionPass& pass)
+        void clear()
         {
             _bump = nullptr;
             _diffuse = nullptr;
             _specular = nullptr;
+        }
+
+        void prepare(InteractionPass& pass)
+        {
+            clear();
 
             _defaultBumpStage.texture = pass.getDefaultInteractionTextureBinding(IShaderLayer::BUMP);
             _defaultDiffuseStage.texture = pass.getDefaultInteractionTextureBinding(IShaderLayer::DIFFUSE);
@@ -176,7 +181,7 @@ public:
 
     void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 
-    void fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
+    void fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program,
         std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
 
     void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program, std::size_t renderTime);
