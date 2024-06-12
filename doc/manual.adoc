@@ -917,13 +917,22 @@ _widths_ on a certain brush face but the number of _lengths_ is not important
 (since the texture is seamless); in this case, avoiding aspect ratio distortion
 is more useful than fitting an exact number of lengths.
 
-|Align Texture|These buttons shift the texture so that the Top/Bottom/Left/Right
+|
+image:align_top.png[]&ensp;
+image:align_bottom.png[]&ensp;
+image:align_left.png[]&ensp;
+image:align_right.png[]
+|These buttons shift the texture so that the Top/Bottom/Left/Right
 edge of the face are aligned with a texture boundary, but otherwise do not
 modify the scaling of the texture (unlike the *Fit* operation).
-|Flip Texture|Flips (mirrors) the texture along the horizontal or vertical axis.
+|
+image:flip_horiz.png[]&ensp;image:flip_vert.png[]
+|Flips (mirrors) the texture along the horizontal or vertical axis.
 |Natural|This button resets the texture to a default alignment and scale, based
-the location and size of the face.
-|Texture Lock|If this is enabled, the alignment of the texture will be preserved
+the location and size of the face. The adjacent *Scale* spinbox allows you to control the
+default scale used for *Natural* fitting.
+|image:texture_lock.png[]
+|If this is enabled, the alignment of the texture will be preserved
 relative to the face if the brush or patch is moved in 3D space. If disabled,
 the texture itself will remain fixed in 3D space as the brush or patch moves,
 resulting in the alignment changing.
