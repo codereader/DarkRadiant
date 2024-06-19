@@ -192,6 +192,8 @@ void SkinEditor::setupPreview()
 void SkinEditor::setupRemappingPanel()
 {
     auto panel = getControl<wxPanel>("SkinEditorRemappingPanel");
+    _sourceMaterialEdit = getControl<wxTextCtrl>("SourceMaterialEdit");
+    _replacementMaterialEdit = getControl<wxTextCtrl>("ReplacementMaterialEdit");
 
     _remappingList = wxutil::TreeView::CreateWithModel(panel, _remappings.get(), wxDV_SINGLE);
 
@@ -846,9 +848,14 @@ void SkinEditor::onRemappingEditDone(wxDataViewEvent& ev)
     row[_remappingColumns.unchangedReplacement] = std::string();
 }
 
-void SkinEditor::onRemappingSelectionChanged(wxCommandEvent& ev)
+void SkinEditor::onRemappingSelectionChanged(wxDataViewEvent& ev)
 {
     updateRemappingButtonSensitivity();
+
+    // Populate the Replace/With entry boxes
+    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
+    _sourceMaterialEdit->SetValue(row[_remappingColumns.original].getString());
+    _replacementMaterialEdit->SetValue(row[_remappingColumns.replacement].getString());
 }
 
 void SkinEditor::onRemoveSelectedMapping(wxCommandEvent& ev)

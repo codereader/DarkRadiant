@@ -68,6 +68,8 @@ class SkinEditor final: public wxutil::DialogBase, private wxutil::XmlResourceBa
     RemappingColumns _remappingColumns;
     wxutil::TreeModel::Ptr _remappings;
     wxutil::TreeView* _remappingList;
+    wxWeakRef<wxTextCtrl> _sourceMaterialEdit;
+    wxWeakRef<wxTextCtrl> _replacementMaterialEdit;
 
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _leftPanePosition;
@@ -125,7 +127,7 @@ private:
     void onRemappingEditStarted(wxDataViewEvent& ev);
     void onRemappingEditDone(wxDataViewEvent& ev);
     void onRemoveSelectedMapping(wxCommandEvent& ev);
-    void onRemappingSelectionChanged(wxCommandEvent& ev);
+    void onRemappingSelectionChanged(wxDataViewEvent& ev);
     void onPopulateMappingsFromModel(wxCommandEvent& ev);
     void onReplacementEntryChanged(const std::string& material);
     void onSaveChanges(wxCommandEvent& ev);
