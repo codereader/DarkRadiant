@@ -215,6 +215,14 @@ void SkinEditor::setupRemappingPanel()
     _remappingList->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &SkinEditor::onRemappingEditDone, this);
     _remappingList->EnableSearchPopup(false);
 
+    // Material browse buttons
+    getControl<wxBitmapButton>("chooseRemappedSourceMaterialBtn")->Bind(
+        wxEVT_BUTTON, [=](wxCommandEvent&) { chooseRemappedSourceMaterial(); }
+    );
+    getControl<wxBitmapButton>("chooseRemappedDestMaterialBtn")->Bind(
+        wxEVT_BUTTON, [=](wxCommandEvent&) { chooseRemappedDestMaterial(); }
+    );
+
     panel->GetSizer()->Prepend(_remappingList, 1, wxEXPAND, 0);
 
     auto populateButton = getControl<wxButton>("SkinEditorAddMaterialsFromModelsButton");
@@ -222,6 +230,22 @@ void SkinEditor::setupRemappingPanel()
 
     auto removeButton = getControl<wxButton>("SkinEditorRemoveMappingButton");
     removeButton->Bind(wxEVT_BUTTON, &SkinEditor::onRemoveSelectedMapping, this);
+}
+
+void SkinEditor::chooseRemappedSourceMaterial()
+{
+    MaterialChooser chooser(
+        this, MaterialSelector::TextureFilter::All, _sourceMaterialEdit
+    );
+    chooser.ShowModal();
+}
+
+void SkinEditor::chooseRemappedDestMaterial()
+{
+    MaterialChooser chooser(
+        this, MaterialSelector::TextureFilter::All, _replacementMaterialEdit
+    );
+    chooser.ShowModal();
 }
 
 decl::ISkin::Ptr SkinEditor::getSelectedSkin()
@@ -318,7 +342,13 @@ void SkinEditor::updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin)
 void SkinEditor::updateRemappingButtonSensitivity()
 {
     auto selectedSource = getSelectedRemappingSourceMaterial();
-    getControl<wxButton>("SkinEditorRemoveMappingButton")->Enable(!selectedSource.empty() && selectedSource != "*");
+    const bool isWildcardRow = (selectedSource == "*");
+
+    // The wildcard row cannot be removed and its source ("*") cannot be changed
+    getControl<wxButton>("SkinEditorRemoveMappingButton")->Enable(
+        !selectedSource.empty() && !isWildcardRow
+    );
+    _sourceMaterialEdit->Enable(!isWildcardRow);
 }
 
 void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)

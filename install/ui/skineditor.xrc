@@ -309,6 +309,18 @@
 																	</object>
 																</object>
 																<object class="sizeritem">
+																	<cellpos>0,3</cellpos>
+																	<cellspan>1,1</cellspan>
+																	<flag>wxEXPAND|wxRIGHT|wxTOP</flag>
+																	<border>6</border>
+																	<object class="wxBitmapButton" name="chooseRemappedSourceMaterialBtn">
+																		<tooltip>Choose source material to replace</tooltip>
+																		<bitmap>../bitmaps/treeView16.png</bitmap>
+																		<default>0</default>
+																		<auth_needed>0</auth_needed>
+																	</object>
+																</object>
+																<object class="sizeritem">
 																	<cellpos>2,1</cellpos>
 																	<cellspan>1,1</cellspan>
 																	<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
@@ -361,6 +373,18 @@
 																	<border>6</border>
 																	<object class="wxTextCtrl" name="ReplacementMaterialEdit">
 																		<value></value>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<cellpos>1,3</cellpos>
+																	<cellspan>1,1</cellspan>
+																	<flag>wxEXPAND|wxRIGHT|wxTOP</flag>
+																	<border>6</border>
+																	<object class="wxBitmapButton" name="chooseRemappedDestMaterialBtn">
+																		<tooltip>Choose replacement material</tooltip>
+																		<bitmap>../bitmaps/treeView16.png</bitmap>
+																		<default>0</default>
+																		<auth_needed>0</auth_needed>
 																	</object>
 																</object>
 															</object>

@@ -136,6 +136,8 @@ private:
     void onCopySkin(wxCommandEvent& ev);
     void onDeleteSkin(wxCommandEvent& ev);
     void onSkinDeclarationChanged();
+    void chooseRemappedSourceMaterial();
+    void chooseRemappedDestMaterial();
 
     bool saveChanges();
     void discardChanges();
