@@ -216,7 +216,8 @@ void SkinEditor::setupRemappingPanel()
     _remappingList->EnableSearchPopup(false);
 
     // Material browse buttons
-    getControl<wxBitmapButton>("chooseRemappedSourceMaterialBtn")->Bind(
+    _sourceMaterialBrowseBtn = getControl<wxBitmapButton>("chooseRemappedSourceMaterialBtn");
+    _sourceMaterialBrowseBtn->Bind(
         wxEVT_BUTTON, [=](wxCommandEvent&) { chooseRemappedSourceMaterial(); }
     );
     getControl<wxBitmapButton>("chooseRemappedDestMaterialBtn")->Bind(
@@ -349,6 +350,7 @@ void SkinEditor::updateRemappingButtonSensitivity()
         !selectedSource.empty() && !isWildcardRow
     );
     _sourceMaterialEdit->Enable(!isWildcardRow);
+    _sourceMaterialBrowseBtn->Enable(!isWildcardRow);
 }
 
 void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)

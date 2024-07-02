@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sigc++/connection.h>
+#include <wx/bmpbuttn.h>
 
 #include "icommandsystem.h"
 #include "modelskin.h"
@@ -70,6 +71,7 @@ class SkinEditor final: public wxutil::DialogBase, private wxutil::XmlResourceBa
     wxutil::TreeView* _remappingList;
     wxWeakRef<wxTextCtrl> _sourceMaterialEdit;
     wxWeakRef<wxTextCtrl> _replacementMaterialEdit;
+    wxWeakRef<wxBitmapButton> _sourceMaterialBrowseBtn;
 
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _leftPanePosition;
