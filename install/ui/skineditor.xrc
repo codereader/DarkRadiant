@@ -305,6 +305,7 @@
 																	<flag>wxEXPAND|wxRIGHT|wxTOP</flag>
 																	<border>6</border>
 																	<object class="wxTextCtrl" name="SourceMaterialEdit">
+																		<style>wxTE_READONLY</style>
 																		<value></value>
 																	</object>
 																</object>
@@ -372,6 +373,7 @@
 																	<flag>wxEXPAND|wxRIGHT|wxTOP</flag>
 																	<border>6</border>
 																	<object class="wxTextCtrl" name="ReplacementMaterialEdit">
+																		<style>wxTE_READONLY</style>
 																		<value></value>
 																	</object>
 																</object>
