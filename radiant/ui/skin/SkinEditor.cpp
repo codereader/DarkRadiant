@@ -200,14 +200,15 @@ void SkinEditor::setupRemappingPanel()
     _remappingList->AppendToggleColumn(_("Active"), _remappingColumns.active.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-    auto originalColumn = new MaterialSelectorColumn(_("Original (click to edit)"), _remappingColumns.original.getColumnIndex());
+    auto originalColumn = new MaterialSelectorColumn(
+        _("Original"), _remappingColumns.original.getColumnIndex()
+    );
     _remappingList->AppendColumn(originalColumn);
 
-    auto replacementColumn = new MaterialSelectorColumn(_("Replacement (click to edit)"), _remappingColumns.replacement.getColumnIndex());
+    auto replacementColumn = new MaterialSelectorColumn(
+        _("Replacement"), _remappingColumns.replacement.getColumnIndex()
+    );
     _remappingList->AppendColumn(replacementColumn);
-
-    replacementColumn->signal_onMaterialSelected().connect(
-        sigc::mem_fun(*this, &SkinEditor::onReplacementEntryChanged));
 
     _remappingList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingRowChanged, this);
     _remappingList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this);
@@ -235,18 +236,19 @@ void SkinEditor::setupRemappingPanel()
 
 void SkinEditor::chooseRemappedSourceMaterial()
 {
-    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All);
+    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All, _sourceMaterialEdit);
     if (chooser.ShowModal() == wxID_OK) {
-        _sourceMaterialEdit->SetValue(chooser.GetSelectedDeclName());
+        const std::string materialName = chooser.GetSelectedDeclName();
+        onOriginalEntryChanged(materialName);
     }
 }
 
 void SkinEditor::chooseRemappedDestMaterial()
 {
-    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All);
+    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All,
+                            _replacementMaterialEdit);
     if (chooser.ShowModal() == wxID_OK) {
         const std::string materialName = chooser.GetSelectedDeclName();
-        _replacementMaterialEdit->SetValue(materialName);
         onReplacementEntryChanged(materialName);
     }
 }
@@ -964,6 +966,15 @@ void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
     _remappingList->CancelEditing(); // stop editing
 
     populateSkinListWithModelMaterials();
+}
+
+void SkinEditor::onOriginalEntryChanged(const std::string& material)
+{
+    wxutil::TreeModel::Row row(_remappingList->GetSelection(), *_remappings);
+
+    row[_remappingColumns.original] = material;
+    row[_remappingColumns.active] = true; // activate edited rows
+    row.SendItemChanged();
 }
 
 void SkinEditor::onReplacementEntryChanged(const std::string& material)

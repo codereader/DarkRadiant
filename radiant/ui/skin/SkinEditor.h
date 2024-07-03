@@ -131,6 +131,7 @@ private:
     void onRemoveSelectedMapping(wxCommandEvent& ev);
     void onRemappingSelectionChanged(wxDataViewEvent& ev);
     void onPopulateMappingsFromModel(wxCommandEvent& ev);
+    void onOriginalEntryChanged(const std::string& material);
     void onReplacementEntryChanged(const std::string& material);
     void onSaveChanges(wxCommandEvent& ev);
     void onDiscardChanges(wxCommandEvent& ev);
