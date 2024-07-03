@@ -235,18 +235,20 @@ void SkinEditor::setupRemappingPanel()
 
 void SkinEditor::chooseRemappedSourceMaterial()
 {
-    MaterialChooser chooser(
-        this, MaterialSelector::TextureFilter::All, _sourceMaterialEdit
-    );
-    chooser.ShowModal();
+    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All);
+    if (chooser.ShowModal() == wxID_OK) {
+        _sourceMaterialEdit->SetValue(chooser.GetSelectedDeclName());
+    }
 }
 
 void SkinEditor::chooseRemappedDestMaterial()
 {
-    MaterialChooser chooser(
-        this, MaterialSelector::TextureFilter::All, _replacementMaterialEdit
-    );
-    chooser.ShowModal();
+    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All);
+    if (chooser.ShowModal() == wxID_OK) {
+        const std::string materialName = chooser.GetSelectedDeclName();
+        _replacementMaterialEdit->SetValue(materialName);
+        onReplacementEntryChanged(materialName);
+    }
 }
 
 decl::ISkin::Ptr SkinEditor::getSelectedSkin()
