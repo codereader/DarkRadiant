@@ -13,9 +13,9 @@
 #include "gamelib.h"
 #include "os/file.h"
 #include "os/path.h"
-#include "MaterialSelectorColumn.h"
 #include "SkinEditorTreeView.h"
 #include "decl/DeclLib.h"
+#include "ui/materials/MaterialChooser.h"
 #include "ui/modelselector/ModelTreeView.h"
 #include "util/ScopedBoolLock.h"
 #include "wxutil/FileChooser.h"
@@ -195,25 +195,24 @@ void SkinEditor::setupRemappingPanel()
     _sourceMaterialEdit = getControl<wxTextCtrl>("SourceMaterialEdit");
     _replacementMaterialEdit = getControl<wxTextCtrl>("ReplacementMaterialEdit");
 
+    // Construct list view and its visible columns
     _remappingList = wxutil::TreeView::CreateWithModel(panel, _remappings.get(), wxDV_SINGLE);
-
     _remappingList->AppendToggleColumn(_("Active"), _remappingColumns.active.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-
-    auto originalColumn = new MaterialSelectorColumn(
+    _remappingList->AppendTextColumn(
         _("Original"), _remappingColumns.original.getColumnIndex()
     );
-    _remappingList->AppendColumn(originalColumn);
-
-    auto replacementColumn = new MaterialSelectorColumn(
+    _remappingList->AppendTextColumn(
         _("Replacement"), _remappingColumns.replacement.getColumnIndex()
     );
-    _remappingList->AppendColumn(replacementColumn);
 
-    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingRowChanged, this);
-    _remappingList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this);
-    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_EDITING_STARTED, &SkinEditor::onRemappingEditStarted, this);
-    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &SkinEditor::onRemappingEditDone, this);
+    // Connect up list view events
+    _remappingList->Bind(
+        wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingValueChanged, this
+    );
+    _remappingList->Bind(
+        wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this
+    );
     _remappingList->EnableSearchPopup(false);
 
     // Material browse buttons
@@ -833,7 +832,7 @@ void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
     updateSkinButtonSensitivity();
 }
 
-void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
+void SkinEditor::onRemappingValueChanged(wxDataViewEvent& ev)
 {
     if (_controlUpdateInProgress || !_skin) return;
 
@@ -857,31 +856,6 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
     updateSkinTreeItem();
     updateSourceView(_skin);
     updateSkinButtonSensitivity();
-}
-
-void SkinEditor::onRemappingEditStarted(wxDataViewEvent& ev)
-{
-    // Save the previous values into the model row, to restore it on cancel
-    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
-
-    row[_remappingColumns.unchangedOriginal] = row[_remappingColumns.original].getString();
-    row[_remappingColumns.unchangedReplacement] = row[_remappingColumns.replacement].getString();
-}
-
-void SkinEditor::onRemappingEditDone(wxDataViewEvent& ev)
-{
-    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
-
-    if (ev.IsEditCancelled())
-    {
-        // Revert to previous value
-        row[_remappingColumns.original] = row[_remappingColumns.unchangedOriginal].getString();
-        row[_remappingColumns.replacement] = row[_remappingColumns.unchangedReplacement].getString();
-        row.SendItemChanged();
-    }
-
-    row[_remappingColumns.unchangedOriginal] = std::string();
-    row[_remappingColumns.unchangedReplacement] = std::string();
 }
 
 void SkinEditor::onRemappingSelectionChanged(wxDataViewEvent& ev)

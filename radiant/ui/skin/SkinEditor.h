@@ -125,9 +125,7 @@ private:
     void onSkinModelSelectionChanged(wxDataViewEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);
     void handleSkinSelectionChanged();
-    void onRemappingRowChanged(wxDataViewEvent& ev);
-    void onRemappingEditStarted(wxDataViewEvent& ev);
-    void onRemappingEditDone(wxDataViewEvent& ev);
+    void onRemappingValueChanged(wxDataViewEvent& ev);
     void onRemoveSelectedMapping(wxCommandEvent& ev);
     void onRemappingSelectionChanged(wxDataViewEvent& ev);
     void onPopulateMappingsFromModel(wxCommandEvent& ev);
