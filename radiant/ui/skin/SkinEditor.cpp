@@ -200,10 +200,12 @@ void SkinEditor::setupRemappingPanel()
     _remappingList->AppendToggleColumn(_("Active"), _remappingColumns.active.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     _remappingList->AppendTextColumn(
-        _("Original"), _remappingColumns.original.getColumnIndex()
+        _("Original"), _remappingColumns.original.getColumnIndex(), wxDATAVIEW_CELL_INERT,
+        wxCOL_WIDTH_AUTOSIZE
     );
     _remappingList->AppendTextColumn(
-        _("Replacement"), _remappingColumns.replacement.getColumnIndex()
+        _("Replacement"), _remappingColumns.replacement.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE
     );
 
     // Connect up list view events
