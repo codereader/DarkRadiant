@@ -9,7 +9,7 @@ namespace wxutil
 /**
  * greebo: This is a custom extension of the wxWidgets styles text control,
  * providing a few methods to make the actual code style mapping easier.
- * It's advisable to subclass this control and map the various lexer-recognised 
+ * It's advisable to subclass this control and map the various lexer-recognised
  * elements to a specific appearance.
  */
 class SourceViewCtrl :
@@ -26,32 +26,23 @@ public:
 	};
 
 	// Describes a specific style (e.g. a code comment)
-	struct Style
-	{
-		wxString foreground;
-		wxString fontname;
-		int fontsize;
-		FontStyle fontstyle;
+    struct Style
+    {
+        wxString foreground;
+        wxString fontname;
+        FontStyle fontstyle;
 
-		Style() :
-			foreground("BLACK"),
-			fontname(""),
-			fontsize(10),
-			fontstyle(Normal)
-		{};
+        Style(): foreground("BLACK"), fontname(""), fontstyle(Normal)
+        {};
 
-		Style(const char* foreground_, 
-				  FontStyle fontStyle_ = Normal,
-				  int fontSize_ = 10,
-				  const char* fontname_ = "") :
-			foreground(foreground_),
-			fontname(fontname_),
-			fontsize(fontSize_),
-			fontstyle(fontStyle_)
-		{}
-	};
+        Style(const char* foreground_, FontStyle fontStyle_ = Normal,
+              const char* fontname_ = "")
+        : foreground(foreground_), fontname(fontname_), fontstyle(fontStyle_)
+        {
+        }
+    };
 
-	// Elements as recognised by the STC lexer
+    // Elements as recognised by the STC lexer
 	enum Element
 	{
 		Default = 0,
@@ -98,13 +89,13 @@ public:
 	virtual ~SourceViewCtrl() {}
 
 	// Use this method to set a lexer-recognised element to a certain style
-	// e.g. SetStyleMapping(0, Number), provided that the lexer is using 
+	// e.g. SetStyleMapping(0, Number), provided that the lexer is using
 	// the index 0 to represent numbers in the source.
 	virtual void SetStyleMapping(int elementIndex, Element elementType);
 };
 
 /**
- * A special class providing syntax highlighting for the Python 
+ * A special class providing syntax highlighting for the Python
  * scripting language.
  */
 class PythonSourceViewCtrl :
