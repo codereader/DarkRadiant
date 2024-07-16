@@ -18,28 +18,24 @@
 namespace ui
 {
 
-PrefDialog::PrefDialog(wxWindow* parent) :
-	DialogBase(_("DarkRadiant Preferences"), parent),
-	_notebook(nullptr)
+PrefDialog::PrefDialog(wxWindow* parent)
+: DialogBase(_("DarkRadiant Preferences"), parent)
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-	SetMinClientSize(wxSize(640, -1));
+    wxBoxSizer* mainVbox = new wxBoxSizer(wxVERTICAL);
 
-	// 12-pixel spacer
-	wxBoxSizer* mainVbox = new wxBoxSizer(wxVERTICAL);
-	GetSizer()->Add(mainVbox, 1, wxEXPAND | wxALL, 12);
+    // Notebook widget (shows tree of pages and the space for each page to be shown)
+    _notebook = new wxTreebook(this, wxID_ANY);
+    mainVbox->Add(_notebook, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
 
-	mainVbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
-	
-	_notebook = new wxTreebook(this, wxID_ANY);
-	
-	// Prevent the tree control from shrinking too much
-	_notebook->GetTreeCtrl()->SetMinClientSize(wxSize(200, -1));
+    // Button box
+    mainVbox->AddSpacer(6);
+    mainVbox->Add(
+        CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM, 12
+    );
 
-	mainVbox->Prepend(_notebook, 1, wxEXPAND);
-
-	// Create the page widgets
-	createPages();
+    // Create the page widgets
+    createPages();
+    SetSizerAndFit(mainVbox);
 }
 
 void PrefDialog::createPages()
@@ -62,7 +58,7 @@ void PrefDialog::createPages()
 		{
 			parts.pop_back();
 			std::string parentPath = string::join(parts, "/");
-			
+
 			PageMap::const_iterator parent = _pages.find(parentPath);
 
 			if (parent != _pages.end())
@@ -93,14 +89,12 @@ void PrefDialog::showModal(const std::string& requestedPage)
 		p.second->resetValues();
 	}
 
-	// Trigger a resize of the treebook's TreeCtrl, do this by expanding all nodes 
+	// Trigger a resize of the treebook's TreeCtrl, do this by expanding all nodes
 	// (one would be enough, but we want to show the whole tree anyway)
 	for (std::size_t page = 0; page < _notebook->GetPageCount(); ++page)
 	{
 		_notebook->ExpandNode(page, true);
 	}
-
-	FitToScreen(0.7f, 0.6f);
 
 	// Is there a specific page display request?
 	if (!requestedPage.empty())
@@ -109,7 +103,7 @@ void PrefDialog::showModal(const std::string& requestedPage)
 	}
 	else
 	{
-		// To prevent starting up with the "Game" node selected, 
+		// To prevent starting up with the "Game" node selected,
 		// select the first page below the Settings path
 		for (const PageMap::value_type& p : _pages)
 		{
@@ -125,8 +119,8 @@ void PrefDialog::showModal(const std::string& requestedPage)
 	{
 		// Tell all pages to flush their buffer
 		for (const PageMap::value_type& p : _pages)
-		{ 
-			p.second->saveChanges(); 
+		{
+			p.second->saveChanges();
 		}
 
 		// greebo: Check if the mainframe module is already "existing". It might be

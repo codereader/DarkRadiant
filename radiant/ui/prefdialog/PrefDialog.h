@@ -15,8 +15,7 @@ namespace ui
 class PrefDialog :
 	public wxutil::DialogBase
 {
-private:
-	wxTreebook* _notebook;
+	wxTreebook* _notebook = nullptr;
 
 	// Each notebook page is created and maintained by a PrefPage class
 	// Map the page path to its widget
