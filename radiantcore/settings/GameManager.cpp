@@ -118,10 +118,6 @@ void Manager::initialiseModule(const IApplicationContext& ctx)
 		// The UI will call applyConfig on its own
 		showGameSetupDialog();
 	}
-
-	// Add a legacy note to the preference dialog for folks who are looking for the old settings page
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Game"));
-	page.appendLabel(_("This page has been moved!\nPlease use the game settings dialog in the menu: File &gt; Game/Project Setup..."));
 }
 
 const std::string& Manager::getModPath() const
