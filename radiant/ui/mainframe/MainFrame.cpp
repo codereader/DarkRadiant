@@ -78,7 +78,7 @@ const StringSet& MainFrame::getDependencies() const
 void MainFrame::initialiseModule(const IApplicationContext& ctx)
 {
 	// Add another page for Multi-Monitor stuff
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Multi Monitor"));
 
 	// Initialise the registry, if no key is set
 	if (GlobalRegistry().get(RKEY_MULTIMON_START_MONITOR).empty())
@@ -129,7 +129,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 		if (dwmEnableComposition)
 		{
 			// Add a page for Desktop Composition stuff
-			IPreferencePage& compatPage = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
+			IPreferencePage& compatPage = GlobalPreferenceSystem().getPage(_("Compatibility"));
 
 			compatPage.appendCheckBox(_("Disable Windows Desktop Composition"),
 				RKEY_DISABLE_WIN_DESKTOP_COMP);

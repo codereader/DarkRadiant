@@ -69,7 +69,7 @@ void PatchModule::initialiseModule(const IApplicationContext& ctx)
 	registerPatchCommands();
 
 	// Construct and Register the patch-related preferences
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Patch"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Patch"));
 	page.appendEntry(_("Patch Subdivide Threshold"), RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 
 	_patchTextureChanged = Patch::signal_patchTextureChanged().connect(

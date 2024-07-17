@@ -95,7 +95,7 @@ private:
 	void constructPreferences()
 	{
 		// Add a page to the given group
-		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Readable Editor"));
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Readable Editor"));
 
 		ComboBoxValueList options;
 

@@ -36,7 +36,7 @@ ArchiveTextFilePtr GitModule::openTextFile(const std::string& vcsUri)
         }
 
         auto tree = _repository->getTreeByRevision(vcs::getVcsRevision(vcsUri));
-        
+
         return tree->openTextFile(vcs::getVcsFilePath(vcsUri), *_repository);
     }
     catch (const git::GitException& ex)
@@ -54,7 +54,7 @@ const std::string& GitModule::getName() const
 
 const StringSet& GitModule::getDependencies() const
 {
-    static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER, 
+    static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER,
         MODULE_PREFERENCESYSTEM, MODULE_MAP, MODULE_VERSION_CONTROL_MANAGER };
     return _dependencies;
 }
@@ -70,7 +70,7 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
 
     auto modPath = GlobalGameManager().getModPath();
     _repository = std::make_unique<git::Repository>(modPath);
-    
+
     if (_repository->isOk())
     {
         rMessage() << "Opened repository at " << modPath << std::endl;
@@ -123,7 +123,7 @@ void GitModule::fetch(const cmd::ArgumentList& args)
 
 void GitModule::createPreferencePage()
 {
-    auto& page = GlobalPreferenceSystem().getPage(_("Settings/Version Control"));
+    auto& page = GlobalPreferenceSystem().getPage(_("Version Control"));
 
     page.appendCheckBox(_("Enable Auto-Fetch"), RKEY_AUTO_FETCH_ENABLED);
     page.appendSpinner(_("Fetch Interval (Minutes)"), RKEY_AUTO_FETCH_INTERVAL, 0.25, 900, 2);

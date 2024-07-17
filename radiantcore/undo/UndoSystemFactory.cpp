@@ -38,7 +38,7 @@ public:
 private:
     void constructPreferences()
     {
-        IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
+        IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Undo System"));
         page.appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
     }
 };

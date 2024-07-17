@@ -83,7 +83,7 @@ void TextureBrowserManager::updateAllWindows()
 void TextureBrowserManager::registerPreferencePage()
 {
     // Add a page to the given group
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Texture Browser"));
 
     std::list<std::string> textureScaleList
     {

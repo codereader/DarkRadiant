@@ -28,7 +28,7 @@ namespace brush
 void BrushModuleImpl::constructPreferences()
 {
 	// Add a page to the given group
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Primitives"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Primitives"));
 
 	// Add the default texture scale preference and connect it to the according registryKey
 	// Note: this should be moved somewhere else, I think

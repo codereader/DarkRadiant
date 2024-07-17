@@ -31,7 +31,7 @@ AutoSaveTimer::~AutoSaveTimer()
 void AutoSaveTimer::initialise()
 {
     // Add a page to the given group
-    IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
+    IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Autosave"));
 
     // Add the checkboxes and connect them with the registry key
     page.appendCheckBox(_("Enable Autosave"), RKEY_AUTOSAVE_ENABLED);
