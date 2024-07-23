@@ -21,7 +21,7 @@ RegularLight::RegularLight(RendererLight& light, IGeometryStore& store, IObjectR
     _shadowLightIndex(-1)
 {
     // Consider the "noshadows" flag and the setting of the light material
-    _isShadowCasting = _light.isShadowCasting() && _light.getShader() && 
+    _isShadowCasting = _light.isShadowCasting() && _light.getShader() &&
         _light.getShader()->getMaterial() && _light.getShader()->getMaterial()->lightCastsShadows();
 }
 
@@ -99,7 +99,7 @@ void RegularLight::collectSurfaces(const IRenderView& view, const std::set<IRend
     }
 }
 
-void RegularLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
+void RegularLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program,
     std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
@@ -153,7 +153,7 @@ void RegularLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& pr
     }
 }
 
-void RegularLight::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
+void RegularLight::drawShadowMap(OpenGLState& state, const Rectangle& rectangle,
     ShadowMapProgram& program, std::size_t renderTime)
 {
     // Set up the viewport to write to a specific area within the shadow map texture
@@ -229,6 +229,16 @@ RegularLight::InteractionDrawCall::InteractionDrawCall(OpenGLState& state, Inter
     _interactionDrawCalls(0)
 {
     _untransformedObjects.reserve(10000);
+}
+
+std::ostream& operator<< (std::ostream& os, IShaderLayer::Ptr p)
+{
+    if (p) {
+        return os << *p;
+    }
+    else {
+        return os << "<default>";
+    }
 }
 
 void RegularLight::InteractionDrawCall::submit(const ObjectList& objects)
@@ -318,7 +328,7 @@ void RegularLight::InteractionDrawCall::setSpecular(const InteractionPass::Stage
     _specular = specular;
 }
 
-void RegularLight::drawInteractions(OpenGLState& state, InteractionProgram& program, 
+void RegularLight::drawInteractions(OpenGLState& state, InteractionProgram& program,
     const IRenderView& view, std::size_t renderTime)
 {
     if (_objectsByEntity.empty())
@@ -349,12 +359,22 @@ void RegularLight::drawInteractions(OpenGLState& state, InteractionProgram& prog
 
                 if (!interactionStage.stage->isVisible()) continue; // ignore inactive stages
 
+                // Assemble diffuse, bump and specular stages into interaction passes, each
+                // of which consumes a single map of each type (with defaults black or _flat
+                // used if the respective stage is not declared). Bump maps are treated
+                // specially, in that they delimit separate interaction passes, whereas
+                // diffuse or specular maps can be shared from one pass to the next.
+                //
+                // This allows the material to list {B1, D1, B2, D2} to blend between two
+                // completely different textures (typically using vertexColor), or {B1, D1,
+                // D2} to use a single bumpmap but blend between two different diffusemaps.
                 switch (interactionStage.stage->getType())
                 {
                 case IShaderLayer::BUMP:
                     if (draw.hasBump())
                     {
                         draw.submit(objects); // submit pending draws when changing bump maps
+                        draw.clear(); // bump map starts a new interaction pass
                     }
                     draw.setBump(&interactionStage);
                     break;

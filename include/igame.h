@@ -15,6 +15,7 @@ const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
 const char* const RKEY_MOD_PATH = "user/paths/modPath";
 const char* const RKEY_MOD_BASE_PATH = "user/paths/modBasePath";
 
+/// Code for dealing with the per-game configuration items contained in .game files
 namespace game
 {
 

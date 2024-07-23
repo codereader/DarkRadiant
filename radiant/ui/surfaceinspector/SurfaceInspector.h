@@ -52,7 +52,6 @@ class SurfaceInspector :
 
 	struct FitTextureWidgets
 	{
-		wxStaticText* label;
 		wxStaticText* x;
 		wxButton* fitButton;
         wxToggleButton* preserveAspectButton;
@@ -65,14 +64,12 @@ class SurfaceInspector :
 
 	struct FlipTextureWidgets
 	{
-		wxStaticText* label;
 		wxButton* flipX;
 		wxButton* flipY;
 	} _flipTexture;
 
 	struct AlignTextureWidgets
 	{
-		wxStaticText* label;
 		wxButton* top;
 		wxButton* bottom;
 		wxButton* left;
@@ -81,9 +78,7 @@ class SurfaceInspector :
 
 	struct ModifyTextureWidgets
 	{
-		wxStaticText* label;
 		wxButton* natural;
-		wxButton* normalise;
 	} _modifyTex;
 
 	wxSpinCtrlDouble* _defaultTexScale;

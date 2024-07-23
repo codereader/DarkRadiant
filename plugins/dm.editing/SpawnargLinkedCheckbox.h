@@ -2,7 +2,7 @@
 
 #include "iundo.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include <wx/checkbox.h>
 
 namespace ui
@@ -12,10 +12,10 @@ namespace ui
  * An enhanced checkbox that is updating the named
  * entity property (spawnarg) when toggled.
  *
- * The logic toggled = "1" can be optionally inversed such that 
+ * The logic toggled = "1" can be optionally inversed such that
  * an unchecked box reflects a property value of "1".
  */
-class SpawnargLinkedCheckbox : 
+class SpawnargLinkedCheckbox :
 	public wxCheckBox
 {
 private:
@@ -30,8 +30,8 @@ private:
 	bool _defaultValueForMissingKeyValue;
 
 public:
-	SpawnargLinkedCheckbox(wxWindow* parent, const std::string& label, 
-						   const std::string& propertyName, 
+	SpawnargLinkedCheckbox(wxWindow* parent, const std::string& label,
+						   const std::string& propertyName,
 						   bool inverseLogic = false) :
 		wxCheckBox(parent, wxID_ANY, label),
 		_inverseLogic(inverseLogic),
@@ -53,7 +53,7 @@ public:
 	{
 		_entity = entity;
 
-		if (_entity == NULL) 
+		if (_entity == NULL)
 		{
 			SetToolTip("");
 			return;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iscenegraph.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 namespace scene
 {

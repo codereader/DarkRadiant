@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "ifilter.h"
 #include "scene/BasicRootNode.h"
+#include "scene/EntityNode.h"
 
 #include "../dialog/MessageBox.h"
 #include "scene/PrefabBoundsAccumulator.h"
@@ -23,12 +24,12 @@ void EntityPreview::setDefaultCamDistanceFactor(float factor)
     _defaultCamDistanceFactor = factor;
 }
 
-const IEntityNodePtr& EntityPreview::getEntity()
+const EntityNodePtr& EntityPreview::getEntity()
 {
     return _entity;
 }
 
-void EntityPreview::setEntity(const IEntityNodePtr& entity)
+void EntityPreview::setEntity(const EntityNodePtr& entity)
 {
     if (_entity == entity) return;
 

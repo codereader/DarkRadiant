@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"

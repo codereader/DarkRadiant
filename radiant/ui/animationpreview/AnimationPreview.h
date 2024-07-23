@@ -6,7 +6,7 @@
 #include "imd5model.h"
 #include "inode.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "imap.h"
 
 namespace ui
@@ -23,7 +23,7 @@ private:
 	scene::INodePtr _model;
 
 	// Each model node needs a parent entity to be properly renderable
-	IEntityNodePtr _entity;
+	EntityNodePtr _entity;
 
 	// The animation to play on this model
 	md5::IMD5AnimPtr _anim;

@@ -1,5 +1,6 @@
 #include "SpeakerNode.h"
-#include "../EntitySettings.h"
+#include "scene/EntitySettings.h"
+#include "entitylib.h"
 
 #include "math/Frustum.h"
 #include <functional>
@@ -390,18 +391,30 @@ void SpeakerNode::revertTransform()
 
 void SpeakerNode::freezeTransform()
 {
-	m_originKey.set(m_origin);
-	m_originKey.write(_spawnArgs);
+    m_originKey.set(m_origin);
+    m_originKey.write(_spawnArgs);
 
-	_radii = _radiiTransformed;
+    _radii = _radiiTransformed;
 
-	// Write the s_mindistance/s_maxdistance keyvalues if we have a valid shader
-	if (!_spawnArgs.getKeyValue(KEY_S_SHADER).empty())
-	{
-		// Note: Write the spawnargs in meters
-		_spawnArgs.setKeyValue(KEY_S_MAXDISTANCE, string::to_string(_radii.getMax(true)));
-		_spawnArgs.setKeyValue(KEY_S_MINDISTANCE, string::to_string(_radii.getMin(true)));
-	}
+    // Write the s_mindistance/s_maxdistance keyvalues if there is a valid shader and EITHER
+    // the radii are different from the shader default, OR there were already min/max
+    // keyvalues to begin with. This means we will not create or remove spawnargs when
+    // moving a speaker.
+    if (!_spawnArgs.getKeyValue(KEY_S_SHADER).empty())
+    {
+        // Note: Write the spawnargs in meters
+        if (_radii.getMin(true) != _defaultRadii.getMin(true)
+            || !_spawnArgs.getKeyValue(KEY_S_MINDISTANCE).empty())
+        {
+            _spawnArgs.setKeyValue(KEY_S_MINDISTANCE, string::to_string(_radii.getMin(true)));
+        }
+
+        if (_radii.getMax(true) != _defaultRadii.getMax(true)
+            || !_spawnArgs.getKeyValue(KEY_S_MAXDISTANCE).empty())
+        {
+            _spawnArgs.setKeyValue(KEY_S_MAXDISTANCE, string::to_string(_radii.getMax(true)));
+        }
+    }
 }
 
 void SpeakerNode::_onTransformationChanged()

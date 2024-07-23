@@ -7,7 +7,7 @@
 #include "ilayer.h"
 #include "ibrush.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 #include "PortableMapFormat.h"
 #include "Constants.h"
@@ -24,7 +24,7 @@ namespace format
 
 namespace
 {
-	class BadDocumentFormatException : 
+	class BadDocumentFormatException :
 		public std::runtime_error
 	{
 	public:
@@ -218,7 +218,7 @@ void PortableMapReader::readEntities(const xml::Node& mapNode)
 void PortableMapReader::readPrimitives(const xml::Node& primitivesNode, const scene::INodePtr& entity)
 {
 	auto childNodes = primitivesNode.getChildren();
-	
+
 	for (const auto childNode : childNodes)
 	{
 		const std::string name = childNode.getName();
@@ -290,7 +290,7 @@ void PortableMapReader::readBrush(const xml::Node& brushTag, const scene::INodeP
 		}
 		catch (const BadDocumentFormatException& ex)
 		{
-			rError() << "PortableMapReader: Entity " << entity->name() << ", Brush " << 
+			rError() << "PortableMapReader: Entity " << entity->name() << ", Brush " <<
 				brushTag.getAttributeValue(ATTR_BRUSH_NUMBER) << ": " << ex.what() << std::endl;
 		}
 	}
@@ -484,7 +484,7 @@ void PortableMapReader::readSelectionSetInformation(const xml::Node& tag, const 
 		);
 
 		auto setIter = _selectionSets.find(id);
-		
+
 		if (setIter != _selectionSets.end())
 		{
 			setIter->second->addNode(sceneNode);
@@ -495,11 +495,11 @@ void PortableMapReader::readSelectionSetInformation(const xml::Node& tag, const 
 bool PortableMapReader::CanLoad(std::istream& stream)
 {
 	// Instead of instantiating an XML parser and buffering the whole
-	// file into memory, read in some lines and look for 
+	// file into memory, read in some lines and look for
 	// certain signature parts.
 	// This will fail if the XML is oddly formatted with e.g. line-breaks
 	std::string buffer(512, '\0');
-	
+
 	for (int i = 0; i < 25; ++i)
 	{
         std::getline(stream, buffer);

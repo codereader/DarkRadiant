@@ -2,13 +2,13 @@
 
 #include <pybind11/stl_bind.h>
 
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "ieclass.h"
 #include "itextstream.h"
 
 #include "../SceneNodeBuffer.h"
 
-namespace script 
+namespace script
 {
 
 // Constructor, checks if the passed node is actually an entity
@@ -78,7 +78,7 @@ bool ScriptEntityNode::isEntity(const ScriptSceneNode& node) {
 // The returned node is non-NULL if the cast succeeded
 ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 	// Try to cast the node onto a brush
-	IEntityNodePtr entityNode = std::dynamic_pointer_cast<IEntityNode>(
+	EntityNodePtr entityNode = std::dynamic_pointer_cast<EntityNode>(
 		static_cast<scene::INodePtr>(node)
 	);
 
@@ -135,7 +135,7 @@ struct EntityKeyValuePair :
 	}
 };
 
-void EntityInterface::registerInterface(py::module& scope, py::dict& globals) 
+void EntityInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Add the EntityNode interface
 	py::class_<ScriptEntityNode, ScriptSceneNode> entityNode(scope, "EntityNode");

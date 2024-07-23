@@ -1,6 +1,6 @@
 #include "XMLFilter.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "ifilter.h"
 #include <regex>
@@ -55,7 +55,7 @@ bool XMLFilter::isEntityVisible(const FilterRule::Type type, const Entity& entit
 	bool visible = true; // default if unmodified by rules
 
 	IEntityClassConstPtr eclass = entity.getEntityClass();
-	
+
 	for (FilterRules::const_iterator ruleIter = _rules.begin();
 		 ruleIter != _rules.end();
 		 ++ruleIter)

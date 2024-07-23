@@ -469,13 +469,6 @@ void OpenGLShader::constructLightingPassesFromMaterial()
         return true;
     });
 
-    // Sort interaction stages: bumps go first, then diffuses, speculars last
-    std::sort(interactionLayers.begin(), interactionLayers.end(), [](const IShaderLayer::Ptr& a, const IShaderLayer::Ptr& b)
-    {
-        // Use the enum value to sort stages
-        return static_cast<int>(a->getType()) < static_cast<int>(b->getType());
-    });
-
     if (!interactionLayers.empty())
     {
         // Translucent materials don't contribute to the depth buffer
@@ -796,4 +789,3 @@ InteractionPass* OpenGLShader::getInteractionPass() const
 }
 
 }
-

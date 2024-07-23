@@ -6,7 +6,7 @@
 #include "ui/iresourcechooser.h"
 #include "ui/idialogmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
-#include "ientity.h" // Node_getEntity()
+#include "scene/Entity.h" // Node_getEntity()
 #include "iregistry.h"
 #include "ui/imainframe.h"
 
@@ -213,7 +213,7 @@ bool OrthoContextMenu::checkMergeEntities()
 
 bool OrthoContextMenu::checkReparentPrimitives()
 {
-    return selection::curSelectionIsSuitableForReparent();
+    return curSelectionIsSuitableForReparent();
 }
 
 bool OrthoContextMenu::checkRevertToWorldspawnPartial()

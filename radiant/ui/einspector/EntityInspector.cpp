@@ -4,7 +4,7 @@
 #include "AddPropertyDialog.h"
 
 #include "i18n.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "ideclmanager.h"
 #include "ieclass.h"
 #include "iregistry.h"
@@ -1531,9 +1531,9 @@ std::string EntityInspector::getPropertyTypeForAttachmentKey(const std::string& 
     // Check if there is a single attachment eclass on all selected entities
     std::optional<std::string> attachmentClass;
 
-    _entitySelection->foreachEntity([&](const IEntityNodePtr& entity)
+    _entitySelection->foreachEntity([&](const EntityNodePtr& entity)
     {
-        entity->getEntity().forEachAttachment([&](const Entity::Attachment& attachment)
+        entity->getEntity().forEachAttachment([&](const EntityAttachment& attachment)
         {
             if (attachment.name != attachmentName) return;
 

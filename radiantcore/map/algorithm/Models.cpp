@@ -5,7 +5,7 @@
 #include "i18n.h"
 #include "inode.h"
 #include "iselection.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "imodel.h"
 #include "imodelcache.h"
 #include "iscenegraph.h"
@@ -23,7 +23,7 @@ class ModelFinder :
 	public scene::NodeVisitor
 {
 public:
-	typedef std::set<IEntityNodePtr> Entities;
+	typedef std::set<EntityNodePtr> Entities;
 	typedef std::set<std::string> ModelPaths;
 
 private:
@@ -41,7 +41,7 @@ public:
 		{
 			_modelNames.insert(model->getIModel().getModelPath());
 
-			IEntityNodePtr ent = std::dynamic_pointer_cast<IEntityNode>(node->getParent());
+			EntityNodePtr ent = std::dynamic_pointer_cast<EntityNode>(node->getParent());
 
 			if (ent)
 			{
@@ -76,7 +76,7 @@ class ModelRefreshWalker :
 public:
 	bool pre(const scene::INodePtr& node)
 	{
-		IEntityNodePtr entity = std::dynamic_pointer_cast<IEntityNode>(node);
+		EntityNodePtr entity = std::dynamic_pointer_cast<EntityNode>(node);
 
 		if (entity)
 		{
@@ -134,7 +134,7 @@ void refreshSelectedModels(bool blockScreenUpdates)
 	// Traverse the entities and submit a refresh call
 	ModelFinder::Entities entities = walker.getEntities();
 
-	for (const IEntityNodePtr& entityNode : entities)
+	for (const EntityNodePtr& entityNode : entities)
 	{
 		entityNode->refreshModel();
 	}
@@ -150,7 +150,7 @@ void refreshModelsByPath(const std::string& relativeModelPath)
 
     GlobalMapModule().getRoot()->foreachNode([&](const scene::INodePtr& node)
     {
-        auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+        auto entity = std::dynamic_pointer_cast<EntityNode>(node);
 
         if (entity && entity->getEntity().getKeyValue("model") == relativeModelPath)
         {

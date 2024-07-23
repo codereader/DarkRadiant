@@ -4,7 +4,7 @@
 
 #include "iselectable.h"
 #include "iselectiontest.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 namespace selection
 {
@@ -57,7 +57,7 @@ public:
         if (!intersection.isValid()) return; // skip invalid intersections
 
         auto existing = _currentSelectables.find(selectable);
-        auto isEntity = dynamic_cast<IEntityNode*>(selectable) != nullptr;
+        auto isEntity = dynamic_cast<EntityNode*>(selectable) != nullptr;
         auto& pool = isEntity ? _entityPool : _primitivePool;
 
         if (existing != _currentSelectables.end())
@@ -96,7 +96,7 @@ public:
 
     // Visit each selectable, entities first, then primitives
     void foreachSelectable(const std::function<void(ISelectable*)>& functor) override
-    { 
+    {
         for (const auto& [_, selectable] : _entityPool)
         {
             functor(selectable);

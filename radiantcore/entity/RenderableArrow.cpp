@@ -1,6 +1,6 @@
 #include "RenderableArrow.h"
 
-#include "EntityNode.h"
+#include "scene/EntityNode.h"
 
 namespace entity
 {
@@ -20,7 +20,7 @@ void RenderableArrow::updateGeometry()
     if (!_needsUpdate) return;
 
     _needsUpdate = false;
-    
+
     // The starting point of the arrow is at the center of the entity's visible bounding box
     auto origin = _node.getWorldPosition() + _node.localAABB().getOrigin();
 
@@ -37,7 +37,7 @@ void RenderableArrow::updateGeometry()
     {
         left = g_vector3_axis_y;
     }
-    
+
     Vector3 up = direction.cross(left);
 
     Vector3 endpoint(origin + direction * 32.0);

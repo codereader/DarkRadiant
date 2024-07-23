@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "iscenegraph.h"
 #include "iundo.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include "PropertyEditorFactory.h"
 

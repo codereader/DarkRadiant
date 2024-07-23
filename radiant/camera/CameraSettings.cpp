@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ipreferencesystem.h"
+#include "irender.h"
 
 #include "registry/registry.h"
 #include "util/ScopedBoolLock.h"
@@ -68,7 +69,7 @@ void CameraSettings::observeKey(const std::string& key)
 
 void CameraSettings::constructPreferencePage()
 {
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Camera"));
 
 	// Add the sliders for the movement and angle speed and connect them to the observer
     page.appendSlider(_("Movement Speed (game units)"), RKEY_MOVEMENT_SPEED, 1, MAX_CAMERA_SPEED, 1, 1);

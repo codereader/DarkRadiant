@@ -1,7 +1,7 @@
 #include "LayerInfoFileModule.h"
 
 #include "ilayer.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "itextstream.h"
 #include "scenelib.h"
 #include "scene/LayerValidityCheckWalker.h"
@@ -174,7 +174,7 @@ void LayerInfoFileModule::onInfoFileLoadStart()
 
 bool LayerInfoFileModule::canParseBlock(const std::string& blockName)
 {
-	return blockName == LAYERS || blockName == NODE_TO_LAYER_MAPPING || 
+	return blockName == LAYERS || blockName == NODE_TO_LAYER_MAPPING ||
 	       blockName == LAYER_HIERARCHY || blockName == LAYER_PROPERTIES;
 }
 
@@ -205,7 +205,7 @@ void LayerInfoFileModule::parseLayerNames(parser::DefTokeniser& tok)
 	// The opening brace
 	tok.assertNextToken("{");
 
-	while (tok.hasMoreTokens()) 
+	while (tok.hasMoreTokens())
 	{
 		std::string token = tok.nextToken();
 
@@ -361,7 +361,7 @@ void LayerInfoFileModule::parseLayerProperties(parser::DefTokeniser& tok)
                 // Add the ID to the list
                 _hiddenLayerIds.push_back(string::convert<int>(nodeToken));
             }
-            
+
             continue;
         }
 

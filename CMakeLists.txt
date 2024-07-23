@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Project name and version
-project(darkradiant VERSION 3.9.0)
+project(darkradiant VERSION 3.9.1)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -130,7 +130,7 @@ add_subdirectory(radiant)
 pkg_check_modules(GTEST gtest)
 pkg_check_modules(GTEST_MAIN gtest_main)
 if (${GTEST_FOUND} AND ${GTEST_MAIN_FOUND})
-    include(CTest)
+    enable_testing()
     add_subdirectory(test)
 endif()
 
@@ -143,7 +143,7 @@ else()
 endif()
 
 # Install main targets
-install(TARGETS darkradiant math xmlutil scenegraph wxutil
+install(TARGETS darkradiant math xmlutil scene wxutil
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION ${PKGLIBDIR})
 install(TARGETS radiantcore script sound

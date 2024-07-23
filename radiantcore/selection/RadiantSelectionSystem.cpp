@@ -79,7 +79,7 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     {
         rMessage() << "Leaving selection focus mode" << std::endl;
         _selectionFocusActive = false;
-        
+
         GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
         {
             node->setRenderState(scene::INode::RenderState::Active);
@@ -1036,7 +1036,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
     GlobalCommandSystem().addCommand("RotateSelectedEulerXYZ", selection::algorithm::rotateSelectedEulerXYZ, { cmd::ARGTYPE_VECTOR3 });
     GlobalCommandSystem().addCommand("ScaleSelected", selection::algorithm::scaleSelectedCmd, { cmd::ARGTYPE_VECTOR3 });
 
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Selection"));
 
 	page.appendCheckBox(_("Ignore light volume bounds when calculating default rotation pivot location"),
 		SceneManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);

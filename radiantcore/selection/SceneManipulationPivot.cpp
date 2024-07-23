@@ -2,7 +2,7 @@
 
 #include "iselection.h"
 #include "ilightnode.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "igrid.h"
 #include "selectionlib.h"
 #include "registry/registry.h"

@@ -1,7 +1,7 @@
 #include "RadiantTest.h"
 
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "irendersystemfactory.h"
 #include "iselectable.h"
 #include "iselection.h"
@@ -18,6 +18,7 @@
 #include "scenelib.h"
 #include "algorithm/Entity.h"
 #include "algorithm/Scene.h"
+#include "scene/EntityKeyValue.h"
 
 namespace test
 {
@@ -31,7 +32,7 @@ namespace
 // global map to enable undo.
 struct TestEntity
 {
-    IEntityNodePtr node;
+    EntityNodePtr node;
     Entity* spawnArgs = nullptr;
 
     // Create an entity with the given class name
@@ -52,13 +53,13 @@ struct TestEntity
 };
 
 // Obtain entity attachments as a simple std::list
-std::list<Entity::Attachment> getAttachments(const IEntityNodePtr& node)
+std::list<EntityAttachment> getAttachments(const EntityNodePtr& node)
 {
-    std::list<Entity::Attachment> attachments;
+    std::list<EntityAttachment> attachments;
     if (node)
     {
         node->getEntity().forEachAttachment(
-            [&](const Entity::Attachment& a) { attachments.push_back(a); }
+            [&](const EntityAttachment& a) { attachments.push_back(a); }
         );
     }
     return attachments;
@@ -671,7 +672,7 @@ TEST_F(EntityTest, ForeachAttachment)
     scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     int attachmentCount = 0;
-    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    torch->foreachAttachment([&](const EntityNodePtr& attachment)
     {
         attachmentCount++;
         EXPECT_TRUE(attachment->getEntity().isOfType("light_cageflame_small"));
@@ -907,7 +908,7 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
     EXPECT_EQ(attachments.size(), 1);
 
     // Examine the properties of the single attachment
-    Entity::Attachment attachment = attachments.front();
+    EntityAttachment attachment = attachments.front();
     EXPECT_EQ(attachment.eclass, spawnArgs.getKeyValue("def_attach"));
     EXPECT_EQ(attachment.offset, Vector3(0, 0, 10));
     EXPECT_EQ(attachment.name, spawnArgs.getKeyValue("name_attach"));
@@ -1715,11 +1716,11 @@ TEST_F(EntityTest, EntityNodeObserveKeyAutoDisconnect)
     spawnArgs->setKeyValue(TEST_KEY, "whatever");
 }
 
-inline IEntityNodePtr findPlayerStartEntity()
+inline EntityNodePtr findPlayerStartEntity()
 {
-    IEntityNodePtr found;
+    EntityNodePtr found;
 
-    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](const IEntityNodePtr& entity)
+    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](const EntityNodePtr& entity)
     {
         if (entity->getEntity().getEntityClass()->getDeclName() == "info_player_start")
         {
@@ -1782,8 +1783,8 @@ TEST_F(EntityTest, CreateSpeaker)
     });
 
     // The speaker should be in the map now
-    auto speaker = std::dynamic_pointer_cast<IEntityNode>(
-        algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    auto speaker = std::dynamic_pointer_cast<EntityNode>(
+        algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const EntityNodePtr& entity)
     {
         return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
     }));
@@ -1815,11 +1816,11 @@ TEST_F(EntityTest, MovingSpeakerNotRemovingDistanceArgs)
         cmd::Argument("test/jorge"), cmd::Argument("50 30 47")
     });
 
-    auto node = algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    auto node = algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const EntityNodePtr& entity)
     {
         return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
     });
-    auto speaker = std::dynamic_pointer_cast<IEntityNode>(node);
+    auto speaker = std::dynamic_pointer_cast<EntityNode>(node);
 
     EXPECT_TRUE(speaker);
     EXPECT_NE(speaker->getEntity().getKeyValue("s_mindistance"), "");
@@ -1848,7 +1849,7 @@ TEST_F(EntityTest, CloneGenericEntityRotatableAngle)
     EXPECT_TRUE(math::isNear(separator->getDirection(), Vector3(-1, 0, 0), 0.01));
 
     // Clone the entity node
-    auto separatorCopy = std::dynamic_pointer_cast<IEntityNode>(separator->clone());
+    auto separatorCopy = std::dynamic_pointer_cast<EntityNode>(separator->clone());
 
     // Confirm the direction of clone is also negative x axis
     EXPECT_TRUE(math::isNear(separatorCopy->getDirection(), Vector3(-1, 0, 0), 0.01));
@@ -1865,7 +1866,7 @@ TEST_F(EntityTest, CloneGenericEntityRotatableRotation)
     EXPECT_TRUE(math::isNear(separator->getDirection(), Vector3(-1, 0, 0), 0.01));
 
     // Clone the entity node
-    auto separatorCopy = std::dynamic_pointer_cast<IEntityNode>(separator->clone());
+    auto separatorCopy = std::dynamic_pointer_cast<EntityNode>(separator->clone());
 
     // Confirm the direction of clone is also negative x axis
     EXPECT_TRUE(math::isNear(separatorCopy->getDirection(), Vector3(-1, 0, 0), 0.01));

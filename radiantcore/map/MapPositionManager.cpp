@@ -1,7 +1,7 @@
 #include "MapPositionManager.h"
 
 #include "maplib.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "icameraview.h"
 #include "gamelib.h"
 #include "iregistry.h"
@@ -142,7 +142,7 @@ void MapPositionManager::convertLegacyPositions()
 	{
 		return; // no worldspawn or root
 	}
-		
+
 	for (unsigned int i = 1; i <= MAX_POSITIONS; i++)
 	{
 		MapPosition pos(i);

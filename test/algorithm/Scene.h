@@ -3,7 +3,7 @@
 #include <cstddef>
 #include "inode.h"
 #include "iundo.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "imodel.h"
@@ -125,13 +125,13 @@ inline scene::INodePtr findFirstPatchWithMaterial(const scene::INodePtr& parent,
 }
 
 inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
-    const std::function<bool(const IEntityNodePtr&)>& predicate)
+    const std::function<bool(const EntityNodePtr&)>& predicate)
 {
-    IEntityNodePtr candidate;
+    EntityNodePtr candidate;
 
     parent->foreachNode([&](const scene::INodePtr& node)
     {
-        auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+        auto entity = std::dynamic_pointer_cast<EntityNode>(node);
 
         if (entity && predicate(entity))
         {
@@ -147,7 +147,7 @@ inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
 
 inline scene::INodePtr findWorldspawn(const scene::INodePtr& root)
 {
-    return findFirstEntity(root, [&](const IEntityNodePtr& entity)
+    return findFirstEntity(root, [&](const EntityNodePtr& entity)
     {
         return entity->getEntity().isWorldspawn();
     });
@@ -155,7 +155,7 @@ inline scene::INodePtr findWorldspawn(const scene::INodePtr& root)
 
 inline scene::INodePtr getEntityByName(const scene::INodePtr& parent, const std::string& name)
 {
-    return findFirstEntity(parent, [&](const IEntityNodePtr& entity)
+    return findFirstEntity(parent, [&](const EntityNodePtr& entity)
     {
         return entity->getEntity().getKeyValue("name") == name;
     });
@@ -196,7 +196,7 @@ inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
 }
 
 // Returns the number of children of the given parent node matching the given predicate
-inline std::size_t getChildCount(const scene::INodePtr& parent, 
+inline std::size_t getChildCount(const scene::INodePtr& parent,
     const std::function<bool(const scene::INodePtr&)>& predicate)
 {
     std::size_t count = 0;

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "i18n.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "iundo.h"
 #include "iselection.h"
 #include "isound.h"
+#include "scene/EntityNode.h"
 #include "fmt/format.h"
 #include "command/ExecutionFailure.h"
 #include "string/convert.h"

@@ -5,7 +5,7 @@
 #include "ieclass.h"
 #include "ifilesystem.h"
 #include "imodelcache.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "iundo.h"
 #include "itextstream.h"
 
@@ -182,7 +182,7 @@ void exportSelectedAsModel(const model::ModelExportOptions& options)
 
         Node_setSelected(modelNode, true);
     }
-    
+
     // It's possible that the export overwrote a model we're already using in this map, refresh it
     refreshModelsByPath(relativeModelPath);
 }

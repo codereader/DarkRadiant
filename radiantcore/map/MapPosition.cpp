@@ -1,6 +1,6 @@
 #include "MapPosition.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "icameraview.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
@@ -11,7 +11,7 @@
 namespace map
 {
 
-namespace 
+namespace
 {
     const char* const GKEY_MAP_POSROOT = "/mapFormat/mapPositionPosKey";
     const char* const GKEY_MAP_ANGLEROOT = "/mapFormat/mapPositionAngleKey";
@@ -97,7 +97,7 @@ void MapPosition::clear()
     _angle = Vector3(0,0,0);
 }
 
-bool MapPosition::empty() const 
+bool MapPosition::empty() const
 {
     return _position == Vector3(0,0,0) && _angle == Vector3(0,0,0);
 }
@@ -113,7 +113,7 @@ void MapPosition::store(const cmd::ArgumentList& args)
     }
 
     rMessage() << "Storing map position #" << _index << std::endl;
-    
+
     try
     {
         auto& cameraView = GlobalCameraManager().getActiveView();
@@ -132,7 +132,7 @@ void MapPosition::store(const cmd::ArgumentList& args)
     }
 }
 
-void MapPosition::recall(const cmd::ArgumentList& args) 
+void MapPosition::recall(const cmd::ArgumentList& args)
 {
     auto mapRoot = GlobalMapModule().getRoot();
 

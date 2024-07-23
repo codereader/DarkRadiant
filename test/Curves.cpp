@@ -1,6 +1,6 @@
 #include "RadiantTest.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselection.h"
 #include "imap.h"
 #include "algorithm/Scene.h"

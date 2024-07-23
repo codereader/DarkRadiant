@@ -8,15 +8,14 @@
 
 #include "PreferenceItem.h"
 
-namespace ui 
+namespace ui
 {
 
 PrefPage::PrefPage(wxWindow* parent, const IPreferencePage& settingsPage) :
-	wxScrolledWindow(parent, wxID_ANY),
+	wxPanel(parent, wxID_ANY),
 	_settingsPage(settingsPage)
 {
 	// Create the overall panel
-	SetScrollRate(0, 3);
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// 12 pixel border
@@ -68,7 +67,7 @@ void PrefPage::createItemWidgets(const IPreferenceItemBase::Ptr& item)
 {
 	// Construct a generic item and pass the common values
 	PreferenceItem widget(this, item->getRegistryKey(), _registryBuffer, _resetValuesSignal);
-	
+
 	// Switch on the item type
 	if (std::dynamic_pointer_cast<IPreferenceLabel>(item))
 	{
@@ -114,7 +113,7 @@ void PrefPage::createItemWidgets(const IPreferenceItemBase::Ptr& item)
 	{
 		auto info = std::dynamic_pointer_cast<IPreferenceSlider>(item);
 
-		wxWindow* slider = widget.createSlider(info->getLower(), info->getUpper(), 
+		wxWindow* slider = widget.createSlider(info->getLower(), info->getUpper(),
 			info->getStepIncrement(), info->getPageIncrement());
 
 		appendNamedWidget(item->getLabel(), slider);

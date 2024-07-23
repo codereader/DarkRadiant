@@ -5,7 +5,7 @@
 #include "iundo.h"
 #include "ieclass.h"
 #include "itransformable.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "iorthoview.h"
 
 #include "scenelib.h"
@@ -53,7 +53,7 @@ void createCurve(const std::string& key)
     );
 
     // Create a new entity node deriving from this entityclass
-    IEntityNodePtr curve(GlobalEntityModule().createEntity(entityClass));
+    EntityNodePtr curve(GlobalEntityModule().createEntity(entityClass));
 
     // Insert this new node into the scenegraph root
     GlobalSceneGraph().root()->addChildNode(curve);

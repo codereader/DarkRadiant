@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "itransformnode.h"
 #include "itextstream.h"

@@ -1,12 +1,14 @@
 #pragma once
 
-#include "ientity.h"
+#include "scene/Entity.h"
+#include "scene/EntityNode.h"
 #include "ieclass.h"
 #include "iselection.h"
 #include "iselectiontest.h"
 
 #include "math/AABB.h"
 #include "scenelib.h"
+#include "scene/Entity.h"
 
 #include "imd5anim.h"
 #include "imd5model.h"
@@ -42,72 +44,9 @@ inline std::ostream& operator<< (std::ostream& os, const Entity& entity) {
 	return os;
 }
 
-class EntityNodeFindByClassnameWalker :
-	public scene::NodeVisitor
-{
-protected:
-	// Name to search for
-	std::string _name;
-
-	// The search result
-	scene::INodePtr _entityNode;
-
-public:
-	// Constructor
-	EntityNodeFindByClassnameWalker(const std::string& name) :
-		_name(name)
-	{}
-
-	scene::INodePtr getEntityNode() {
-		return _entityNode;
-	}
-
-	Entity* getEntity() {
-		return _entityNode != NULL ? Node_getEntity(_entityNode) : NULL;
-	}
-
-	// Pre-descent callback
-	bool pre(const scene::INodePtr& node) {
-		if (_entityNode == NULL) {
-			// Entity not found yet
-			Entity* entity = Node_getEntity(node);
-
-			if (entity != NULL) {
-				// Got an entity, let's see if the name matches
-				if (entity->getKeyValue("classname") == _name) {
-					_entityNode = node;
-				}
-
-				return false; // don't traverse entities
-			}
-			else {
-				// Not an entity, traverse
-				return true;
-			}
-		}
-		else {
-			// Entity already found, don't traverse any further
-			return false;
-		}
-	}
-};
-
-/* greebo: Finds an entity with the given classname
- */
-inline Entity* Scene_FindEntityByClass(const std::string& className)
-{
-	// Instantiate a walker to find the entity
-	EntityNodeFindByClassnameWalker walker(className);
-
-	// Walk the scenegraph
-	GlobalSceneGraph().root()->traverse(walker);
-
-	return walker.getEntity();
-}
-
 /* Check if a node is the worldspawn.
  */
-inline bool Node_isWorldspawn(const scene::INodePtr& node) 
+inline bool Node_isWorldspawn(const scene::INodePtr& node)
 {
 	Entity* entity = Node_getEntity(node);
 
@@ -141,7 +80,7 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	assert(eclass);
 
 	// Create a new entity with the given class
-	IEntityNodePtr newNode(GlobalEntityModule().createEntity(eclass));
+	EntityNodePtr newNode(GlobalEntityModule().createEntity(eclass));
 
 	Entity* oldEntity = Node_getEntity(oldNode);
 
@@ -151,7 +90,7 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
     // Copy all keyvalues except classname
     oldEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
     {
-        if (key != "classname") 
+        if (key != "classname")
         {
             newEntity.setKeyValue(key, value);
         }
@@ -166,8 +105,8 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	// Traverse the child and reparent all primitives to the new entity node
 	scene::parentPrimitives(oldNode, newNode);
 
-	// Remove the old entity node from the parent. This will disconnect 
-	// oldNode from the scene and the UndoSystem, so it's important to do 
+	// Remove the old entity node from the parent. This will disconnect
+	// oldNode from the scene and the UndoSystem, so it's important to do
 	// this step last, after the primitives have been moved. (#4718)
 	scene::removeNodeFromParent(oldNode);
 

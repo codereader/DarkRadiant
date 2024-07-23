@@ -9,7 +9,7 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
-#include "ientity.h"
+#include "scene/Entity.h"
 
 namespace ui
 {

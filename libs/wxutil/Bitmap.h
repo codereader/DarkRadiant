@@ -1,7 +1,7 @@
 #pragma once
 
-#include "wxutil/Bitmap.h"
 #include <wx/artprov.h>
+#include <wx/bmpbuttn.h>
 
 namespace wxutil
 {
@@ -29,6 +29,12 @@ inline wxBitmap GetLocalBitmap(const std::string& name)
 inline wxBitmap GetLocalBitmap(const std::string& name, const wxArtClient& client)
 {
     return wxArtProvider::GetBitmap("darkradiant:" + name, client);
+}
+
+/// Construct and return a wxBitmapButton displaying the given local icon
+inline wxBitmapButton* IconButton(wxWindow* parent, const std::string& iconFile)
+{
+    return new wxBitmapButton(parent, wxID_ANY, GetLocalBitmap(iconFile));
 }
 
 }

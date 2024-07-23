@@ -693,7 +693,7 @@ TEST_F(EntityInspectorTest, DeletedEntitiesAreSafelyUntracked)
     auto guardNode = GlobalEntityModule().createEntity(cls);
 
     // Create a weak reference to check whether the entity is gone
-    std::weak_ptr<IEntityNode> weakGuardNode(guardNode);
+    std::weak_ptr<EntityNode> weakGuardNode(guardNode);
 
     scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
     Node_setSelected(guardNode, true);

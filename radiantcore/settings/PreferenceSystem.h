@@ -6,10 +6,8 @@
 namespace settings
 {
 
-class PreferenceSystem :
-	public IPreferenceSystem
+class PreferenceSystem: public IPreferenceSystem
 {
-private:
 	PreferencePagePtr _rootPage;
 
 public:

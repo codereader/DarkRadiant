@@ -2,10 +2,10 @@
 
 #include "render/RenderableGeometry.h"
 
+class EntityNode;
+
 namespace entity
 {
-
-class EntityNode;
 
 class RenderableArrow :
     public render::RenderableGeometry

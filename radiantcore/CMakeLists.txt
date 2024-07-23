@@ -30,38 +30,22 @@ add_library(radiantcore MODULE
             eclass/EClassColourManager.cpp
             eclass/EClassManager.cpp
             entity/AngleKey.cpp
-            entity/AttachmentData.cpp
             entity/curve/CurveCatmullRom.cpp
             entity/curve/Curve.cpp
             entity/curve/CurveEditInstance.cpp
             entity/curve/CurveNURBS.cpp
-            entity/SpawnArgs.cpp
             entity/doom3group/StaticGeometryNode.cpp
             entity/eclassmodel/EclassModelNode.cpp
             entity/EntityModule.cpp
-            entity/EntityNode.cpp
-            entity/EntitySettings.cpp
             entity/generic/GenericEntityNode.cpp
-            entity/KeyValue.cpp
-            entity/KeyValueObserver.cpp
             entity/light/LightNode.cpp
             entity/light/Renderables.cpp
-            entity/ModelKey.cpp
-            entity/NameKeyObserver.cpp
-            entity/NamespaceManager.cpp
             entity/RenderableArrow.cpp
             entity/RenderableEntityBox.cpp
-            entity/RenderableEntityName.cpp
             entity/RotationKey.cpp
             entity/RotationMatrix.cpp
-            entity/ShaderParms.cpp
             entity/speaker/SpeakerNode.cpp
             entity/speaker/SpeakerRenderables.cpp
-            entity/target/TargetableNode.cpp
-            entity/target/TargetKeyCollection.cpp
-            entity/target/TargetKey.cpp
-            entity/target/TargetLineNode.cpp
-            entity/target/TargetManager.cpp
             filetypes/FileTypeRegistry.cpp
             filters/BasicFilterSystem.cpp
             filters/XMLFilter.cpp
@@ -322,7 +306,7 @@ add_library(radiantcore MODULE
             xmlregistry/XMLRegistry.cpp)
 target_include_directories(radiantcore PRIVATE .)
 target_link_libraries(radiantcore PUBLIC
-                      math xmlutil scenegraph wxutil module
+                      math xmlutil scene wxutil module
                       ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 
 # Enable precompiled header for radiantcore

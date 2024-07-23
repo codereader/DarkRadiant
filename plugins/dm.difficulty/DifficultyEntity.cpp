@@ -1,6 +1,6 @@
 #include "DifficultyEntity.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "string/convert.h"
 
 namespace difficulty {

@@ -276,7 +276,7 @@ void AutoMapSaver::performAutosave()
 void AutoMapSaver::constructPreferences()
 {
 	// Add a page to the given group
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Autosave"));
 
 	page.appendCheckBox(_("Save Snapshots"), RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
 	page.appendEntry(_("Snapshot Folder (absolute, or relative to Map Folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);

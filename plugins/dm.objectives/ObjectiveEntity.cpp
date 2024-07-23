@@ -6,7 +6,7 @@
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "iundo.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 #include "string/convert.h"
 #include "string/predicate.h"
@@ -66,7 +66,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 		int index = string::convert<int>(results[1].str());
 
 		// Valid indices are [1..infinity)
-		if (index < 1) 
+		if (index < 1)
 		{
 			continue; // invalid index, continue
 		}
@@ -93,7 +93,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 			}
 			else
 			{
-				rWarning() << "Unsupported objective condition source state encountered: " 
+				rWarning() << "Unsupported objective condition source state encountered: "
 					<< kv->second << std::endl;
 			}
 		}
@@ -117,7 +117,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 			}
 			else
 			{
-				rWarning() << "Unsupported objective condition type encountered: " 
+				rWarning() << "Unsupported objective condition type encountered: "
 					<< kv->second << std::endl;
 			}
 		}
@@ -130,7 +130,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 
 void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 {
-	// No need to clear previous set of obj_condition_ spawnargs, 
+	// No need to clear previous set of obj_condition_ spawnargs,
 	// as they've been removed by clearEntity() already
 
 	// Spawnargs are numbered starting with 1 as first index
@@ -138,7 +138,7 @@ void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 
 	// Go through all the conditions and save them. Skip invalid ones such that the
 	// set of conditions will be "compressed" in terms of their indices.
-	for (ObjectiveEntity::ConditionMap::const_iterator i = _objConditions.begin(); 
+	for (ObjectiveEntity::ConditionMap::const_iterator i = _objConditions.begin();
 		 i != _objConditions.end(); ++i)
 	{
 		const ObjectiveCondition& cond = *i->second;
@@ -293,7 +293,7 @@ int ObjectiveEntity::moveObjective(int index, int delta)
 	}
 
 	// Constrain the obj index to sane values
-	if (targetIndex < 0) 
+	if (targetIndex < 0)
 	{
 		targetIndex = 0;
 	}
@@ -311,7 +311,7 @@ int ObjectiveEntity::moveObjective(int index, int delta)
 
 	if (oldObj == _objectives.end()) return -1; // invalid source objective
 
-	if (newObj == _objectives.end()) 
+	if (newObj == _objectives.end())
 	{
 		// no objective at the target index, just re-locate the source objective
 		Objective temp(oldObj->second);
@@ -320,7 +320,7 @@ int ObjectiveEntity::moveObjective(int index, int delta)
 
 		_objectives[targetIndex] = temp;
 	}
-	else 
+	else
 	{
 		// Both source and target indices exist, swap them
 		Objective temp(oldObj->second);

@@ -6,7 +6,7 @@
 #include "iradiant.h"
 #include "iscenegraph.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "itextstream.h"
 
 #include "ce/ComponentEditorFactory.h"

@@ -9,7 +9,7 @@
 
 // Modules
 #include "icommandsystem.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ifilesystem.h"
 #include "ifonts.h"
 #include "igame.h"
@@ -95,7 +95,7 @@ private:
 	void constructPreferences()
 	{
 		// Add a page to the given group
-		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Readable Editor"));
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Readable Editor"));
 
 		ComboBoxValueList options;
 

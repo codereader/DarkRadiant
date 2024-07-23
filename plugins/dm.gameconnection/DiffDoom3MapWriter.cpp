@@ -1,7 +1,7 @@
 #include "DiffDoom3MapWriter.h"
 #include "DiffStatus.h"
 
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 namespace gameconn
 {
@@ -36,7 +36,7 @@ void DiffDoom3MapWriter::writeRemoveEntityStub(const std::string& name, std::ost
     stream << "}" << std::endl;
 }
 
-void DiffDoom3MapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) {
+void DiffDoom3MapWriter::beginWriteEntity(const EntityNodePtr& entity, std::ostream& stream) {
     const std::string& name = entity->name();
     writeEntityPreamble(name, stream);
     stream << "{" << std::endl;
@@ -48,7 +48,7 @@ void DiffDoom3MapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ost
     });
 }
 
-void DiffDoom3MapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) {
+void DiffDoom3MapWriter::endWriteEntity(const EntityNodePtr& entity, std::ostream& stream) {
     stream << "}" << std::endl;
 }
 

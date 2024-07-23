@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "icommandsystem.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include "ClassnamePropertyEditor.h"
 #include "PropertyEditorFactory.h"

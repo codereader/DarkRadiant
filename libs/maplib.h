@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imap.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 namespace map
 {

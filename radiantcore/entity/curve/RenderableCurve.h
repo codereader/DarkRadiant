@@ -4,6 +4,7 @@
 #include "irenderable.h"
 #include "render.h"
 #include "render/RenderableGeometry.h"
+#include "scene/EntityNode.h"
 
 namespace entity
 {
@@ -12,13 +13,13 @@ class RenderableCurve :
     public render::RenderableGeometry
 {
 private:
-    const IEntityNode& _entity;
+    const EntityNode& _entity;
     bool _needsUpdate;
 
 public:
 	std::vector<VertexCb> m_vertices;
 
-    RenderableCurve(const IEntityNode& entity) :
+    RenderableCurve(const EntityNode& entity) :
         _entity(entity),
         _needsUpdate(true)
     {}

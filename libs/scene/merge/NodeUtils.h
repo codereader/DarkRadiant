@@ -5,6 +5,7 @@
 #include "icomparablenode.h"
 #include "ientity.h"
 #include "itextstream.h"
+#include "scene/Entity.h"
 
 namespace scene
 {

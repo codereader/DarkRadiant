@@ -4,7 +4,7 @@
 #include "ui/iresourcechooser.h"
 #include "ui/idialogmanager.h"
 #include "i18n.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "isound.h"
 
 #include <wx/panel.h>

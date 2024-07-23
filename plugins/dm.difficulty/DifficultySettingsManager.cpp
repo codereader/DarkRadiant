@@ -211,7 +211,7 @@ void DifficultySettingsManager::saveSettings()
         }
 
         // Create and insert a new entity node into the scenegraph root
-        IEntityNodePtr entNode = GlobalEntityModule().createEntity(diffEclass);
+        EntityNodePtr entNode = GlobalEntityModule().createEntity(diffEclass);
         GlobalSceneGraph().root()->addChildNode(entNode);
 
         // Add the entity to the list

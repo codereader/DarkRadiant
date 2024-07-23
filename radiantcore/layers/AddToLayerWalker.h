@@ -2,7 +2,7 @@
 #define ADDTOLAYERWALKER_H_
 
 #include "iselection.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ilayer.h"
 
 namespace scene {

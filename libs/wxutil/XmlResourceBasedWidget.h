@@ -17,15 +17,17 @@ namespace wxutil
 class XmlResourceBasedWidget
 {
 protected:
-	// Loads a named Panel from the XRC resources
-	wxPanel* loadNamedPanel(wxWindow* parent, const std::string& name)
-	{
-		wxPanel* panel = wxXmlResource::Get()->LoadPanel(parent, name);
-
-		assert(panel != NULL);
-
-		return panel;
-	}
+    /// Loads a named panel from the XRC resources.
+    ///
+    /// The panel is parented to the given window, but should be packed into a sizer by the
+    /// calling code to avoid layout problems (unpredictable alignment, minimum panel size
+    /// being ignored, etc).
+    [[nodiscard]] wxPanel* loadNamedPanel(wxWindow* parent, const std::string& name)
+    {
+        wxPanel* panel = wxXmlResource::Get()->LoadPanel(parent, name);
+        wxASSERT(panel);
+        return panel;
+    }
 
 	static const wxToolBarToolBase* getToolBarToolByLabel(wxToolBarBase* toolbar, const std::string& name)
 	{

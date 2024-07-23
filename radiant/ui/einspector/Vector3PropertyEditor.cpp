@@ -1,7 +1,7 @@
 #include "Vector3PropertyEditor.h"
 
 #include "i18n.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -48,7 +48,7 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection&
     // Register the main widget in the base class
     setMainWidget(mainVBox);
 
-    // Create the spin buttons 
+    // Create the spin buttons
     _xValue = makeSpinCtrl(mainVBox);
     _yValue = makeSpinCtrl(mainVBox);
     _zValue = makeSpinCtrl(mainVBox);

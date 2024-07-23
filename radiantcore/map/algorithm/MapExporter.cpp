@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "ibrush.h"
 #include "ipatch.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "imapresource.h"
 #include "imap.h"
 #include "igroupnode.h"
@@ -60,7 +60,7 @@ MapExporter::~MapExporter()
 	// Close any info file stream
 	_infoFileExporter.reset();
 
-	// The finish() call is placed in the destructor to make sure that 
+	// The finish() call is placed in the destructor to make sure that
 	// even on unhandled exceptions the map is left in a working state
 	finishScene();
 }
@@ -141,13 +141,13 @@ bool MapExporter::pre(const scene::INodePtr& node)
 {
 	try
 	{
-		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+		auto entity = std::dynamic_pointer_cast<EntityNode>(node);
 
 		if (entity)
 		{
 			// Progress dialog handling
 			onNodeProgress();
-			
+
 			_writer.beginWriteEntity(entity, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitEntity(node, _entityNum);
@@ -195,7 +195,7 @@ void MapExporter::post(const scene::INodePtr& node)
 {
 	try
 	{
-		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+		auto entity = std::dynamic_pointer_cast<EntityNode>(node);
 
 		if (entity)
 		{
@@ -237,7 +237,7 @@ void MapExporter::onNodeProgress()
 	// button is clicked, which we must catch and handle.
 	if (_dialogEventLimiter.readyForEvent())
 	{
-		float progressFraction = _totalNodeCount > 0 ? 
+		float progressFraction = _totalNodeCount > 0 ?
 			static_cast<float>(_curNodeCount) / static_cast<float>(_totalNodeCount) : 0.0f;
 
         if (_sendProgressMessages)

@@ -7,12 +7,12 @@
 #include "irenderable.h"
 #include "math/Ray.h"
 
-#include "../target/TargetableNode.h"
-#include "../EntityNode.h"
-#include "../OriginKey.h"
+#include "scene/TargetableNode.h"
+#include "scene/EntityNode.h"
+#include "scene/OriginKey.h"
 #include "../AngleKey.h"
 #include "../RotationKey.h"
-#include "../SpawnArgs.h"
+#include "scene/Entity.h"
 
 #include "../RenderableArrow.h"
 #include "../RenderableEntityBox.h"
@@ -56,7 +56,7 @@ class GenericEntityNode final : public EntityNode, public Snappable
 	// TRUE if this entity's arrow can be rotated in all directions,
 	// FALSE if the arrow is caught in the xy plane
 	bool _allow3Drotations;
-	
+
 	// TRUE if direction uses up after 3D rotation (only true for func_emitter/func_splat)
 	// FALSE if direction uses forward after 3D rotation (default)
 	bool _3DdirectionUsesUp;

@@ -15,6 +15,12 @@ cmake_install.cmake
 *.la
 .deps
 
+# Linux profiling
+perf.data*
+
+# Doxygen output
+/dox
+
 # Editor temporary files
 *.swp
 tags
@@ -63,11 +69,6 @@ testsuite.ilk
 .DS_Store
 xcuserdata
 
-Makefile.in
-/config.h.in
-/configure
-/ltmain.sh
-/aclocal.m4
 /install/*.zip
 /tools/msvc/.vs
 /tools/msvc/DarkRadiant.VC.db

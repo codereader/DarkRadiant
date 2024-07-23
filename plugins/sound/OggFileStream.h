@@ -1,6 +1,10 @@
 #pragma once
 
 #include "stream/ScopedArchiveBuffer.h"
+#include <cstring>
+
+/// Functionality related to loading and playing sounds
+namespace sound {
 
 /** greebo: A wrapper class for use with the ov_open_callbacks() method
  * 			in vorbsfile.h. This provides the four callback
@@ -9,8 +13,6 @@
  * 			Parts of this code has been written after
  * 			http://www.devmaster.net/articles/openal-ogg-file/
  */
-namespace sound {
-
 class OggFileStream
 {
 	archive::ScopedArchiveBuffer _source;

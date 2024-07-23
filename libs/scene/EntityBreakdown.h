@@ -3,8 +3,9 @@
 #include <map>
 #include <string>
 #include "iscenegraph.h"
-#include "ientity.h"
 #include "ieclass.h"
+
+#include "scene/EntityNode.h"
 
 namespace scene
 {

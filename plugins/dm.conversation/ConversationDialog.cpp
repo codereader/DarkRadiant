@@ -7,6 +7,7 @@
 #include "ui/imainframe.h"
 #include "iscenegraph.h"
 #include "string/string.h"
+#include "scene/EntityNode.h"
 
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -54,18 +55,17 @@ ConversationDialog::ConversationDialog() :
 
 void ConversationDialog::populateWindow()
 {
-	loadNamedPanel(this, "ConvDialogMainPanel");
-
-	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ConvDialogEntityPanel");
+	wxPanel* mainPanel = loadNamedPanel(this, "ConvDialogMainPanel");
 
 	// Entity Tree View
+	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ConvDialogEntityPanel");
 	_entityView = wxutil::TreeView::CreateWithModel(entityPanel, _entityList.get(), wxDV_NO_HEADER);
 	entityPanel->GetSizer()->Add(_entityView, 1, wxEXPAND);
 
 	_entityView->AppendTextColumn("", _convEntityColumns.displayName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_entityView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+	_entityView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
 		wxDataViewEventHandler(ConversationDialog::onEntitySelectionChanged), NULL, this);
 
 	// Wire up button signals
@@ -127,6 +127,10 @@ void ConversationDialog::populateWindow()
 		wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onCancel), NULL, this);
 	findNamedObject<wxButton>(this, "ConvDialogOkButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onOK), NULL, this);
+
+    wxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer->Add(mainPanel, 1, wxEXPAND, 0);
+    SetSizerAndFit(mainSizer);
 }
 
 void ConversationDialog::save()
@@ -197,7 +201,7 @@ int ConversationDialog::ShowModal()
 	{
 		save();
 	}
-	
+
 	return returnCode;
 }
 
@@ -279,7 +283,7 @@ void ConversationDialog::onAddEntity(wxCommandEvent& ev)
         UndoableCommand addEntityCommand("addConversationEntity");
 
         // Construct a Node of this entity type
-        IEntityNodePtr node(GlobalEntityModule().createEntity(eclass));
+        EntityNodePtr node(GlobalEntityModule().createEntity(eclass));
 
         // Create a random offset
         node->getEntity().setKeyValue(

@@ -1,7 +1,7 @@
 #ifndef DIFFICULTY_ENTITY_H_
 #define DIFFICULTY_ENTITY_H_
 
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "Setting.h"
 
 namespace difficulty {

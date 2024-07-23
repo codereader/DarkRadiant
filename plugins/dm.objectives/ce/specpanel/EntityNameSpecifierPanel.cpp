@@ -3,7 +3,7 @@
 #include <wx/sizer.h>
 #include "inode.h"
 #include "imap.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 namespace objectives
 {
@@ -75,4 +75,3 @@ EntityNameSpecifierPanel::RegHelper EntityNameSpecifierPanel::_regHelper;
 }
 
 }
-

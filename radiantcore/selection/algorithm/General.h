@@ -4,13 +4,13 @@
 #include <string>
 #include "icommandsystem.h"
 #include "iscenegraph.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
 namespace selection
 {
-	namespace algorithm 
+	namespace algorithm
     {
 
     const char* const RKEY_FREE_OBJECT_ROTATION = "user/ui/rotateObjectsIndependently";
@@ -97,7 +97,7 @@ namespace selection
 	Vector3 getCurrentSelectionCenter();
 
 	// Returns the AABB of the current selection (invalid bounds if nothing is selected).
-	// Use the bool to specify whether you want to have the light volumes calculated in 
+	// Use the bool to specify whether you want to have the light volumes calculated in
 	// in their entirety.
 	AABB getCurrentSelectionBounds(bool considerLightVolumes);
 

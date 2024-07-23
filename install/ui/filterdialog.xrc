@@ -6,15 +6,6 @@
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxStaticText" name="FilterDialogTopLabel">
-					<label>Filters</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
 				<option>1</option>
 				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
 				<border>12</border>
@@ -44,6 +35,7 @@
 								<object class="wxButton" name="FilterDialogAddButton">
 									<label>Add</label>
 									<default>0</default>
+									<auth_needed>0</auth_needed>
 									<markup>0</markup>
 									<bitmap />
 								</object>
@@ -55,6 +47,7 @@
 								<object class="wxButton" name="FilterDialogViewButton">
 									<label>View</label>
 									<default>0</default>
+									<auth_needed>0</auth_needed>
 									<markup>0</markup>
 									<bitmap />
 								</object>
@@ -66,6 +59,7 @@
 								<object class="wxButton" name="FilterDialogEditButton">
 									<label>Edit</label>
 									<default>0</default>
+									<auth_needed>0</auth_needed>
 									<markup>0</markup>
 									<bitmap />
 								</object>
@@ -77,6 +71,7 @@
 								<object class="wxButton" name="FilterDialogCopyButton">
 									<label>Copy</label>
 									<default>0</default>
+									<auth_needed>0</auth_needed>
 									<markup>0</markup>
 									<bitmap />
 								</object>
@@ -88,6 +83,7 @@
 								<object class="wxButton" name="FilterDialogDeleteButton">
 									<label>Delete</label>
 									<default>0</default>
+									<auth_needed>0</auth_needed>
 									<markup>0</markup>
 									<bitmap />
 								</object>
@@ -109,6 +105,7 @@
 						<object class="wxButton" name="FilterDialogCancelButton">
 							<label>Cancel</label>
 							<default>0</default>
+							<auth_needed>0</auth_needed>
 							<markup>0</markup>
 							<bitmap />
 						</object>
@@ -120,6 +117,7 @@
 						<object class="wxButton" name="FilterDialogOkButton">
 							<label>OK</label>
 							<default>0</default>
+							<auth_needed>0</auth_needed>
 							<markup>0</markup>
 							<bitmap />
 						</object>

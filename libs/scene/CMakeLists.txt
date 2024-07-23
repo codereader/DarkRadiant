@@ -1,17 +1,34 @@
-add_library(scenegraph
+add_library(scene
+            AttachmentData.cpp
             ChildPrimitives.cpp
             InstanceWalkers.cpp
+            Entity.cpp
+            EntityKeyValue.cpp
+            EntityNode.cpp
+            EntitySettings.cpp
+            KeyValueObserver.cpp
             LayerUsageBreakdown.cpp
             ModelFinder.cpp
+            ModelKey.cpp
+            NameKeyObserver.cpp
+            NamespaceManager.cpp
             Node.cpp
             merge/MergeOperation.cpp
             merge/MergeOperationBase.cpp
             merge/MergeActionNode.cpp
             merge/GraphComparer.cpp
             merge/ThreeWayMergeOperation.cpp
+            RenderableEntityName.cpp
+            RenderableTargetLines.cpp
             SelectableNode.cpp
             SelectionIndex.cpp
+            ShaderParms.cpp
+            TargetableNode.cpp
+            TargetKey.cpp
+            TargetKeyCollection.cpp
+            TargetLineNode.cpp
+            TargetManager.cpp
             TraversableNodeSet.cpp
             Traverse.cpp)
-target_compile_options(scenegraph PUBLIC ${SIGC_CFLAGS})
-target_link_libraries(scenegraph PUBLIC ${SIGC_LIBRARIES} math)
+target_compile_options(scene PUBLIC ${SIGC_CFLAGS})
+target_link_libraries(scene PUBLIC ${SIGC_LIBRARIES} math)

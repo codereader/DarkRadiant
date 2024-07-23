@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>
@@ -71,7 +71,7 @@ void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	{
         auto selectedHead = dialog->getSelectedHead();
 
-        _entities.foreachEntity([&](const IEntityNodePtr& entity)
+        _entities.foreachEntity([&](const EntityNodePtr& entity)
         {
             entity->getEntity().setKeyValue(DEF_HEAD_KEY, selectedHead);
         });

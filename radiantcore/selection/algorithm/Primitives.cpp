@@ -4,7 +4,7 @@
 
 #include "i18n.h"
 #include "igroupnode.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "itextstream.h"
 #include "iundo.h"
 #include "ibrush.h"

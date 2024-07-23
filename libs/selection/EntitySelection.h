@@ -3,7 +3,7 @@
 #include <list>
 #include "inode.h"
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "iselection.h"
 #include "iselectable.h"
 #include "CollectiveSpawnargs.h"
@@ -14,18 +14,18 @@ namespace selection
 /**
  * Helper object used by the Entity Inspector to track all selected entities
  * in the scene and keep the list of their spawnargs up to date.
- * 
+ *
  * On update() it rescans the entity selection in the scene, triggering
  * the contained CollectiveSpawnargs object to emit its signals. The signals
- * are emitted such that the listening EntityInspector will show the 
+ * are emitted such that the listening EntityInspector will show the
  * correct set of keys: the ones with shared values will show just that,
  * the keys with differing values will show a placeholder text instead.
- * 
- * This instance will monitor the selected entities to dispatch all 
+ *
+ * This instance will monitor the selected entities to dispatch all
  * key value changes to the CollectiveSpawnargs.
- * Selection updates will not take effect until update() is called, which 
+ * Selection updates will not take effect until update() is called, which
  * ideally should happen in an idle processing loop after a selection change.
- * 
+ *
  * This class keeps weak references to the scene::Nodes to not interfere with
  * node destruction.
  */
@@ -150,7 +150,7 @@ public:
         {
             IEntityClassPtr result;
 
-            foreachEntity([&](const IEntityNodePtr& entityNode)
+            foreachEntity([&](const EntityNodePtr& entityNode)
             {
                 auto eclass = entityNode->getEntity().getEntityClass();
 
@@ -180,7 +180,7 @@ public:
         {
             std::set<std::string> values;
 
-            foreachEntity([&](const IEntityNodePtr& entity)
+            foreachEntity([&](const EntityNodePtr& entity)
             {
                 values.emplace(std::move(entity->getEntity().getKeyValue(key)));
             });
@@ -191,17 +191,17 @@ public:
         return _spawnargs.getSharedKeyValue(key);
     }
 
-    void foreachEntity(const std::function<void(const IEntityNodePtr&)>& functor) override
+    void foreachEntity(const std::function<void(const EntityNodePtr&)>& functor) override
     {
         for (auto& tracked : _trackedEntities)
         {
             auto node = tracked.getNode();
-            
+
             if (!node) continue;
 
-            auto entityNode = scene::node_cast<IEntityNode>(node);
+            auto entityNode = scene::node_cast<EntityNode>(node);
             assert(entityNode);
-            
+
             if (entityNode)
             {
                 functor(entityNode);

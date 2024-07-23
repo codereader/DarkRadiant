@@ -3,7 +3,7 @@
 #include <fstream>
 #include "ieclass.h"
 #include "icolourscheme.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "imap.h"
 #include "ibrush.h"
 #include "ifilesystem.h"

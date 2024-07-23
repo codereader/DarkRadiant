@@ -14,10 +14,8 @@ namespace ui
  * A preference page as inserted into the PrefDialog's treebook control.
  * Each PrefPage renders the items found in the assigned settings::PreferencePage.
  */
-class PrefPage :
-	public wxScrolledWindow
+class PrefPage: public wxPanel
 {
-private:
 	// The settings page we're representing
 	const IPreferencePage& _settingsPage;
 

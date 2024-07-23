@@ -1,7 +1,7 @@
 #include "RadiantTest.h"
 
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "itransformable.h"
 #include "icommandsystem.h"
 #include "scenelib.h"

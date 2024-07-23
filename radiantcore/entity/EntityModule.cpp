@@ -12,16 +12,16 @@
 
 #include "string/replace.h"
 
-#include "SpawnArgs.h"
+#include "scene/Entity.h"
+#include "scene/TargetManager.h"
+#include "scene/EntitySettings.h"
 
 #include "light/LightNode.h"
 #include "doom3group/StaticGeometryNode.h"
 #include "speaker/SpeakerNode.h"
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
-#include "target/TargetManager.h"
 #include "module/StaticModule.h"
-#include "EntitySettings.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Entity.h"
@@ -54,7 +54,7 @@ AABB Doom3Light_getBounds(AABB aabb)
     return aabb;
 }
 
-IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
+EntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 {
 	// Null entityclass check
 	if (!eclass)
@@ -83,14 +83,14 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
         return GenericEntityNode::Create(eclass); // Fixed size, no model path
 
 	default:
-        throw std::invalid_argument("Entity class type " + 
+        throw std::invalid_argument("Entity class type " +
             string::to_string(static_cast<int>(eclass->getClassType())) + " is not supported");
     }
 }
 
-IEntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
+EntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
 {
-	IEntityNodePtr node = createNodeForEntity(eclass);
+	EntityNodePtr node = createNodeForEntity(eclass);
 
 	if (GlobalMapModule().getRoot())
 	{
@@ -120,7 +120,7 @@ IEntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
 	return node;
 }
 
-IEntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& name, const Vector3& origin)
+EntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& name, const Vector3& origin)
 {
     // Obtain the structure containing the selection counts
     const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
@@ -143,7 +143,7 @@ IEntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& n
     AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
 
     // Create the new node for the entity
-    IEntityNodePtr node(GlobalEntityModule().createEntity(entityClass));
+    EntityNodePtr node(GlobalEntityModule().createEntity(entityClass));
 
     GlobalSceneGraph().root()->addChildNode(node);
 

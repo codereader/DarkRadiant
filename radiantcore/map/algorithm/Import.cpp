@@ -10,7 +10,7 @@
 #include "imapformat.h"
 #include "inamespace.h"
 #include "iselectiongroup.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iscenegraph.h"
 #include "scene/BasicRootNode.h"
 #include "scene/ChildPrimitives.h"
@@ -27,7 +27,7 @@ namespace map
 namespace algorithm
 {
 
-// Will rewrite the group memberships of visited nodes to not be 
+// Will rewrite the group memberships of visited nodes to not be
 // in conflict with any of the groups present in the target scene
 class SelectionGroupRemapper :
 	public scene::NodeVisitor
@@ -108,7 +108,7 @@ private:
 
 		return found.first->second;
 	}
-	
+
 	std::size_t generateNonConflictingGroupId()
 	{
 		while (++_nextNewGroupId < std::numeric_limits<std::size_t>::max())
@@ -330,7 +330,7 @@ public:
             entity->addChildNode(primitive);
             return true;
         }
-        
+
         return false;
     }
 };
@@ -369,7 +369,7 @@ void importFromStream(std::istream& stream)
         // Clear out the root node, otherwise we end up with half a map
         scene::NodeRemover remover;
         importFilter.getRootNode()->traverseChildren(remover);
-        
+
 		throw cmd::ExecutionFailure(fmt::format(_("Failure reading map from clipboard:\n{0}"), ex.what()));
     }
 }

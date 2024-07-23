@@ -7,7 +7,7 @@
 #include "ui/ieventmanager.h"
 #include "ui/imainframe.h"
 #include "icolourscheme.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "igrid.h"
 #include "iregion.h"
 #include "ui/istatusbarmanager.h"

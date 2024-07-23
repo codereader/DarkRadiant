@@ -45,20 +45,19 @@ SourceViewCtrl::SourceViewCtrl(wxWindow* parent) :
 
 void SourceViewCtrl::SetStyleMapping(int elementIndex, Element elementType)
 {
-	const Style& style = _predefinedStyles[elementType];
+    const Style& style = _predefinedStyles[elementType];
 
-	StyleSetForeground(elementIndex,  wxColour(style.foreground));
+    StyleSetForeground(elementIndex,  wxColour(style.foreground));
 
-	wxFont font(style.fontsize, 
-		wxFONTFAMILY_MODERN, 
-		(style.fontstyle & Italic) > 0 ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, 
-		(style.fontstyle & Bold) > 0 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, 
-		(style.fontstyle & Underline) > 0, 
-		style.fontname);
+    wxFont font(
+        11, wxFONTFAMILY_MODERN,
+        (style.fontstyle & Italic) > 0 ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+        (style.fontstyle & Bold) > 0 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
+        (style.fontstyle & Underline) > 0, style.fontname
+    );
 
-	StyleSetFont(elementIndex, font);
-
-	StyleSetVisible(elementIndex, (style.fontstyle & Hidden) == 0);
+    StyleSetFont(elementIndex, font);
+    StyleSetVisible(elementIndex, (style.fontstyle & Hidden) == 0);
 }
 
 // Python specific

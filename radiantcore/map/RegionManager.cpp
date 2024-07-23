@@ -4,7 +4,7 @@
 #include "ibrush.h"
 #include "icameraview.h"
 #include "iorthoview.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "ieclass.h"
 #include "imru.h"
 #include "ifiletypes.h"

@@ -5,7 +5,7 @@
 #include "ui/imainframe.h"
 #include "ieclass.h"
 #include "igame.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include "wxutil/dataview/TreeView.h"
 #include <wx/frame.h>

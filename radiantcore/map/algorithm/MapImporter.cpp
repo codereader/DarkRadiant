@@ -1,7 +1,7 @@
 #include "MapImporter.h"
 
 #include "i18n.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "imap.h"
 #include "iradiant.h"
 

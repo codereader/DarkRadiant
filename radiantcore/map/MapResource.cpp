@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "ifiletypes.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iarchive.h"
 #include "igroupnode.h"
 #include "ifilesystem.h"
@@ -73,7 +73,7 @@ void MapResource::rename(const std::string& fullPath)
 
 void MapResource::constructPaths(const std::string& resourcePath)
 {
-    // Since the resource path can contain dots like this ".." 
+    // Since the resource path can contain dots like this ".."
     // pass the filename part only to getExtension().
     _extension = os::getExtension(os::getFilename(resourcePath));
 
@@ -82,7 +82,7 @@ void MapResource::constructPaths(const std::string& resourcePath)
     _path = rootPath(resourcePath);
 
     // Try to create a relative path, based on the VFS directories
-    // If no relative path can be deducted, use the absolute resourcePath 
+    // If no relative path can be deducted, use the absolute resourcePath
     // in unmodified form.
     _name = os::getRelativePath(resourcePath, _path);
 }
@@ -129,7 +129,7 @@ void MapResource::save(const MapFormatPtr& mapFormat)
 	}
 
 	rMessage() << "Using " << format->getMapFormatName() << " format to save the resource." << std::endl;
-	
+
 	std::string fullpath = getAbsoluteResourcePath();
 
 	// Save a backup of the existing file (rename it to .bak) if it exists in the first place
@@ -173,7 +173,7 @@ bool MapResource::saveBackup()
 
 		fs::path backup = fullpath;
 		backup.replace_extension(".bak");
-			
+
 		// replace_extension() doesn't accept something like ".darkradiant.bak", so roll our own
 		fs::path auxFileBackup = auxFile.string() + ".bak";
 
@@ -192,7 +192,7 @@ bool MapResource::saveBackup()
 		}
 		catch (fs::filesystem_error& ex)
 		{
-			rWarning() << "Error while creating backups: " << ex.what() << 
+			rWarning() << "Error while creating backups: " << ex.what() <<
 				", the file is possibly opened by the game." << std::endl;
 			errorOccurred = true;
 		}
@@ -328,7 +328,7 @@ RootNodePtr MapResource::loadMapNode()
     catch (const OperationException& ex)
     {
         // Re-throw the exception, prepending the map file path to the message (if not cancelled)
-        throw ex.operationCancelled() ? ex : 
+        throw ex.operationCancelled() ? ex :
             OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), getAbsoluteResourcePath(), ex.what()));
     }
 
@@ -447,8 +447,8 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	// Check the total count of nodes to traverse
 	NodeCounter counter;
 	traverse(root, counter);
-		
-	// Create our main MapExporter walker, and pass the desired 
+
+	// Create our main MapExporter walker, and pass the desired
 	// format to it. The constructor will prepare the scene
 	// and the destructor will clean it up afterwards. That way
 	// we ensure a nice and tidy scene when exceptions are thrown.

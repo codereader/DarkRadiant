@@ -8,6 +8,7 @@
 #include "ui/ientityinspector.h"
 #include "iundo.h"
 #include "selectionlib.h"
+#include "scene/EntityNode.h"
 
 #include "SpawnargLinkedCheckbox.h"
 #include "SpawnargLinkedSpinButton.h"
@@ -159,7 +160,7 @@ void AIEditingPanel::constructWidgets()
 	{
 		// Behaviour widgets
 		vbox->Add(createSectionLabel(_("Behaviour")), 0, wxTOP | wxBOTTOM, 6);
-		
+
 		wxGridSizer* table = new wxGridSizer(10, 2, 4, 12);
 		vbox->Add(table, 0, wxLEFT, 18);
 
@@ -205,7 +206,7 @@ void AIEditingPanel::constructWidgets()
 	{
 		// Abilities widgets
 		vbox->Add(createSectionLabel(_("Abilities")), 0, wxTOP | wxBOTTOM, 6);
-		
+
 		wxGridSizer* table = new wxGridSizer(3, 2, 4, 12);
 		vbox->Add(table, 0, wxLEFT, 18);
 
@@ -220,7 +221,7 @@ void AIEditingPanel::constructWidgets()
 	{
 		// Optimization widgets
 		vbox->Add(createSectionLabel(_("Optimization")), 0, wxTOP | wxBOTTOM, 6);
-		
+
 		wxGridSizer* table = new wxGridSizer(3, 1, 4, 12);
 		vbox->Add(table, 0, wxLEFT, 18);
 
@@ -232,7 +233,7 @@ void AIEditingPanel::constructWidgets()
 	{
 		// Health / Combat widgets
 		vbox->Add(createSectionLabel(_("Health / Combat")), 0, wxTOP | wxBOTTOM, 6);
-		
+
 		wxGridSizer* table = new wxGridSizer(5, 2, 4, 12);
 		vbox->Add(table, 0, wxLEFT, 18);
 
@@ -262,7 +263,7 @@ wxSizer* AIEditingPanel::createSpinButtonHbox(SpawnargLinkedSpinButton* spinButt
 	return hbox;
 }
 
-void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabel, 
+void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabel,
 									  const std::string& buttonLabel, const std::string& buttonIcon,
 									  const std::string& key)
 {
@@ -365,7 +366,7 @@ void AIEditingPanel::updateWidgetsFromSelection()
 	std::for_each(_labels.begin(), _labels.end(), [&] (LabelMap::value_type& pair)
 	{
 		pair.second->SetLabelText(_entity != nullptr ? _entity->getKeyValue(pair.first) : "");
-	}); 
+	});
 }
 
 void AIEditingPanel::rescanSelection()
@@ -420,7 +421,7 @@ void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
 	}
 	else
 	{
-		rError() << "Could not find a property editor implementing the IPropertyEditorDialog interface for key " 
+		rError() << "Could not find a property editor implementing the IPropertyEditorDialog interface for key "
 			<< key << std::endl;
 	}
 }

@@ -1,6 +1,7 @@
-#pragma once 
+#pragma once
 
 #include "imodule.h"
+#include "scene/scene_fwd.h"
 
 namespace scene
 {
@@ -17,8 +18,6 @@ class IPatchNode;
 typedef std::shared_ptr<IPatchNode> IPatchNodePtr;
 class IBrushNode;
 typedef std::shared_ptr<IBrushNode> IBrushNodePtr;
-class IEntityNode;
-typedef std::shared_ptr<IEntityNode> IEntityNodePtr;
 
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
@@ -59,11 +58,11 @@ typedef std::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
 
 /**
  * An abstract map writer class used to write any map elements
- * as string to the given output stream. 
+ * as string to the given output stream.
  *
- * The IMapWriter interface defines beginWrite/endWrite pairs for 
- * each scene element (Entity, primitives and the Map itself). 
- * These are called by the map saving algorithm when traversing 
+ * The IMapWriter interface defines beginWrite/endWrite pairs for
+ * each scene element (Entity, primitives and the Map itself).
+ * These are called by the map saving algorithm when traversing
  * the scene depth-first. The usual call order will look like this:
  *
  * beginWriteMap
@@ -82,7 +81,7 @@ typedef std::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
  * IMapWriter::FailureException will be thrown. The calling code
  * is designed to catch this exception.
  */
-class IMapWriter 
+class IMapWriter
 {
 public:
 	// The generic exception type which is thrown by the IMapWriter methods
@@ -97,7 +96,7 @@ public:
 
 	// Destructor
 	virtual ~IMapWriter() {}
-	
+
 	/**
 	 * This is called before writing any nodes, to give an opportunity
 	 * to write a map header and version info.
@@ -111,8 +110,8 @@ public:
 	virtual void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) = 0;
 
 	// Entity export methods
-	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) = 0;
-	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) = 0;
+	virtual void beginWriteEntity(const std::shared_ptr<EntityNode>& entity, std::ostream& stream) = 0;
+	virtual void endWriteEntity(const std::shared_ptr<EntityNode>& entity, std::ostream& stream) = 0;
 
 	// Brush export methods
 	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) = 0;
@@ -145,7 +144,7 @@ public:
 
 	 /**
 	 * Read the contents of the given stream and send them through the given MapImportFilter.
-	 * Whether the nodes are actually added to the map or not is something the 
+	 * Whether the nodes are actually added to the map or not is something the
 	 * ImportFilter can decide.
 	 *
 	 * throws: FailureException on any error.
@@ -202,10 +201,10 @@ public:
 	virtual const std::string& getGameType() const = 0;
 
 	/**
-	 * Instantiate a new map reader, using the given ImportFilter 
+	 * Instantiate a new map reader, using the given ImportFilter
 	 * which will be fed with nodes during the import.
 	 */
-	virtual IMapReaderPtr getMapReader(IMapImportFilter& filter) const = 0; 
+	virtual IMapReaderPtr getMapReader(IMapImportFilter& filter) const = 0;
 
 	/**
 	 * Acquire a map writer instance, for exporting nodes to a stream.
@@ -256,7 +255,7 @@ public:
 	 * Tries to look up the default map format for the given game type (e.g. "doom3")
 	 * associated with the given file extension.
 	 */
-	virtual MapFormatPtr getMapFormatForGameType(const std::string& gameType, 
+	virtual MapFormatPtr getMapFormatForGameType(const std::string& gameType,
 												 const std::string& extension) = 0;
 
 	/**

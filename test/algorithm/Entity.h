@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 
 namespace test
 {
@@ -23,7 +23,7 @@ inline std::vector<std::pair<std::string, std::string>> getAllKeyValuePairs(Enti
 }
 
 // Create an entity from a simple classname string
-inline IEntityNodePtr createEntityByClassName(const std::string& className)
+inline EntityNodePtr createEntityByClassName(const std::string& className)
 {
     auto cls = GlobalEntityClassManager().findClass(className);
     return GlobalEntityModule().createEntity(cls);

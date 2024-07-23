@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "iselection.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "selectionlib.h"
 #include "gamelib.h"
 #include "brush/Brush.h"

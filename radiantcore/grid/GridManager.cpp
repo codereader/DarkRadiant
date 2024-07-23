@@ -127,7 +127,7 @@ ComboBoxValueList GridManager::getGridList()
 
 void GridManager::constructPreferences()
 {
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Grid"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Grid"));
 
 	page.appendCombo(_("Default Grid Size"), RKEY_DEFAULT_GRID_SIZE, getGridList());
 

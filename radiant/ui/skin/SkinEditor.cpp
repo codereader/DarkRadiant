@@ -13,9 +13,9 @@
 #include "gamelib.h"
 #include "os/file.h"
 #include "os/path.h"
-#include "MaterialSelectorColumn.h"
 #include "SkinEditorTreeView.h"
 #include "decl/DeclLib.h"
+#include "ui/materials/MaterialChooser.h"
 #include "ui/modelselector/ModelTreeView.h"
 #include "util/ScopedBoolLock.h"
 #include "wxutil/FileChooser.h"
@@ -46,10 +46,8 @@ SkinEditor::SkinEditor() :
     _controlUpdateInProgress(false),
     _skinUpdateInProgress(false)
 {
-    loadNamedPanel(this, "SkinEditorMainPanel");
+    wxPanel* mainPanel = loadNamedPanel(this, "SkinEditorMainPanel");
 
-    makeLabelBold(this, "SkinEditorSkinDefinitionsLabel");
-    makeLabelBold(this, "SkinEditorEditSkinDefinitionLabel");
     makeLabelBold(this, "SkinEditorDeclarationSourceLabel");
 
     setupModelTreeView();
@@ -59,22 +57,29 @@ SkinEditor::SkinEditor() :
     setupPreview();
 
     getControl<wxButton>("SkinEditorCloseButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCloseButton, this);
-    getControl<wxTextCtrl>("SkinEditorSkinName")->Bind(wxEVT_TEXT, &SkinEditor::onSkinNameChanged, this);
+    getControl<wxTextCtrl>("SkinEditorSkinName")->Bind(
+        wxEVT_TEXT_ENTER, &SkinEditor::onSkinNameChanged, this
+    );
 
     getControl<wxNotebook>("SkinEditorNotebook")->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [&](auto& ev)
     {
         _remappingList->CancelEditing(); // Stop editing when switching tabs
     });
 
-    auto oldInfoPanel = getControl<wxPanel>("SkinEditorSaveNotePanel");
-    auto declFileInfo = new wxutil::DeclFileInfo(oldInfoPanel->GetParent(), decl::Type::Skin);
-    replaceControl(oldInfoPanel, declFileInfo);
+    // Pack in the decl info at the bottom of the window (next to the Close button)
+    wxPanel* saveNotePanelContainer = getControl<wxPanel>("SkinEditorSaveNotePanel");
+    _saveNotePanel = new wxutil::DeclFileInfo(saveNotePanelContainer, decl::Type::Skin);
+    auto sizer = new wxBoxSizer(wxHORIZONTAL);
+    sizer->Add(_saveNotePanel.get(), 1, wxEXPAND | wxLEFT, 12);
+    saveNotePanelContainer->SetSizerAndFit(sizer);
 
     // Set the default size of the window
     FitToScreen(0.9f, 0.9f);
 
+    auto* mainPanelSizer = new wxBoxSizer(wxVERTICAL);
+    mainPanelSizer->Add(mainPanel, 1, wxEXPAND, 0);
+    SetSizerAndFit(mainPanelSizer);
     Layout();
-    Fit();
 
     // Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -137,11 +142,6 @@ void SkinEditor::setupSkinTreeView()
     auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _skinTreeView);
     treeToolbar->EnableFavouriteManagement(false);
 
-    auto definitionLabel = getControl<wxStaticText>("SkinEditorSkinDefinitionsLabel");
-    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
-    definitionLabel->Reparent(treeToolbar);
-    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
-
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_skinTreeView, 1, wxEXPAND);
 
@@ -192,26 +192,39 @@ void SkinEditor::setupPreview()
 void SkinEditor::setupRemappingPanel()
 {
     auto panel = getControl<wxPanel>("SkinEditorRemappingPanel");
+    _sourceMaterialEdit = getControl<wxTextCtrl>("SourceMaterialEdit");
+    _replacementMaterialEdit = getControl<wxTextCtrl>("ReplacementMaterialEdit");
 
+    // Construct list view and its visible columns
     _remappingList = wxutil::TreeView::CreateWithModel(panel, _remappings.get(), wxDV_SINGLE);
-
     _remappingList->AppendToggleColumn(_("Active"), _remappingColumns.active.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    _remappingList->AppendTextColumn(
+        _("Original"), _remappingColumns.original.getColumnIndex(), wxDATAVIEW_CELL_INERT,
+        wxCOL_WIDTH_AUTOSIZE
+    );
+    _remappingList->AppendTextColumn(
+        _("Replacement"), _remappingColumns.replacement.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE
+    );
 
-    auto originalColumn = new MaterialSelectorColumn(_("Original (click to edit)"), _remappingColumns.original.getColumnIndex());
-    _remappingList->AppendColumn(originalColumn);
-
-    auto replacementColumn = new MaterialSelectorColumn(_("Replacement (click to edit)"), _remappingColumns.replacement.getColumnIndex());
-    _remappingList->AppendColumn(replacementColumn);
-
-    replacementColumn->signal_onMaterialSelected().connect(
-        sigc::mem_fun(*this, &SkinEditor::onReplacementEntryChanged));
-
-    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingRowChanged, this);
-    _remappingList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this);
-    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_EDITING_STARTED, &SkinEditor::onRemappingEditStarted, this);
-    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &SkinEditor::onRemappingEditDone, this);
+    // Connect up list view events
+    _remappingList->Bind(
+        wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingValueChanged, this
+    );
+    _remappingList->Bind(
+        wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this
+    );
     _remappingList->EnableSearchPopup(false);
+
+    // Material browse buttons
+    _sourceMaterialBrowseBtn = getControl<wxBitmapButton>("chooseRemappedSourceMaterialBtn");
+    _sourceMaterialBrowseBtn->Bind(
+        wxEVT_BUTTON, [=](wxCommandEvent&) { chooseRemappedSourceMaterial(); }
+    );
+    getControl<wxBitmapButton>("chooseRemappedDestMaterialBtn")->Bind(
+        wxEVT_BUTTON, [=](wxCommandEvent&) { chooseRemappedDestMaterial(); }
+    );
 
     panel->GetSizer()->Prepend(_remappingList, 1, wxEXPAND, 0);
 
@@ -220,6 +233,25 @@ void SkinEditor::setupRemappingPanel()
 
     auto removeButton = getControl<wxButton>("SkinEditorRemoveMappingButton");
     removeButton->Bind(wxEVT_BUTTON, &SkinEditor::onRemoveSelectedMapping, this);
+}
+
+void SkinEditor::chooseRemappedSourceMaterial()
+{
+    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All, _sourceMaterialEdit);
+    if (chooser.ShowModal() == wxID_OK) {
+        const std::string materialName = chooser.GetSelectedDeclName();
+        onOriginalEntryChanged(materialName);
+    }
+}
+
+void SkinEditor::chooseRemappedDestMaterial()
+{
+    MaterialChooser chooser(this, MaterialSelector::TextureFilter::All,
+                            _replacementMaterialEdit);
+    if (chooser.ShowModal() == wxID_OK) {
+        const std::string materialName = chooser.GetSelectedDeclName();
+        onReplacementEntryChanged(materialName);
+    }
 }
 
 decl::ISkin::Ptr SkinEditor::getSelectedSkin()
@@ -316,7 +348,14 @@ void SkinEditor::updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin)
 void SkinEditor::updateRemappingButtonSensitivity()
 {
     auto selectedSource = getSelectedRemappingSourceMaterial();
-    getControl<wxButton>("SkinEditorRemoveMappingButton")->Enable(!selectedSource.empty() && selectedSource != "*");
+    const bool isWildcardRow = (selectedSource == "*");
+
+    // The wildcard row cannot be removed and its source ("*") cannot be changed
+    getControl<wxButton>("SkinEditorRemoveMappingButton")->Enable(
+        !selectedSource.empty() && !isWildcardRow
+    );
+    _sourceMaterialEdit->Enable(!isWildcardRow);
+    _sourceMaterialBrowseBtn->Enable(!isWildcardRow);
 }
 
 void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)
@@ -349,9 +388,6 @@ void SkinEditor::updateSkinControlsFromSelection()
     // Enable/disable notebook tabs independently to allow page switching
     getControl<wxWindow>("SkinEditorTargetModels")->Enable(skinCanBeModified);
     getControl<wxWindow>("SkinEditorRemappings")->Enable(skinCanBeModified);
-
-    getControl<wxWindow>("SkinEditorEditSkinDefinitionLabel")->Enable(skinCanBeModified);
-    getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(skinCanBeModified);
     getControl<wxWindow>("SkinEditorSkinName")->Enable(skinCanBeModified);
 
     updateSourceView(skin);
@@ -374,16 +410,12 @@ void SkinEditor::updateSkinControlsFromSelection()
 
 void SkinEditor::updateDeclFileInfo()
 {
-    auto declFileInfo = getControl<wxutil::DeclFileInfo>("SkinEditorSaveNotePanel");
-
-    if (_skin)
-    {
-        declFileInfo->Show();
-        declFileInfo->SetDeclarationName(_skin->getDeclName());
+    if (_skin) {
+        _saveNotePanel->Show();
+        _saveNotePanel->SetDeclarationName(_skin->getDeclName());
     }
-    else
-    {
-        declFileInfo->Hide();
+    else {
+        _saveNotePanel->Hide();
     }
 }
 
@@ -709,13 +741,14 @@ void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
 
     // Rename the active skin decl
     auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
-
-    GlobalModelSkinCache().renameSkin(_skin->getDeclName(), nameEntry->GetValue().ToStdString());
-    auto item = _skinTreeView->GetTreeModel()->FindString(_skin->getDeclName(), _columns.declName);
+    auto newSkin = nameEntry->GetValue().ToStdString();
+    GlobalModelSkinCache().renameSkin(_skin->getDeclName(), newSkin);
+    auto item = _skinTreeView->GetTreeModel()->FindString(newSkin, _columns.declName);
 
     // Make sure the item is selected again, it will be de-selected by the rename operation
     _skinTreeView->Select(item);
     _skinTreeView->EnsureVisible(item);
+    _skin = getSelectedSkin();
     handleSkinSelectionChanged(); // also updates all controls
 
     nameEntry->SetFocus();
@@ -801,7 +834,7 @@ void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
     updateSkinButtonSensitivity();
 }
 
-void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
+void SkinEditor::onRemappingValueChanged(wxDataViewEvent& ev)
 {
     if (_controlUpdateInProgress || !_skin) return;
 
@@ -827,34 +860,14 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
     updateSkinButtonSensitivity();
 }
 
-void SkinEditor::onRemappingEditStarted(wxDataViewEvent& ev)
-{
-    // Save the previous values into the model row, to restore it on cancel
-    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
-
-    row[_remappingColumns.unchangedOriginal] = row[_remappingColumns.original].getString();
-    row[_remappingColumns.unchangedReplacement] = row[_remappingColumns.replacement].getString();
-}
-
-void SkinEditor::onRemappingEditDone(wxDataViewEvent& ev)
-{
-    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
-
-    if (ev.IsEditCancelled())
-    {
-        // Revert to previous value
-        row[_remappingColumns.original] = row[_remappingColumns.unchangedOriginal].getString();
-        row[_remappingColumns.replacement] = row[_remappingColumns.unchangedReplacement].getString();
-        row.SendItemChanged();
-    }
-
-    row[_remappingColumns.unchangedOriginal] = std::string();
-    row[_remappingColumns.unchangedReplacement] = std::string();
-}
-
-void SkinEditor::onRemappingSelectionChanged(wxCommandEvent& ev)
+void SkinEditor::onRemappingSelectionChanged(wxDataViewEvent& ev)
 {
     updateRemappingButtonSensitivity();
+
+    // Populate the Replace/With entry boxes
+    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
+    _sourceMaterialEdit->SetValue(row[_remappingColumns.original].getString());
+    _replacementMaterialEdit->SetValue(row[_remappingColumns.replacement].getString());
 }
 
 void SkinEditor::onRemoveSelectedMapping(wxCommandEvent& ev)
@@ -929,6 +942,15 @@ void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
     _remappingList->CancelEditing(); // stop editing
 
     populateSkinListWithModelMaterials();
+}
+
+void SkinEditor::onOriginalEntryChanged(const std::string& material)
+{
+    wxutil::TreeModel::Row row(_remappingList->GetSelection(), *_remappings);
+
+    row[_remappingColumns.original] = material;
+    row[_remappingColumns.active] = true; // activate edited rows
+    row.SendItemChanged();
 }
 
 void SkinEditor::onReplacementEntryChanged(const std::string& material)

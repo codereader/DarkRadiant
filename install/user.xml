@@ -304,8 +304,8 @@
       <separator/>
       <toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
       <toolbutton name="normaliseitems" action="TexToolNormaliseItems; TextureToolResetView" tooltip="Normalise" icon="textool_normalise.png"/>
-      <toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="tex_flips.png"/>
-      <toolbutton name="texflipt" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="tex_flipt.png"/>
+      <toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="flip_horiz.png"/>
+      <toolbutton name="texflipt" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="flip_vert.png"/>
       <toolbutton name="selectrelated" action="TexToolSelectRelated" tooltip="Select Related Items" icon="textool_select_related.png"/>
       <separator/>
       <toggletoolbutton name="uselighttheme" action="TextureToolUseLightTheme" tooltip="Use Light Colour Theme" icon="bulb_lit.png" />
@@ -321,7 +321,7 @@
       </git>
     </vcs>
     <windowStates>
-        <!-- Default Width/Height Fraction defines the proportion of the screen size 
+        <!-- Default Width/Height Fraction defines the proportion of the screen size
              this window will take if no size information has been saved so far -->
         <EntityClassChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
         <SkinChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />

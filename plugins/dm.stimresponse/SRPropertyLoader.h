@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ieclass.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "SREntity.h"
 #include "StimTypes.h"
 

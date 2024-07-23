@@ -1,6 +1,6 @@
 #include "BooleanPropertyEditor.h"
 
-#include "ientity.h"
+#include "scene/Entity.h"
 
 #include <wx/checkbox.h>
 #include <wx/panel.h>

@@ -1,11 +1,11 @@
 #include "RenderableEntityBox.h"
 
-#include "EntityNode.h"
+#include "scene/EntityNode.h"
 
 namespace entity
 {
 
-RenderableEntityBox::RenderableEntityBox(const IEntityNode& entity, const AABB& bounds, const Vector3& worldPos) :
+RenderableEntityBox::RenderableEntityBox(const EntityNode& entity, const AABB& bounds, const Vector3& worldPos) :
     RenderableBox(bounds, worldPos),
     _entity(entity)
 {}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../VertexInstance.h"
-#include "../EntitySettings.h"
+#include "scene/EntitySettings.h"
 #include "render/RenderableGeometry.h"
 
 namespace entity

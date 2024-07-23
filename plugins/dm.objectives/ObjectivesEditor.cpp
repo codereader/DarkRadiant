@@ -14,7 +14,7 @@
 #include "iregistry.h"
 #include "ieclass.h"
 #include "igame.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 
 #include "wxutil/dialog/MessageBox.h"
 
@@ -52,7 +52,7 @@ ObjectivesEditor::ObjectivesEditor() :
 	wxButton* successLogicButton = findNamedObject<wxButton>(this, "ObjDialogSuccessLogicButton");
 	successLogicButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditLogic), NULL, this);
 	successLogicButton->Enable(false);
-	
+
 	wxButton* objCondButton = findNamedObject<wxButton>(this, "ObjDialogObjConditionsButton");
 	objCondButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjConditions), NULL, this);
 	objCondButton->Enable(false);
@@ -98,13 +98,13 @@ void ObjectivesEditor::setupEntitiesPanel()
 	_objectiveEntityView->AppendTextColumn("", _objEntityColumns.displayName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	_objectiveEntityView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+	_objectiveEntityView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
 		wxDataViewEventHandler(ObjectivesEditor::_onEntitySelectionChanged), NULL, this);
 
 	// Active-at-start column (checkbox)
-	_objectiveEntityView->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE, 
+	_objectiveEntityView->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE,
 		wxDataViewEventHandler(ObjectivesEditor::_onStartActiveCellToggled), NULL, this);
-	
+
     // Connect button signals
 	findNamedObject<wxButton>(this, "ObjDialogAddEntityButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onAddEntity), NULL, this);
@@ -136,7 +136,7 @@ void ObjectivesEditor::setupObjectivesPanel()
 
 	_objectiveView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ObjectivesEditor::_onObjectiveSelectionChanged, this);
 	_objectiveView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ObjectivesEditor::_onObjectiveActivated, this);
-    
+
 	wxButton* addButton = findNamedObject<wxButton>(this, "ObjDialogAddObjectiveButton");
 	addButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onAddObjective), NULL, this);
 
@@ -194,7 +194,7 @@ void ObjectivesEditor::populateWidgets()
     // Select the first entity in the list for convenience
     wxDataViewItemArray children;
     _objectiveEntityList->GetChildren(_objectiveEntityList->GetRoot(), children);
-    
+
     if (!children.empty())
     {
         _objectiveEntityView->Select(children.front());
@@ -325,7 +325,7 @@ void ObjectivesEditor::selectObjectiveByIndex(int index)
 	if (index == -1) return;
 
 	// Select the new objective
-	wxDataViewItem newObjLoc = _objectiveList->FindInteger(index, 
+	wxDataViewItem newObjLoc = _objectiveList->FindInteger(index,
 			_objectiveColumns.objNumber);
 
 	_objectiveView->Select(newObjLoc);
@@ -348,7 +348,7 @@ void ObjectivesEditor::handleEntitySelectionChange()
 {
 	// Clear the objectives list
 	_objectiveList->Clear();
-	
+
 	updateEditorButtonPanel();
 }
 
@@ -417,7 +417,7 @@ void ObjectivesEditor::updateEditorButtonPanel()
 	// Get the selection
 	wxDataViewItem item = _objectiveEntityView->GetSelection();
 
-	if (item.IsOk()) 
+	if (item.IsOk())
     {
 		// Get name of the entity and find the corresponding ObjectiveEntity in
 		// the map
@@ -465,11 +465,11 @@ void ObjectivesEditor::_onAddEntity(wxCommandEvent& ev)
 
 	// Obtain the entity class object
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(objEClass);
-		
-    if (eclass) 
+
+    if (eclass)
     {
         // Construct a Node of this entity type
-        IEntityNodePtr node(GlobalEntityModule().createEntity(eclass));
+        EntityNodePtr node(GlobalEntityModule().createEntity(eclass));
 
         // Create a random offset
         node->getEntity().setKeyValue("origin", RandomOrigin::generate(128));
@@ -495,8 +495,8 @@ void ObjectivesEditor::_onDeleteEntity(wxCommandEvent& ev)
 {
 	// Get the selection
     wxDataViewItem item = _objectiveEntityView->GetSelection();
-	
-	if (item.IsOk()) 
+
+	if (item.IsOk())
 	{
 		// Get the name of the selected entity
 		wxutil::TreeModel::Row row(item, *_objectiveEntityList);
@@ -591,7 +591,7 @@ void ObjectivesEditor::_onClearObjectives(wxCommandEvent& ev)
 void ObjectivesEditor::_onEditLogic(wxCommandEvent& ev)
 {
 	MissionLogicDialog* dialog = new MissionLogicDialog(this, *_curEntity->second);
-	
+
 	dialog->ShowModal();
 	dialog->Destroy();
 
@@ -601,7 +601,7 @@ void ObjectivesEditor::_onEditLogic(wxCommandEvent& ev)
 void ObjectivesEditor::_onEditObjConditions(wxCommandEvent& ev)
 {
 	ObjectiveConditionsDialog* dialog = new ObjectiveConditionsDialog(this, *_curEntity->second);
-	
+
 	dialog->ShowModal();
 	dialog->Destroy();
 

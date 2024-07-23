@@ -8,6 +8,7 @@
 #include "selectionlib.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "string/string.h"
+#include "scene/EntityNode.h"
 
 #include "i18n.h"
 #include <iostream>
@@ -83,17 +84,17 @@ int StimResponseEditor::ShowModal()
 void StimResponseEditor::populateWindow()
 {
 	auto mainPanel = loadNamedPanel(this, "SREditorMainPanel");
-	
+
 	_notebook = findNamedObject<wxNotebook>(this, "SREditorNotebook");
 
 	_stimEditor = std::make_unique<StimEditor>(mainPanel, _stimTypes);
 	_responseEditor = std::make_unique<ResponseEditor>(mainPanel, _stimTypes);
-	
+
 	// Custom Stim Editor
 	auto customStimPanel = findNamedObject<wxPanel>(mainPanel, "SREditorCustomStimEditorContainer");
 	_customStimEditor = std::make_unique<CustomStimEditor>(customStimPanel, _stimTypes);
 
-	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
+	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED,
 		wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), nullptr, this);
 
 	findNamedObject<wxButton>(this, "SREditorOkButton")->Bind(
@@ -176,10 +177,10 @@ void StimResponseEditor::save()
 
 bool StimResponseEditor::Destroy()
 {
-	// We experience crashes in Linux/GTK during dialog destruction when GTK+ 
-	// apparently starts sending out the notebook page changed event right 
+	// We experience crashes in Linux/GTK during dialog destruction when GTK+
+	// apparently starts sending out the notebook page changed event right
 	// before removing the pages.
-	_notebook->Disconnect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
+	_notebook->Disconnect(wxEVT_NOTEBOOK_PAGE_CHANGED,
 		wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), nullptr, this);
 
 	return wxutil::DialogBase::Destroy();

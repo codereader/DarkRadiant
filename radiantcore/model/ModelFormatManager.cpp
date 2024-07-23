@@ -56,7 +56,7 @@ void ModelFormatManager::postModuleInitialisation()
 	if (!_exporters.empty())
 	{
 		// Construct and Register the patch-related preferences
-		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Model Export"));
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Model Export"));
 
 		ComboBoxValueList choices;
 

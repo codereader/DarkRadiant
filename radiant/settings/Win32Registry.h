@@ -3,14 +3,14 @@
 
 #include <string>
 
+namespace game {
+
 /** greebo: This provides a convenience method to retrieve a string
  * 			from the Windows Registry using the Windows API.
  *
  * 			It is safe to call this function in Linux, the non-Win32 implementations
  * 			just return an empty string.
  */
-namespace game {
-
 class Win32Registry
 {
 public:

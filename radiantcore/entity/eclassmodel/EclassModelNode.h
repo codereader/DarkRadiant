@@ -2,7 +2,7 @@
 
 #include "inamespace.h"
 #include "modelskin.h"
-#include "ientity.h"
+#include "scene/Entity.h"
 #include "iselection.h"
 #include "editable.h"
 
@@ -10,11 +10,11 @@
 #include "transformlib.h"
 #include "selectionlib.h"
 #include "render/RenderablePivot.h"
-#include "../target/TargetableNode.h"
-#include "../EntityNode.h"
-#include "../KeyObserverDelegate.h"
+#include "scene/TargetableNode.h"
+#include "scene/EntityNode.h"
+#include "scene/KeyObserverDelegate.h"
 #include "../RotationKey.h"
-#include "../OriginKey.h"
+#include "scene/OriginKey.h"
 
 namespace entity
 {
@@ -74,7 +74,7 @@ public:
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
-    
+
     const Vector3& getWorldPosition() const override;
 
     virtual bool isShadowCasting() const override;

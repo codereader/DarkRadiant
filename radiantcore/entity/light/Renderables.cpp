@@ -1,7 +1,7 @@
 #include "Renderables.h"
 
 #include "LightNode.h"
-#include "../EntitySettings.h"
+#include "scene/EntitySettings.h"
 
 namespace entity
 {

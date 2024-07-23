@@ -1,6 +1,7 @@
 #include "ModelFinder.h"
 
 #include "ientity.h"
+#include "scene/EntityNode.h"
 
 namespace scene
 {

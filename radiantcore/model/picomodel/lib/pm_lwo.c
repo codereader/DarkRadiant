@@ -343,9 +343,9 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 					else if (vm->vmap->type == LWID_('R','G','B','A'))
 					{
 						/* set rgba */
-						color[ 0 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 0 ] * surface->color.rgb[ 0 ] * surface->diffuse.val * 0xFF);
-						color[ 1 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 1 ] * surface->color.rgb[ 1 ] * surface->diffuse.val * 0xFF);
-						color[ 2 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 2 ] * surface->color.rgb[ 2 ] * surface->diffuse.val * 0xFF);
+						color[ 0 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 0 ] * 0xFF);
+						color[ 1 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 1 ] * 0xFF);
+						color[ 2 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 2 ] * 0xFF);
 						color[ 3 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 3 ] * 0xFF);
 					}
 				}
@@ -362,9 +362,9 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 					else if (vm->vmap->type == LWID_('R','G','B','A'))
 					{
 						/* set rgba */
-						color[ 0 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 0 ] * surface->color.rgb[ 0 ] * surface->diffuse.val * 0xFF);
-						color[ 1 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 1 ] * surface->color.rgb[ 1 ] * surface->diffuse.val * 0xFF);
-						color[ 2 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 2 ] * surface->color.rgb[ 2 ] * surface->diffuse.val * 0xFF);
+						color[ 0 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 0 ] * 0xFF);
+						color[ 1 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 1 ] * 0xFF);
+						color[ 2 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 2 ] * 0xFF);
 						color[ 3 ] = (picoByte_t)(vm->vmap->val[ vm->index ][ 3 ] * 0xFF);
 					}
 				}

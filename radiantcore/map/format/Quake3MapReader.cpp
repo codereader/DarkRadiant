@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "ieclass.h"
 #include "igame.h"
-#include "ientity.h"
+#include "scene/EntityNode.h"
 #include "string/string.h"
 
 #include "i18n.h"
@@ -16,7 +16,7 @@
 
 namespace map {
 
-Quake3MapReader::Quake3MapReader(IMapImportFilter& importFilter) : 
+Quake3MapReader::Quake3MapReader(IMapImportFilter& importFilter) :
 	_importFilter(importFilter),
 	_entityCount(0),
 	_primitiveCount(0)
@@ -103,7 +103,7 @@ void Quake3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INo
 		}
 
 		// Now add the primitive as a child of the entity
-		_importFilter.addPrimitiveToEntity(primitive, parentEntity); 
+		_importFilter.addPrimitiveToEntity(primitive, parentEntity);
 	}
 	catch (parser::ParseException& e)
 	{
@@ -137,7 +137,7 @@ scene::INodePtr Quake3MapReader::createEntity(const EntityKeyValues& keyValues)
 	}
 
 	// Create the actual entity node
-    IEntityNodePtr node(GlobalEntityModule().createEntity(classPtr));
+    EntityNodePtr node(GlobalEntityModule().createEntity(classPtr));
 
     for (EntityKeyValues::const_iterator i = keyValues.begin();
          i != keyValues.end();
@@ -172,7 +172,7 @@ void Quake3MapReader::parseEntity(parser::DefTokeniser& tok)
 	    // primitive, or a "}" to indicate the end of the entity
 
 	    if (token == "{") // PRIMITIVE
-		{ 
+		{
 			// Create the entity right now, if not yet done
 			if (entity == NULL)
 			{
@@ -193,7 +193,7 @@ void Quake3MapReader::parseEntity(parser::DefTokeniser& tok)
 			break;
 	    }
 	    else // KEY
-		{ 
+		{
 	        std::string value = tok.nextToken();
 
 	        // Sanity check (invalid number of tokens will get us out of sync)
