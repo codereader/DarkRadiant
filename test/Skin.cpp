@@ -692,7 +692,7 @@ void expectModelDefHasMeshAndSkin(const std::string& modelDef, const std::string
     EXPECT_EQ(model->getSkin(), expectedSkin) << "Expected skin to be " << expectedSkin << " on modelDef " << modelDef;
 }
 
-IEntityNodePtr createStaticEntityWithModel(const std::string& model)
+EntityNodePtr createStaticEntityWithModel(const std::string& model)
 {
     auto funcStaticClass = GlobalEntityClassManager().findClass("func_static");
     auto entity = GlobalEntityModule().createEntity(funcStaticClass);
@@ -700,7 +700,7 @@ IEntityNodePtr createStaticEntityWithModel(const std::string& model)
     return entity;
 }
 
-SkinnedModel::Ptr getSkinnedModel(const IEntityNodePtr& entity)
+SkinnedModel::Ptr getSkinnedModel(const EntityNodePtr& entity)
 {
     SkinnedModel::Ptr foundModelNode;
 
@@ -719,7 +719,7 @@ SkinnedModel::Ptr getSkinnedModel(const IEntityNodePtr& entity)
     return foundModelNode;
 }
 
-void expectEntityHasSkinnedModel(const IEntityNodePtr& entity, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+void expectEntityHasSkinnedModel(const EntityNodePtr& entity, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
 {
     // Check the skinned model node beneath it
     auto foundModelNode = getSkinnedModel(entity);
@@ -746,7 +746,7 @@ void expectEntityClassHasSkinnedModel(const std::string& eclassName, const std::
     expectEntityHasSkinnedModel(entity, expectedSkin, expectedMaterials);
 }
 
-void setSkinKeyAndCheckModel(const IEntityNodePtr& entity, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
+void setSkinKeyAndCheckModel(const EntityNodePtr& entity, const std::string& expectedSkin, const std::vector<std::string>& expectedMaterials)
 {
     // Save the data to do a before/after test
     auto model = getSkinnedModel(entity);

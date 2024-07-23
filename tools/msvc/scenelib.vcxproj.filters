@@ -51,6 +51,57 @@
     <ClCompile Include="..\..\libs\scene\merge\MergeActionNode.cpp">
       <Filter>scene\merge</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\scene\AttachmentData.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\Entity.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\EntityKeyValue.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\EntityNode.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\EntitySettings.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\KeyValueObserver.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\ModelKey.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\NameKeyObserver.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\NamespaceManager.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\RenderableEntityName.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\RenderableTargetLines.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\ShaderParms.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\TargetableNode.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\TargetKey.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\TargetKeyCollection.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\TargetLineNode.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\TargetManager.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h">
@@ -166,5 +217,88 @@
     <ClInclude Include="..\..\libs\scene\TransformedCopy.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\AttachmentData.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\ColourKey.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\Entity.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\EntityAttachment.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\EntityKeyValue.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\EntityNode.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\EntitySettings.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\KeyObserverDelegate.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\KeyObserverMap.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\KeyValueObserver.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\ModelKey.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\NameKey.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\NameKeyObserver.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\NamespaceManager.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\OriginKey.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\RenderableEntityName.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\RenderableObjectCollection.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\RenderableTargetLines.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\scene_fwd.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\ShaderParms.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\Target.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\TargetableNode.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\TargetKey.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\TargetKeyCollection.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\TargetLineNode.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\TargetManager.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\libs\scene\CMakeLists.txt">
+      <Filter>scene</Filter>
+    </Text>
   </ItemGroup>
 </Project>

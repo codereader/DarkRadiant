@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\libs\wxutil\preview\EntityPreview.h">
       <Filter>preview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\Debug.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

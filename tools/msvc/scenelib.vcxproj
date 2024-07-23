@@ -110,8 +110,14 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\scene\AttachmentData.cpp" />
     <ClCompile Include="..\..\libs\scene\ChildPrimitives.cpp" />
+    <ClCompile Include="..\..\libs\scene\Entity.cpp" />
+    <ClCompile Include="..\..\libs\scene\EntityKeyValue.cpp" />
+    <ClCompile Include="..\..\libs\scene\EntityNode.cpp" />
+    <ClCompile Include="..\..\libs\scene\EntitySettings.cpp" />
     <ClCompile Include="..\..\libs\scene\InstanceWalkers.cpp" />
+    <ClCompile Include="..\..\libs\scene\KeyValueObserver.cpp" />
     <ClCompile Include="..\..\libs\scene\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\libs\scene\merge\GraphComparer.cpp" />
     <ClCompile Include="..\..\libs\scene\merge\MergeActionNode.cpp" />
@@ -119,22 +125,43 @@
     <ClCompile Include="..\..\libs\scene\merge\MergeOperationBase.cpp" />
     <ClCompile Include="..\..\libs\scene\merge\ThreeWayMergeOperation.cpp" />
     <ClCompile Include="..\..\libs\scene\ModelFinder.cpp" />
+    <ClCompile Include="..\..\libs\scene\ModelKey.cpp" />
+    <ClCompile Include="..\..\libs\scene\NameKeyObserver.cpp" />
+    <ClCompile Include="..\..\libs\scene\NamespaceManager.cpp" />
     <ClCompile Include="..\..\libs\scene\Node.cpp" />
+    <ClCompile Include="..\..\libs\scene\RenderableEntityName.cpp" />
+    <ClCompile Include="..\..\libs\scene\RenderableTargetLines.cpp" />
     <ClCompile Include="..\..\libs\scene\SelectableNode.cpp" />
     <ClCompile Include="..\..\libs\scene\SelectionIndex.cpp" />
+    <ClCompile Include="..\..\libs\scene\ShaderParms.cpp" />
+    <ClCompile Include="..\..\libs\scene\TargetableNode.cpp" />
+    <ClCompile Include="..\..\libs\scene\TargetKey.cpp" />
+    <ClCompile Include="..\..\libs\scene\TargetKeyCollection.cpp" />
+    <ClCompile Include="..\..\libs\scene\TargetLineNode.cpp" />
+    <ClCompile Include="..\..\libs\scene\TargetManager.cpp" />
     <ClCompile Include="..\..\libs\scene\TraversableNodeSet.cpp" />
     <ClCompile Include="..\..\libs\scene\Traverse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\AABBAccumulateWalker.h" />
+    <ClInclude Include="..\..\libs\scene\AttachmentData.h" />
     <ClInclude Include="..\..\libs\scene\BasicRootNode.h" />
     <ClInclude Include="..\..\libs\scene\ChildPrimitives.h" />
     <ClInclude Include="..\..\libs\scene\Clone.h" />
+    <ClInclude Include="..\..\libs\scene\ColourKey.h" />
+    <ClInclude Include="..\..\libs\scene\Entity.h" />
+    <ClInclude Include="..\..\libs\scene\EntityAttachment.h" />
     <ClInclude Include="..\..\libs\scene\EntityBreakdown.h" />
+    <ClInclude Include="..\..\libs\scene\EntityKeyValue.h" />
+    <ClInclude Include="..\..\libs\scene\EntityNode.h" />
     <ClInclude Include="..\..\libs\scene\EntitySelector.h" />
+    <ClInclude Include="..\..\libs\scene\EntitySettings.h" />
     <ClInclude Include="..\..\libs\scene\Group.h" />
     <ClInclude Include="..\..\libs\scene\GroupNodeChecker.h" />
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h" />
+    <ClInclude Include="..\..\libs\scene\KeyObserverDelegate.h" />
+    <ClInclude Include="..\..\libs\scene\KeyObserverMap.h" />
+    <ClInclude Include="..\..\libs\scene\KeyValueObserver.h" />
     <ClInclude Include="..\..\libs\scene\LayerUsageBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h" />
     <ClInclude Include="..\..\libs\scene\merge\ComparisonResult.h" />
@@ -154,17 +181,36 @@
     <ClInclude Include="..\..\libs\scene\merge\ThreeWaySelectionGroupMerger.h" />
     <ClInclude Include="..\..\libs\scene\ModelBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\ModelFinder.h" />
+    <ClInclude Include="..\..\libs\scene\ModelKey.h" />
+    <ClInclude Include="..\..\libs\scene\NameKey.h" />
+    <ClInclude Include="..\..\libs\scene\NameKeyObserver.h" />
+    <ClInclude Include="..\..\libs\scene\NamespaceManager.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />
+    <ClInclude Include="..\..\libs\scene\OriginKey.h" />
     <ClInclude Include="..\..\libs\scene\PointTrace.h" />
     <ClInclude Include="..\..\libs\scene\PrefabBoundsAccumulator.h" />
+    <ClInclude Include="..\..\libs\scene\RenderableEntityName.h" />
+    <ClInclude Include="..\..\libs\scene\RenderableObjectCollection.h" />
+    <ClInclude Include="..\..\libs\scene\RenderableTargetLines.h" />
+    <ClInclude Include="..\..\libs\scene\scene_fwd.h" />
     <ClInclude Include="..\..\libs\scene\SelectableNode.h" />
     <ClInclude Include="..\..\libs\scene\SelectionIndex.h" />
     <ClInclude Include="..\..\libs\scene\ShaderBreakdown.h" />
+    <ClInclude Include="..\..\libs\scene\ShaderParms.h" />
+    <ClInclude Include="..\..\libs\scene\Target.h" />
+    <ClInclude Include="..\..\libs\scene\TargetableNode.h" />
+    <ClInclude Include="..\..\libs\scene\TargetKey.h" />
+    <ClInclude Include="..\..\libs\scene\TargetKeyCollection.h" />
+    <ClInclude Include="..\..\libs\scene\TargetLineNode.h" />
+    <ClInclude Include="..\..\libs\scene\TargetManager.h" />
     <ClInclude Include="..\..\libs\scene\TransformedCopy.h" />
     <ClInclude Include="..\..\libs\scene\TraversableNodeSet.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\scene\Traverse.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\libs\scene\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -100,7 +100,7 @@
     <ClCompile />
     <Lib />
     <Lib>
-      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>scenelib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -110,14 +110,14 @@
     <ClCompile />
     <Lib />
     <Lib>
-      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>scenelib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile />
     <Lib />
     <Lib>
-      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>scenelib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,7 +127,7 @@
     <ClCompile />
     <Lib />
     <Lib>
-      <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>scenelib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeViewItemStyle.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h" />
+    <ClInclude Include="..\..\libs\wxutil\Debug.h" />
     <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.h" />
     <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelector.h" />
     <ClInclude Include="..\..\libs\wxutil\decl\DeclFileInfo.h" />
