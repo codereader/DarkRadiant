@@ -65,6 +65,14 @@ pkg_check_modules(ZLIB zlib REQUIRED)
 pkg_check_modules(GLIB glib-2.0 REQUIRED)
 pkg_check_modules(EIGEN eigen3 REQUIRED)
 
+# Locate a packaged pugixml, if installed if not, fall back to embedded code copy.
+find_package(pugixml QUIET)
+if (TARGET pugixml::pugixml)
+    message(NOTICE "Distribution pugixml found and used.")
+else()
+    include_directories(libs/pugixml)
+endif()
+
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
              COMPONENTS base core stc adv gl xrc aui)

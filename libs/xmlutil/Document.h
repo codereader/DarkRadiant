@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Node.h"
-#include "pugixml/pugixml.hpp"
 
+#include <pugixml.hpp>
 #include <mutex>
 #include <string>
 #include <optional>
