@@ -334,7 +334,7 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
     // Add all working copy changes
     index->updateAll();
     auto tree = index->writeTree(*this);
-    std::vector<git_commit*> parentCommits;
+    std::vector<const git_commit*> parentCommits;
 
     // It's possible that there is no HEAD yet (first commit in the repo)
     if (head)
