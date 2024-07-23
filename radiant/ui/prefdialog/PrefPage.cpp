@@ -17,21 +17,8 @@ PrefPage::PrefPage(wxWindow* parent, const IPreferencePage& settingsPage) :
 {
 	// Create the overall panel
 	SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	// 12 pixel border
-	wxBoxSizer* overallVBox = new wxBoxSizer(wxVERTICAL);
-	GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
-
-	// Create the label, unless the page is empty
-	if (!settingsPage.isEmpty())
-	{
-		wxStaticText* titleLabel = new wxStaticText(this, wxID_ANY, _settingsPage.getTitle());
-		titleLabel->SetFont(titleLabel->GetFont().Bold());
-		overallVBox->Add(titleLabel, 0, wxBOTTOM, 12);
-	}
-
 	_table = new wxFlexGridSizer(1, 2, 6, 12);
-	overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
+	GetSizer()->Add(_table, 1, wxEXPAND | wxALL, 12);
 
 	settingsPage.foreachItem([&](const IPreferenceItemBase::Ptr& item)
 	{
