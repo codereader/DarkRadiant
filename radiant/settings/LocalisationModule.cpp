@@ -46,9 +46,8 @@ void LocalisationModule::initialiseModule(const IApplicationContext& ctx)
 	GlobalRegistry().setAttribute(registryKey, "volatile", "1"); // don't save this to user.xml
 
 	// Add Preferences
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Language"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("User Interface"));
 	page.appendCombo(_("Language"), registryKey, langs);
-
 	page.appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant\nafter changing the language setting."));
 }
 

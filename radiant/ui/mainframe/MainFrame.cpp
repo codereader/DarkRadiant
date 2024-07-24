@@ -78,7 +78,7 @@ const StringSet& MainFrame::getDependencies() const
 void MainFrame::initialiseModule(const IApplicationContext& ctx)
 {
 	// Add another page for Multi-Monitor stuff
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Multi Monitor"));
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("User Interface"));
 
 	// Initialise the registry, if no key is set
 	if (GlobalRegistry().get(RKEY_MULTIMON_START_MONITOR).empty())
