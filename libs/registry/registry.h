@@ -10,14 +10,19 @@
 namespace registry
 {
 
-/**
- * \brief
- * Set a value in the registry of any type that can be converted to a string
- * with string::to_string.
- */
+/// Set a value in the registry of any type that can be converted to a string with
+/// string::to_string.
 template<typename T> void setValue(const std::string& key, const T& value)
 {
     GlobalRegistry().set(key, string::to_string(value));
+}
+
+/// Set a registry value only if there is no current value
+template<typename T> void setDefault(const std::string& key, const T& value)
+{
+    if (GlobalRegistry().get(key).empty()) {
+        setValue(key, value);
+    }
 }
 
 /**
