@@ -15,6 +15,7 @@
 
 #include "registry/registry.h"
 #include "wxutil/MultiMonitor.h"
+#include "wxutil/sourceview/SourceView.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/AuiLayout.h"
@@ -39,7 +40,6 @@ namespace
     const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
     const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
     const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
-    const std::string RKEY_SOURCE_FONT_SIZE = "user/ui/fonts/sourceEditor/size";
 }
 
 namespace ui
@@ -73,7 +73,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 
     // Initialise the registry, if no key is set
     registry::setDefault(RKEY_MULTIMON_START_MONITOR, "0");
-    registry::setDefault(RKEY_SOURCE_FONT_SIZE, "11");
+    registry::setDefault(wxutil::RKEY_SOURCE_FONT_SIZE, "11");
 
     ComboBoxValueList list;
     for (unsigned int i = 0; i < wxutil::MultiMonitor::getNumMonitors(); ++i)
@@ -85,7 +85,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
     }
 
     page.appendCombo(_("Start on monitor"), RKEY_MULTIMON_START_MONITOR, list);
-    page.appendSpinner(_("Source view font size"), RKEY_SOURCE_FONT_SIZE, 1, 36, 1);
+    page.appendSpinner(_("Source view font size"), wxutil::RKEY_SOURCE_FONT_SIZE, 1, 36, 1);
 
     GlobalCommandSystem().addCommand(FOCUS_CONTROL_COMMAND,
         std::bind(&MainFrame::focusControl, this, std::placeholders::_1),

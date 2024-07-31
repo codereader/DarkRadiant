@@ -6,14 +6,15 @@
 namespace wxutil
 {
 
+const std::string RKEY_SOURCE_FONT_SIZE = "user/ui/fonts/sourceEditor/size";
+
 /**
  * greebo: This is a custom extension of the wxWidgets styles text control,
  * providing a few methods to make the actual code style mapping easier.
  * It's advisable to subclass this control and map the various lexer-recognised
  * elements to a specific appearance.
  */
-class SourceViewCtrl :
-	public wxStyledTextCtrl
+class SourceViewCtrl: public wxStyledTextCtrl
 {
 public:
 	enum FontStyle
