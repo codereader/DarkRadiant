@@ -48,7 +48,7 @@ void assertToConsole(
 )
 {
     std::cerr << "wxASSERT: " << file << ":" << line << ":" << func << ": [" << cond
-              << "]: " << msg;
+              << "]: " << msg << std::endl;
 }
 #endif
 
