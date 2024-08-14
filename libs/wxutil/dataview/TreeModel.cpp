@@ -91,7 +91,7 @@ public:
 wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_FINISHED, TreeModel::PopulationFinishedEvent);
 wxDEFINE_EVENT(EV_TREEMODEL_POPULATION_PROGRESS, TreeModel::PopulationProgressEvent);
 
-TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(int id) : 
+TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(int id) :
 	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED),
 	_treeModel(NULL)
 {}
@@ -100,26 +100,26 @@ TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(TreeModel::Ptr store
 	wxEvent(id, EV_TREEMODEL_POPULATION_FINISHED),
 	_treeModel(store)
 {}
- 
+
 // You *must* copy here the data to be transported
-TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(const TreeModel::PopulationFinishedEvent& event) :  
+TreeModel::PopulationFinishedEvent::PopulationFinishedEvent(const TreeModel::PopulationFinishedEvent& event) :
 	wxEvent(event),
 	_treeModel(event._treeModel)
 {}
- 
+
 // Required for sending with wxPostEvent()
 wxEvent* TreeModel::PopulationFinishedEvent::Clone() const
-{ 
+{
 	return new PopulationFinishedEvent(*this);
 }
- 
+
 TreeModel::Ptr TreeModel::PopulationFinishedEvent::GetTreeModel() const
-{ 
+{
 	return _treeModel;
 }
 
 void TreeModel::PopulationFinishedEvent::SetTreeModel(TreeModel::Ptr store)
-{ 
+{
 	_treeModel = store;
 }
 
@@ -274,27 +274,14 @@ TreeModel::Row TreeModel::GetRootItem()
 
 void TreeModel::Clear()
 {
-    // This workaround seems to cause crashes in wxGTK 3.2.0, take it out (#6105)
-#if wxCHECK_VERSION(3, 0, 5) && !wxCHECK_VERSION(3, 2, 0)
-	// To work around a problem in wxGTK 3.0.5+, trigger 
-	// an ItemRemoved call for all top-level children before 
-	// actually deleting them.
-	// The Cleared() call below might query GetParent() calls
-	// for nodes that are still present in the internal tree
-	wxDataViewItemArray children;
-	GetChildren(_rootNode->item, children);
+    // Rather than delete the root node outright, swap it with an empty
+    // replacement then keep it alive until the end of this function. This
+    // avoids crashes if the backend (mainly GTK) tries to dereference
+    // wxDataViewItem pointers during the subsequent Cleared() call.
+    NodePtr newRoot = Node::createRoot();
+    std::swap(_rootNode, newRoot);
 
-	if (!children.empty())
-	{
-		ItemsDeleted(_rootNode->item, children);
-	}
-#endif
-
-	// Now it should be safe to free all the nodes
-	_rootNode->values.clear();
-	_rootNode->children.clear();
-	
-	Cleared();
+    Cleared();
 }
 
 void TreeModel::SetDefaultStringSortColumn(int index)
@@ -379,17 +366,17 @@ void TreeModel::SortModelByColumn(const TreeModel::Column& column)
 		{
 			int intA = rowA[column].getInteger();
 			int intB = rowA[column].getInteger();
-			
+
 			return intA < intB;
 		}
 		else if (column.type == Column::Double)
 		{
 			double dblA = rowA[column].getDouble();
 			double dblB = rowA[column].getDouble();
-			
+
 			return dblA < dblB;
 		}
-		
+
 		return false;
 	});
 }
@@ -468,7 +455,7 @@ wxDataViewItem TreeModel::FindString(const std::string& needle, const Column& co
 		}
 		else if (column.type == Column::String)
 		{
-			return static_cast<int>(node.values.size()) > colIndex && 
+			return static_cast<int>(node.values.size()) > colIndex &&
 				static_cast<std::string>(node.values[colIndex]) == needle;
 		}
 
@@ -488,7 +475,7 @@ wxDataViewItem TreeModel::FindInteger(long needle, const Column& column, const w
 	return FindRecursive(*startNode, [&] (const Node& node)->bool
 	{
 		int colIndex = column.getColumnIndex();
-		return static_cast<int>(node.values.size()) > colIndex && 
+		return static_cast<int>(node.values.size()) > colIndex &&
 			static_cast<long>(node.values[colIndex]) == needle;
 	});
 }
@@ -694,7 +681,7 @@ wxDataViewItem TreeModel::GetParent(const wxDataViewItem& item) const
 	// It's ok to ask for invisible root node's parent
 	if (!item.IsOk())
 	{
-		return wxDataViewItem(NULL);	
+		return wxDataViewItem(NULL);
 	}
 
 	Node* owningNode = static_cast<Node*>(item.GetID());
@@ -703,13 +690,13 @@ wxDataViewItem TreeModel::GetParent(const wxDataViewItem& item) const
 	{
 		return owningNode->parent->item;
 	}
-	
+
 	return wxDataViewItem(NULL);
 }
 
 bool TreeModel::IsContainer(const wxDataViewItem& item) const
 {
-	// greebo: it appears that invalid items are treated as containers, they can have children. 
+	// greebo: it appears that invalid items are treated as containers, they can have children.
 	// The wxDataViewCtrl has such a root node with invalid items
 	if (!item.IsOk())
 	{
@@ -783,7 +770,7 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 
 	if (_defaultStringSortColumn >= 0)
 	{
-		return ascending ? 
+		return ascending ?
             node1->values[_defaultStringSortColumn].GetString().CmpNoCase(
 			    node2->values[_defaultStringSortColumn].GetString()) :
                 node2->values[_defaultStringSortColumn].GetString().CmpNoCase(
@@ -791,13 +778,13 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	}
 
 	// When clicking on the dataviewctrl headers, we need to support some default algorithm
-    
+
     // implement a few comparison types
     switch (_columns[column].type)
     {
         case Column::String:
         {
-            return ascending ? 
+            return ascending ?
                 node1->values[column].GetString().CmpNoCase(node2->values[column].GetString()) :
                 node2->values[column].GetString().CmpNoCase(node1->values[column].GetString());
         }
@@ -861,7 +848,7 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
         {
             return 0; // no sense in comparing icons
         }
-        
+
         default:
             break; // break to return 0
     };
@@ -885,9 +872,9 @@ int TreeModel::CompareIconTextVariants(const wxVariant& a, const wxVariant& b)
     return aValue.GetText().CmpNoCase(bValue.GetText());
 }
 
-bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b, 
+bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b,
                                     const TreeModel::Column& stringColumn,
-                                    const std::function<int(const wxVariant&, const wxVariant&)>& stringCompareFunc, 
+                                    const std::function<int(const wxVariant&, const wxVariant&)>& stringCompareFunc,
                                     const TreeModel::Column& isFolderCol,
                                     const std::function<int(const wxDataViewItem&, const wxDataViewItem&)>& folderCompareFunc)
 {
@@ -914,7 +901,7 @@ bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewIte
                     return customResult < 0;
                 }
             }
-			
+
 			// Compare folder names
 			// greebo: We're not checking for equality here, shader names are unique
 			wxVariant aName, bName;
@@ -948,7 +935,7 @@ bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewIte
             return stringCompareFunc(aName, bName) < 0;
 		}
 	}
-} 
+}
 
 // Search functor which tries to find the next match for the given search string
 // is agnostic of the search direction, it just gets invoked for each row.
@@ -973,7 +960,7 @@ private:
 
 public:
 	SearchFunctor(const wxString& searchString,
-				  const std::vector<TreeModel::Column>& columns, 
+				  const std::vector<TreeModel::Column>& columns,
 				  const wxDataViewItem& previousMatch) :
 		_columns(columns),
 		_previousMatch(previousMatch),
@@ -1028,7 +1015,7 @@ wxDataViewItem TreeModel::FindNextString(const wxString& needle,
 	return functor.getMatch();
 }
 
-// Search for an item in the given columns (backwards), using previousMatch as reference point 
+// Search for an item in the given columns (backwards), using previousMatch as reference point
 wxDataViewItem TreeModel::FindPrevString(const wxString& needle,
 	const std::vector<TreeModel::Column>& columns, const wxDataViewItem& previousMatch)
 {
@@ -1050,7 +1037,7 @@ bool TreeModel::IsEnabled(const wxDataViewItem& item, unsigned int col) const
 	{
 		return owningNode->enabledFlags[col];
 	}
-	
+
 	// Column values without flags render as enabled by default
 	return true;
 }
