@@ -480,6 +480,7 @@ inline std::ostream& operator<< (std::ostream& os, IShaderLayer::VertexColourMod
     case IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY:
         return os << "inverseVertexColor";
     }
+    return os;
 }
 
 inline std::ostream& operator<< (std::ostream& os, IShaderLayer::Type type)
@@ -494,6 +495,7 @@ inline std::ostream& operator<< (std::ostream& os, IShaderLayer::Type type)
     case IShaderLayer::BLEND:
         return os << "blend";
     }
+    return os;
 }
 
 inline std::ostream& operator<< (std::ostream& os, IShaderLayer& layer)
