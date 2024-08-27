@@ -50,6 +50,10 @@ void AboutDialog::populateWindow()
 
     wxStaticText* buildDateText = findNamedObject<wxStaticText>(this, "AboutDialogBuildDate");
 
+    // Embedding the build date and time works perfectly fine on Linux too, but
+    // distros want reproducible builds which means the same source files and
+    // compiler options must produce identical output from one minute to the
+    // next.
 #if WIN32
     std::string date = __DATE__;
     std::string time = __TIME__;
