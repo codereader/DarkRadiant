@@ -27,9 +27,9 @@ void WindowPosition::initialise(wxTopLevelWindow* window, const std::string& win
     initialise(window, windowStateKey, 0.6f, 0.8f);
 }
 
-void WindowPosition::initialise(wxTopLevelWindow* window, 
+void WindowPosition::initialise(wxTopLevelWindow* window,
                                 const std::string& windowStateKey,
-                                float defaultXFraction, 
+                                float defaultXFraction,
                                 float defaultYFraction)
 {
     // Set up events and such
@@ -71,20 +71,9 @@ void WindowPosition::disconnect(wxTopLevelWindow* window)
 	window->Unbind(wxEVT_MOVE, &WindowPosition::onMove, this);
 }
 
-const std::array<int, 2>& WindowPosition::getPosition() const
-{
-	return _position;
-}
-
 const std::array<int, 2>& WindowPosition::getSize() const
 {
 	return _size;
-}
-
-void WindowPosition::setPosition(int x, int y)
-{
-	_position.at(0) = x;
-	_position.at(1) = y;
 }
 
 void WindowPosition::setSize(int width, int height)
@@ -139,7 +128,7 @@ void WindowPosition::applyPosition()
 
 	// Sanity check the window position
     wxRect targetPos(_position.at(0), _position.at(1), _size.at(0), _size.at(1));
-	
+
 	constexpr int TOL = 8;
 
 	// Employ a few pixels tolerance to allow for placement very near the borders
@@ -195,7 +184,7 @@ void WindowPosition::onMove(wxMoveEvent& ev)
 {
     if (_window == nullptr) return;
 
-    // The position passed in the wxMoveEvent seems (on my Win10 system) 
+    // The position passed in the wxMoveEvent seems (on my Win10 system)
     // to be off by about x=8,y=51
     // Call GetScreenPosition to get the real coordinates
 	//setPosition(ev.GetPosition().x, ev.GetPosition().y);
