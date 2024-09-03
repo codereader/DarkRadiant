@@ -137,7 +137,7 @@ void ObjectivesEditor::setupObjectivesPanel()
 
     wxButton* editObjButton = findNamedObject<wxButton>(this, "ObjDialogEditObjectiveButton");
     editObjButton->Enable(false); // not enabled without selection
-    editObjButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onEditObjective), NULL, this);
+    editObjButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { doEditObjective(); });
 
     wxButton* moveUpObjButton = findNamedObject<wxButton>(this, "ObjDialogMoveObjUpButton");
     moveUpObjButton->Enable(false); // not enabled without selection
@@ -527,12 +527,6 @@ void ObjectivesEditor::doEditObjective()
 
     // Repopulate the objective list
     refreshObjectivesList();
-}
-
-// Edit an existing objective
-void ObjectivesEditor::_onEditObjective(wxCommandEvent& ev)
-{
-    doEditObjective();
 }
 
 void ObjectivesEditor::_onMoveUpObjective(wxCommandEvent& ev)

@@ -67,7 +67,6 @@ private:
 	void _onAddEntity(wxCommandEvent& ev);
 	void _onDeleteEntity(wxCommandEvent& ev);
 	void _onAddObjective(wxCommandEvent& ev);
-	void _onEditObjective(wxCommandEvent& ev);
 	void _onMoveUpObjective(wxCommandEvent& ev);
 	void _onMoveDownObjective(wxCommandEvent& ev);
 	void _onDeleteObjective(wxCommandEvent& ev);
