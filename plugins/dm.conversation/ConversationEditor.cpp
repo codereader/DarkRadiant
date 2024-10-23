@@ -154,7 +154,7 @@ void ConversationEditor::populateWindow()
 		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onSave), NULL, this);
 
 	wxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-	mainSizer->Add(mainPanel);
+	mainSizer->Add(mainPanel, 1, wxEXPAND);
 	SetSizerAndFit(mainSizer);
 }
 
