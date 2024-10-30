@@ -762,7 +762,7 @@
                     <property name="auth_needed">0</property>
                     <property name="best_size"></property>
                     <property name="bg"></property>
-                    <property name="bitmap"></property>
+                    <property name="bitmap">Load From File; ../bitmaps/add.png</property>
                     <property name="caption"></property>
                     <property name="caption_visible">1</property>
                     <property name="center_pane">0</property>
@@ -785,7 +785,7 @@
                     <property name="gripper">0</property>
                     <property name="hidden">0</property>
                     <property name="id">wxID_ANY</property>
-                    <property name="label">Add</property>
+                    <property name="label"></property>
                     <property name="margins"></property>
                     <property name="markup">0</property>
                     <property name="max_size"></property>
@@ -836,7 +836,7 @@
                     <property name="auth_needed">0</property>
                     <property name="best_size"></property>
                     <property name="bg"></property>
-                    <property name="bitmap"></property>
+                    <property name="bitmap">Load From File; ../bitmaps/delete.png</property>
                     <property name="caption"></property>
                     <property name="caption_visible">1</property>
                     <property name="center_pane">0</property>
@@ -859,7 +859,7 @@
                     <property name="gripper">0</property>
                     <property name="hidden">0</property>
                     <property name="id">wxID_ANY</property>
-                    <property name="label">Delete</property>
+                    <property name="label"></property>
                     <property name="margins"></property>
                     <property name="markup">0</property>
                     <property name="max_size"></property>
@@ -1132,7 +1132,7 @@
                     <property name="auth_needed">0</property>
                     <property name="best_size"></property>
                     <property name="bg"></property>
-                    <property name="bitmap"></property>
+                    <property name="bitmap">Load From File; ../bitmaps/add.png</property>
                     <property name="caption"></property>
                     <property name="caption_visible">1</property>
                     <property name="center_pane">0</property>
@@ -1155,7 +1155,7 @@
                     <property name="gripper">0</property>
                     <property name="hidden">0</property>
                     <property name="id">wxID_ANY</property>
-                    <property name="label">Add</property>
+                    <property name="label"></property>
                     <property name="margins"></property>
                     <property name="markup">0</property>
                     <property name="max_size"></property>
@@ -1206,7 +1206,7 @@
                     <property name="auth_needed">0</property>
                     <property name="best_size"></property>
                     <property name="bg"></property>
-                    <property name="bitmap"></property>
+                    <property name="bitmap">Load From File; ../bitmaps/edit.png</property>
                     <property name="caption"></property>
                     <property name="caption_visible">1</property>
                     <property name="center_pane">0</property>
@@ -1229,7 +1229,7 @@
                     <property name="gripper">0</property>
                     <property name="hidden">0</property>
                     <property name="id">wxID_ANY</property>
-                    <property name="label">Edit</property>
+                    <property name="label"></property>
                     <property name="margins"></property>
                     <property name="markup">0</property>
                     <property name="max_size"></property>
@@ -1280,7 +1280,7 @@
                     <property name="auth_needed">0</property>
                     <property name="best_size"></property>
                     <property name="bg"></property>
-                    <property name="bitmap"></property>
+                    <property name="bitmap">Load From File; ../bitmaps/arrow_up_blue.png</property>
                     <property name="caption"></property>
                     <property name="caption_visible">1</property>
                     <property name="center_pane">0</property>
@@ -1303,7 +1303,7 @@
                     <property name="gripper">0</property>
                     <property name="hidden">0</property>
                     <property name="id">wxID_ANY</property>
-                    <property name="label">Move up</property>
+                    <property name="label"></property>
                     <property name="margins"></property>
                     <property name="markup">0</property>
                     <property name="max_size"></property>
@@ -1354,7 +1354,7 @@
                     <property name="auth_needed">0</property>
                     <property name="best_size"></property>
                     <property name="bg"></property>
-                    <property name="bitmap"></property>
+                    <property name="bitmap">Load From File; ../bitmaps/arrow_down_blue.png</property>
                     <property name="caption"></property>
                     <property name="caption_visible">1</property>
                     <property name="center_pane">0</property>
@@ -1377,7 +1377,7 @@
                     <property name="gripper">0</property>
                     <property name="hidden">0</property>
                     <property name="id">wxID_ANY</property>
-                    <property name="label">Move down</property>
+                    <property name="label"></property>
                     <property name="margins"></property>
                     <property name="markup">0</property>
                     <property name="max_size"></property>
@@ -1428,7 +1428,7 @@
                     <property name="auth_needed">0</property>
                     <property name="best_size"></property>
                     <property name="bg"></property>
-                    <property name="bitmap"></property>
+                    <property name="bitmap">Load From File; ../bitmaps/delete.png</property>
                     <property name="caption"></property>
                     <property name="caption_visible">1</property>
                     <property name="center_pane">0</property>
@@ -1451,7 +1451,7 @@
                     <property name="gripper">0</property>
                     <property name="hidden">0</property>
                     <property name="id">wxID_ANY</property>
-                    <property name="label">Delete</property>
+                    <property name="label"></property>
                     <property name="margins"></property>
                     <property name="markup">0</property>
                     <property name="max_size"></property>

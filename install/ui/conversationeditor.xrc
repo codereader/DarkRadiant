@@ -141,11 +141,11 @@
                 <border>6</border>
                 <option>0</option>
                 <object class="wxButton" name="ConvEditorAddActorButton">
-                  <label>Add</label>
+                  <label></label>
                   <default>0</default>
                   <auth_needed>0</auth_needed>
                   <markup>0</markup>
-                  <bitmap/>
+                  <bitmap>../bitmaps/add.png</bitmap>
                 </object>
               </object>
               <object class="sizeritem">
@@ -153,11 +153,11 @@
                 <border>6</border>
                 <option>0</option>
                 <object class="wxButton" name="ConvEditorDeleteActorButton">
-                  <label>Delete</label>
+                  <label></label>
                   <default>0</default>
                   <auth_needed>0</auth_needed>
                   <markup>0</markup>
-                  <bitmap/>
+                  <bitmap>../bitmaps/delete.png</bitmap>
                 </object>
               </object>
               <object class="sizeritem">
@@ -213,11 +213,11 @@
                 <border>6</border>
                 <option>0</option>
                 <object class="wxButton" name="ConvEditorAddCommandButton">
-                  <label>Add</label>
+                  <label></label>
                   <default>0</default>
                   <auth_needed>0</auth_needed>
                   <markup>0</markup>
-                  <bitmap/>
+                  <bitmap>../bitmaps/add.png</bitmap>
                 </object>
               </object>
               <object class="sizeritem">
@@ -225,11 +225,11 @@
                 <border>6</border>
                 <option>0</option>
                 <object class="wxButton" name="ConvEditorEditCommandButton">
-                  <label>Edit</label>
+                  <label></label>
                   <default>0</default>
                   <auth_needed>0</auth_needed>
                   <markup>0</markup>
-                  <bitmap/>
+                  <bitmap>../bitmaps/edit.png</bitmap>
                 </object>
               </object>
               <object class="sizeritem">
@@ -237,11 +237,11 @@
                 <border>6</border>
                 <option>0</option>
                 <object class="wxButton" name="ConvEditorMoveUpCommandButton">
-                  <label>Move up</label>
+                  <label></label>
                   <default>0</default>
                   <auth_needed>0</auth_needed>
                   <markup>0</markup>
-                  <bitmap/>
+                  <bitmap>../bitmaps/arrow_up_blue.png</bitmap>
                 </object>
               </object>
               <object class="sizeritem">
@@ -249,11 +249,11 @@
                 <border>6</border>
                 <option>0</option>
                 <object class="wxButton" name="ConvEditorMoveDownCommandButton">
-                  <label>Move down</label>
+                  <label></label>
                   <default>0</default>
                   <auth_needed>0</auth_needed>
                   <markup>0</markup>
-                  <bitmap/>
+                  <bitmap>../bitmaps/arrow_down_blue.png</bitmap>
                 </object>
               </object>
               <object class="sizeritem">
@@ -261,11 +261,11 @@
                 <border>6</border>
                 <option>0</option>
                 <object class="wxButton" name="ConvEditorDeleteCommandButton">
-                  <label>Delete</label>
+                  <label></label>
                   <default>0</default>
                   <auth_needed>0</auth_needed>
                   <markup>0</markup>
-                  <bitmap/>
+                  <bitmap>../bitmaps/delete.png</bitmap>
                 </object>
               </object>
             </object>
