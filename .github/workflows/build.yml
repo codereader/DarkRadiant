@@ -28,7 +28,7 @@ jobs:
       shell: powershell
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
       
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -52,7 +52,7 @@ jobs:
       shell: powershell
       
     - name: Setup VSTest.console.exe
-      uses: darenm/Setup-VSTest@v1.2
+      uses: darenm/Setup-VSTest@v1.3
 
     - name: Run Unit Tests
       run: |
@@ -70,7 +70,7 @@ jobs:
       working-directory: .\tools\scripts
 
     - name: Upload Portable Package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: darkradiant-portable-package-x64
         path: |
@@ -78,14 +78,14 @@ jobs:
           !tools/scripts/DarkRadiant_install.x64/**/*.pdb
 
     - name: Upload Portable Package PDBs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: darkradiant-pdb-files-x64
         path: |
           tools/scripts/DarkRadiant_install.x64/**/*.pdb
 
     - name: Upload Test Results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
         path: TestResults\*.trx
@@ -97,7 +97,7 @@ jobs:
       BUILD_TYPE: Release
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Install Package Dependencies
       run: |
