@@ -350,7 +350,7 @@ def execute():
 \t\t\t*MAP_CLASS "Bitmap"
 \t\t\t*MAP_SUBNO 1
 \t\t\t*MAP_AMOUNT 1.0000
-\t\t\t*BITMAP "\\\\purgatory\\purgatory\\doom\\base\{2}"
+\t\t\t*BITMAP "//base/{2}"
 \t\t\t*MAP_TYPE Screen
 \t\t\t*UVW_U_OFFSET 0.0000
 \t\t\t*UVW_V_OFFSET 0.0000

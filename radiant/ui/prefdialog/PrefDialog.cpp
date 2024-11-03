@@ -9,7 +9,7 @@
 #include "wxutil/dialog/DialogBase.h"
 
 #include <wx/sizer.h>
-#include <wx/treebook.h>
+#include <wx/listbook.h>
 #include <wx/treectrl.h>
 #include "string/split.h"
 #include "string/join.h"
@@ -18,13 +18,15 @@
 namespace ui
 {
 
+using NotebookType = wxListbook;
+
 PrefDialog::PrefDialog(wxWindow* parent)
 : DialogBase(_("DarkRadiant Preferences"), parent)
 {
     wxBoxSizer* mainVbox = new wxBoxSizer(wxVERTICAL);
 
     // Notebook widget (shows tree of pages and the space for each page to be shown)
-    _notebook = new wxTreebook(this, wxID_ANY);
+    _notebook = new NotebookType(this, wxID_ANY);
     mainVbox->Add(_notebook, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
 
     // Button box
@@ -40,45 +42,20 @@ PrefDialog::PrefDialog(wxWindow* parent)
 
 void PrefDialog::createPages()
 {
-	// Now create all pages
-	GlobalPreferenceSystem().foreachPage([&](IPreferencePage& page)
-	{
-		// Create a page responsible for this settings::PreferencePage
-		PrefPage* pageWidget = new PrefPage(_notebook, page);
+    // Now create all pages
+    GlobalPreferenceSystem().foreachPage([&](IPreferencePage& page)
+    {
+        // Create a page responsible for this settings::PreferencePage
+        PrefPage* pageWidget = new PrefPage(_notebook, page);
 
-		// Remember this page in our mapping
-		const std::string& pagePath = page.getPath();
+        // Remember this page in our mapping
+        const std::string& pagePath = page.getPath();
+        _pages[pagePath] = pageWidget;
 
-		_pages[pagePath] = pageWidget;
-
-		std::vector<std::string> parts;
-		string::split(parts, pagePath, "/");
-
-		if (parts.size() > 1)
-		{
-			parts.pop_back();
-			std::string parentPath = string::join(parts, "/");
-
-			PageMap::const_iterator parent = _pages.find(parentPath);
-
-			if (parent != _pages.end())
-			{
-				// Find the index of the parent page to perform the insert
-				int pos = _notebook->FindPage(parent->second);
-				_notebook->InsertSubPage(pos, pageWidget, page.getName());
-			}
-			else
-			{
-				rError() << "Cannot insert page, unable to find parent path: " << parentPath << std::endl;
-			}
-		}
-		else
-		{
-			// Top-level page
-			// Append the panel as new page to the notebook
-			_notebook->AddPage(pageWidget, page.getName());
-		}
-	});
+        // Top-level page
+        // Append the panel as new page to the notebook
+        _notebook->AddPage(pageWidget, page.getName());
+    });
 }
 
 void PrefDialog::showModal(const std::string& requestedPage)
@@ -87,13 +64,6 @@ void PrefDialog::showModal(const std::string& requestedPage)
 	for (const PageMap::value_type& p : _pages)
 	{
 		p.second->resetValues();
-	}
-
-	// Trigger a resize of the treebook's TreeCtrl, do this by expanding all nodes
-	// (one would be enough, but we want to show the whole tree anyway)
-	for (std::size_t page = 0; page < _notebook->GetPageCount(); ++page)
-	{
-		_notebook->ExpandNode(page, true);
 	}
 
 	// Is there a specific page display request?
@@ -132,29 +102,22 @@ void PrefDialog::showModal(const std::string& requestedPage)
 	}
 }
 
-void PrefDialog::ShowPrefDialog(const cmd::ArgumentList& args)
-{
-	ShowDialog();
-}
-
 void PrefDialog::showPage(const std::string& path)
 {
-	if (!_notebook)
-	{
-		rError() << "Can't show requested page, as the wxNotebook is null" << std::endl;
-		return;
-	}
+    if (!_notebook)
+    {
+        rError() << "Can't show requested page, as the wxNotebook is null" << std::endl;
+        return;
+    }
 
-	PageMap::const_iterator found = _pages.find(path);
+    if (PageMap::const_iterator found = _pages.find(path); found != _pages.end())
+    {
+        // Find the page number
+        int pagenum = _notebook->FindPage(found->second);
 
-	if (found != _pages.end())
-	{
-		// Find the page number
-		int pagenum = _notebook->FindPage(found->second);
-
-		// make it active
-		_notebook->SetSelection(pagenum);
-	}
+        // make it active
+        _notebook->SetSelection(pagenum);
+    }
 }
 
 void PrefDialog::ShowDialog(const std::string& path)
@@ -168,11 +131,6 @@ void PrefDialog::ShowDialog(const std::string& path)
 
 	dialog->showModal(path);
 	dialog->Destroy();
-}
-
-void PrefDialog::ShowProjectSettings(const cmd::ArgumentList& args)
-{
-	ShowDialog(_("Game"));
 }
 
 } // namespace ui

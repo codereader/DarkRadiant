@@ -14,20 +14,14 @@
 #include <string>
 #include "wxutil/dataview/TreeView.h"
 
-/* FORWARD DECLS */
 class Entity;
 
 namespace objectives
 {
 
-/**
- * Dialog for adding and manipulating mission objectives in Dark Mod missions.
- */
-class ObjectivesEditor :
-	public wxutil::DialogBase,
-    private wxutil::XmlResourceBasedWidget
+/// Dialog for adding and manipulating mission objectives in Dark Mod missions.
+class ObjectivesEditor: public wxutil::DialogBase, private wxutil::XmlResourceBasedWidget
 {
-private:
 	// List of target_addobjectives entities
 	ObjectiveEntityListColumns _objEntityColumns;
 	wxutil::TreeModel::Ptr _objectiveEntityList;
@@ -37,7 +31,7 @@ private:
 	ObjectivesListColumns _objectiveColumns;
 	wxutil::TreeModel::Ptr _objectiveList;
 	wxutil::TreeView* _objectiveView;
-	
+
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
 
@@ -73,7 +67,6 @@ private:
 	void _onAddEntity(wxCommandEvent& ev);
 	void _onDeleteEntity(wxCommandEvent& ev);
 	void _onAddObjective(wxCommandEvent& ev);
-	void _onEditObjective(wxCommandEvent& ev);
 	void _onMoveUpObjective(wxCommandEvent& ev);
 	void _onMoveDownObjective(wxCommandEvent& ev);
 	void _onDeleteObjective(wxCommandEvent& ev);

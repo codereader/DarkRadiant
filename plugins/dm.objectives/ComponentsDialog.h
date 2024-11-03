@@ -29,7 +29,6 @@ class ComponentsDialog :
 	public wxutil::DialogBase,
 	private wxutil::XmlResourceBasedWidget
 {
-private:
 	// The objective we are editing
 	Objective& _objective;
 

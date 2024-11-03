@@ -1,3 +1,18 @@
+darkradiant (3.9.2~jammy1) jammy; urgency=medium
+
+  * Fix incorrect preview rendering of vertex blends between pairs of diffuse
+    and bump maps.
+  * Fix inability to choose source and replacement materials using the Skin
+    Editor GUI.
+  * Several additional layout and usability improvements to Skin Editor.
+  * Improvements to layout and organisation of Preferences dialog; consolidate a
+    few pages and remove obsolete items.
+  * Add a new preference to control the font size of text in the various source
+    code editors.
+  * Fix wxGTK assertion failure on opening Stim/Response editor.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Mon, 19 Aug 2024 19:24:12 +0100
+
 darkradiant (3.9.1~jammy1) jammy; urgency=medium
 
   * Textures with RGTC normal maps no longer show as black in lighting preview
@@ -315,4 +330,3 @@ darkradiant (1.7.0~raring1) raring; urgency=low
   * 1.7.0 release.
 
  -- Matthew Mott <orbweaver3d@gmail.com>  Mon, 14 Nov 2011 11:13:41 +0000
-

@@ -12,6 +12,7 @@
 #include "wxutil/dialog/MessageBox.h"
 
 #include <wx/button.h>
+#include <wx/event.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
@@ -43,13 +44,11 @@ ConversationEditor::ConversationEditor(wxWindow* parent, conversation::Conversat
 
 	// Clear the button sensitivity in the command actions panel
 	updateCmdActionSensitivity(false);
-
-	SetSize(500, 680);
 }
 
 void ConversationEditor::populateWindow()
 {
-	loadNamedPanel(this, "ConvEditorMainPanel");
+	wxPanel* mainPanel = loadNamedPanel(this, "ConvEditorMainPanel");
 
 	makeLabelBold(this, "ConvEditorPropertyLabel");
 	makeLabelBold(this, "ConvEditorActorLabel");
@@ -153,6 +152,10 @@ void ConversationEditor::populateWindow()
 		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onCancel), NULL, this);
 	findNamedObject<wxButton>(this, "ConvEditorOkButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onSave), NULL, this);
+
+	wxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+	mainSizer->Add(mainPanel, 1, wxEXPAND);
+	SetSizerAndFit(mainSizer);
 }
 
 void ConversationEditor::updateWidgets()

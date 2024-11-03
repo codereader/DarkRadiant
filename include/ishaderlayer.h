@@ -482,6 +482,7 @@ inline std::ostream& operator<< (std::ostream& os, IShaderLayer::VertexColourMod
     default:
         return os;
     }
+    return os;
 }
 
 inline std::ostream& operator<< (std::ostream& os, IShaderLayer::Type type)
@@ -498,6 +499,7 @@ inline std::ostream& operator<< (std::ostream& os, IShaderLayer::Type type)
     default:
         return os;
     }
+    return os;
 }
 
 inline std::ostream& operator<< (std::ostream& os, IShaderLayer& layer)

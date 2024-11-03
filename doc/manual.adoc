@@ -1965,7 +1965,7 @@ primitive. See <<ReparentingPrimitives,reparenting primitives>>.
 second selected entity.
 
 *Bind selected entities*:: Set a `bind` spawnarg on the first selected entity pointing to the
-*second selected entity.
+second selected entity.
 
 *Entity class tree...*:: Show a tree of all available entity types in the current game, along with
 all of their properties. Unlike the tree shown in the *Create Entity* dialog, this entity class
@@ -2083,42 +2083,12 @@ the 2D views.
 *Show grid*:: Control the visibility of grid lines in the 2D views. This does
  not affect the snapping behaviour, just the visual rendering of the grid.
 
-*Show size info*:: Control the visibility of the text overlays which show the
- dimensions of a selected object on the X, Y or Z axes. This option is also
- available in the `View -> Show` menu.
-
-*Show entity angle arrow*:: Hide or show the small arrow which indicates the
- direction of an entity with an `angle` spawnarg, such as `info_player_start`.
- This affects both the 2D and 3D views.
-
-*Show entity names*:: Enable this to show permanently-visible text names next to
- each entity in the map. This option is also available as `View -> Show -> Show
- names`.
-
 *Show blocks*:: If enabled, the world space is divided into a horizontal grid of
  1024x1024 unit blocks (of infinite height) which are outlined in blue in the 2D
  views. Each block is assigned a pair of numbers representing its position from
  the centermost block, which is assigned `(0, 0)`. This might help with
  "blocking out" a map at the beginning of the design phase. This option is also
  available in the `View -> Show` menu.
-
-*Show coordinates*:: Toggle the visibility of the coordinate rulers along the
- edges of the 2D window. Also available in the `View -> Show` menu.
-
-*Show axes*:: Control the visibility of the axis widget displayed at the
- top-left of each 2D window and at the world origin. Also available in the `View
- -> Show` menu.
-
-*Show window outline*:: Enable this to draw a rectangular outline around the
- edge of the 2D window. Depending on the platform and GUI theme this may be
- almost invisible, but might be useful to improve visibility in certain
- environments.
-
-*Show workzone*:: The 'workzone' is an imaginary axis-aligned cuboid which
- encloses the set of currently-selected items (this is what defines the volume
- of a new light, when a <<CreatingLights,light is created>> from one or more
- existing brushes). Enabling this option causes the workzone to be outlined in
- red in the 2D views. Also available in the `View -> Show` menu.
 
 *Translate manipulator always constrained to axis*:: This option affects the
  behaviour of the <<ManipulatorModes,translate manipulator>>. When the option is
@@ -2135,11 +2105,17 @@ the 2D views.
  controls whether DarkRadiant will prefer to select the entity (enabled) or the
  brush (disabled).
 
-==== Multi Monitor settings
+==== User Interface settings
 
-The Multi Monitor page contains a single setting, *Start DarkRadiant on
-monitor*, which allows you to choose which monitor DarkRadiant will start on if
-you have several available.
+*Start on Monitor*:: If you have more than one monitor, you can choose which
+monitor DarkRadiant will start on using this combo box.
+
+*Source view font size*:: This controls the point size of the monospace font
+used in source code view widgets, such as those which show material or skin
+source declarations.
+
+*Language*:: This combo box lists all of the installed language packs, allowing
+you to choose which language is used for the DarkRadiant interface.
 
 ==== Autosave settings
 

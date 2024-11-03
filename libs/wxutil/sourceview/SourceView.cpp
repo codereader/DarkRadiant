@@ -1,4 +1,5 @@
 #include "SourceView.h"
+#include "registry/registry.h"
 
 namespace wxutil
 {
@@ -50,7 +51,7 @@ void SourceViewCtrl::SetStyleMapping(int elementIndex, Element elementType)
     StyleSetForeground(elementIndex,  wxColour(style.foreground));
 
     wxFont font(
-        11, wxFONTFAMILY_MODERN,
+        registry::getValue(RKEY_SOURCE_FONT_SIZE, 11), wxFONTFAMILY_MODERN,
         (style.fontstyle & Italic) > 0 ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
         (style.fontstyle & Bold) > 0 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
         (style.fontstyle & Underline) > 0, style.fontname

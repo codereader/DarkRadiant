@@ -20,11 +20,6 @@
 namespace patch
 {
 
-namespace
-{
-	const char* const RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";
-}
-
 scene::INodePtr PatchModule::createPatch(PatchDefType type)
 {
 	scene::INodePtr node = std::make_shared<PatchNode>(type);
@@ -67,10 +62,6 @@ void PatchModule::initialiseModule(const IApplicationContext& ctx)
 	_settings.reset(new PatchSettings);
 
 	registerPatchCommands();
-
-	// Construct and Register the patch-related preferences
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Patch"));
-	page.appendEntry(_("Patch Subdivide Threshold"), RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 
 	_patchTextureChanged = Patch::signal_patchTextureChanged().connect(
 		[] { radiant::TextureChangedMessage::Send(); });

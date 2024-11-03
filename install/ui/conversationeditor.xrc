@@ -1,287 +1,309 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
-	<object class="wxPanel" name="ConvEditorMainPanel">
-		<style>wxTAB_TRAVERSAL</style>
-		<size>500,650</size>
-		<object class="wxBoxSizer">
-			<orient>wxVERTICAL</orient>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxStaticText" name="ConvEditorPropertyLabel">
-					<label>Properties</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
-				<border>18</border>
-				<object class="wxBoxSizer">
-					<orient>wxVERTICAL</orient>
-					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-						<border>6</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText4">
-									<label>Name:</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>0</border>
-								<object class="wxTextCtrl" name="ConvEditorNameEntry">
-									<value></value>
-								</object>
-							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxBOTTOM|wxLEFT</flag>
-						<border>6</border>
-						<object class="wxCheckBox" name="ConvEditorActorsWithinTalkDistance">
-							<label>Actors must be within talk distance</label>
-							<checked>0</checked>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxBOTTOM|wxLEFT|wxTOP</flag>
-						<border>6</border>
-						<object class="wxCheckBox" name="ConvEditorActorsMustFace">
-							<label>Actors always face each other while talking</label>
-							<checked>0</checked>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-						<border>2</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>6</border>
-								<object class="wxCheckBox" name="ConvEditorRepeatCheckbox">
-									<label>Let this conversation play</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>6</border>
-								<object class="wxSpinCtrl" name="ConvEditorRepeatTimes">
-									<style>wxSP_ARROW_KEYS</style>
-									<size>60,-1</size>
-									<value>0</value>
-									<min>-1</min>
-									<max>9999</max>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>6</border>
-								<object class="wxStaticText" name="ConvEditorRepeatAdditionalText">
-									<label>times at maximum</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-						</object>
-					</object>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxStaticText" name="ConvEditorActorLabel">
-					<label>Actors</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>1</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxBoxSizer">
-					<orient>wxHORIZONTAL</orient>
-					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
-						<border>6</border>
-						<object class="wxPanel" name="ConvEditorActorPanel">
-							<style>wxTAB_TRAVERSAL</style>
-							<size>-1,160</size>
-							<object class="wxBoxSizer">
-								<orient>wxVERTICAL</orient>
-							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxEXPAND</flag>
-						<border>5</border>
-						<object class="wxBoxSizer">
-							<orient>wxVERTICAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorAddActorButton">
-									<size>80,-1</size>
-									<label>Add</label>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorDeleteActorButton">
-									<size>80,-1</size>
-									<label>Delete</label>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxEXPAND|wxTOP</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorValidateActorsButton">
-									<size>80,-1</size>
-									<label>Validate all</label>
-									<default>0</default>
-								</object>
-							</object>
-						</object>
-					</object>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxStaticText" name="ConvEditorCommandLabel">
-					<label>Commands</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>1</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxBoxSizer">
-					<orient>wxHORIZONTAL</orient>
-					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
-						<border>6</border>
-						<object class="wxPanel" name="ConvEditorCommandPanel">
-							<style>wxTAB_TRAVERSAL</style>
-							<object class="wxBoxSizer">
-								<orient>wxVERTICAL</orient>
-							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag></flag>
-						<border>12</border>
-						<object class="wxBoxSizer">
-							<orient>wxVERTICAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorAddCommandButton">
-									<size>80,-1</size>
-									<label>Add</label>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorEditCommandButton">
-									<size>80,-1</size>
-									<label>Edit</label>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorMoveUpCommandButton">
-									<size>80,-1</size>
-									<label>Move up</label>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorMoveDownCommandButton">
-									<size>80,-1</size>
-									<label>Move down</label>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxEXPAND</flag>
-								<border>6</border>
-								<object class="wxButton" name="ConvEditorDeleteCommandButton">
-									<size>80,-1</size>
-									<label>Delete</label>
-									<default>0</default>
-								</object>
-							</object>
-						</object>
-					</object>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxBoxSizer">
-					<orient>wxHORIZONTAL</orient>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxEXPAND|wxLEFT</flag>
-						<border>6</border>
-						<object class="wxButton" name="ConvEditorCancelButton">
-							<label>Cancel</label>
-							<default>0</default>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxEXPAND|wxLEFT</flag>
-						<border>6</border>
-						<object class="wxButton" name="ConvEditorOkButton">
-							<label>OK</label>
-							<default>0</default>
-						</object>
-					</object>
-				</object>
-			</object>
-		</object>
-	</object>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.3.0.1">
+  <object class="wxPanel" name="ConvEditorMainPanel">
+    <style>wxTAB_TRAVERSAL</style>
+    <object class="wxBoxSizer" name="bSizer5">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <flag>wxLEFT|wxRIGHT|wxTOP</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxStaticText" name="ConvEditorPropertyLabel">
+          <label>Properties</label>
+          <wrap>-1</wrap>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+        <border>18</border>
+        <option>0</option>
+        <object class="wxBoxSizer" name="bSizer11">
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+            <border>6</border>
+            <option>1</option>
+            <object class="wxBoxSizer" name="bSizer12">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                <border>5</border>
+                <option>0</option>
+                <object class="wxStaticText" name="m_staticText4">
+                  <label>Name:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="ConvEditorNameEntry">
+                  <value></value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxBOTTOM|wxLEFT</flag>
+            <border>6</border>
+            <option>0</option>
+            <object class="wxCheckBox" name="ConvEditorActorsWithinTalkDistance">
+              <label>Actors must be within talk distance</label>
+              <checked>0</checked>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxBOTTOM|wxLEFT|wxTOP</flag>
+            <border>6</border>
+            <option>0</option>
+            <object class="wxCheckBox" name="ConvEditorActorsMustFace">
+              <label>Actors always face each other while talking</label>
+              <checked>0</checked>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+            <border>2</border>
+            <option>0</option>
+            <object class="wxBoxSizer" name="bSizer13">
+              <orient>wxHORIZONTAL</orient>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxCheckBox" name="ConvEditorRepeatCheckbox">
+                  <label>Let this conversation play</label>
+                  <checked>0</checked>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxSpinCtrl" name="ConvEditorRepeatTimes">
+                  <size>60,-1</size>
+                  <style>wxSP_ARROW_KEYS</style>
+                  <value>0</value>
+                  <min>-1</min>
+                  <max>9999</max>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxStaticText" name="ConvEditorRepeatAdditionalText">
+                  <label>times at maximum</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxLEFT|wxRIGHT|wxTOP</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxStaticText" name="ConvEditorActorLabel">
+          <label>Actors</label>
+          <wrap>-1</wrap>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+        <border>12</border>
+        <option>1</option>
+        <object class="wxBoxSizer" name="bSizer61">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+            <border>6</border>
+            <option>1</option>
+            <object class="wxPanel" name="ConvEditorActorPanel">
+              <size>-1,160</size>
+              <style>wxTAB_TRAVERSAL</style>
+              <object class="wxBoxSizer" name="bSizer7">
+                <orient>wxVERTICAL</orient>
+              </object>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxEXPAND</flag>
+            <border>5</border>
+            <option>0</option>
+            <object class="wxBoxSizer" name="ButtonSizer1">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <flag>wxBOTTOM|wxEXPAND</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorAddActorButton">
+                  <label></label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap>../bitmaps/add.png</bitmap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorDeleteActorButton">
+                  <label></label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap>../bitmaps/delete.png</bitmap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND|wxTOP</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorValidateActorsButton">
+                  <label>Validate all</label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap/>
+                </object>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxLEFT|wxRIGHT|wxTOP</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxStaticText" name="ConvEditorCommandLabel">
+          <label>Commands</label>
+          <wrap>-1</wrap>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+        <border>12</border>
+        <option>1</option>
+        <object class="wxBoxSizer" name="bSizer6">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+            <border>6</border>
+            <option>1</option>
+            <object class="wxPanel" name="ConvEditorCommandPanel">
+              <style>wxTAB_TRAVERSAL</style>
+              <object class="wxBoxSizer" name="bSizer9">
+                <orient>wxVERTICAL</orient>
+              </object>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag></flag>
+            <border>12</border>
+            <option>0</option>
+            <object class="wxBoxSizer" name="ButtonSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <flag>wxBOTTOM|wxEXPAND</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorAddCommandButton">
+                  <label></label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap>../bitmaps/add.png</bitmap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxBOTTOM|wxEXPAND</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorEditCommandButton">
+                  <label></label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap>../bitmaps/edit.png</bitmap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxBOTTOM|wxEXPAND</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorMoveUpCommandButton">
+                  <label></label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap>../bitmaps/arrow_up_blue.png</bitmap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxBOTTOM</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorMoveDownCommandButton">
+                  <label></label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap>../bitmaps/arrow_down_blue.png</bitmap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxBOTTOM|wxEXPAND</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="ConvEditorDeleteCommandButton">
+                  <label></label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap>../bitmaps/delete.png</bitmap>
+                </object>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxBoxSizer" name="bSizer8">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <flag>wxEXPAND|wxLEFT</flag>
+            <border>6</border>
+            <option>0</option>
+            <object class="wxButton" name="ConvEditorCancelButton">
+              <label>Cancel</label>
+              <default>0</default>
+              <auth_needed>0</auth_needed>
+              <markup>0</markup>
+              <bitmap/>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxEXPAND|wxLEFT</flag>
+            <border>6</border>
+            <option>0</option>
+            <object class="wxButton" name="ConvEditorOkButton">
+              <label>OK</label>
+              <default>0</default>
+              <auth_needed>0</auth_needed>
+              <markup>0</markup>
+              <bitmap/>
+            </object>
+          </object>
+        </object>
+      </object>
+    </object>
+  </object>
 </resource>

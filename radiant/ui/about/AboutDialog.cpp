@@ -40,60 +40,68 @@ AboutDialog::AboutDialog() :
 
 void AboutDialog::populateWindow()
 {
-	loadNamedPanel(this, "AboutDialogPanel");
+    wxPanel* mainPanel = loadNamedPanel(this, "AboutDialogPanel");
 
-	wxStaticText* appTitle = findNamedObject<wxStaticText>(this, "AboutDialogAppTitle");
-	wxFont appTitleFont = appTitle->GetFont().Bold();
-	appTitleFont.SetPointSize(appTitleFont.GetPointSize() + 4);
-	appTitle->SetFont(appTitleFont);
-	appTitle->SetLabel(RADIANT_APPNAME_FULL());
+    wxStaticText* appTitle = findNamedObject<wxStaticText>(this, "AboutDialogAppTitle");
+    wxFont appTitleFont = appTitle->GetFont().Bold();
+    appTitleFont.SetPointSize(appTitleFont.GetPointSize() + 4);
+    appTitle->SetFont(appTitleFont);
+    appTitle->SetLabel(RADIANT_APPNAME_FULL());
 
-	wxStaticText* buildDateText = findNamedObject<wxStaticText>(this, "AboutDialogBuildDate");
+    wxStaticText* buildDateText = findNamedObject<wxStaticText>(this, "AboutDialogBuildDate");
 
+    // Embedding the build date and time works perfectly fine on Linux too, but
+    // distros want reproducible builds which means the same source files and
+    // compiler options must produce identical output from one minute to the
+    // next.
 #if WIN32
-	std::string date = __DATE__;
-	std::string time = __TIME__;
+    std::string date = __DATE__;
+    std::string time = __TIME__;
 
-	bool showBuildTime = registry::getValue<bool>(RKEY_SHOW_BUILD_TIME);
-	std::string buildDate = (showBuildTime) ? date + " " + time : date;
-	std::string buildDateStr = fmt::format(_("Build date: {0}"), buildDate);
+    bool showBuildTime = registry::getValue<bool>(RKEY_SHOW_BUILD_TIME);
+    std::string buildDate = (showBuildTime) ? date + " " + time : date;
+    std::string buildDateStr = fmt::format(_("Build date: {0}"), buildDate);
 
-	buildDateText->SetLabel(buildDateStr);
+    buildDateText->SetLabel(buildDateStr);
 #else
-	wxSizer* sizer = buildDateText->GetContainingSizer();
-	buildDateText->Destroy();
-	sizer->Layout();
+    wxSizer* sizer = buildDateText->GetContainingSizer();
+    buildDateText->Destroy();
+    sizer->Layout();
 #endif
 
-	std::string wxVersion = fmt::format(_("Version: {0:d}.{1:d}.{2:d}"),
-		wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER);
-	
-	findNamedObject<wxStaticText>(this, "AboutDialogWxWidgetsVersion")->SetLabel(wxVersion);
+    std::string wxVersion = fmt::format(_("Version: {0:d}.{1:d}.{2:d}"),
+        wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER);
 
-	// If anybody knows a better method to convert glubyte* to char*, please tell me...
-	std::string vendorStr = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-	std::string versionStr = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-	std::string rendererStr = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    findNamedObject<wxStaticText>(this, "AboutDialogWxWidgetsVersion")->SetLabel(wxVersion);
 
-	std::string openGLVendor = fmt::format(_("Vendor: {0}"), vendorStr);
-	std::string openGLVersion = fmt::format(_("Version: {0}"), versionStr);
-	std::string openGLRenderer = fmt::format(_("Renderer: {0}"), rendererStr);
+    // If anybody knows a better method to convert glubyte* to char*, please tell me...
+    std::string vendorStr = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    std::string versionStr = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    std::string rendererStr = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
 
-	findNamedObject<wxStaticText>(this, "AboutDialogOpenGLVendor")->SetLabel(openGLVendor);
-	findNamedObject<wxStaticText>(this, "AboutDialogOpenGLVersion")->SetLabel(openGLVersion);
-	findNamedObject<wxStaticText>(this, "AboutDialogOpenGLRenderer")->SetLabel(openGLRenderer);
-	
-	std::string openGLExtensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    std::string openGLVendor = fmt::format(_("Vendor: {0}"), vendorStr);
+    std::string openGLVersion = fmt::format(_("Version: {0}"), versionStr);
+    std::string openGLRenderer = fmt::format(_("Renderer: {0}"), rendererStr);
 
-	findNamedObject<wxTextCtrl>(this, "AboutDialogOpenGLExtensions")->SetValue(openGLExtensions);
-	
-	findNamedObject<wxButton>(this, "AboutDialogOkButton")->Bind(wxEVT_BUTTON, &AboutDialog::_onClose, this);
+    findNamedObject<wxStaticText>(this, "AboutDialogOpenGLVendor")->SetLabel(openGLVendor);
+    findNamedObject<wxStaticText>(this, "AboutDialogOpenGLVersion")->SetLabel(openGLVersion);
+    findNamedObject<wxStaticText>(this, "AboutDialogOpenGLRenderer")->SetLabel(openGLRenderer);
 
-	// Make all headers bold
-	wxFont bold = findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->GetFont().Bold();
-	findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->SetFont(bold);
-	findNamedObject<wxStaticText>(this, "AboutDialogHeader2")->SetFont(bold);
-	findNamedObject<wxStaticText>(this, "AboutDialogHeader3")->SetFont(bold);
+    std::string openGLExtensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+
+    findNamedObject<wxTextCtrl>(this, "AboutDialogOpenGLExtensions")->SetValue(openGLExtensions);
+
+    findNamedObject<wxButton>(this, "AboutDialogOkButton")->Bind(wxEVT_BUTTON, &AboutDialog::_onClose, this);
+
+    // Make all headers bold
+    wxFont bold = findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->GetFont().Bold();
+    findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->SetFont(bold);
+    findNamedObject<wxStaticText>(this, "AboutDialogHeader2")->SetFont(bold);
+    findNamedObject<wxStaticText>(this, "AboutDialogHeader3")->SetFont(bold);
+
+    wxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer->Add(mainPanel, 1, wxEXPAND | wxALL);
+    SetSizerAndFit(mainSizer);
 }
 
 void AboutDialog::_onClose(wxCommandEvent& ev)

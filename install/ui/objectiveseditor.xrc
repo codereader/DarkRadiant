@@ -2,21 +2,26 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="ObjDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>500,600</size>
+		<size>712,692</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
+				<flag>wxEXPAND</flag>
 				<border>12</border>
 				<object class="wxStaticText" name="ObjDialogEntityLabel">
+					<font>
+						<style>normal</style>
+						<weight>bold</weight>
+						<underlined>0</underlined>
+					</font>
 					<label>Objective Entities</label>
 					<wrap>-1</wrap>
 				</object>
 			</object>
 			<object class="sizeritem">
 				<option>1</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<flag>wxEXPAND|wxTOP</flag>
 				<border>12</border>
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
@@ -35,7 +40,7 @@
 					<object class="sizeritem">
 						<option>0</option>
 						<flag>wxEXPAND</flag>
-						<border>5</border>
+						<border>6</border>
 						<object class="wxBoxSizer">
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
@@ -43,9 +48,11 @@
 								<flag>wxBOTTOM|wxEXPAND</flag>
 								<border>6</border>
 								<object class="wxButton" name="ObjDialogAddEntityButton">
-									<size>80,-1</size>
 									<label>Add</label>
 									<default>0</default>
+									<auth_needed>0</auth_needed>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="sizeritem">
@@ -53,9 +60,11 @@
 								<flag>wxEXPAND</flag>
 								<border>6</border>
 								<object class="wxButton" name="ObjDialogDeleteEntityButton">
-									<size>80,-1</size>
 									<label>Delete</label>
 									<default>0</default>
+									<auth_needed>0</auth_needed>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 						</object>
@@ -64,16 +73,21 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
+				<flag>wxEXPAND|wxRIGHT|wxTOP</flag>
 				<border>12</border>
 				<object class="wxStaticText" name="ObjDialogObjectivesLabel">
+					<font>
+						<style>normal</style>
+						<weight>bold</weight>
+						<underlined>0</underlined>
+					</font>
 					<label>Objectives</label>
 					<wrap>-1</wrap>
 				</object>
 			</object>
 			<object class="sizeritem">
 				<option>4</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<flag>wxEXPAND|wxTOP</flag>
 				<border>12</border>
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
@@ -90,8 +104,8 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND | wxALL</flag>
-						<border>5</border>
+						<flag>wxEXPAND</flag>
+						<border>6</border>
 						<object class="wxPanel" name="ObjDialogObjectiveButtonPanel">
 							<style>wxTAB_TRAVERSAL</style>
 							<object class="wxBoxSizer">
@@ -101,9 +115,11 @@
 									<flag>wxBOTTOM|wxEXPAND</flag>
 									<border>6</border>
 									<object class="wxButton" name="ObjDialogAddObjectiveButton">
-										<size>80,-1</size>
 										<label>Add</label>
 										<default>0</default>
+										<auth_needed>0</auth_needed>
+										<markup>0</markup>
+										<bitmap />
 									</object>
 								</object>
 								<object class="sizeritem">
@@ -111,9 +127,11 @@
 									<flag>wxBOTTOM|wxEXPAND</flag>
 									<border>6</border>
 									<object class="wxButton" name="ObjDialogDeleteObjectiveButton">
-										<size>80,-1</size>
 										<label>Delete</label>
 										<default>0</default>
+										<auth_needed>0</auth_needed>
+										<markup>0</markup>
+										<bitmap />
 									</object>
 								</object>
 								<object class="sizeritem">
@@ -121,9 +139,11 @@
 									<flag>wxBOTTOM|wxEXPAND</flag>
 									<border>6</border>
 									<object class="wxButton" name="ObjDialogClearObjectiveButton">
-										<size>80,-1</size>
 										<label>Clear</label>
 										<default>0</default>
+										<auth_needed>0</auth_needed>
+										<markup>0</markup>
+										<bitmap />
 									</object>
 								</object>
 								<object class="sizeritem">
@@ -131,17 +151,11 @@
 									<flag>wxBOTTOM|wxEXPAND</flag>
 									<border>6</border>
 									<object class="wxButton" name="ObjDialogEditObjectiveButton">
-										<size>80,-1</size>
 										<label>Edit</label>
 										<default>0</default>
-									</object>
-								</object>
-								<object class="sizeritem">
-									<option>0</option>
-									<flag>wxEXPAND | wxALL</flag>
-									<border>5</border>
-									<object class="wxStaticLine" name="m_staticline1">
-										<style>wxLI_HORIZONTAL</style>
+										<auth_needed>0</auth_needed>
+										<markup>0</markup>
+										<bitmap />
 									</object>
 								</object>
 								<object class="sizeritem">
@@ -149,9 +163,11 @@
 									<flag>wxBOTTOM|wxEXPAND</flag>
 									<border>6</border>
 									<object class="wxButton" name="ObjDialogMoveObjUpButton">
-										<size>80,-1</size>
-										<label>Move up</label>
+										<label></label>
 										<default>0</default>
+										<auth_needed>0</auth_needed>
+										<markup>0</markup>
+										<bitmap>../bitmaps/arrow_up_blue.png</bitmap>
 									</object>
 								</object>
 								<object class="sizeritem">
@@ -159,9 +175,11 @@
 									<flag>wxBOTTOM|wxEXPAND</flag>
 									<border>6</border>
 									<object class="wxButton" name="ObjDialogMoveObjDownButton">
-										<size>80,-1</size>
-										<label>Move down</label>
+										<label></label>
 										<default>0</default>
+										<auth_needed>0</auth_needed>
+										<markup>0</markup>
+										<bitmap>../bitmaps/arrow_down_blue.png</bitmap>
 									</object>
 								</object>
 							</object>
@@ -171,26 +189,20 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
-				<object class="wxStaticText" name="ObjDialogLogicLabel">
-					<label>Success Logic</label>
-					<wrap>-1</wrap>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
-				<border>12</border>
+				<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+				<border>6</border>
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxLEFT</flag>
+						<flag></flag>
 						<border>12</border>
 						<object class="wxButton" name="ObjDialogSuccessLogicButton">
 							<label>Edit Mission Success Logic</label>
 							<default>0</default>
+							<auth_needed>0</auth_needed>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -200,13 +212,16 @@
 						<object class="wxButton" name="ObjDialogObjConditionsButton">
 							<label>Edit Objective Conditions</label>
 							<default>0</default>
+							<auth_needed>0</auth_needed>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+				<flag>wxALIGN_RIGHT|wxLEFT|wxTOP</flag>
 				<border>12</border>
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
@@ -217,6 +232,9 @@
 						<object class="wxButton" name="ObjDialogCancelButton">
 							<label>Cancel</label>
 							<default>0</default>
+							<auth_needed>0</auth_needed>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -226,6 +244,9 @@
 						<object class="wxButton" name="ObjDialogOkButton">
 							<label>OK</label>
 							<default>0</default>
+							<auth_needed>0</auth_needed>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>

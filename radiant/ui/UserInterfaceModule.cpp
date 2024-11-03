@@ -479,10 +479,12 @@ void UserInterfaceModule::applyEntityVertexColours()
 
 void UserInterfaceModule::registerUICommands()
 {
-	TexTool::registerCommands();
+    TexTool::registerCommands();
 
-	GlobalCommandSystem().addCommand("ProjectSettings", GameSetupDialog::Show);
-	GlobalCommandSystem().addCommand("Preferences", PrefDialog::ShowPrefDialog);
+    GlobalCommandSystem().addCommand("ProjectSettings", GameSetupDialog::Show);
+    GlobalCommandSystem().addCommand("Preferences", [](const auto&) {
+        PrefDialog::ShowDialog();
+    });
 
     GlobalCommandSystem().addCommand("clear", [](const auto&) { radiant::ClearConsoleMessage::Send(); });
 
@@ -494,31 +496,31 @@ void UserInterfaceModule::registerUICommands()
     GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
     GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 
-	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);
+    GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
+    GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);
 
-	GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
-	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
-	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
-	GlobalCommandSystem().addCommand("OpenForumUrl", Documentation::OpenForumUrl);
-	GlobalCommandSystem().addCommand("OpenScriptReference", Documentation::OpenScriptReference);
+    GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
+    GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
+    GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
+    GlobalCommandSystem().addCommand("OpenForumUrl", Documentation::OpenForumUrl);
+    GlobalCommandSystem().addCommand("OpenScriptReference", Documentation::OpenScriptReference);
 #ifndef WIN32
-	GlobalCommandSystem().addCommand("ShowOfflineUserGuide", Documentation::showOfflineUserGuide);
+    GlobalCommandSystem().addCommand("ShowOfflineUserGuide", Documentation::showOfflineUserGuide);
 #endif
-	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
+    GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
+    GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
 
-	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
-	// ----------------------- Bind Events ---------------------------------------
+    // ----------------------- Bind Events ---------------------------------------
 
-	// Add the callback event
-	GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
-	GlobalCommandSystem().addCommand("SkinEditor", SkinEditor::ShowDialog);
+    // Add the callback event
+    GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
+    GlobalCommandSystem().addCommand("SkinEditor", SkinEditor::ShowDialog);
 
-	// Register the "create layer" command
-	GlobalCommandSystem().addCommand("CreateNewLayerDialog", CreateLayerDialog::CreateNewLayer,
-		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    // Register the "create layer" command
+    GlobalCommandSystem().addCommand("CreateNewLayerDialog", CreateLayerDialog::CreateNewLayer,
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
     GlobalCommandSystem().addWithCheck("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd,
                                        selection::pred::havePatch);
@@ -533,17 +535,17 @@ void UserInterfaceModule::registerUICommands()
                                        selection::pred::haveBrush, {cmd::ARGTYPE_INT});
 
     // Set up the CloneSelection command to react on key up events only
-	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
+    GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 
-	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
-	GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
-	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", "user/ui/offsetClonedObjects");
-	GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
+    GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
+    GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
+    GlobalEventManager().addRegistryToggle("ToggleOffsetClones", "user/ui/offsetClonedObjects");
+    GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
 
-	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
+    GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
-	GlobalCommandSystem().addCommand("LoadPrefab", ui::loadPrefabDialog);
-	GlobalCommandSystem().addCommand("OpenMapFromProject", ui::MapSelector::OpenMapFromProject);
+    GlobalCommandSystem().addCommand("LoadPrefab", ui::loadPrefabDialog);
+    GlobalCommandSystem().addCommand("OpenMapFromProject", ui::MapSelector::OpenMapFromProject);
 }
 
 // Static module registration

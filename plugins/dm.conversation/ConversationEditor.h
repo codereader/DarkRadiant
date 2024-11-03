@@ -3,7 +3,6 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/dataview/TreeView.h"
-#include <map>
 
 #include "Conversation.h"
 

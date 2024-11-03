@@ -1,6 +1,5 @@
 #include "ClipboardModule.h"
 
-#include "itextstream.h"
 #include "math/Hash.h"
 #include <wx/clipbrd.h>
 #include <wx/app.h>

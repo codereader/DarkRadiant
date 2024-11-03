@@ -15,6 +15,7 @@
 
 #include "registry/registry.h"
 #include "wxutil/MultiMonitor.h"
+#include "wxutil/sourceview/SourceView.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/AuiLayout.h"
@@ -36,68 +37,55 @@
 
 namespace
 {
-	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
-	const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
-	const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
+    const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
+    const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
+    const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
 }
 
 namespace ui
 {
 
-MainFrame::MainFrame() :
-	_topLevelWindow(nullptr),
-	_screenUpdatesEnabled(false), // not enabled until constructed
-    _defLoadingBlocksUpdates(false),
-    _mapLoadingBlocksUpdates(false)
-{}
-
 // RegisterableModule implementation
 const std::string& MainFrame::getName() const
 {
-	static std::string _name(MODULE_MAINFRAME);
-	return _name;
+    static std::string _name(MODULE_MAINFRAME);
+    return _name;
 }
 
 const StringSet& MainFrame::getDependencies() const
 {
-	static StringSet _dependencies;
+    static StringSet _dependencies = {
+        MODULE_XMLREGISTRY,
+        MODULE_PREFERENCESYSTEM,
+        MODULE_COMMANDSYSTEM,
+        MODULE_ORTHOVIEWMANAGER,
+        MODULE_ECLASSMANAGER,
+        MODULE_MAP,
+    };
 
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
-		_dependencies.insert(MODULE_ECLASSMANAGER);
-		_dependencies.insert(MODULE_MAP);
-	}
-
-	return _dependencies;
+    return _dependencies;
 }
 
 void MainFrame::initialiseModule(const IApplicationContext& ctx)
 {
-	// Add another page for Multi-Monitor stuff
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Multi Monitor"));
+    // Add another page for UI stuff
+    IPreferencePage& page = GlobalPreferenceSystem().getPage(_("User Interface"));
 
-	// Initialise the registry, if no key is set
-	if (GlobalRegistry().get(RKEY_MULTIMON_START_MONITOR).empty())
-	{
-		GlobalRegistry().set(RKEY_MULTIMON_START_MONITOR, "0");
-	}
+    // Initialise the registry, if no key is set
+    registry::setDefault(RKEY_MULTIMON_START_MONITOR, "0");
+    registry::setDefault(wxutil::RKEY_SOURCE_FONT_SIZE, "11");
 
-	ComboBoxValueList list;
+    ComboBoxValueList list;
+    for (unsigned int i = 0; i < wxutil::MultiMonitor::getNumMonitors(); ++i)
+    {
+        wxRect rect = wxutil::MultiMonitor::getMonitor(i);
+        list.push_back(
+            fmt::format("Monitor {0:d} ({1:d}x{2:d})", i, rect.GetWidth(), rect.GetHeight())
+        );
+    }
 
-	for (unsigned int i = 0; i < wxutil::MultiMonitor::getNumMonitors(); ++i)
-	{
-		wxRect rect = wxutil::MultiMonitor::getMonitor(i);
-
-		list.push_back(
-			fmt::format("Monitor {0:d} ({1:d}x{2:d})", i, rect.GetWidth(), rect.GetHeight())
-		);
-	}
-
-	page.appendCombo(_("Start DarkRadiant on monitor"), RKEY_MULTIMON_START_MONITOR, list);
+    page.appendCombo(_("Start on monitor"), RKEY_MULTIMON_START_MONITOR, list);
+    page.appendSpinner(_("Source view font size"), wxutil::RKEY_SOURCE_FONT_SIZE, 1, 36, 1);
 
     GlobalCommandSystem().addCommand(FOCUS_CONTROL_COMMAND,
         std::bind(&MainFrame::focusControl, this, std::placeholders::_1),
@@ -116,43 +104,43 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
 
-	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
+    GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
 
 #ifdef WIN32
-	HMODULE lib = LoadLibrary(L"dwmapi.dll");
+    HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
-	if (lib != NULL)
-	{
-		void (WINAPI *dwmEnableComposition) (bool) =
-			(void (WINAPI *) (bool)) GetProcAddress(lib, "DwmEnableComposition");
+    if (lib != NULL)
+    {
+        void (WINAPI *dwmEnableComposition) (bool) =
+            (void (WINAPI *) (bool)) GetProcAddress(lib, "DwmEnableComposition");
 
-		if (dwmEnableComposition)
-		{
-			// Add a page for Desktop Composition stuff
-			IPreferencePage& compatPage = GlobalPreferenceSystem().getPage(_("Compatibility"));
+        if (dwmEnableComposition)
+        {
+            // Add a page for Desktop Composition stuff
+            IPreferencePage& compatPage = GlobalPreferenceSystem().getPage(_("Compatibility"));
 
-			compatPage.appendCheckBox(_("Disable Windows Desktop Composition"),
-				RKEY_DISABLE_WIN_DESKTOP_COMP);
+            compatPage.appendCheckBox(_("Disable Windows Desktop Composition"),
+                RKEY_DISABLE_WIN_DESKTOP_COMP);
 
-			GlobalRegistry().signalForKey(RKEY_DISABLE_WIN_DESKTOP_COMP).connect(
+            GlobalRegistry().signalForKey(RKEY_DISABLE_WIN_DESKTOP_COMP).connect(
                 sigc::mem_fun(this, &MainFrame::keyChanged)
             );
-		}
+        }
 
-		FreeLibrary(lib);
-	}
+        FreeLibrary(lib);
+    }
 
-	// Load the value and act
-	setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
+    // Load the value and act
+    setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
 #endif
 
-	_mapNameChangedConn = GlobalMapModule().signal_mapNameChanged().connect(
-		sigc::mem_fun(this, &MainFrame::updateTitle)
-	);
+    _mapNameChangedConn = GlobalMapModule().signal_mapNameChanged().connect(
+        sigc::mem_fun(this, &MainFrame::updateTitle)
+    );
 
-	_mapModifiedChangedConn = GlobalMapModule().signal_modifiedChanged().connect(
-		sigc::mem_fun(this, &MainFrame::updateTitle)
-	);
+    _mapModifiedChangedConn = GlobalMapModule().signal_modifiedChanged().connect(
+        sigc::mem_fun(this, &MainFrame::updateTitle)
+    );
 
     // When the eclass defs are in progress of being loaded, block all updates
     _defsLoadingSignal = GlobalDeclarationManager().signal_DeclsReloading(decl::Type::EntityDef).connect(
@@ -178,52 +166,52 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         }
     );
 
-	// Subscribe for the post-module init event
-	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
-		sigc::mem_fun(this, &MainFrame::postModuleInitialisation));
+    // Subscribe for the post-module init event
+    module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
+        sigc::mem_fun(this, &MainFrame::postModuleInitialisation));
 }
 
 void MainFrame::shutdownModule()
 {
     _mapEventSignal.disconnect();
-	_mapNameChangedConn.disconnect();
-	_mapModifiedChangedConn.disconnect();
+    _mapNameChangedConn.disconnect();
+    _mapModifiedChangedConn.disconnect();
 
     _defsLoadingSignal.disconnect();
     _defsLoadedSignal.disconnect();
 
-	disableScreenUpdates();
+    disableScreenUpdates();
 }
 
 void MainFrame::exitCmd(const cmd::ArgumentList& args)
 {
-	// Just tell the main application window to close, which will invoke
-	// appropriate event handlers.
-	if (getWxTopLevelWindow() != nullptr)
-	{
-		getWxTopLevelWindow()->Close(false /* don't force */);
-	}
+    // Just tell the main application window to close, which will invoke
+    // appropriate event handlers.
+    if (getWxTopLevelWindow() != nullptr)
+    {
+        getWxTopLevelWindow()->Close(false /* don't force */);
+    }
 }
 
 void MainFrame::postModuleInitialisation()
 {
-	// Initialise the mainframe
-	construct();
+    // Initialise the mainframe
+    construct();
 
-	// Load the shortcuts from the registry
-	GlobalEventManager().loadAccelerators();
+    // Load the shortcuts from the registry
+    GlobalEventManager().loadAccelerators();
 
-	// Show the top level window as late as possible
-	getWxTopLevelWindow()->Show();
+    // Show the top level window as late as possible
+    getWxTopLevelWindow()->Show();
 
-	signal_MainFrameReady().emit();
-	signal_MainFrameReady().clear();
+    signal_MainFrameReady().emit();
+    signal_MainFrameReady().clear();
 }
 
 void MainFrame::keyChanged()
 {
 #ifdef WIN32
-	setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
+    setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
 #endif
 }
 
@@ -235,37 +223,37 @@ void MainFrame::keyChanged()
 
 void MainFrame::setDesktopCompositionEnabled(bool enabled)
 {
-	HMODULE lib = LoadLibrary(L"dwmapi.dll");
+    HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
-	if (lib != NULL)
-	{
-		HRESULT (WINAPI *dwmEnableComposition) (UINT) =
-			(HRESULT (WINAPI *) (UINT)) GetProcAddress(lib, "DwmEnableComposition");
+    if (lib != NULL)
+    {
+        HRESULT (WINAPI *dwmEnableComposition) (UINT) =
+            (HRESULT (WINAPI *) (UINT)) GetProcAddress(lib, "DwmEnableComposition");
 
-		if (dwmEnableComposition)
-		{
-			HRESULT result = dwmEnableComposition(enabled ? DWM_EC_ENABLECOMPOSITION : DWM_EC_DISABLECOMPOSITION);
+        if (dwmEnableComposition)
+        {
+            HRESULT result = dwmEnableComposition(enabled ? DWM_EC_ENABLECOMPOSITION : DWM_EC_DISABLECOMPOSITION);
 
-			if (!SUCCEEDED(result))
-			{
-				rError() << "Could not disable desktop composition" << std::endl;
-			}
-		}
+            if (!SUCCEEDED(result))
+            {
+                rError() << "Could not disable desktop composition" << std::endl;
+            }
+        }
 
-		FreeLibrary(lib);
-	}
+        FreeLibrary(lib);
+    }
 }
 #endif
 
 void MainFrame::construct()
 {
-	// Create the base window and the default widgets
-	create();
+    // Create the base window and the default widgets
+    create();
 
-	// Emit the "constructed" signal to give modules a chance to register
-	// their UI parts. Clear the signal afterwards.
-	signal_MainFrameConstructed().emit();
-	signal_MainFrameConstructed().clear();
+    // Emit the "constructed" signal to give modules a chance to register
+    // their UI parts. Clear the signal afterwards.
+    signal_MainFrameConstructed().emit();
+    signal_MainFrameConstructed().clear();
 
     // Restore the saved layout now that all signal listeners have added their controls
     _layout->restoreStateFromRegistry();
@@ -286,23 +274,23 @@ void MainFrame::construct()
     });
 #endif
 
-	enableScreenUpdates();
+    enableScreenUpdates();
 
     updateAllWindows();
 }
 
 void MainFrame::removeLayout()
 {
-	// Sanity check
-	if (!_layout) return;
+    // Sanity check
+    if (!_layout) return;
 
-	_layout->deactivate();
+    _layout->deactivate();
     _layout.reset();
 }
 
 void MainFrame::preDestructionCleanup()
 {
-	saveWindowPosition();
+    saveWindowPosition();
 
     // Free the layout
     if (_layout)
@@ -313,19 +301,19 @@ void MainFrame::preDestructionCleanup()
 
 void MainFrame::updateTitle()
 {
-	if (_topLevelWindow == nullptr)
-	{
-		return;
-	}
+    if (_topLevelWindow == nullptr)
+    {
+        return;
+    }
 
-	std::string title = GlobalMapModule().getMapName();
+    std::string title = GlobalMapModule().getMapName();
 
-	if (GlobalMapModule().isModified())
-	{
-		title += " *";
-	}
+    if (GlobalMapModule().isModified())
+    {
+        title += " *";
+    }
 
-	_topLevelWindow->SetTitle(title);
+    _topLevelWindow->SetTitle(title);
 }
 
 void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
@@ -333,15 +321,15 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
     // If the event is vetoable, issue the shutdown message and get the green light
     if (ev.CanVeto())
     {
-		radiant::ApplicationShutdownRequest request;
-		GlobalRadiantCore().getMessageBus().sendMessage(request);
+        radiant::ApplicationShutdownRequest request;
+        GlobalRadiantCore().getMessageBus().sendMessage(request);
 
-		if (request.isDenied())
-		{
-			// Keep running
-			ev.Veto();
-			return;
-		}
+        if (request.isDenied())
+        {
+            // Keep running
+            ev.Veto();
+            return;
+        }
     }
 
     _layout->saveStateToRegistry();
@@ -354,9 +342,9 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
     // present
     preDestructionCleanup();
 
-	// Broadcast shutdown event
-	signal_MainFrameShuttingDown().emit();
-	signal_MainFrameShuttingDown().clear();
+    // Broadcast shutdown event
+    signal_MainFrameShuttingDown().emit();
+    signal_MainFrameShuttingDown().clear();
 
     // Destroy the actual window
     _topLevelWindow->Destroy();
@@ -371,29 +359,29 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 
 wxFrame* MainFrame::getWxTopLevelWindow()
 {
-	return _topLevelWindow;
+    return _topLevelWindow;
 }
 
 wxBoxSizer* MainFrame::getWxMainContainer()
 {
-	return _topLevelWindow != nullptr ? _topLevelWindow->getMainContainer() : nullptr;
+    return _topLevelWindow != nullptr ? _topLevelWindow->getMainContainer() : nullptr;
 }
 
 bool MainFrame::isActiveApp()
 {
-	return wxTheApp->IsActive();
+    return wxTheApp->IsActive();
 }
 
 void MainFrame::createTopLevelWindow()
 {
-	// Destroy any previous toplevel window
-	if (_topLevelWindow)
-	{
-		_topLevelWindow->Destroy();
-	}
+    // Destroy any previous toplevel window
+    if (_topLevelWindow)
+    {
+        _topLevelWindow->Destroy();
+    }
 
-	// Create a new window
-	_topLevelWindow = new TopLevelFrame;
+    // Create a new window
+    _topLevelWindow = new TopLevelFrame;
     wxTheApp->SetTopWindow(_topLevelWindow);
 
     // Listen for close events
@@ -402,37 +390,37 @@ void MainFrame::createTopLevelWindow()
 
 void MainFrame::restoreWindowPosition()
 {
-	// We start out maximised by default
-	bool isMaximised = true;
+    // We start out maximised by default
+    bool isMaximised = true;
 
-	// Load and sanitise the monitor number, the number of displays might have changed
-	unsigned int startMonitor = registry::getValue<unsigned int>(RKEY_MULTIMON_START_MONITOR);
+    // Load and sanitise the monitor number, the number of displays might have changed
+    unsigned int startMonitor = registry::getValue<unsigned int>(RKEY_MULTIMON_START_MONITOR);
 
-	if (startMonitor >= wxutil::MultiMonitor::getNumMonitors())
-	{
-		startMonitor = 0;
-	}
+    if (startMonitor >= wxutil::MultiMonitor::getNumMonitors())
+    {
+        startMonitor = 0;
+    }
 
-	// Set up the size/position from registry or the defaults
-	if (GlobalRegistry().keyExists(RKEY_WINDOW_STATE))
-	{
-		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
+    // Set up the size/position from registry or the defaults
+    if (GlobalRegistry().keyExists(RKEY_WINDOW_STATE))
+    {
+        _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 
-		isMaximised = string::convert<bool>(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"), true);
-	}
-	else
-	{
-		// If no state was found in the registry, fit the window into the start monitor rectangle
-		_windowPosition.fitToScreen(wxutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
-	}
+        isMaximised = string::convert<bool>(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"), true);
+    }
+    else
+    {
+        // If no state was found in the registry, fit the window into the start monitor rectangle
+        _windowPosition.fitToScreen(wxutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
+    }
 
-	// Connect the tracker which will also apply the stored size/position
-	_windowPosition.connect(_topLevelWindow);
+    // Connect the tracker which will also apply the stored size/position
+    _windowPosition.connect(_topLevelWindow);
 
-	if (isMaximised)
-	{
-		_topLevelWindow->Maximize(true);
-	}
+    if (isMaximised)
+    {
+        _topLevelWindow->Maximize(true);
+    }
 }
 
 wxToolBar* MainFrame::getToolbar(IMainFrame::Toolbar type)
@@ -451,8 +439,8 @@ wxToolBar* MainFrame::getToolbar(IMainFrame::Toolbar type)
 
 void MainFrame::create()
 {
-	// Create the topmost window first
-	createTopLevelWindow();
+    // Create the topmost window first
+    createTopLevelWindow();
 
     _layout = std::make_shared<AuiLayout>();
     _layout->activate();
@@ -461,45 +449,45 @@ void MainFrame::create()
     addControl(UserControl::EntityInspector, ControlSettings{ Location::PropertyPanel, true });
     addControl(UserControl::MediaBrowser, ControlSettings{ Location::PropertyPanel, true });
 
-	// Load the previous window settings from the registry
-	restoreWindowPosition();
+    // Load the previous window settings from the registry
+    restoreWindowPosition();
 }
 
 void MainFrame::saveWindowPosition()
 {
-	// Tell the position tracker to save the information
-	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
+    // Tell the position tracker to save the information
+    _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
-	if (_topLevelWindow)
-	{
-		GlobalRegistry().setAttribute(
-			RKEY_WINDOW_STATE,
-			"state",
-			string::to_string(_topLevelWindow->IsMaximized())
-		);
+    if (_topLevelWindow)
+    {
+        GlobalRegistry().setAttribute(
+            RKEY_WINDOW_STATE,
+            "state",
+            string::to_string(_topLevelWindow->IsMaximized())
+        );
 
-		// Save the monitor number the window is currently displayed on
-		registry::setValue(RKEY_MULTIMON_START_MONITOR,
-			wxutil::MultiMonitor::getMonitorNumForWindow(_topLevelWindow));
-	}
+        // Save the monitor number the window is currently displayed on
+        registry::setValue(RKEY_MULTIMON_START_MONITOR,
+            wxutil::MultiMonitor::getMonitorNumForWindow(_topLevelWindow));
+    }
 }
 
 bool MainFrame::screenUpdatesEnabled()
 {
-	return _screenUpdatesEnabled && !_defLoadingBlocksUpdates && !_mapLoadingBlocksUpdates;
+    return _screenUpdatesEnabled && !_defLoadingBlocksUpdates && !_mapLoadingBlocksUpdates;
 }
 
 void MainFrame::enableScreenUpdates() {
-	_screenUpdatesEnabled = true;
+    _screenUpdatesEnabled = true;
 }
 
 void MainFrame::disableScreenUpdates() {
-	_screenUpdatesEnabled = false;
+    _screenUpdatesEnabled = false;
 }
 
 void MainFrame::updateAllWindows(bool force)
 {
-	if (!_screenUpdatesEnabled) return;
+    if (!_screenUpdatesEnabled) return;
 
     if (force)
     {
@@ -523,9 +511,9 @@ void MainFrame::updateAllWindows(bool force)
 }
 
 IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std::string& title,
-		const std::string& message, bool forceDisplay)
+        const std::string& message, bool forceDisplay)
 {
-	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
+    return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
 }
 
 void MainFrame::addControl(const std::string& controlName, const ControlSettings& defaultSettings)
@@ -582,17 +570,17 @@ void MainFrame::toggleMainControl(const cmd::ArgumentList& args)
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()
 {
-	return _sigMainFrameConstructed;
+    return _sigMainFrameConstructed;
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameReady()
 {
-	return _sigMainFrameReady;
+    return _sigMainFrameReady;
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameShuttingDown()
 {
-	return _sigMainFrameShuttingDown;
+    return _sigMainFrameShuttingDown;
 }
 
 // Define the static MainFrame module

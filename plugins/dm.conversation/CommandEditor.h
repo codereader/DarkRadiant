@@ -1,12 +1,10 @@
 #pragma once
 
-#include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
 #include "Conversation.h"
 #include "ConversationCommand.h"
-#include "ConversationCommandLibrary.h"
 #include "CommandArgumentItem.h"
 
 namespace ui

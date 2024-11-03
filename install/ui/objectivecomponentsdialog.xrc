@@ -6,463 +6,457 @@
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
-				<option>1</option>
-				<flag>wxALL|wxEXPAND</flag>
-				<border>12</border>
-				<object class="wxBoxSizer">
-					<orient>wxVERTICAL</orient>
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>0</border>
+				<object class="wxFlexGridSizer">
+					<rows>8</rows>
+					<cols>2</cols>
+					<vgap>10</vgap>
+					<hgap>12</hgap>
+					<growablecols>1</growablecols>
+					<growablerows></growablerows>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND</flag>
-						<border>0</border>
-						<object class="wxFlexGridSizer">
-							<rows>8</rows>
-							<cols>2</cols>
-							<vgap>10</vgap>
-							<hgap>12</hgap>
-							<growablecols>1</growablecols>
-							<growablerows></growablerows>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText4">
-									<label>Description</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxTextCtrl" name="ObjCompDescription">
-									<value></value>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag></flag>
-								<border>5</border>
-								<object class="wxStaticText" name="Diff">
-									<label>Difficulty</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>0</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxEXPAND</flag>
-										<border>0</border>
-										<object class="wxPanel" name="ObjCompDiffPanel">
-											<style>wxTAB_TRAVERSAL</style>
-											<object class="wxBoxSizer">
-												<orient>wxHORIZONTAL</orient>
-											</object>
-										</object>
-									</object>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText6">
-									<label>Initial State</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxChoice" name="ObjCompInitialState">
-									<selection>0</selection>
-									<content />
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-								<border>0</border>
-								<object class="wxStaticText" name="m_staticText26">
-									<label>Flags</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-										<border>0</border>
-										<object class="wxCheckBox" name="ObjCompObjMandatory">
-											<label>Mandatory</label>
-											<checked>0</checked>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-										<border>6</border>
-										<object class="wxCheckBox" name="ObjCompObjOngoing">
-											<label>Ongoing</label>
-											<checked>0</checked>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-										<border>6</border>
-										<object class="wxCheckBox" name="ObjCompObjIrreversible">
-											<label>Irreversible</label>
-											<checked>0</checked>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-										<border>6</border>
-										<object class="wxCheckBox" name="ObjCompObjVisible">
-											<label>Visible</label>
-											<checked>0</checked>
-										</object>
-									</object>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText7">
-									<label>Enabling Objectives</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxTextCtrl" name="ObjCompEnablingObjectives">
-									<value></value>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText8">
-									<label>Success Logic</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>0</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL</flag>
-										<border>5</border>
-										<object class="wxTextCtrl" name="ObjCompSuccessLogic">
-											<value></value>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-										<border>6</border>
-										<object class="wxStaticText" name="m_staticText9">
-											<label>Failure Logic</label>
-											<wrap>-1</wrap>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL</flag>
-										<border>5</border>
-										<object class="wxTextCtrl" name="ObjCompFailureLogic">
-											<value></value>
-										</object>
-									</object>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText81">
-									<label>Completion Script</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL</flag>
-										<border>5</border>
-										<object class="wxTextCtrl" name="ObjCompCompletionScript">
-											<value></value>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-										<border>6</border>
-										<object class="wxStaticText" name="m_staticText91">
-											<label>Failure Script</label>
-											<wrap>-1</wrap>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL</flag>
-										<border>5</border>
-										<object class="wxTextCtrl" name="ObjCompFailureScript">
-											<value></value>
-										</object>
-									</object>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText811">
-									<label>Completion Target</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL</flag>
-										<border>5</border>
-										<object class="wxTextCtrl" name="ObjCompCompletionTarget">
-											<value></value>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-										<border>6</border>
-										<object class="wxStaticText" name="m_staticText911">
-											<label>Failure Target</label>
-											<wrap>-1</wrap>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALIGN_CENTER_VERTICAL</flag>
-										<border>5</border>
-										<object class="wxTextCtrl" name="ObjCompFailureTarget">
-											<value></value>
-										</object>
-									</object>
-								</object>
-							</object>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText4">
+							<label>Description</label>
+							<wrap>-1</wrap>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxBOTTOM|wxTOP</flag>
-						<border>12</border>
-						<object class="wxStaticText" name="ObjCompListLabel">
-							<label>Components</label>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxTextCtrl" name="ObjCompDescription">
+							<value></value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag></flag>
+						<border>5</border>
+						<object class="wxStaticText" name="Diff">
+							<label>Difficulty</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxEXPAND|wxLEFT</flag>
-						<border>12</border>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
 						<object class="wxBoxSizer">
-							<orient>wxVERTICAL</orient>
+							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>1</option>
 								<flag>wxEXPAND</flag>
+								<border>0</border>
+								<object class="wxPanel" name="ObjCompDiffPanel">
+									<style>wxTAB_TRAVERSAL</style>
+									<object class="wxBoxSizer">
+										<orient>wxHORIZONTAL</orient>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText6">
+							<label>Initial State</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxChoice" name="ObjCompInitialState">
+							<selection>0</selection>
+							<content />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+						<border>0</border>
+						<object class="wxStaticText" name="m_staticText26">
+							<label>Flags</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>0</border>
+								<object class="wxCheckBox" name="ObjCompObjMandatory">
+									<label>Mandatory</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+								<border>6</border>
+								<object class="wxCheckBox" name="ObjCompObjOngoing">
+									<label>Ongoing</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+								<border>6</border>
+								<object class="wxCheckBox" name="ObjCompObjIrreversible">
+									<label>Irreversible</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+								<border>6</border>
+								<object class="wxCheckBox" name="ObjCompObjVisible">
+									<label>Visible</label>
+									<checked>0</checked>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText7">
+							<label>Enabling Objectives</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxTextCtrl" name="ObjCompEnablingObjectives">
+							<value></value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText8">
+							<label>Success Logic</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
+								<object class="wxTextCtrl" name="ObjCompSuccessLogic">
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="m_staticText9">
+									<label>Failure Logic</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxTextCtrl" name="ObjCompFailureLogic">
+									<value></value>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText81">
+							<label>Completion Script</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxTextCtrl" name="ObjCompCompletionScript">
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="m_staticText91">
+									<label>Failure Script</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxTextCtrl" name="ObjCompFailureScript">
+									<value></value>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText811">
+							<label>Completion Target</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxTextCtrl" name="ObjCompCompletionTarget">
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="m_staticText911">
+									<label>Failure Target</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxTextCtrl" name="ObjCompFailureTarget">
+									<value></value>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxBOTTOM|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStaticText" name="ObjCompListLabel">
+					<label>Components</label>
+					<wrap>-1</wrap>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND|wxLEFT</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxEXPAND</flag>
+								<border>12</border>
 								<object class="wxBoxSizer">
-									<orient>wxVERTICAL</orient>
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxEXPAND | wxALL</flag>
+										<border>5</border>
+										<object class="wxPanel" name="ObjCompListViewPanel">
+											<style>wxTAB_TRAVERSAL</style>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+											</object>
+										</object>
+									</object>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxBOTTOM|wxEXPAND</flag>
-										<border>12</border>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
 										<object class="wxBoxSizer">
-											<orient>wxHORIZONTAL</orient>
-											<object class="sizeritem">
-												<option>1</option>
-												<flag>wxEXPAND | wxALL</flag>
-												<border>5</border>
-												<object class="wxPanel" name="ObjCompListViewPanel">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-													</object>
-												</object>
-											</object>
+											<orient>wxVERTICAL</orient>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxEXPAND</flag>
-												<border>5</border>
+												<flag>wxEXPAND|wxLEFT</flag>
+												<border>6</border>
 												<object class="wxBoxSizer">
 													<orient>wxVERTICAL</orient>
 													<object class="sizeritem">
 														<option>0</option>
-														<flag>wxEXPAND|wxLEFT</flag>
+														<flag>wxBOTTOM|wxEXPAND</flag>
 														<border>6</border>
-														<object class="wxBoxSizer">
-															<orient>wxVERTICAL</orient>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxBOTTOM|wxEXPAND</flag>
-																<border>6</border>
-																<object class="wxButton" name="ObjCompAddComponentButton">
-																	<label>Add</label>
-																	<default>0</default>
-																	<markup>0</markup>
-																	<bitmap />
-																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxEXPAND</flag>
-																<border>5</border>
-																<object class="wxButton" name="ObjCompDeleteComponentButton">
-																	<label>Delete</label>
-																	<default>0</default>
-																	<markup>0</markup>
-																	<bitmap />
-																</object>
-															</object>
+														<object class="wxButton" name="ObjCompAddComponentButton">
+															<label>Add</label>
+															<default>0</default>
+															<auth_needed>0</auth_needed>
+															<markup>0</markup>
+															<bitmap />
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxButton" name="ObjCompDeleteComponentButton">
+															<label>Delete</label>
+															<default>0</default>
+															<auth_needed>0</auth_needed>
+															<markup>0</markup>
+															<bitmap />
 														</object>
 													</object>
 												</object>
 											</object>
 										</object>
 									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxEXPAND | wxALL</flag>
-										<border>0</border>
-										<object class="wxPanel" name="ObjCompComponentEditPanel">
-											<style>wxTAB_TRAVERSAL</style>
-											<object class="wxBoxSizer">
-												<orient>wxVERTICAL</orient>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxEXPAND | wxALL</flag>
+								<border>0</border>
+								<object class="wxPanel" name="ObjCompComponentEditPanel">
+									<style>wxTAB_TRAVERSAL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM|wxEXPAND</flag>
+											<border>6</border>
+											<object class="wxFlexGridSizer">
+												<rows>2</rows>
+												<cols>2</cols>
+												<vgap>12</vgap>
+												<hgap>12</hgap>
+												<growablecols>1</growablecols>
+												<growablerows></growablerows>
 												<object class="sizeritem">
 													<option>0</option>
-													<flag>wxBOTTOM|wxEXPAND</flag>
-													<border>6</border>
-													<object class="wxFlexGridSizer">
-														<rows>2</rows>
-														<cols>2</cols>
-														<vgap>12</vgap>
-														<hgap>12</hgap>
-														<growablecols>1</growablecols>
-														<growablerows></growablerows>
+													<flag>wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText24">
+														<label>Type</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxChoice" name="ObjCompComponentType">
+														<selection>0</selection>
+														<content />
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="m_staticText25">
+														<label>Flags</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>0</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
 														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALIGN_CENTER_VERTICAL</flag>
-															<border>5</border>
-															<object class="wxStaticText" name="m_staticText24">
-																<label>Type</label>
-																<wrap>-1</wrap>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxEXPAND</flag>
-															<border>5</border>
-															<object class="wxChoice" name="ObjCompComponentType">
-																<selection>0</selection>
-																<content />
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
+															<option>1</option>
 															<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 															<border>0</border>
-															<object class="wxStaticText" name="m_staticText25">
-																<label>Flags</label>
-																<wrap>-1</wrap>
+															<object class="wxCheckBox" name="ObjCompSatisfiedAtStart">
+																<label>Satisfied at start</label>
+																<checked>0</checked>
 															</object>
 														</object>
 														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxEXPAND</flag>
+															<option>1</option>
+															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>0</border>
-															<object class="wxBoxSizer">
-																<orient>wxHORIZONTAL</orient>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxCheckBox" name="ObjCompSatisfiedAtStart">
-																		<label>Satisfied at start</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>0</border>
-																	<object class="wxCheckBox" name="ObjCompIrreversible">
-																		<label>Irreversible</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxCheckBox" name="ObjCompBooleanNOT">
-																		<label>Boolean NOT</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxCheckBox" name="ObjCompPlayerResponsible">
-																		<label>Player responsible</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
+															<object class="wxCheckBox" name="ObjCompIrreversible">
+																<label>Irreversible</label>
+																<checked>0</checked>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+															<border>0</border>
+															<object class="wxCheckBox" name="ObjCompBooleanNOT">
+																<label>Boolean NOT</label>
+																<checked>0</checked>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+															<border>0</border>
+															<object class="wxCheckBox" name="ObjCompPlayerResponsible">
+																<label>Player responsible</label>
+																<checked>0</checked>
 															</object>
 														</object>
 													</object>
 												</object>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxEXPAND</flag>
-													<border>0</border>
-													<object class="wxPanel" name="ObjCompEditorContainer">
-														<style>wxTAB_TRAVERSAL|wxBORDER_STATIC</style>
-														<object class="wxBoxSizer">
-															<orient>wxVERTICAL</orient>
-														</object>
-													</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>0</border>
+											<object class="wxPanel" name="ObjCompEditorContainer">
+												<style>wxTAB_TRAVERSAL|wxBORDER_STATIC</style>
+												<object class="wxBoxSizer">
+													<orient>wxVERTICAL</orient>
 												</object>
 											</object>
 										</object>
@@ -471,25 +465,25 @@
 							</object>
 						</object>
 					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxEXPAND|wxTOP</flag>
-						<border>12</border>
-						<object class="wxStdDialogButtonSizer">
-							<object class="button">
-								<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
-								<border>5</border>
-								<object class="wxButton" name="wxID_OK">
-									<label>&amp;OK</label>
-								</object>
-							</object>
-							<object class="button">
-								<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
-								<border>5</border>
-								<object class="wxButton" name="wxID_CANCEL">
-									<label>&amp;Cancel</label>
-								</object>
-							</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND|wxTOP</flag>
+				<border>12</border>
+				<object class="wxStdDialogButtonSizer">
+					<object class="button">
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="wxID_OK">
+							<label>&amp;OK</label>
+						</object>
+					</object>
+					<object class="button">
+						<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+						<border>5</border>
+						<object class="wxButton" name="wxID_CANCEL">
+							<label>&amp;Cancel</label>
 						</object>
 					</object>
 				</object>
@@ -497,4 +491,3 @@
 		</object>
 	</object>
 </resource>
-
