@@ -242,6 +242,7 @@
 
 	<subMenu name="patch" caption="&amp;Patch">
 		<menuItem name="simplePatch" caption="Create Simple Patch..." command="CreateSimplePatchDialog" />
+		<menuItem name="terrainGenerator" caption="Create Terrain..." command="TerrainGeneratorDialog" />
 		<menuSeparator />
 		<menuItem name="endcap" caption="Create End cap" command="PatchEndCap" />
 		<menuItem name="bevel" caption="Create Bevel" command="PatchBevel" />

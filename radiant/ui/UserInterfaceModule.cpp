@@ -62,6 +62,7 @@
 #include "ui/patch/PatchCreateDialog.h"
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/scatter/ScatterDialog.h"
+#include "ui/terrain/TerrainGeneratorDialog.h"
 #include "ui/selectionset/SelectionSetToolmenu.h"
 #include "ui/brush/QuerySidesDialog.h"
 #include "ui/brush/FindBrush.h"
@@ -560,6 +561,9 @@ void UserInterfaceModule::registerUICommands()
     // Scatter dialog for placing entities on surfaces
     GlobalCommandSystem().addWithCheck("ScatterDialog", ScatterDialog::Show,
         [] { return GlobalSelectionSystem().countSelected() > 0; });
+
+    // Terrain generator dialog for creating patch terrains
+    GlobalCommandSystem().addCommand("TerrainGeneratorDialog", TerrainGeneratorDialog::Show);
 }
 
 // Static module registration

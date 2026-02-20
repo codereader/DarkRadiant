@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+  <object class="wxPanel" name="TerrainGeneratorMainPanel">
+    <style>wxTAB_TRAVERSAL</style>
+    <object class="wxBoxSizer" name="">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <flag>wxALL</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxStaticText" name="TerrainGeneratorTopLabel">
+          <label>Create Patch Mesh Terrain</label>
+          <wrap>-1</wrap>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxFlexGridSizer" name="">
+          <vgap>6</vgap>
+          <hgap>12</hgap>
+          <growablerows></growablerows>
+          <growablecols>1</growablecols>
+          <rows>1</rows>
+          <cols>2</cols>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL</flag>
+            <border>0</border>
+            <option>0</option>
+            <object class="wxStaticText" name="">
+              <label>Algorithm:</label>
+              <wrap>-1</wrap>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxEXPAND</flag>
+            <border>0</border>
+            <option>1</option>
+            <object class="wxChoice" name="TerrainGeneratorAlgorithm">
+              <selection>2</selection>
+              <content>
+                <item>Perlin Noise</item>
+                <item>Simplex Noise</item>
+                <item>fBm (Fractional Brownian Motion)</item>
+                <item>Ridged Multifractal</item>
+              </content>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxALL|wxBOTTOM|wxLEFT|wxRIGHT</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxStaticBoxSizer" name="">
+          <orient>wxVERTICAL</orient>
+          <label>Patch Dimensions</label>
+          <object class="sizeritem">
+            <flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+            <border>12</border>
+            <option>0</option>
+            <object class="wxFlexGridSizer" name="">
+              <vgap>6</vgap>
+              <hgap>12</hgap>
+              <growablerows></growablerows>
+              <growablecols>1,3</growablecols>
+              <rows>2</rows>
+              <cols>4</cols>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Columns:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxChoice" name="TerrainGeneratorColumns">
+                  <selection>4</selection>
+                  <content>
+                    <item>3</item>
+                    <item>5</item>
+                    <item>7</item>
+                    <item>9</item>
+                    <item>11</item>
+                    <item>13</item>
+                    <item>15</item>
+                    <item>17</item>
+                    <item>19</item>
+                    <item>21</item>
+                    <item>25</item>
+                    <item>31</item>
+                    <item>33</item>
+                    <item>49</item>
+                    <item>65</item>
+                    <item>99</item>
+                  </content>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Rows:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxChoice" name="TerrainGeneratorRows">
+                  <selection>4</selection>
+                  <content>
+                    <item>3</item>
+                    <item>5</item>
+                    <item>7</item>
+                    <item>9</item>
+                    <item>11</item>
+                    <item>13</item>
+                    <item>15</item>
+                    <item>17</item>
+                    <item>19</item>
+                    <item>21</item>
+                    <item>25</item>
+                    <item>31</item>
+                    <item>33</item>
+                    <item>49</item>
+                    <item>65</item>
+                    <item>99</item>
+                  </content>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Width (units):</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="TerrainGeneratorWidth">
+                  <value>512</value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Height (units):</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="TerrainGeneratorHeight">
+                  <value>512</value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxStaticBoxSizer" name="">
+          <orient>wxVERTICAL</orient>
+          <label>Noise Parameters</label>
+          <object class="sizeritem">
+            <flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+            <border>12</border>
+            <option>0</option>
+            <object class="wxFlexGridSizer" name="">
+              <vgap>6</vgap>
+              <hgap>6</hgap>
+              <growablerows></growablerows>
+              <growablecols>1</growablecols>
+              <rows>3</rows>
+              <cols>3</cols>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Seed:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxSpinCtrl" name="TerrainGeneratorSeed">
+                  <style>wxSP_ARROW_KEYS</style>
+                  <value>12345</value>
+                  <min>0</min>
+                  <max>999999999</max>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxLEFT</flag>
+                <border>6</border>
+                <option>0</option>
+                <object class="wxButton" name="TerrainGeneratorRandomizeSeed">
+                  <label>Randomize</label>
+                  <default>0</default>
+                  <auth_needed>0</auth_needed>
+                  <markup>0</markup>
+                  <bitmap/>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Frequency:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="TerrainGeneratorFrequency">
+                  <value>0.01</value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+              <object class="spacer">
+                <flag>wxEXPAND</flag>
+                <border>5</border>
+                <option>1</option>
+                <size>0,0</size>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Amplitude:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="TerrainGeneratorAmplitude">
+                  <value>64</value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+              <object class="spacer">
+                <flag>wxEXPAND</flag>
+                <border>5</border>
+                <option>1</option>
+                <size>0,0</size>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxStaticBoxSizer" name="TerrainGeneratorFractalSizer">
+          <orient>wxVERTICAL</orient>
+          <label>Fractal Parameters</label>
+          <object class="sizeritem">
+            <flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+            <border>12</border>
+            <option>0</option>
+            <object class="wxFlexGridSizer" name="">
+              <vgap>6</vgap>
+              <hgap>12</hgap>
+              <growablerows></growablerows>
+              <growablecols>1</growablecols>
+              <rows>4</rows>
+              <cols>2</cols>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Octaves:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxSpinCtrl" name="TerrainGeneratorOctaves">
+                  <style>wxSP_ARROW_KEYS</style>
+                  <value>4</value>
+                  <min>1</min>
+                  <max>16</max>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Persistence:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="TerrainGeneratorPersistence">
+                  <value>0.5</value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="">
+                  <label>Lacunarity:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="TerrainGeneratorLacunarity">
+                  <value>2.0</value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxALIGN_CENTER_VERTICAL</flag>
+                <border>0</border>
+                <option>0</option>
+                <object class="wxStaticText" name="TerrainGeneratorOffsetLabel">
+                  <label>Ridge Offset:</label>
+                  <wrap>-1</wrap>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <flag>wxEXPAND</flag>
+                <border>0</border>
+                <option>1</option>
+                <object class="wxTextCtrl" name="TerrainGeneratorOffset">
+                  <value>1.0</value>
+                  <maxlength>0</maxlength>
+                </object>
+              </object>
+            </object>
+          </object>
+        </object>
+      </object>
+      <object class="sizeritem">
+        <flag>wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND</flag>
+        <border>12</border>
+        <option>0</option>
+        <object class="wxFlexGridSizer" name="">
+          <vgap>6</vgap>
+          <hgap>6</hgap>
+          <growablerows></growablerows>
+          <growablecols>1</growablecols>
+          <rows>1</rows>
+          <cols>3</cols>
+          <object class="sizeritem">
+            <flag>wxALIGN_CENTER_VERTICAL</flag>
+            <border>0</border>
+            <option>0</option>
+            <object class="wxStaticText" name="">
+              <label>Material:</label>
+              <wrap>-1</wrap>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxEXPAND</flag>
+            <border>0</border>
+            <option>1</option>
+            <object class="wxTextCtrl" name="TerrainGeneratorMaterial">
+              <value>textures/common/caulk</value>
+              <maxlength>0</maxlength>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <flag>wxLEFT</flag>
+            <border>6</border>
+            <option>0</option>
+            <object class="wxButton" name="TerrainGeneratorBrowseMaterial">
+              <size>30,-1</size>
+              <label>...</label>
+              <default>0</default>
+              <auth_needed>0</auth_needed>
+              <markup>0</markup>
+              <bitmap/>
+            </object>
+          </object>
+        </object>
+      </object>
+    </object>
+  </object>
+</resource>

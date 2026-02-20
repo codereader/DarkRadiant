@@ -157,6 +157,7 @@ add_executable(darkradiant
                ui/prefdialog/PreferenceItem.cpp
                ui/prefdialog/PrefPage.cpp
                ui/scatter/ScatterDialog.cpp
+               ui/terrain/TerrainGeneratorDialog.cpp
                ui/script/ScriptMenu.cpp
                ui/script/ScriptWindow.cpp
                ui/selectionset/SelectionSetToolmenu.cpp
