@@ -277,6 +277,7 @@
     <ClCompile Include="..\..\radiant\ui\materials\MaterialChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\MaterialPopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\MaterialSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialThumbnailBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\MaterialTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp" />
@@ -502,6 +503,7 @@
     <ClInclude Include="..\..\radiant\ui\materials\MaterialChooser.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialThumbnailBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\FocusMaterialRequest.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h" />

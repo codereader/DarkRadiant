@@ -673,6 +673,9 @@
     <ClCompile Include="..\..\radiant\ui\materials\MaterialSelector.cpp">
       <Filter>src\ui\materials</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialThumbnailBrowser.cpp">
+      <Filter>src\ui\materials</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\materials\MaterialChooser.cpp">
       <Filter>src\ui\materials</Filter>
     </ClCompile>
@@ -1372,6 +1375,9 @@
       <Filter>src\ui\einspector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\MaterialSelector.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialThumbnailBrowser.h">
       <Filter>src\ui\materials</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\MaterialChooser.h">
