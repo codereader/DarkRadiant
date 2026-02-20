@@ -34,6 +34,8 @@ private:
         double width,
         double height,
         double offset,
+        double rotationDegrees,
+        bool flip,
         const std::string& material
     );
 };

@@ -13,6 +13,7 @@
 #include "ui/decalshooter/DecalShooterPanel.h"
 
 #include <cmath>
+#include <random>
 
 namespace ui
 {
@@ -64,6 +65,22 @@ MouseTool::Result DecalShooterTool::onMouseDown(Event& ev)
             double width = panel ? panel->getDecalWidth() : 128.0;
             double height = panel ? panel->getDecalHeight() : 128.0;
             double offset = panel ? panel->getDecalOffset() : 0.125;
+
+            bool randomRotation = panel ? panel->isRandomRotationEnabled() : false;
+            double rotation = 0.0;
+            if (randomRotation)
+            {
+                static std::random_device rd;
+                static std::mt19937 gen(rd());
+                static std::uniform_real_distribution<double> dist(-180.0, 180.0);
+                rotation = dist(gen);
+            }
+            else
+            {
+                rotation = panel ? panel->getDecalRotation() : 0.0;
+            }
+
+            bool flip = panel ? panel->isFlipEnabled() : false;
             std::string material = panel ? panel->getDecalMaterial() : "textures/common/decal";
 
             createDecalAtFace(
@@ -72,6 +89,8 @@ MouseTool::Result DecalShooterTool::onMouseDown(Event& ev)
                 width,
                 height,
                 offset,
+                rotation,
+                flip,
                 material
             );
         }
@@ -101,6 +120,8 @@ void DecalShooterTool::createDecalAtFace(
     double width,
     double height,
     double offset,
+    double rotationDegrees,
+    bool flip,
     const std::string& material)
 {
     UndoableCommand cmd("PlaceDecal");
@@ -132,6 +153,24 @@ void DecalShooterTool::createDecalAtFace(
 
     Vector3 tangent = normal.cross(up).getNormalised();
     Vector3 bitangent = tangent.cross(normal).getNormalised();
+
+    if (std::abs(rotationDegrees) > 0.001)
+    {
+        double radians = rotationDegrees * (M_PI / 180.0);
+        double cosAngle = std::cos(radians);
+        double sinAngle = std::sin(radians);
+
+        Vector3 rotatedTangent = tangent * cosAngle + bitangent * sinAngle;
+        Vector3 rotatedBitangent = bitangent * cosAngle - tangent * sinAngle;
+
+        tangent = rotatedTangent;
+        bitangent = rotatedBitangent;
+    }
+
+    if (flip)
+    {
+        bitangent = -bitangent;
+    }
 
     Vector3 center = intersectionPoint + normal * offset;
 
@@ -165,6 +204,12 @@ void DecalShooterTool::createDecalAtFace(
     if (worldspawn)
     {
         worldspawn->addChildNode(patchNode);
+    }
+
+    DecalShooterPanel* panel = DecalShooterPanel::getInstance();
+    if (panel)
+    {
+        panel->onDecalCreated(patchNode);
     }
 
     GlobalSelectionSystem().setSelectedAll(false);

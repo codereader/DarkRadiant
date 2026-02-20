@@ -6,8 +6,12 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>
+#include <wx/checkbox.h>
+#include <wx/choice.h>
 
 #include "i18n.h"
+#include "imap.h"
+#include "ilayer.h"
 #include "wxutil/Bitmap.h"
 #include "ui/materials/MaterialChooser.h"
 #include "ui/materials/MaterialSelector.h"
@@ -22,15 +26,29 @@ DecalShooterPanel::DecalShooterPanel(wxWindow* parent) :
     _widthCtrl(nullptr),
     _heightCtrl(nullptr),
     _offsetCtrl(nullptr),
+    _rotationCtrl(nullptr),
+    _randomRotationCheckbox(nullptr),
     _materialEntry(nullptr),
-    _browseButton(nullptr)
+    _browseButton(nullptr),
+    _autogroupCheckbox(nullptr),
+    _flipCheckbox(nullptr),
+    _layerChoice(nullptr)
 {
     _instance = this;
     populateWindow();
+
+    _mapEventConnection = GlobalMapModule().signal_mapEvent().connect(
+        sigc::mem_fun(*this, &DecalShooterPanel::onMapEvent)
+    );
+
+    connectToMapRoot();
 }
 
 DecalShooterPanel::~DecalShooterPanel()
 {
+    _mapEventConnection.disconnect();
+    _layersChangedConnection.disconnect();
+
     if (_instance == this)
     {
         _instance = nullptr;
@@ -57,24 +75,93 @@ double DecalShooterPanel::getDecalOffset() const
     return _offsetCtrl ? _offsetCtrl->GetValue() : 0.125;
 }
 
+double DecalShooterPanel::getDecalRotation() const
+{
+    return _rotationCtrl ? _rotationCtrl->GetValue() : 0.0;
+}
+
+bool DecalShooterPanel::isRandomRotationEnabled() const
+{
+    return _randomRotationCheckbox ? _randomRotationCheckbox->GetValue() : false;
+}
+
+bool DecalShooterPanel::isFlipEnabled() const
+{
+    return _flipCheckbox ? _flipCheckbox->GetValue() : false;
+}
+
 std::string DecalShooterPanel::getDecalMaterial() const
 {
     return _materialEntry ? _materialEntry->GetValue().ToStdString() : "textures/common/decal";
 }
 
+bool DecalShooterPanel::isAutogroupEnabled() const
+{
+    return _autogroupCheckbox ? _autogroupCheckbox->GetValue() : false;
+}
+
+int DecalShooterPanel::getSelectedLayerId() const
+{
+    if (!_layerChoice || _layerChoice->GetSelection() == wxNOT_FOUND)
+    {
+        return -1;
+    }
+
+    return static_cast<int>(reinterpret_cast<intptr_t>(_layerChoice->GetClientData(_layerChoice->GetSelection())));
+}
+
+void DecalShooterPanel::onDecalCreated(const scene::INodePtr& decalNode)
+{
+    if (!decalNode)
+    {
+        return;
+    }
+
+    auto mapRoot = GlobalMapModule().getRoot();
+    if (!mapRoot)
+    {
+        return;
+    }
+
+    // Do the layer assignment
+    int selectedLayerId = getSelectedLayerId();
+    if (selectedLayerId >= 0)
+    {
+        decalNode->moveToLayer(selectedLayerId);
+    }
+
+    if (isAutogroupEnabled())
+    {
+        // Create a new group if we dont have one
+        if (!_currentSessionGroup)
+        {
+            _currentSessionGroup = mapRoot->getSelectionGroupManager().createSelectionGroup();
+        }
+
+        _currentSessionGroup->addNode(decalNode);
+    }
+}
+
+void DecalShooterPanel::resetSessionGroup()
+{
+    _currentSessionGroup.reset();
+}
+
 void DecalShooterPanel::onPanelActivated()
 {
+    connectToMapRoot();
 }
 
 void DecalShooterPanel::onPanelDeactivated()
 {
+    resetSessionGroup();
 }
 
 void DecalShooterPanel::populateWindow()
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    wxFlexGridSizer* gridSizer = new wxFlexGridSizer(4, 2, 6, 12);
+    wxFlexGridSizer* gridSizer = new wxFlexGridSizer(6, 2, 6, 12);
     gridSizer->AddGrowableCol(1);
 
     wxStaticText* widthLabel = new wxStaticText(this, wxID_ANY, _("Width:"));
@@ -105,6 +192,26 @@ void DecalShooterPanel::populateWindow()
     gridSizer->Add(offsetLabel, 0, wxALIGN_CENTER_VERTICAL);
     gridSizer->Add(_offsetCtrl, 1, wxEXPAND);
 
+    wxStaticText* rotationLabel = new wxStaticText(this, wxID_ANY, _("Rotation:"));
+
+    wxBoxSizer* rotationSizer = new wxBoxSizer(wxHORIZONTAL);
+    _rotationCtrl = new wxSpinCtrlDouble(this, wxID_ANY);
+    _rotationCtrl->SetRange(-180.0, 180.0);
+    _rotationCtrl->SetValue(0.0);
+    _rotationCtrl->SetIncrement(15.0);
+    _rotationCtrl->SetDigits(1);
+    _rotationCtrl->SetToolTip(_("Rotation angle in degrees"));
+
+    _randomRotationCheckbox = new wxCheckBox(this, wxID_ANY, _("Random"));
+    _randomRotationCheckbox->SetToolTip(_("Apply a random rotation for each decal"));
+    _randomRotationCheckbox->Bind(wxEVT_CHECKBOX, &DecalShooterPanel::onRandomRotationToggled, this);
+
+    rotationSizer->Add(_rotationCtrl, 1, wxEXPAND | wxRIGHT, 4);
+    rotationSizer->Add(_randomRotationCheckbox, 0, wxALIGN_CENTER_VERTICAL);
+
+    gridSizer->Add(rotationLabel, 0, wxALIGN_CENTER_VERTICAL);
+    gridSizer->Add(rotationSizer, 1, wxEXPAND);
+
     wxStaticText* materialLabel = new wxStaticText(this, wxID_ANY, _("Material:"));
 
     wxBoxSizer* materialSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -122,7 +229,29 @@ void DecalShooterPanel::populateWindow()
     gridSizer->Add(materialLabel, 0, wxALIGN_CENTER_VERTICAL);
     gridSizer->Add(materialSizer, 1, wxEXPAND);
 
+    // Layer choice
+    wxStaticText* layerLabel = new wxStaticText(this, wxID_ANY, _("Layer:"));
+    _layerChoice = new wxChoice(this, wxID_ANY);
+    _layerChoice->SetToolTip(_("Assign created decals to this layer"));
+    populateLayerChoice();
+    gridSizer->Add(layerLabel, 0, wxALIGN_CENTER_VERTICAL);
+    gridSizer->Add(_layerChoice, 1, wxEXPAND);
+
     GetSizer()->Add(gridSizer, 0, wxEXPAND | wxALL, 12);
+
+    // Checkboxes row
+    wxBoxSizer* checkboxSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    _autogroupCheckbox = new wxCheckBox(this, wxID_ANY, _("Autogroup"));
+    _autogroupCheckbox->SetToolTip(_("When enabled, all decals placed during this tool session will be grouped together"));
+    _autogroupCheckbox->Bind(wxEVT_CHECKBOX, &DecalShooterPanel::onAutogroupToggled, this);
+    checkboxSizer->Add(_autogroupCheckbox, 0, wxRIGHT, 12);
+
+    _flipCheckbox = new wxCheckBox(this, wxID_ANY, _("Flip"));
+    _flipCheckbox->SetToolTip(_("Flip the decal. Useful for decals facing the wrong direction."));
+    checkboxSizer->Add(_flipCheckbox, 0);
+
+    GetSizer()->Add(checkboxSizer, 0, wxLEFT | wxRIGHT | wxBOTTOM, 12);
 
     wxStaticText* helpText = new wxStaticText(this, wxID_ANY,
         _("Use Ctrl+Shift+Middle-Click\nin the 3D view to place decals."));
@@ -135,6 +264,93 @@ void DecalShooterPanel::onBrowseMaterial(wxCommandEvent& ev)
     auto* chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular, _materialEntry);
     chooser->ShowModal();
     chooser->Destroy();
+}
+
+void DecalShooterPanel::onAutogroupToggled(wxCommandEvent& ev)
+{
+    if (!_autogroupCheckbox->GetValue())
+    {
+        resetSessionGroup();
+    }
+}
+
+void DecalShooterPanel::onRandomRotationToggled(wxCommandEvent& ev)
+{
+    // Disable the rotation text field when randomizer is enabled
+    if (_rotationCtrl)
+    {
+        _rotationCtrl->Enable(!_randomRotationCheckbox->GetValue());
+    }
+}
+
+void DecalShooterPanel::populateLayerChoice()
+{
+    if (!_layerChoice)
+    {
+        return;
+    }
+
+    int previousSelection = getSelectedLayerId();
+
+    _layerChoice->Clear();
+    _layerChoice->Append(_("None"), reinterpret_cast<void*>(static_cast<intptr_t>(-1)));
+
+    auto mapRoot = GlobalMapModule().getRoot();
+    if (mapRoot)
+    {
+        mapRoot->getLayerManager().foreachLayer([this](int layerId, const std::string& layerName)
+        {
+            _layerChoice->Append(layerName, reinterpret_cast<void*>(static_cast<intptr_t>(layerId)));
+        });
+    }
+
+    if (previousSelection >= 0)
+    {
+        for (unsigned int i = 0; i < _layerChoice->GetCount(); ++i)
+        {
+            int layerId = static_cast<int>(reinterpret_cast<intptr_t>(_layerChoice->GetClientData(i)));
+            if (layerId == previousSelection)
+            {
+                _layerChoice->SetSelection(i);
+                return;
+            }
+        }
+    }
+
+    _layerChoice->SetSelection(0);
+}
+
+void DecalShooterPanel::onLayersChanged()
+{
+    populateLayerChoice();
+}
+
+void DecalShooterPanel::connectToMapRoot()
+{
+    _layersChangedConnection.disconnect();
+
+    auto mapRoot = GlobalMapModule().getRoot();
+    if (mapRoot)
+    {
+        _layersChangedConnection = mapRoot->getLayerManager().signal_layersChanged().connect(
+            sigc::mem_fun(*this, &DecalShooterPanel::onLayersChanged)
+        );
+    }
+
+    populateLayerChoice();
+}
+
+void DecalShooterPanel::onMapEvent(IMap::MapEvent ev)
+{
+    if (ev == IMap::MapLoaded)
+    {
+        connectToMapRoot();
+    }
+    else if (ev == IMap::MapUnloading)
+    {
+        _layersChangedConnection.disconnect();
+        resetSessionGroup();
+    }
 }
 
 } // namespace ui
