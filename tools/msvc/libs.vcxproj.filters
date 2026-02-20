@@ -105,6 +105,15 @@
     <ClInclude Include="..\..\libs\string\convert.h">
       <Filter>string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\noise\SimplexNoise.h">
+      <Filter>noise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\noise\PerlinNoise.h">
+      <Filter>noise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\noise\Noise.h">
+      <Filter>noise</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\libs\util\ScopedBoolLock.h">
       <Filter>util</Filter>
     </ClInclude>
@@ -467,6 +476,9 @@
     </Filter>
     <Filter Include="decl">
       <UniqueIdentifier>{b6509c1f-67af-4737-b9d9-833a01c4bdd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="noise">
+      <UniqueIdentifier>{d4ce22a9-f44f-4484-9b65-e5a593ba35d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

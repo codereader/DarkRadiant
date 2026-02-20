@@ -203,6 +203,9 @@
     <Filter Include="src\ui\scatter">
       <UniqueIdentifier>{41fb15cf-e351-4f2a-97a8-8278c61c6a75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\terrain">
+      <UniqueIdentifier>{ba840bd8-ef36-4397-b595-0953f3c805f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -699,6 +702,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp">
       <Filter>src\ui\transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\terrain\TerrainGeneratorDialog.cpp">
+      <Filter>src\ui\terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\merge\MapMergePanel.cpp">
       <Filter>src\ui\merge</Filter>
@@ -1433,6 +1439,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanel.h">
       <Filter>src\ui\transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\terrain\TerrainGeneratorDialog.h">
+      <Filter>src\ui\terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\merge\MapMergePanel.h">
       <Filter>src\ui\merge</Filter>

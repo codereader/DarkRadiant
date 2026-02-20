@@ -29,8 +29,8 @@ private:
                                           {0, 1, -1},
                                           {0, -1, -1}};
 
-    static constexpr double F2 = 0.5 * (std::sqrt(3.0) - 1.0);
-    static constexpr double G2 = (3.0 - std::sqrt(3.0)) / 6.0;
+    static constexpr double F2 = 0.5 * (/*std::sqrt(3.0)=*/1.73205080757 - 1.0);
+    static constexpr double G2 = (3.0 - /*std::sqrt(3.0)=*/1.73205080757) / 6.0;
 
     static double dot2(const double g[], double x, double y)
     {
