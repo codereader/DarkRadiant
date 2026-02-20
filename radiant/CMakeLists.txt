@@ -103,6 +103,7 @@ add_executable(darkradiant
                ui/materials/MaterialChooser.cpp
                ui/materials/MaterialPopulator.cpp
                ui/materials/MaterialSelector.cpp
+               ui/materials/MaterialThumbnailBrowser.cpp
                ui/materials/MaterialTreeView.cpp
                ui/merge/MapMergePanel.cpp
                ui/animationpreview/AnimationPreview.cpp

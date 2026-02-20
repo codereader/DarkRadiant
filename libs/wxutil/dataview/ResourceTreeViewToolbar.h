@@ -4,6 +4,7 @@
 #include <wx/radiobut.h>
 #include <wx/bmpbuttn.h>
 #include <wx/timer.h>
+#include <sigc++/signal.h>
 
 #include "ResourceTreeView.h"
 
@@ -32,6 +33,8 @@ private:
 
     wxTimer _applyFilterTimer;
 
+    sigc::signal<void(const std::string&)> _signalFilterTextChanged;
+
 public:
     ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView = nullptr);
 
@@ -46,6 +49,12 @@ public:
     void AssociateToTreeView(ResourceTreeView* treeView);
 
     void ClearFilter();
+
+    // Returns the current filter text
+    std::string GetFilterText() const;
+
+    // Signal emitted when the filter text changes
+    sigc::signal<void(const std::string&)>& signal_filterTextChanged();
 
 private:
     void JumpToNextFilterMatch();

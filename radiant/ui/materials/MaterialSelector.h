@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <sigc++/connection.h>
 #include "wxutil/decl/DeclarationSelector.h"
 
 // FORWARD DECLS
@@ -8,9 +9,12 @@ class Material;
 typedef std::shared_ptr<Material> MaterialPtr;
 
 class wxDataViewCtrl;
+class wxBitmapToggleButton;
 
 namespace ui
 {
+
+class MaterialThumbnailBrowser;
 
 /**
  * A widget that allows the selection of a material. The widget contains
@@ -37,19 +41,27 @@ public:
 
 private:
     TextureFilter _textureFilter;
+    MaterialThumbnailBrowser* _thumbnailBrowser;
+    wxBitmapToggleButton* _viewToggleBtn;
+    bool _showingThumbnails;
 
     sigc::signal<void()> _selectionChanged;
+    sigc::connection _thumbnailSelectionConn;
+    sigc::connection _thumbnailActivatedConn;
+    sigc::connection _filterTextChangedConn;
 
 public:
     /**
      * @brief Constructor.
-     * 
+     *
      * @param filter Texture set to show in the selector
      */
     MaterialSelector(wxWindow* parent, TextureFilter filter);
+    ~MaterialSelector() override;
 
     // Get the selected Material
     MaterialPtr getSelectedShader();
+    std::string GetSelectedDeclName() const override;
 
     /// Signal emitted when the selection is changed by the user
     sigc::signal<void()> signal_selectionChanged() const { return _selectionChanged; }
@@ -58,6 +70,17 @@ public:
 
 protected:
     void onTreeViewSelectionChanged() override;
+    bool onTreeViewItemActivated() override;
+
+private:
+    void createThumbnailBrowser();
+    void createViewToggleButton();
+    void connectFilterSignal();
+    void switchView(bool showThumbnails);
+    void onViewToggle(wxCommandEvent& ev);
+    void onThumbnailSelectionChanged();
+    void onThumbnailItemActivated();
+    void onFilterTextChanged(const std::string& filterText);
 };
 
 } // namespace ui

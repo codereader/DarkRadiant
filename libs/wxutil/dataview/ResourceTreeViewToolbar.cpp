@@ -122,6 +122,18 @@ void ResourceTreeViewToolbar::ClearFilter()
     {
         _treeView->SetFilterText("");
     }
+
+    _signalFilterTextChanged.emit("");
+}
+
+std::string ResourceTreeViewToolbar::GetFilterText() const
+{
+    return _filterEntry->GetValue().ToStdString();
+}
+
+sigc::signal<void(const std::string&)>& ResourceTreeViewToolbar::signal_filterTextChanged()
+{
+    return _signalFilterTextChanged;
 }
 
 void ResourceTreeViewToolbar::JumpToNextFilterMatch()
@@ -238,6 +250,8 @@ void ResourceTreeViewToolbar::_onFilterTimeoutReached(wxTimerEvent& ev)
     }
 
     _filterEntry->Refresh();
+
+    _signalFilterTextChanged.emit(filterText.ToStdString());
 }
 
 }

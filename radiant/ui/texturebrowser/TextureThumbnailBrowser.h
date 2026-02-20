@@ -219,7 +219,16 @@ private:
      *          When successful, this applies the shader to the
      *          current selection.
      */
-    void selectTextureAt(int mx, int my);
+    void selectTextureAt(int mx, int my, bool activated);
+
+protected:
+    // Called when a material is selected. Default applies shader to selection.
+    virtual void handleMaterialSelection(const MaterialPtr& material);
+
+    // Called when a material is activated (double-click). Default does nothing.
+    virtual void handleMaterialActivated(const MaterialPtr& material);
+
+private:
 
 	// wx callbacks
 	bool onRender();

@@ -83,6 +83,12 @@ public:
 protected:
     DeclarationTreeView* GetTreeView() const;
 
+    // Returns the left panel containing the tree view
+    wxPanel* GetLeftPanel() const;
+
+    // Returns the sizer containing the tree view (for adding widgets alongside tree view)
+    wxSizer* GetTreeViewSizer() const;
+
     // Adds a preview widget to the right of the tree view
     void AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion = 1);
     void AddPreviewToBottom(ui::IDeclarationPreview* preview, int sizerProportion = 0);
@@ -92,6 +98,9 @@ protected:
     const DeclarationTreeView::Columns& GetColumns() const;
 
     void PopulateTreeView(const IResourceTreePopulator::Ptr& populator);
+
+    // Manually update all preview widgets with the given declaration name
+    void UpdatePreviewsWithDeclaration(const std::string& declName);
 
     // Event method invoked when the tree view selection has been changed
     virtual void onTreeViewSelectionChanged()

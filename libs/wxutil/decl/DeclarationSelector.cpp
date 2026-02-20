@@ -144,6 +144,16 @@ DeclarationTreeView* DeclarationSelector::GetTreeView() const
     return _treeView;
 }
 
+wxPanel* DeclarationSelector::GetLeftPanel() const
+{
+    return _leftPanel;
+}
+
+wxSizer* DeclarationSelector::GetTreeViewSizer() const
+{
+    return _treeVbox;
+}
+
 const DeclarationTreeView::Columns& DeclarationSelector::GetColumns() const
 {
     return _columns;
@@ -162,6 +172,23 @@ void DeclarationSelector::SetSelectedDeclName(const std::string& declName)
 void DeclarationSelector::PopulateTreeView(const IResourceTreePopulator::Ptr& populator)
 {
     _treeView->Populate(populator);
+}
+
+void DeclarationSelector::UpdatePreviewsWithDeclaration(const std::string& declName)
+{
+    for (auto preview : _previews)
+    {
+        preview->SetPreviewDeclName(declName);
+    }
+
+    if (!declName.empty())
+    {
+        _declFileInfo->SetDeclarationName(declName);
+    }
+    else
+    {
+        _declFileInfo->Clear();
+    }
 }
 
 const DeclarationTreeView::Columns& DeclarationSelector::CreateDefaultColumns()

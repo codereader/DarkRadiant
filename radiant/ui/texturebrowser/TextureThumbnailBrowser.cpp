@@ -688,18 +688,28 @@ MaterialPtr TextureThumbnailBrowser::getShaderAtCoords(int x, int y)
     return {};
 }
 
-void TextureThumbnailBrowser::selectTextureAt(int mx, int my)
+void TextureThumbnailBrowser::selectTextureAt(int mx, int my, bool activated)
 {
     if (auto shader = getShaderAtCoords(mx, my); shader)
     {
         setSelectedShader(shader->getName());
+        handleMaterialSelection(shader);
 
-        // Apply the shader to the current selection
-        GlobalCommandSystem().executeCommand("SetShaderOnSelection", shader->getName());
-
-		// Copy the shader name to the clipboard too
-		GlobalShaderClipboard().setSourceShader(shader->getName());
+        if (activated)
+        {
+            handleMaterialActivated(shader);
+        }
     }
+}
+
+void TextureThumbnailBrowser::handleMaterialSelection(const MaterialPtr& material)
+{
+    GlobalCommandSystem().executeCommand("SetShaderOnSelection", material->getName());
+    GlobalShaderClipboard().setSourceShader(material->getName());
+}
+
+void TextureThumbnailBrowser::handleMaterialActivated(const MaterialPtr& /*material*/)
+{
 }
 
 void TextureThumbnailBrowser::draw()
@@ -907,11 +917,12 @@ void TextureThumbnailBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
         _popupY = getViewportSize().y() - 1 - static_cast<int>(ev.GetY());
         _startOrigin = _viewportOriginY;
     }
-	else if (ev.LeftDown())
+	else if (ev.LeftDown() || ev.LeftDClick())
     {
         selectTextureAt(
             static_cast<int>(ev.GetX()),
-            getViewportSize().y() - 1 - static_cast<int>(ev.GetY())
+            getViewportSize().y() - 1 - static_cast<int>(ev.GetY()),
+            ev.LeftDClick() // activated on double-click
         );
     }
 }
