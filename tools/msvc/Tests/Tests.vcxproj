@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\..\test\Settings.cpp" />
     <ClCompile Include="..\..\..\test\Skin.cpp" />
     <ClCompile Include="..\..\..\test\SoundManager.cpp" />
+    <ClCompile Include="..\..\..\test\TerrainGenerator.cpp" />
     <ClCompile Include="..\..\..\test\TestOrthoViewManager.cpp" />
     <ClCompile Include="..\..\..\test\TextureManipulation.cpp" />
     <ClCompile Include="..\..\..\test\TextureTool.cpp" />
