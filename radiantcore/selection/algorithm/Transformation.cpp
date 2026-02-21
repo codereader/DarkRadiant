@@ -23,6 +23,9 @@
 #include "iarray.h"
 #include "ibrush.h"
 #include "icameraview.h"
+#include "ipatch.h"
+
+#include "noise/Noise.h"
 
 #include "scenelib.h"
 #include "selectionlib.h"
@@ -1570,6 +1573,83 @@ void scatterObjectsCmd(const cmd::ArgumentList &args) {
 
   scatterObjects(densityMethod, distribution, density, amount, minDistance,
                  seed, faceDirection, rotationRange, alignToNormal);
+}
+
+void generateTerrainCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 16)
+	{
+		rWarning() << "Usage: GenerateTerrain <algorithm:int> <seed:int> <frequency:double> <amplitude:double> "
+			<< "<octaves:int> <persistence:double> <lacunarity:double> <offset:double> "
+			<< "<columns:int> <rows:int> <physicalWidth:double> <physicalHeight:double> "
+			<< "<spawnX:double> <spawnY:double> <spawnZ:double> <material:string>" << std::endl;
+		return;
+	}
+
+	noise::NoiseParameters params;
+	params.algorithm = static_cast<noise::Algorithm>(args[0].getInt());
+	params.seed = static_cast<unsigned int>(args[1].getInt());
+	params.frequency = args[2].getDouble();
+	params.amplitude = args[3].getDouble();
+	params.octaves = args[4].getInt();
+	params.persistence = args[5].getDouble();
+	params.lacunarity = args[6].getDouble();
+	params.offset = args[7].getDouble();
+
+	std::size_t columns = static_cast<std::size_t>(args[8].getInt());
+	std::size_t rows = static_cast<std::size_t>(args[9].getInt());
+	float physicalWidth = static_cast<float>(args[10].getDouble());
+	float physicalHeight = static_cast<float>(args[11].getDouble());
+
+	Vector3 spawnPos(args[12].getDouble(), args[13].getDouble(), args[14].getDouble());
+	std::string material = args[15].getString();
+
+	UndoableCommand undo("terrainGeneratorCreate");
+
+	GlobalSelectionSystem().setSelectedAll(false);
+
+	scene::INodePtr node = GlobalPatchModule().createPatch(patch::PatchDefType::Def2);
+
+	GlobalMapModule().findOrInsertWorldspawn()->addChildNode(node);
+
+	IPatch* patch = Node_getIPatch(node);
+	if (!patch)
+	{
+		return;
+	}
+
+	patch->setDims(columns, rows);
+
+	noise::NoiseGenerator noiseGen(params);
+	float spacingX = physicalWidth / static_cast<float>(columns - 1);
+	float spacingY = physicalHeight / static_cast<float>(rows - 1);
+	float offsetX = static_cast<float>(spawnPos.x()) - physicalWidth / 2.0f;
+	float offsetY = static_cast<float>(spawnPos.y()) - physicalHeight / 2.0f;
+	float baseZ = static_cast<float>(spawnPos.z());
+
+	for (std::size_t row = 0; row < rows; ++row)
+	{
+		for (std::size_t col = 0; col < columns; ++col)
+		{
+			PatchControl& ctrl = patch->ctrlAt(row, col);
+
+			float worldX = offsetX + col * spacingX;
+			float worldY = offsetY + row * spacingY;
+			float noiseValue = static_cast<float>(noiseGen.sample(worldX, worldY));
+
+			ctrl.vertex.x() = worldX;
+			ctrl.vertex.y() = worldY;
+			ctrl.vertex.z() = baseZ + noiseValue;
+			ctrl.texcoord.x() = static_cast<float>(col) / static_cast<float>(columns - 1);
+			ctrl.texcoord.y() = static_cast<float>(row) / static_cast<float>(rows - 1);
+		}
+	}
+
+	patch->controlPointsChanged();
+	patch->setShader(material);
+	patch->scaleTextureNaturally();
+
+	Node_setSelected(node, true);
 }
 
 } // namespace algorithm
