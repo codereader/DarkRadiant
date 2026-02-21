@@ -170,6 +170,11 @@ void arrayCloneSelectedSplineCmd(const cmd::ArgumentList& args);
  */
 void scatterObjectsCmd(const cmd::ArgumentList& args);
 
+/**
+ * Generates a terrain patch using noise.
+ */
+void generateTerrainCmd(const cmd::ArgumentList& args);
+
 } // namespace algorithm
 
 } // namespace selection

@@ -2,17 +2,13 @@
 
 #include "i18n.h"
 #include "ui/imainframe.h"
-#include "imap.h"
-#include "ipatch.h"
+#include "icommandsystem.h"
 #include "iselection.h"
 #include "icameraview.h"
-#include "iscenegraph.h"
 #include "ishaderclipboard.h"
-#include "iundo.h"
 
 #include "string/convert.h"
 #include "selectionlib.h"
-#include "scenelib.h"
 #include "shaderlib.h"
 
 #include <random>
@@ -246,72 +242,25 @@ void TerrainGeneratorDialog::Show(const cmd::ArgumentList& args)
         return;
     }
 
-    noise::NoiseParameters params;
-    params.algorithm = dialog.getAlgorithm();
-    params.seed = dialog.getSeed();
-    params.frequency = dialog.getFrequency();
-    params.amplitude = dialog.getAmplitude();
-    params.octaves = dialog.getOctaves();
-    params.persistence = dialog.getPersistence();
-    params.lacunarity = dialog.getLacunarity();
-    params.offset = dialog.getOffset();
-
-    std::size_t columns = dialog.getColumns();
-    std::size_t rows = dialog.getRows();
-    float physicalWidth = dialog.getPhysicalWidth();
-    float physicalHeight = dialog.getPhysicalHeight();
-    std::string material = dialog.getMaterial();
-
     Vector3 spawnPos = getSpawnPosition();
 
-    UndoableCommand undo("terrainGeneratorCreate");
-
-    GlobalSelectionSystem().setSelectedAll(false);
-
-    scene::INodePtr node = GlobalPatchModule().createPatch(patch::PatchDefType::Def2);
-
-    GlobalMapModule().findOrInsertWorldspawn()->addChildNode(node);
-
-    IPatch* patch = Node_getIPatch(node);
-    if (!patch)
-    {
-        return;
-    }
-
-    patch->setDims(columns, rows);
-
-    // Create noise generator
-    noise::NoiseGenerator noiseGen(params);
-    float spacingX = physicalWidth / static_cast<float>(columns - 1);
-    float spacingY = physicalHeight / static_cast<float>(rows - 1);
-    float offsetX = spawnPos.x() - physicalWidth / 2.0f;
-    float offsetY = spawnPos.y() - physicalHeight / 2.0f;
-    float baseZ = spawnPos.z();
-
-    // Fill in points based on thr noise
-    for (std::size_t row = 0; row < rows; ++row)
-    {
-        for (std::size_t col = 0; col < columns; ++col)
-        {
-            PatchControl& ctrl = patch->ctrlAt(row, col);
-
-            float worldX = offsetX + col * spacingX;
-            float worldY = offsetY + row * spacingY;
-            float noiseValue = static_cast<float>(noiseGen.sample(worldX, worldY));
-
-            ctrl.vertex.x() = worldX;
-            ctrl.vertex.y() = worldY;
-            ctrl.vertex.z() = baseZ + noiseValue;
-            ctrl.texcoord.x() = static_cast<float>(col) / static_cast<float>(columns - 1);
-            ctrl.texcoord.y() = static_cast<float>(row) / static_cast<float>(rows - 1);
-        }
-    }
-
-    patch->controlPointsChanged();
-    patch->setShader(material);
-    patch->scaleTextureNaturally();
-
-    Node_setSelected(node, true);
+    GlobalCommandSystem().executeCommand("GenerateTerrain",
+        { cmd::Argument(static_cast<int>(dialog.getAlgorithm())),
+          cmd::Argument(static_cast<int>(dialog.getSeed())),
+          cmd::Argument(static_cast<double>(dialog.getFrequency())),
+          cmd::Argument(static_cast<double>(dialog.getAmplitude())),
+          cmd::Argument(dialog.getOctaves()),
+          cmd::Argument(static_cast<double>(dialog.getPersistence())),
+          cmd::Argument(static_cast<double>(dialog.getLacunarity())),
+          cmd::Argument(static_cast<double>(dialog.getOffset())),
+          cmd::Argument(static_cast<int>(dialog.getColumns())),
+          cmd::Argument(static_cast<int>(dialog.getRows())),
+          cmd::Argument(static_cast<double>(dialog.getPhysicalWidth())),
+          cmd::Argument(static_cast<double>(dialog.getPhysicalHeight())),
+          cmd::Argument(spawnPos.x()),
+          cmd::Argument(spawnPos.y()),
+          cmd::Argument(spawnPos.z()),
+          cmd::Argument(dialog.getMaterial()) });
 }
 
 } // namespace ui
