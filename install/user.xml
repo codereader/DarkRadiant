@@ -177,6 +177,7 @@
     <brush>
       <textureLock value="1" />
       <emitCSGSubtractWarning value="1" />
+      <csgSubtractPreserveTexture value="0" />
     </brush>
     <patch>
       <patchInspector>

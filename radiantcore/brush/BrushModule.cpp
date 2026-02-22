@@ -36,6 +36,9 @@ void BrushModuleImpl::constructPreferences()
 
 	// The checkbox to enable/disable the texture lock option
 	page.appendCheckBox(_("Enable Texture Lock (for Brushes)"), "user/ui/brush/textureLock");
+
+	// The checkbox to enable/diosable the preserving of texture during CSG Subtract
+	page.appendCheckBox(_("CSG Subtract: preserve textures of target brush"), "user/ui/brush/csgSubtractPreserveTexture");
 }
 
 void BrushModuleImpl::construct()
