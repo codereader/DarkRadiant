@@ -29,6 +29,7 @@ namespace algorithm
 {
 
 const std::string RKEY_EMIT_CSG_SUBTRACT_WARNING("user/ui/brush/emitCSGSubtractWarning");
+const std::string RKEY_CSG_SUBTRACT_PRESERVE_TEXTURE("user/ui/brush/csgSubtractPreserveTexture");
 
 void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
 {
@@ -122,8 +123,33 @@ void makeRoomForSelectedBrushes(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
+const Face& findBestMatchingFace(const Brush& brush, const Vector3& normal)
+{
+	const Face* bestFace = nullptr;
+	double bestDot = -2;
+
+	for (Brush::const_iterator i = brush.begin(); i != brush.end(); ++i)
+	{
+		const Face& face = *(*i);
+
+		if (!face.contributes()) continue;
+
+		double dot = face.getPlane3().normal().dot(normal);
+
+		if (dot > bestDot)
+		{
+			bestDot = dot;
+			bestFace = &face;
+		}
+	}
+
+	assert(bestFace != nullptr);
+
+	return *bestFace;
+}
+
 // Returns true if fragments have been inserted into the given ret_fragments list
-bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVector& ret_fragments)
+bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVector& ret_fragments, bool preserveTexture = false)
 {
 	if (brush->getBrush().localAABB().intersects(other.localAABB()))
 	{
@@ -149,9 +175,23 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 				if (newFace != 0)
 				{
 					newFace->flipWinding();
+
+					if (preserveTexture)
+					{
+						const Face& bestFace = findBestMatchingFace(brush->getBrush(), newFace->getPlane3().normal());
+						newFace->setShader(bestFace.getShader());
+						newFace->SetTexdef(bestFace.getProjection());
+					}
 				}
 
-				back->getBrush().addFace(face);
+				FacePtr backFace = back->getBrush().addFace(face);
+
+				if (preserveTexture && backFace != 0)
+				{
+					const Face& bestFace = findBestMatchingFace(brush->getBrush(), backFace->getPlane3().normal());
+					backFace->setShader(bestFace.getShader());
+					backFace->SetTexdef(bestFace.getProjection());
+				}
 			}
 			else if (split.counts[ePlaneBack] == 0)
 			{
@@ -206,6 +246,7 @@ class SubtractBrushesFromUnselected :
 	const BrushPtrVector& _brushlist;
 	std::size_t& _before;
 	std::size_t& _after;
+	bool _preserveTexture;
 
 	BrushPtrVector _unselectedBrushes;
 
@@ -213,7 +254,8 @@ public:
 	SubtractBrushesFromUnselected(const BrushPtrVector& brushlist, std::size_t& before, std::size_t& after) :
 		_brushlist(brushlist),
 		_before(before),
-		_after(after)
+		_after(after),
+		_preserveTexture(registry::getValue<bool>(RKEY_CSG_SUBTRACT_PRESERVE_TEXTURE))
 	{}
 
 	bool pre(const scene::INodePtr& node) override
@@ -259,7 +301,7 @@ private:
 		{
 			for (const auto& target : buffer[swap])
 			{
-				if (Brush_subtract(target, selectedBrush->getBrush(), buffer[1 - swap]))
+				if (Brush_subtract(target, selectedBrush->getBrush(), buffer[1 - swap], _preserveTexture))
 				{
 					// greebo: Delete not necessary, nodes get deleted automatically by clear() below
 					// delete (*j);
