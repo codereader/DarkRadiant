@@ -1,8 +1,12 @@
 #include "GroupCycle.h"
 
 #include "iselectable.h"
+#include "iselectiongroup.h"
+#include "imap.h"
 #include "selectionlib.h"
 #include "iscenegraph.h"
+
+#include <algorithm>
 
 namespace selection {
 
@@ -65,6 +69,47 @@ void GroupCycle::rescanSelection() {
 
 		algorithm::ChildNodeFinder finder(_list);
 		node->traverse(finder);
+	}
+	else if (info.totalCount > 1)
+	{
+		// Check if all selected nodes share a common selection group
+		std::size_t commonGroupId = 0;
+		bool hasCommonGroup = true;
+		bool first = true;
+
+		GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node) {
+			if (!hasCommonGroup) return;
+
+			auto groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+			if (!groupSelectable || !groupSelectable->isGroupMember()) {
+				hasCommonGroup = false;
+				return;
+			}
+
+			if (first) {
+				commonGroupId = groupSelectable->getMostRecentGroupId();
+				first = false;
+			} else {
+				const auto& ids = groupSelectable->getGroupIds();
+				if (std::find(ids.begin(), ids.end(), commonGroupId) == ids.end()) {
+					hasCommonGroup = false;
+				}
+			}
+		});
+
+		if (hasCommonGroup && !first) {
+			auto root = GlobalMapModule().getRoot();
+			if (root) {
+				auto group = root->getSelectionGroupManager().getSelectionGroup(commonGroupId);
+				if (group) {
+					group->foreachNode([&](const scene::INodePtr& node) {
+						if (node->visible()) {
+							_list.push_back(node);
+						}
+					});
+				}
+			}
+		}
 	}
 }
 
