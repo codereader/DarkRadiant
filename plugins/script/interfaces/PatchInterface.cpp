@@ -135,6 +135,14 @@ void ScriptPatchNode::controlPointsChanged()
 	patchNode->getPatch().controlPointsChanged();
 }
 
+void ScriptPatchNode::translateTexture(float s, float t)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
+
+	patchNode->getPatch().translateTexture(s, t);
+}
+
 const std::string& ScriptPatchNode::getShader() const
 {
 	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
@@ -265,6 +273,7 @@ void PatchInterface::registerInterface(py::module& scope, py::dict& globals)
 	patchNode.def("getSubdivisions", &ScriptPatchNode::getSubdivisions);
 	patchNode.def("setFixedSubdivisions", &ScriptPatchNode::setFixedSubdivisions);
 	patchNode.def("controlPointsChanged", &ScriptPatchNode::controlPointsChanged);
+	patchNode.def("translateTexture", &ScriptPatchNode::translateTexture);
 	patchNode.def("getTesselatedPatchMesh", &ScriptPatchNode::getTesselatedPatchMesh);
 
 	// Define the GlobalPatchCreator interface
