@@ -145,6 +145,7 @@ add_executable(darkradiant
                ui/patch/BulgePatchDialog.cpp
                ui/patch/CapDialog.cpp
                ui/patch/PatchCreateDialog.cpp
+               ui/patch/PatchPrefabDialog.cpp
                ui/patch/PatchInspector.cpp
                ui/patch/PatchThickenDialog.cpp
                ui/PointFileChooser.cpp

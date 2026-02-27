@@ -16,14 +16,14 @@
 		<bind name="BrushCone" value="QueryBrushPrefabSidesDialog 2" readonly="1" />
 		<bind name="BrushSphere" value="QueryBrushPrefabSidesDialog 3" readonly="1" />
 		<!-- Patch Prefab commands -->
-		<bind name="PatchCylinder" value="CreatePatchPrefab cylinder" readonly="1" />
-		<bind name="PatchDenseCylinder" value="CreatePatchPrefab densecylinder" readonly="1" />
-		<bind name="PatchVeryDenseCylinder" value="CreatePatchPrefab verydensecylinder" readonly="1" />
-		<bind name="PatchSquareCylinder" value="CreatePatchPrefab squarecylinder" readonly="1" />
-		<bind name="PatchEndCap" value="CreatePatchPrefab endcap" readonly="1" />
-		<bind name="PatchBevel" value="CreatePatchPrefab bevel" readonly="1" />
-		<bind name="PatchCone" value="CreatePatchPrefab cone" readonly="1" />
-		<bind name="PatchSphere" value="CreatePatchPrefab sphere" readonly="1" />
+		<bind name="PatchCylinder" value="CreatePrefabPatchDialog cylinder" readonly="1" />
+		<bind name="PatchDenseCylinder" value="CreatePrefabPatchDialog densecylinder" readonly="1" />
+		<bind name="PatchVeryDenseCylinder" value="CreatePrefabPatchDialog verydensecylinder" readonly="1" />
+		<bind name="PatchSquareCylinder" value="CreatePrefabPatchDialog squarecylinder" readonly="1" />
+		<bind name="PatchEndCap" value="CreatePrefabPatchDialog endcap" readonly="1" />
+		<bind name="PatchBevel" value="CreatePrefabPatchDialog bevel" readonly="1" />
+		<bind name="PatchCone" value="CreatePrefabPatchDialog cone" readonly="1" />
+		<bind name="PatchSphere" value="CreatePrefabPatchDialog sphere" readonly="1" />
 		<!-- Texture Manipulation -->
 		<bind name="TexRotateClock" value="TexRotate 1" readonly="1" />
 		<bind name="TexRotateCounter" value="TexRotate -1" readonly="1" />

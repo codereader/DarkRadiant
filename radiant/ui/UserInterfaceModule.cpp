@@ -60,6 +60,7 @@
 #include "ui/animationpreview/MD5AnimationViewer.h"
 #include "ui/layers/CreateLayerDialog.h"
 #include "ui/patch/PatchCreateDialog.h"
+#include "ui/patch/PatchPrefabDialog.h"
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/scatter/ScatterDialog.h"
 #include "ui/terrain/TerrainGeneratorDialog.h"
@@ -537,6 +538,7 @@ void UserInterfaceModule::registerUICommands()
     GlobalCommandSystem().addWithCheck("ThickenPatchDialog", PatchThickenDialog::Show,
                                        selection::pred::havePatch);
     GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
+    GlobalCommandSystem().addCommand("CreatePrefabPatchDialog", PatchPrefabDialog::Show, { cmd::ARGTYPE_STRING });
 
     GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
     GlobalCommandSystem().addWithCheck("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show,

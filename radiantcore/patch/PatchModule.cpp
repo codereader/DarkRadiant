@@ -75,7 +75,8 @@ void PatchModule::shutdownModule()
 void PatchModule::registerPatchCommands()
 {
 	// First connect the commands to the code
-	GlobalCommandSystem().addCommand("CreatePatchPrefab", patch::algorithm::createPrefab, { cmd::ARGTYPE_STRING });
+	GlobalCommandSystem().addCommand("CreatePatchPrefab", patch::algorithm::createPrefab,
+		{ cmd::ARGTYPE_STRING, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 
 	// Two optional integer arguments
 	GlobalCommandSystem().addCommand("CreateSimplePatchMesh", patch::algorithm::createSimplePatch,

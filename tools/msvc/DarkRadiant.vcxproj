@@ -336,6 +336,7 @@
     <ClCompile Include="..\..\radiant\ui\patch\BulgePatchDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\CapDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchCreateDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\patch\PatchPrefabDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchInspector.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchThickenDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\PointFileChooser.cpp" />
@@ -574,6 +575,7 @@
     <ClInclude Include="..\..\radiant\ui\patch\BulgePatchDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\CapDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchCreateDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\patch\PatchPrefabDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchInspector.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchInspectorControl.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h" />
