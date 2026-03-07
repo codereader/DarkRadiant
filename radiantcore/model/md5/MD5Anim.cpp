@@ -147,10 +147,10 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 
 		int version = string::convert<int>(tok.nextToken());
 
-		if (version != 10)
+		if (version != 10 && version != 11 && version != 12)
 		{
-			rWarning() << "Unexpected version encountered: " << version 
-				<< " (expected 10), will attempt to load anyway." << std::endl;
+			rWarning() << "Unexpected MD5 version encountered: " << version
+				<< " (expected 10, 11, or 12), will attempt to load anyway." << std::endl;
 		}
 
 		tok.assertNextToken("commandline");

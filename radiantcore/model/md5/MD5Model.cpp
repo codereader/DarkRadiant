@@ -205,7 +205,12 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 
 	// Check the version number
 	tok.assertNextToken("MD5Version");
-	tok.assertNextToken("10");
+	int version = string::convert<int>(tok.nextToken());
+
+	if (version != 10 && version != 11 && version != 12)
+	{
+		throw parser::ParseException("Unsupported MD5Version: " + std::to_string(version));
+	}
 
 	// Commandline
 	tok.assertNextToken("commandline");
@@ -268,7 +273,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 		// Construct the surface for this mesh
 		MD5Surface& surface = createNewSurface();
 
-		surface.parseFromTokens(tok);
+		surface.parseFromTokens(tok, version);
 
 		// Build the index array - this has to happen at least once
 		surface.buildIndexArray();
