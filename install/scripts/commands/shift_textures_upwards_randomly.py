@@ -17,6 +17,16 @@ def execute():
 	visitor = FaceVisitor()
 	GlobalSelectionSystem.foreachSelectedFace(visitor)
 
+	class PatchVisitor(dr.SelectionVisitor) :
+		def visit(self, node):
+			patch = node.getPatch()
+			if not patch.isNull():
+				t = random.randint(0, 100)
+				patch.translateTexture(0, t)
+
+	patchVisitor = PatchVisitor()
+	GlobalSelectionSystem.foreachSelected(patchVisitor)
+
 	GlobalCameraManager.getActiveView().refresh()
 
 # The variable __executeCommand__ evaluates to true

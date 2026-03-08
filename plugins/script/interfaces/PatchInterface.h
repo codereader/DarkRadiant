@@ -51,6 +51,9 @@ public:
 
 	void controlPointsChanged();
 
+	// Texture manipulation
+	void translateTexture(float s, float t);
+
 	// Shader handling
 	const std::string& getShader() const;
 	void setShader(const std::string& name);
