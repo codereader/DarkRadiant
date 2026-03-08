@@ -5,17 +5,23 @@
 #include "ideclmanager.h"
 #include "imap.h"
 #include "ishaders.h"
+#include "icommandsystem.h"
 #include "ishaderclipboard.h"
 
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "wxutil/Bitmap.h"
 
 #include <wx/sizer.h>
+#include <wx/tglbtn.h>
+#include <wx/checkbox.h>
 #include <wx/app.h>
 #include <wx/popupwin.h>
 
 #include "util/ScopedBoolLock.h"
+#include "registry/registry.h"
 #include "ui/texturebrowser/TextureBrowserManager.h"
 #include "ui/common/TexturePreviewCombo.h"
+#include "ui/materials/MaterialThumbnailBrowser.h"
 
 #include "FocusMaterialRequest.h"
 #include "ui/UserInterfaceModule.h"
@@ -26,10 +32,19 @@
 namespace ui
 {
 
+namespace
+{
+    constexpr const char* const RKEY_MEDIABROWSER_VIEW_MODE = "user/ui/mediaBrowser/viewMode";
+}
+
 MediaBrowser::MediaBrowser(wxWindow* parent) :
     DockablePanel(parent),
 	_treeView(nullptr),
 	_preview(nullptr),
+	_thumbnailBrowser(nullptr),
+	_viewToggleBtn(nullptr),
+	_uniformScaleCheckbox(nullptr),
+	_showingThumbnails(false),
 	_blockShaderClipboardUpdates(false),
     _reloadTreeOnIdle(false),
     _showThumbnailBrowserOnIdle(false)
@@ -42,6 +57,13 @@ MediaBrowser::MediaBrowser(wxWindow* parent) :
 
 MediaBrowser::~MediaBrowser()
 {
+    GlobalRegistry().set(RKEY_MEDIABROWSER_VIEW_MODE,
+                         _showingThumbnails ? "thumbnails" : "tree");
+
+    _thumbnailSelectionConn.disconnect();
+    _thumbnailActivatedConn.disconnect();
+    _filterTextChangedConn.disconnect();
+
     if (panelIsActive())
     {
         disconnectListeners();
@@ -188,6 +210,11 @@ void MediaBrowser::queueTreeReload()
     {
         requestIdleCallback();
     }
+
+    if (_thumbnailBrowser)
+    {
+        _thumbnailBrowser->queueUpdate();
+    }
 }
 
 void MediaBrowser::construct()
@@ -197,15 +224,30 @@ void MediaBrowser::construct()
 	_treeView = new MediaBrowserTreeView(this);
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
 
+	createViewToggleButton(toolbar);
+	createUniformScaleCheckbox(toolbar);
+
 	GetSizer()->Add(toolbar, 0, wxALIGN_LEFT | wxEXPAND | wxALL, 6);
 	GetSizer()->Add(_treeView, 1, wxEXPAND);
 
 	// Connect up the selection changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MediaBrowser::_onTreeViewSelectionChanged, this);
 
+	_filterTextChangedConn = toolbar->signal_filterTextChanged().connect(
+		sigc::mem_fun(this, &MediaBrowser::onFilterTextChanged));
+
 	// Add the info pane
 	_preview = new TexturePreviewCombo(this);
 	GetSizer()->Add(_preview, 0, wxEXPAND);
+
+	// Restore saved view mode
+	std::string savedMode = GlobalRegistry().get(RKEY_MEDIABROWSER_VIEW_MODE);
+	if (savedMode == "thumbnails")
+	{
+		_showingThumbnails = true;
+		_viewToggleBtn->SetValue(true);
+		switchView(true);
+	}
 
 	// When destroying the main widget clear out the held references.
 	// The dying populator thread might have posted a finished message which
@@ -236,12 +278,21 @@ void MediaBrowser::onMapEvent(IMap::MapEvent ev)
 
 std::string MediaBrowser::getSelection()
 {
+    if (_showingThumbnails && _thumbnailBrowser)
+    {
+        return _thumbnailBrowser->getSelectedShader();
+    }
     return _treeView->GetSelectedDeclName();
 }
 
 void MediaBrowser::setSelection(const std::string& selection)
 {
     _treeView->SetSelectedDeclName(selection);
+
+    if (_thumbnailBrowser)
+    {
+        _thumbnailBrowser->setSelectedShader(selection);
+    }
 }
 
 void MediaBrowser::onMaterialDefsLoaded()
@@ -262,6 +313,11 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         _preview->SetPreviewDeclName(getSelection());
         // Close any pending popups
         closePopup();
+
+        if (!_showingThumbnails && _thumbnailBrowser)
+        {
+            _thumbnailBrowser->setSelectedShader(_treeView->GetSelectedDeclName());
+        }
     }
     else
     {
@@ -280,9 +336,11 @@ void MediaBrowser::sendSelectionToShaderClipboard()
 
     util::ScopedBoolLock lock(_blockShaderClipboardUpdates);
 
-    if (!_treeView->IsDirectorySelected())
+    std::string selection = getSelection();
+
+    if (!selection.empty())
     {
-        GlobalShaderClipboard().setSourceShader(getSelection());
+        GlobalShaderClipboard().setSourceShader(selection);
     }
     else
     {
@@ -312,6 +370,113 @@ void MediaBrowser::onShaderClipboardSourceChanged()
 void MediaBrowser::focusMaterial(FocusMaterialRequest& request)
 {
     queueSelection(request.getRequestedMaterial());
+}
+
+void MediaBrowser::createThumbnailBrowser()
+{
+    _thumbnailBrowser = new MaterialThumbnailBrowser(this, MaterialThumbnailBrowser::TextureFilter::All);
+    _thumbnailBrowser->Hide();
+
+    GetSizer()->Insert(2, _thumbnailBrowser, 1, wxEXPAND);
+
+    _thumbnailSelectionConn = _thumbnailBrowser->signal_selectionChanged().connect(
+        sigc::mem_fun(this, &MediaBrowser::onThumbnailSelectionChanged));
+
+    _thumbnailActivatedConn = _thumbnailBrowser->signal_itemActivated().connect(
+        sigc::mem_fun(this, &MediaBrowser::onThumbnailItemActivated));
+}
+
+MaterialThumbnailBrowser* MediaBrowser::getOrCreateThumbnailBrowser()
+{
+    if (!_thumbnailBrowser)
+    {
+        createThumbnailBrowser();
+    }
+
+    return _thumbnailBrowser;
+}
+
+void MediaBrowser::createViewToggleButton(wxutil::ResourceTreeViewToolbar* toolbar)
+{
+    _viewToggleBtn = new wxBitmapToggleButton(toolbar, wxID_ANY,
+        wxutil::GetLocalBitmap("bgimage16.png"));
+    _viewToggleBtn->SetToolTip(_("Toggle between tree view and thumbnail grid view"));
+    toolbar->GetRightSizer()->Add(_viewToggleBtn, wxSizerFlags().Border(wxLEFT, 6));
+    _viewToggleBtn->Bind(wxEVT_TOGGLEBUTTON, &MediaBrowser::onViewToggle, this);
+}
+
+void MediaBrowser::createUniformScaleCheckbox(wxutil::ResourceTreeViewToolbar* toolbar)
+{
+    _uniformScaleCheckbox = new wxCheckBox(toolbar, wxID_ANY, _("Grid"));
+    _uniformScaleCheckbox->SetValue(registry::getValue<bool>(RKEY_TEXTURE_USE_UNIFORM_SCALE));
+    _uniformScaleCheckbox->Hide();
+    toolbar->GetLeftSizer()->Add(_uniformScaleCheckbox, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    _uniformScaleCheckbox->Bind(wxEVT_CHECKBOX, &MediaBrowser::onUniformScaleToggle, this);
+}
+
+void MediaBrowser::switchView(bool showThumbnails)
+{
+    if (showThumbnails)
+    {
+        auto* browser = getOrCreateThumbnailBrowser();
+        browser->setSelectedShader(_treeView->GetSelectedDeclName());
+        _treeView->Hide();
+        browser->Show();
+        browser->queueUpdate();
+        _uniformScaleCheckbox->Show();
+    }
+    else
+    {
+        if (_thumbnailBrowser)
+        {
+            std::string selectedShader = _thumbnailBrowser->getSelectedShader();
+            if (!selectedShader.empty())
+            {
+                setSelection(selectedShader);
+            }
+            _thumbnailBrowser->Hide();
+        }
+        _treeView->Show();
+        _uniformScaleCheckbox->Hide();
+    }
+
+    _showingThumbnails = showThumbnails;
+    Layout();
+}
+
+void MediaBrowser::onViewToggle(wxCommandEvent& ev)
+{
+    switchView(ev.IsChecked());
+}
+
+void MediaBrowser::onUniformScaleToggle(wxCommandEvent& ev)
+{
+    registry::setValue(RKEY_TEXTURE_USE_UNIFORM_SCALE, ev.IsChecked());
+}
+
+void MediaBrowser::onThumbnailSelectionChanged()
+{
+    std::string selected = _thumbnailBrowser->getSelectedShader();
+    _preview->SetPreviewDeclName(selected);
+    sendSelectionToShaderClipboard();
+}
+
+void MediaBrowser::onThumbnailItemActivated()
+{
+    std::string selection = _thumbnailBrowser->getSelectedShader();
+
+    if (!selection.empty())
+    {
+        GlobalCommandSystem().executeCommand("SetShaderOnSelection", selection);
+    }
+}
+
+void MediaBrowser::onFilterTextChanged(const std::string& filterText)
+{
+    if (_thumbnailBrowser)
+    {
+        _thumbnailBrowser->setExternalFilterText(filterText);
+    }
 }
 
 } // namespace

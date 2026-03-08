@@ -9,7 +9,11 @@
 #include "wxutil/DockablePanel.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
-namespace wxutil { class TransientPopupWindow; }
+namespace wxutil
+{
+    class TransientPopupWindow;
+    class ResourceTreeViewToolbar;
+}
 
 class wxWindow;
 class wxTreeCtrl;
@@ -17,12 +21,15 @@ class wxFrame;
 class wxDataViewTreeStore;
 class wxTreeEvent;
 class wxRadioButton;
+class wxBitmapToggleButton;
+class wxCheckBox;
 
 namespace ui
 {
 
 class FocusMaterialRequest;
 class TexturePreviewCombo;
+class MaterialThumbnailBrowser;
 
 /**
  * \brief Media Browser control
@@ -30,7 +37,7 @@ class TexturePreviewCombo;
  * This control allows browsing of individual textures by name and loading them
  * into the texture window or applying directly to map geometry.
  */
-class MediaBrowser : 
+class MediaBrowser :
 	public wxutil::DockablePanel,
     public wxutil::SingleIdleCallback
 {
@@ -40,10 +47,19 @@ private:
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo* _preview;
 
+	// Thumbnail grid browser
+	MaterialThumbnailBrowser* _thumbnailBrowser;
+	wxBitmapToggleButton* _viewToggleBtn;
+	wxCheckBox* _uniformScaleCheckbox;
+	bool _showingThumbnails;
+
 	sigc::connection _materialDefsLoaded;
 	sigc::connection _materialDefsUnloaded;
 	sigc::connection _shaderClipboardConn;
 	sigc::connection _mapLoadedConn;
+	sigc::connection _thumbnailSelectionConn;
+	sigc::connection _thumbnailActivatedConn;
+	sigc::connection _filterTextChangedConn;
 
 	bool _blockShaderClipboardUpdates;
 	bool _reloadTreeOnIdle;
@@ -96,6 +112,17 @@ private:
 	void sendSelectionToShaderClipboard();
     wxutil::TransientPopupWindow* findOrCreateBrowserPopup();
     void closePopup();
+
+    void createThumbnailBrowser();
+    MaterialThumbnailBrowser* getOrCreateThumbnailBrowser();
+    void createViewToggleButton(wxutil::ResourceTreeViewToolbar* toolbar);
+    void switchView(bool showThumbnails);
+    void onViewToggle(wxCommandEvent& ev);
+    void onUniformScaleToggle(wxCommandEvent& ev);
+    void createUniformScaleCheckbox(wxutil::ResourceTreeViewToolbar* toolbar);
+    void onThumbnailSelectionChanged();
+    void onThumbnailItemActivated();
+    void onFilterTextChanged(const std::string& filterText);
 };
 
 }
