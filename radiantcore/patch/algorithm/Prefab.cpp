@@ -86,11 +86,19 @@ AABB getDefaultBoundsFromSelection()
 	return AABB(Vector3(0, 0, 0), Vector3(64, 64, 64));
 }
 
-void createPrefabInternal(EPatchPrefab prefabType, const std::string& undoCmdName)
+void createPrefabInternal(EPatchPrefab prefabType, const std::string& undoCmdName, bool removeSelectedBrush = false)
 {
 	UndoableCommand undo(undoCmdName);
 
-	constructPrefab(getDefaultBoundsFromSelection(),
+	// Store the boundaries before any deletes
+	AABB bounds = getDefaultBoundsFromSelection();
+
+	if (removeSelectedBrush)
+	{
+		selection::algorithm::deleteSelection();
+	}
+
+	constructPrefab(bounds,
 					getSelectedShader(),
 					prefabType,
 					GlobalOrthoViewManager().getActiveViewType());
@@ -98,9 +106,9 @@ void createPrefabInternal(EPatchPrefab prefabType, const std::string& undoCmdNam
 
 void createPrefab(const cmd::ArgumentList& args)
 {
-	if (args.size() != 1)
+	if (args.empty() || args.size() > 2)
 	{
-		rError() << "Usage: createPatchPrefab <type>" << std::endl
+		rError() << "Usage: createPatchPrefab <type> [removeSelectedBrush]" << std::endl
 			<< " with <type> being one of the following: " << std::endl
 			<< "cylinder, densecylinder, verydensecylinder, squarecylinder," << std::endl
 			<< "sphere, endcap, bevel, cone" << std::endl;
@@ -108,38 +116,39 @@ void createPrefab(const cmd::ArgumentList& args)
 	}
 
 	std::string typeStr = string::to_lower_copy(args[0].getString());
+	bool removeSelectedBrush = args.size() > 1 && args[1].getInt() != 0;
 
 	if (typeStr == "cylinder")
 	{
-		createPrefabInternal(eCylinder, "patchCreateCylinder");
+		createPrefabInternal(eCylinder, "patchCreateCylinder", removeSelectedBrush);
 	}
 	else if (typeStr == "densecylinder")
 	{
-		createPrefabInternal(eDenseCylinder, "patchCreateDenseCylinder");
+		createPrefabInternal(eDenseCylinder, "patchCreateDenseCylinder", removeSelectedBrush);
 	}
 	else if (typeStr == "verydensecylinder")
 	{
-		createPrefabInternal(eVeryDenseCylinder, "patchCreateVeryDenseCylinder");
+		createPrefabInternal(eVeryDenseCylinder, "patchCreateVeryDenseCylinder", removeSelectedBrush);
 	}
 	else if (typeStr == "squarecylinder")
 	{
-		createPrefabInternal(eSqCylinder, "patchCreateSquareCylinder");
+		createPrefabInternal(eSqCylinder, "patchCreateSquareCylinder", removeSelectedBrush);
 	}
 	else if (typeStr == "sphere")
 	{
-		createPrefabInternal(eSphere, "patchCreateSphere");
+		createPrefabInternal(eSphere, "patchCreateSphere", removeSelectedBrush);
 	}
 	else if (typeStr == "endcap")
 	{
-		createPrefabInternal(eEndCap, "patchCreateCaps");
+		createPrefabInternal(eEndCap, "patchCreateCaps", removeSelectedBrush);
 	}
 	else if (typeStr == "bevel")
 	{
-		createPrefabInternal(eBevel, "patchCreateBevel");
+		createPrefabInternal(eBevel, "patchCreateBevel", removeSelectedBrush);
 	}
 	else if (typeStr == "cone")
 	{
-		createPrefabInternal(eCone, "patchCreateCone");
+		createPrefabInternal(eCone, "patchCreateCone", removeSelectedBrush);
 	}
 }
 
