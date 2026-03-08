@@ -369,6 +369,7 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\brush\CreateTrimDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\terrain\TerrainGeneratorDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp" />
@@ -613,6 +614,7 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\MainFrame.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h" />
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\brush\CreateTrimDialog.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanel.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanelControl.h" />
     <ClInclude Include="..\..\radiant\ui\terrain\TerrainGeneratorDialog.h" />

@@ -65,6 +65,7 @@
 #include "ui/terrain/TerrainGeneratorDialog.h"
 #include "ui/selectionset/SelectionSetToolmenu.h"
 #include "ui/brush/QuerySidesDialog.h"
+#include "ui/brush/CreateTrimDialog.h"
 #include "ui/brush/FindBrush.h"
 #include "ui/array/ArrayDialog.h"
 #include "ui/mousetool/RegistrationHelper.h"
@@ -541,6 +542,7 @@ void UserInterfaceModule::registerUICommands()
     GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
     GlobalCommandSystem().addWithCheck("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show,
                                        selection::pred::haveBrush, {cmd::ARGTYPE_INT});
+    GlobalCommandSystem().addCommand("CreateTrimDialog", CreateTrimDialog::CreateTrimCmd);
 
     // Set up the CloneSelection command to react on key up events only
     GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp

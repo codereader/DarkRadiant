@@ -1015,6 +1015,12 @@ void registerCommands()
         [] { return !FaceInstance::Selection().empty(); }
     );
 
+    GlobalCommandSystem().addWithCheck(
+        "CreateTrimForFaces", createTrimForSelectedFaces,
+        [] { return !FaceInstance::Selection().empty(); },
+        { cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT }
+    );
+
     GlobalCommandSystem().addCommand("Copy", clipboard::copy);
 	GlobalCommandSystem().addCommand("Cut", clipboard::cut);
 	GlobalCommandSystem().addCommand("Paste", clipboard::paste);

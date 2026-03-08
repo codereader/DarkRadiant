@@ -84,6 +84,12 @@ namespace selection {
 	void createDecalsForSelectedFaces();
 
 	/**
+	 * Creates a trim brush for each selected face instance.
+	 * Args: height, depth, fitTo (0=bottom,1=top,2=left,3=right), mitered (0/1)
+	 */
+	void createTrimForSelectedFaces(const cmd::ArgumentList& args);
+
+	/**
 	 * greebo: Applies the visportal/nodraw texture combo to the selected brushes.
 	 */
 	void makeVisportal();

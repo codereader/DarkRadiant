@@ -1,6 +1,7 @@
 #include "Primitives.h"
 
 #include <fstream>
+#include <limits>
 
 #include "i18n.h"
 #include "igroupnode.h"
@@ -680,6 +681,253 @@ void brushSetDetailFlag(const cmd::ArgumentList& args)
 	else
 	{
 		rError() << "Usage: BrushMakeDetail [detail|structural]" << std::endl;
+	}
+}
+
+void createTrimForSelectedFaces(const cmd::ArgumentList& args)
+{
+	if (args.size() < 4)
+	{
+		rError() << "Usage: CreateTrimForFaces <height> <depth> <fitTo> <mitered>" << std::endl;
+		return;
+	}
+
+	double height = args[0].getDouble();
+	double depth = args[1].getDouble();
+	int fitToInt = args[2].getInt();
+	bool mitered = args[3].getInt() != 0;
+
+	if (FaceInstance::Selection().empty())
+	{
+		throw cmd::ExecutionNotPossible(_("No faces selected."));
+		return;
+	}
+
+	if (height <= 0 || depth <= 0)
+	{
+		throw cmd::ExecutionFailure(_("Height and depth must be positive."));
+		return;
+	}
+
+	UndoableCommand cmd("createTrimForSelectedFaces");
+
+	// Collect face instances first (iterating while modifying selection is unsafe)
+	std::vector<FaceInstance*> faceInstances;
+	for (FaceInstance* fi : FaceInstance::Selection())
+	{
+		if (fi->getFace().contributes() && fi->getFace().getWinding().size() == 4)
+		{
+			faceInstances.push_back(fi);
+		}
+	}
+
+	int unsuitableCount = static_cast<int>(FaceInstance::Selection().size()) - static_cast<int>(faceInstances.size());
+
+	float naturalScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
+	ShiftScaleRotation ssr;
+	ssr.scale[0] = naturalScale;
+	ssr.scale[1] = naturalScale;
+
+	for (FaceInstance* fi : faceInstances)
+	{
+		Face& face = fi->getFace();
+		const Winding& winding = face.getWinding();
+		const Plane3& plane = face.getPlane3();
+		Vector3 N = plane.normal();
+
+		// Determine the "up" direction on the face plane
+		Vector3 worldUp(0, 0, 1);
+		Vector3 faceUp = worldUp - N * N.dot(worldUp);
+
+		if (faceUp.getLengthSquared() < 0.001)
+		{
+			// Face is nearly horizontal, use world Y as up reference
+			worldUp = Vector3(0, 1, 0);
+			faceUp = worldUp - N * N.dot(worldUp);
+		}
+		faceUp.normalise();
+
+		Vector3 faceRight = N.cross(faceUp).getNormalised();
+
+		// Project winding vertices onto face-local axes
+		double uMin = std::numeric_limits<double>::max();
+		double uMax = -std::numeric_limits<double>::max();
+		double rMin = std::numeric_limits<double>::max();
+		double rMax = -std::numeric_limits<double>::max();
+
+		for (std::size_t i = 0; i < winding.size(); i++)
+		{
+			double u = faceUp.dot(winding[i].vertex);
+			double r = faceRight.dot(winding[i].vertex);
+			uMin = std::min(uMin, u);
+			uMax = std::max(uMax, u);
+			rMin = std::min(rMin, r);
+			rMax = std::max(rMax, r);
+		}
+
+		// Compute trim bounds in face-local coordinates
+		double trimUMin, trimUMax, trimRMin, trimRMax;
+
+		switch (fitToInt)
+		{
+		case 0: // Bottom
+			trimUMin = uMin; trimUMax = uMin + height;
+			trimRMin = rMin; trimRMax = rMax;
+			break;
+		case 1: // Top
+			trimUMin = uMax - height; trimUMax = uMax;
+			trimRMin = rMin; trimRMax = rMax;
+			break;
+		case 2: // Left
+			trimUMin = uMin; trimUMax = uMax;
+			trimRMin = rMin; trimRMax = rMin + height;
+			break;
+		case 3: // Right
+			trimUMin = uMin; trimUMax = uMax;
+			trimRMin = rMax - height; trimRMax = rMax;
+			break;
+		default:
+			trimUMin = uMin; trimUMax = uMin + height;
+			trimRMin = rMin; trimRMax = rMax;
+			break;
+		}
+
+		// nBase: the face plane distance along the normal
+		double nBase = N.dot(winding[0].vertex);
+
+		// Helper to convert face-local coords to world coords
+		auto corner = [&](double n, double u, double r) -> Vector3
+		{
+			return N * n + faceUp * u + faceRight * r;
+		};
+
+		double n0 = nBase;
+		double n1 = nBase + depth;
+
+		// Determine which direction the trim extends along and which ends get mitered
+		// For top/bottom: trim runs along R, miters at R ends
+		// For left/right: trim runs along U, miters at U ends
+		bool miterREnds = (fitToInt == 0 || fitToInt == 1); // bottom/top
+		bool miterUEnds = (fitToInt == 2 || fitToInt == 3); // left/right
+
+		// Create the brush node
+		scene::INodePtr brushNode = GlobalBrushCreator().createBrush();
+		Brush* brush = Node_getBrush(brushNode);
+
+		std::string shader = face.getShader();
+		TextureProjection projection;
+
+		brush->clear();
+		brush->reserve(6);
+
+		// Front face (+N direction, outer face at depth from wall)
+		// addPlane points chosen so (p1-p2)x(p0-p2) = +N
+		brush->addPlane(
+			corner(n1, trimUMax, trimRMin),
+			corner(n1, trimUMin, trimRMin),
+			corner(n1, trimUMin, trimRMax),
+			shader, projection
+		);
+
+		// Back face (-N direction, against the wall)
+		brush->addPlane(
+			corner(n0, trimUMax, trimRMax),
+			corner(n0, trimUMin, trimRMax),
+			corner(n0, trimUMin, trimRMin),
+			shader, projection
+		);
+
+		// Top face (+U direction)
+		brush->addPlane(
+			corner(n1, trimUMax, trimRMax),
+			corner(n0, trimUMax, trimRMax),
+			corner(n0, trimUMax, trimRMin),
+			shader, projection
+		);
+
+		// Bottom face (-U direction)
+		brush->addPlane(
+			corner(n1, trimUMin, trimRMin),
+			corner(n0, trimUMin, trimRMin),
+			corner(n0, trimUMin, trimRMax),
+			shader, projection
+		);
+
+		if (mitered && miterREnds)
+		{
+			// Left miter: back face (wall side) at full extent,
+			// front face (outer) shortened by depth
+			brush->addPlane(
+				corner(n1, trimUMin, trimRMin + depth),
+				corner(n0, trimUMax, trimRMin),
+				corner(n0, trimUMin, trimRMin),
+				shader, projection
+			);
+
+			// Right miter: same principle on the right end
+			brush->addPlane(
+				corner(n0, trimUMin, trimRMax),
+				corner(n0, trimUMax, trimRMax),
+				corner(n1, trimUMin, trimRMax - depth),
+				shader, projection
+			);
+		}
+		else if (mitered && miterUEnds)
+		{
+			// Bottom miter: back at full extent, front shortened
+			brush->addPlane(
+				corner(n0, trimUMin, trimRMin),
+				corner(n0, trimUMin, trimRMax),
+				corner(n1, trimUMin + depth, trimRMin),
+				shader, projection
+			);
+
+			// Top miter: same principle on the top end
+			brush->addPlane(
+				corner(n0, trimUMax, trimRMax),
+				corner(n0, trimUMax, trimRMin),
+				corner(n1, trimUMax - depth, trimRMin),
+				shader, projection
+			);
+		}
+		else
+		{
+			// Standard flat end faces
+
+			// Right face (+R direction)
+			brush->addPlane(
+				corner(n1, trimUMax, trimRMax),
+				corner(n1, trimUMin, trimRMax),
+				corner(n0, trimUMin, trimRMax),
+				shader, projection
+			);
+
+			// Left face (-R direction)
+			brush->addPlane(
+				corner(n0, trimUMax, trimRMin),
+				corner(n0, trimUMin, trimRMin),
+				corner(n1, trimUMin, trimRMin),
+				shader, projection
+			);
+		}
+
+		scene::INodePtr worldSpawnNode = GlobalMapModule().findOrInsertWorldspawn();
+		worldSpawnNode->addChildNode(brushNode);
+
+		// Apply natural texturing
+		brush->forEachFace([&](Face& f) { f.setShiftScaleRotation(ssr); });
+
+		fi->setSelected(selection::ComponentSelectionMode::Face, false);
+		Node_setSelected(brushNode, true);
+	}
+
+	SceneChangeNotify();
+
+	if (unsuitableCount > 0)
+	{
+		radiant::NotificationMessage::SendInformation(
+			fmt::format(_("{0:d} faces were not suitable (must have exactly 4 vertices)."), unsuitableCount)
+		);
 	}
 }
 
