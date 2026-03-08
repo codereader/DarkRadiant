@@ -1,6 +1,8 @@
 #include "RadiantTest.h"
 
 #include "ieclass.h"
+#include "ilayer.h"
+#include "iselection.h"
 #include "scene/EntityNode.h"
 #include "itransformable.h"
 #include "icommandsystem.h"
@@ -9,6 +11,8 @@
 #include "selection/SelectedPlaneSet.h"
 #include "render/View.h"
 #include "algorithm/View.h"
+#include "algorithm/Entity.h"
+#include "algorithm/Primitives.h"
 
 namespace test
 {
@@ -149,6 +153,96 @@ TEST_F(TransformationTest, UniformLightDragResize)
     transformable->setTranslation({ 0, 0, 0 });
     EXPECT_EQ(entityNode->worldAABB().getOrigin(), Vector3(0, 0, 0));
     EXPECT_EQ(entityNode->worldAABB().getExtents(), Vector3(320, 320, 320));
+}
+
+TEST_F(TransformationTest, CloneSelectedPlacesNodeInActiveLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    // Create a non-default layer and make it active
+    auto testLayerId = layerManager.createLayer("TestLayer");
+    layerManager.setActiveLayer(testLayerId);
+
+    // Create an entity on the default layer and select it
+    auto entityNode = algorithm::createEntityByClassName("fixed_size_entity");
+    GlobalMapModule().getRoot()->addChildNode(entityNode);
+    entityNode->moveToLayer(0);
+    Node_setSelected(entityNode, true);
+
+    EXPECT_EQ(entityNode->getLayers(), scene::LayerList{ 0 });
+
+    // Clone the selection
+    GlobalCommandSystem().executeCommand("CloneSelection");
+
+    // The original should still be on layer 0
+    EXPECT_EQ(entityNode->getLayers(), scene::LayerList{ 0 });
+
+    // The clone should be on the active layer
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        EXPECT_EQ(node->getLayers(), scene::LayerList{ testLayerId })
+            << "Cloned node should be placed in the active layer";
+    });
+}
+
+TEST_F(TransformationTest, CloneSelectedDefaultLayerStaysOnDefault)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    // Active layer is already the default
+    EXPECT_EQ(layerManager.getActiveLayer(), 0);
+
+    auto entityNode = algorithm::createEntityByClassName("fixed_size_entity");
+    GlobalMapModule().getRoot()->addChildNode(entityNode);
+    Node_setSelected(entityNode, true);
+
+    EXPECT_EQ(entityNode->getLayers(), scene::LayerList{ 0 });
+
+    GlobalCommandSystem().executeCommand("CloneSelection");
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        EXPECT_EQ(node->getLayers(), scene::LayerList{ 0 })
+            << "Cloned node should be on the default layer when it is active";
+    });
+}
+
+TEST_F(TransformationTest, CloneSelectedMovesChildrenToActiveLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    auto testLayerId = layerManager.createLayer("TestLayer");
+    layerManager.setActiveLayer(testLayerId);
+
+    // Create a func_static entity with a child brush on the default layer
+    auto entityNode = algorithm::createEntityByClassName("func_static");
+    GlobalMapModule().getRoot()->addChildNode(entityNode);
+    auto brushNode = algorithm::createCubicBrush(entityNode);
+    entityNode->moveToLayer(0);
+    brushNode->moveToLayer(0);
+    Node_setSelected(entityNode, true);
+
+    EXPECT_EQ(entityNode->getLayers(), scene::LayerList{ 0 });
+    EXPECT_EQ(brushNode->getLayers(), scene::LayerList{ 0 });
+
+    GlobalCommandSystem().executeCommand("CloneSelection");
+
+    // The cloned entity and its child brush should both be on the active layer
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        EXPECT_EQ(node->getLayers(), scene::LayerList{ testLayerId })
+            << "Cloned entity should be on the active layer";
+
+        node->foreachNode([&](const scene::INodePtr& child)
+        {
+            EXPECT_EQ(child->getLayers(), scene::LayerList{ testLayerId })
+                << "Cloned child brush should be on the active layer";
+            return true;
+        });
+    });
 }
 
 }
