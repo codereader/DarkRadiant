@@ -614,8 +614,23 @@ void Face::applyShaderFromFace(const Face& other)
     }
     else
     {
-        // Just use the other projection, as-is
         SetTexdef(projection);
+
+        // Pick a reference vertex on the target face and compute the UV
+        auto& refVertex = m_winding[0].vertex;
+        auto sourceUV = other.m_texdefTransformed.getTextureCoordsForVertex(
+            refVertex, other.m_planeTransformed.getPlane().normal(), Matrix4::getIdentity()
+        );
+        auto targetUV = m_texdefTransformed.getTextureCoordsForVertex(
+            refVertex, m_planeTransformed.getPlane().normal(), Matrix4::getIdentity()
+        );
+
+        // Adjust the texture matrix translation to correct the shift
+        auto texMatrix = _texdef.getMatrix();
+        texMatrix.zx() += sourceUV.x() - targetUV.x();
+        texMatrix.zy() += sourceUV.y() - targetUV.y();
+        _texdef.setTransform(texMatrix);
+        texdefChanged();
     }
 }
 
