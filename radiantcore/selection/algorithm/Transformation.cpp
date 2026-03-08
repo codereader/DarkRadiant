@@ -284,6 +284,19 @@ public:
 			// Add the node to its parent
 			pair.second->addChildNode(pair.first);
 
+			// Move the cloned node (and its children) to the active layer
+			auto rootNode = pair.second->getRootNode();
+			if (rootNode)
+			{
+				auto activeLayer = rootNode->getLayerManager().getActiveLayer();
+				pair.first->moveToLayer(activeLayer);
+				pair.first->foreachNode([=](const scene::INodePtr& child)
+				{
+					child->moveToLayer(activeLayer);
+					return true;
+				});
+			}
+
 			if (select)
 			{
 				Node_setSelected(pair.first, true);
