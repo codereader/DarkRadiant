@@ -1,8 +1,11 @@
 #include "RadiantTest.h"
 
+#include <algorithm>
+#include <vector>
 #include "ieclass.h"
 #include "ilayer.h"
 #include "iselection.h"
+#include "iarray.h"
 #include "scene/EntityNode.h"
 #include "itransformable.h"
 #include "icommandsystem.h"
@@ -13,6 +16,7 @@
 #include "algorithm/View.h"
 #include "algorithm/Entity.h"
 #include "algorithm/Primitives.h"
+#include "algorithm/Scene.h"
 
 namespace test
 {
@@ -159,7 +163,7 @@ TEST_F(TransformationTest, CloneSelectedPlacesNodeInActiveLayer)
 {
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
 
-    // Create a non-default layer and make it active
+    // Create a layer and make it active
     auto testLayerId = layerManager.createLayer("TestLayer");
     layerManager.setActiveLayer(testLayerId);
 
@@ -171,13 +175,10 @@ TEST_F(TransformationTest, CloneSelectedPlacesNodeInActiveLayer)
 
     EXPECT_EQ(entityNode->getLayers(), scene::LayerList{ 0 });
 
-    // Clone the selection
     GlobalCommandSystem().executeCommand("CloneSelection");
 
-    // The original should still be on layer 0
     EXPECT_EQ(entityNode->getLayers(), scene::LayerList{ 0 });
 
-    // The clone should be on the active layer
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
     GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
     {
@@ -190,7 +191,6 @@ TEST_F(TransformationTest, CloneSelectedDefaultLayerStaysOnDefault)
 {
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
 
-    // Active layer is already the default
     EXPECT_EQ(layerManager.getActiveLayer(), 0);
 
     auto entityNode = algorithm::createEntityByClassName("fixed_size_entity");
@@ -216,7 +216,6 @@ TEST_F(TransformationTest, CloneSelectedMovesChildrenToActiveLayer)
     auto testLayerId = layerManager.createLayer("TestLayer");
     layerManager.setActiveLayer(testLayerId);
 
-    // Create a func_static entity with a child brush on the default layer
     auto entityNode = algorithm::createEntityByClassName("func_static");
     GlobalMapModule().getRoot()->addChildNode(entityNode);
     auto brushNode = algorithm::createCubicBrush(entityNode);
@@ -229,7 +228,6 @@ TEST_F(TransformationTest, CloneSelectedMovesChildrenToActiveLayer)
 
     GlobalCommandSystem().executeCommand("CloneSelection");
 
-    // The cloned entity and its child brush should both be on the active layer
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
     GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
     {
@@ -243,6 +241,134 @@ TEST_F(TransformationTest, CloneSelectedMovesChildrenToActiveLayer)
             return true;
         });
     });
+}
+
+TEST_F(TransformationTest, ArrayCloneLineFixedOffset)
+{
+    auto eclass = GlobalEntityClassManager().findClass("fixed_size_entity");
+    auto entityNode = GlobalEntityModule().createEntity(eclass);
+
+    GlobalMapModule().getRoot()->addChildNode(entityNode);
+    Node_setSelected(entityNode, true);
+
+    Vector3 originalPosition = entityNode->worldAABB().getOrigin();
+    EXPECT_EQ(originalPosition, Vector3(0, 0, 0));
+
+    // Create 3 copies with a fixed offset of (100, 0, 0), no rotation
+    int count = 3;
+    int offsetMethod = static_cast<int>(ui::ArrayOffsetMethod::Fixed);
+    Vector3 offset(100, 0, 0);
+    Vector3 rotation(0, 0, 0);
+
+    GlobalCommandSystem().executeCommand("ArrayCloneSelectionLine",
+        { cmd::Argument(count), cmd::Argument(offsetMethod),
+          cmd::Argument(offset), cmd::Argument(rotation) });
+
+    // We should have 4 selected items: original + 3 clones
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 4);
+
+    // Collect positions of all selected nodes
+    std::vector<Vector3> positions;
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        positions.push_back(node->worldAABB().getOrigin());
+    });
+
+    ASSERT_EQ(positions.size(), 4);
+
+    // Sort by X to get deterministic order
+    std::sort(positions.begin(), positions.end(),
+        [](const Vector3& a, const Vector3& b) { return a.x() < b.x(); });
+
+    EXPECT_TRUE(math::isNear(positions[0], Vector3(0, 0, 0), 0.1))
+        << "Original should remain at origin";
+    EXPECT_TRUE(math::isNear(positions[1], Vector3(100, 0, 0), 0.1))
+        << "First clone should be at offset 1x";
+    EXPECT_TRUE(math::isNear(positions[2], Vector3(200, 0, 0), 0.1))
+        << "Second clone should be at offset 2x";
+    EXPECT_TRUE(math::isNear(positions[3], Vector3(300, 0, 0), 0.1))
+        << "Third clone should be at offset 3x";
+}
+
+TEST_F(TransformationTest, ArrayCloneLineEndpointOffset)
+{
+    auto eclass = GlobalEntityClassManager().findClass("fixed_size_entity");
+    auto entityNode = GlobalEntityModule().createEntity(eclass);
+
+    GlobalMapModule().getRoot()->addChildNode(entityNode);
+    Node_setSelected(entityNode, true);
+
+    // Endpoint mode: offset represents total distance, divided evenly among copies
+    int count = 4;
+    int offsetMethod = static_cast<int>(ui::ArrayOffsetMethod::Endpoint);
+    Vector3 totalOffset(400, 0, 0);
+    Vector3 rotation(0, 0, 0);
+
+    GlobalCommandSystem().executeCommand("ArrayCloneSelectionLine",
+        { cmd::Argument(count), cmd::Argument(offsetMethod),
+          cmd::Argument(totalOffset), cmd::Argument(rotation) });
+
+    // 5 selected: original + 4 clones
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 5);
+
+    std::vector<Vector3> positions;
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        positions.push_back(node->worldAABB().getOrigin());
+    });
+
+    std::sort(positions.begin(), positions.end(),
+        [](const Vector3& a, const Vector3& b) { return a.x() < b.x(); });
+
+    ASSERT_EQ(positions.size(), 5);
+
+    // Each clone should be offset by totalOffset/count = (100,0,0) * i
+    for (int i = 0; i < 5; ++i)
+    {
+        EXPECT_TRUE(math::isNear(positions[i], Vector3(100.0 * i, 0, 0), 0.1))
+            << "Clone " << i << " position mismatch";
+    }
+}
+
+TEST_F(TransformationTest, ArrayCloneCircle)
+{
+    auto eclass = GlobalEntityClassManager().findClass("fixed_size_entity");
+    auto entityNode = GlobalEntityModule().createEntity(eclass);
+
+    GlobalMapModule().getRoot()->addChildNode(entityNode);
+    Node_setSelected(entityNode, true);
+
+    int count = 4;
+    double radius = 200.0;
+    double startAngle = 0.0;
+    double endAngle = 360.0;
+    int rotateToCenter = 0;
+
+    GlobalCommandSystem().executeCommand("ArrayCloneSelectionCircle",
+        { cmd::Argument(count), cmd::Argument(radius),
+          cmd::Argument(startAngle), cmd::Argument(endAngle),
+          cmd::Argument(rotateToCenter) });
+
+    // 5 selected: original + 4 clones
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 5);
+
+    // Each clone should be a certain distance from origin
+    int clonesAtExpectedRadius = 0;
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        auto pos = node->worldAABB().getOrigin();
+        double dist = pos.getLength();
+
+        // The original is at origin, clones within radius
+        if (dist > 1.0)
+        {
+            EXPECT_NEAR(dist, radius, 1.0)
+                << "Clone should be at the specified radius";
+            ++clonesAtExpectedRadius;
+        }
+    });
+
+    EXPECT_EQ(clonesAtExpectedRadius, 4) << "All 4 clones should be at the circle radius";
 }
 
 }
