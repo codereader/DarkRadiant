@@ -102,7 +102,7 @@ TEST_F(PatchTest, InvertedEndCapInheritsDef2)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
 
-    GlobalCommandSystem().execute("PatchEndCap");
+    GlobalCommandSystem().execute("CreatePatchPrefab endcap");
 
     auto endcap = algorithm::findFirstPatch(worldspawn, [](auto&) { return true; });
     Node_setSelected(endcap, true);
@@ -125,7 +125,7 @@ TEST_F(PatchTest, InvertedEndCapInheritsDef3)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
 
-    GlobalCommandSystem().execute("PatchEndCap");
+    GlobalCommandSystem().execute("CreatePatchPrefab endcap");
 
     auto endcap = algorithm::findFirstPatch(worldspawn, [](auto&) { return true; });
     Node_setSelected(endcap, true);
