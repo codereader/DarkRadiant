@@ -294,7 +294,7 @@ void MD5Surface::buildIndexArray()
 	}
 }
 
-void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
+void MD5Surface::parseFromTokens(parser::DefTokeniser& tok, int version)
 {
 	// Start of datablock
 	tok.assertNextToken("mesh");
@@ -303,9 +303,24 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 	// Get the reference to the mesh definition
 	MD5Mesh& mesh = *_mesh;
 
+	// v11 may have an optional "name" field before shader
+	if (tok.peek() == "name")
+	{
+		tok.nextToken(); // "name"
+		tok.nextToken(); // skip the name string
+	}
+
 	// Get the shader name
 	tok.assertNextToken("shader");
 	setDefaultMaterial(tok.nextToken());
+
+	// v11 may have an optional "flags { ... }" block
+	if (tok.peek() == "flags")
+	{
+		tok.nextToken(); // "flags"
+		tok.assertNextToken("{");
+		while (tok.nextToken() != "}") {} // skip until closing brace
+	}
 
 	// ----- VERTICES ------
 
@@ -334,6 +349,27 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 		// Weight index and count
 		vt->weight_index = string::convert<std::size_t>(tok.nextToken());
 		vt->weight_count = string::convert<std::size_t>(tok.nextToken());
+
+		if (version == 11)
+		{
+			// v11: optional per-vertex RGBA as ( R G B A )
+			if (tok.peek() == "(")
+			{
+				tok.nextToken(); // "("
+				tok.skipTokens(4); // R G B A
+				tok.assertNextToken(")");
+			}
+		}
+		else if (version == 12)
+		{
+			// v12: per-vertex normal ( nx ny nz ) and tangent ( tx ty tz tw )
+			tok.assertNextToken("(");
+			tok.skipTokens(3); // nx ny nz
+			tok.assertNextToken(")");
+			tok.assertNextToken("(");
+			tok.skipTokens(4); // tx ty tz tw
+			tok.assertNextToken(")");
+		}
 
 	} // for each vertex
 
@@ -384,6 +420,21 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 		w->v = MD5Model::parseVector3(tok);
 
 	} // for each weight
+
+	// v12: optional vertex colors block
+	if (version == 12 && tok.peek() == "numvertexcolors")
+	{
+		tok.nextToken(); // "numvertexcolors"
+		std::size_t numColors = string::convert<std::size_t>(tok.nextToken());
+		for (std::size_t i = 0; i < numColors; ++i)
+		{
+			tok.assertNextToken("vertexcolor");
+			tok.skipTokens(1); // index
+			tok.assertNextToken("(");
+			tok.skipTokens(4); // R G B A
+			tok.assertNextToken(")");
+		}
+	}
 
 	// ----- END OF MESH DECL -----
 

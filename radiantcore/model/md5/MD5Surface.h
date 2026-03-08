@@ -89,7 +89,7 @@ public:
 
     const AABB& getSurfaceBounds() const override;
 
-	void parseFromTokens(parser::DefTokeniser& tok);
+	void parseFromTokens(parser::DefTokeniser& tok, int version = 10);
 
 	// Rebuild the render index array - usually needs to be called only once
 	void buildIndexArray();
