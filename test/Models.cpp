@@ -710,4 +710,34 @@ TEST_F(ObjImportTest, UseMtlReferencingMaterial)
         << "OBJ Model loader should have taken the material from the usemtl keyword";
 }
 
+TEST_F(ModelTest, LoadMd5v11Model)
+{
+    auto model = GlobalModelCache().getModel("models/md5/test_v11.md5mesh");
+    EXPECT_TRUE(model) << "MD5 v11 model should load successfully";
+
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+    EXPECT_EQ(model->getPolyCount(), 2);
+    EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "textures/common/caulk");
+}
+
+TEST_F(ModelTest, LoadMd5v12Model)
+{
+    auto model = GlobalModelCache().getModel("models/md5/test_v12.md5mesh");
+    EXPECT_TRUE(model) << "MD5 v12 model should load successfully";
+
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+    EXPECT_EQ(model->getPolyCount(), 2);
+    EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "textures/common/caulk");
+}
+
+TEST_F(ModelTest, ModelKeyReferencesMd5v11Model)
+{
+    performModelNodeTest(_context.getTestProjectPath(), "models/md5/test_v11.md5mesh", 2);
+}
+
+TEST_F(ModelTest, ModelKeyReferencesMd5v12Model)
+{
+    performModelNodeTest(_context.getTestProjectPath(), "models/md5/test_v12.md5mesh", 2);
+}
+
 }
