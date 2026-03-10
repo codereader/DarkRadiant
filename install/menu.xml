@@ -233,6 +233,7 @@
 		<menuItem name="texturelock" caption="Texture lock" command="TogTexLock" />
 		<menuSeparator />
 		<menuItem name="createdecals" caption="Create Decal Patches" command="CreateDecalsForFaces" icon="create_decals.png" />
+		<menuItem name="createtrim" caption="Create Trim..." command="CreateTrimDialog" />
 		<menuItem name="makevisportal" caption="Make Visportal" command="MakeVisportal" icon="make_visportal.png"  />
 
 		<menuSeparator />

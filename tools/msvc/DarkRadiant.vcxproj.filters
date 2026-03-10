@@ -364,6 +364,9 @@
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp">
       <Filter>src\ui\brush</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\brush\CreateTrimDialog.cpp">
+      <Filter>src\ui\brush</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp">
       <Filter>src\xyview</Filter>
     </ClCompile>
@@ -919,6 +922,9 @@
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h">
+      <Filter>src\ui\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\brush\CreateTrimDialog.h">
       <Filter>src\ui\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h">

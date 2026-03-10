@@ -59,6 +59,7 @@ add_executable(drtest
                TestOrthoViewManager.cpp
                TextureTool.cpp
                Transformation.cpp
+               TrimTool.cpp
                UndoRedo.cpp
                VFS.cpp
                WorldspawnColour.cpp
