@@ -25,6 +25,7 @@ def execute():
 				s = random.randint(0, 100)
 				t = random.randint(0, 100)
 				patch.translateTexture(s, t)
+				patch.controlPointsChanged()
 
 	patchVisitor = PatchVisitor()
 	GlobalSelectionSystem.foreachSelected(patchVisitor)
