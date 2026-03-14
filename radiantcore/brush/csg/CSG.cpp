@@ -342,6 +342,7 @@ private:
 				ASSERT_MESSAGE(!(*i)->getBrush().empty(), "brush left with no faces after subtract");
 
 				Node_getBrush(newBrush)->copy((*i)->getBrush());
+				Node_getBrush(newBrush)->updateFaceVisibility();
 			}
 
 			scene::removeNodeFromParent(brushNode);
