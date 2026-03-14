@@ -23,6 +23,7 @@ def execute():
 			if not patch.isNull():
 				t = random.randint(0, 100)
 				patch.translateTexture(0, t)
+				patch.controlPointsChanged()
 
 	patchVisitor = PatchVisitor()
 	GlobalSelectionSystem.foreachSelected(patchVisitor)
