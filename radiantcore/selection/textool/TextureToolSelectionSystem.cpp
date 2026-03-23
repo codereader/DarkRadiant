@@ -734,21 +734,26 @@ void TextureToolSelectionSystem::normaliseSelectionCmd(const cmd::ArgumentList& 
         return;
     }
 
-    // Calculate the center based on the selection
-    selection::algorithm::TextureBoundsAccumulator accumulator;
-    foreachSelectedNode(accumulator);
-
-    if (!accumulator.getBounds().isValid())
-    {
-        return;
-    }
-
-    Vector2 normaliseCenter(accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y());
+    bool hasSelection = countSelected() > 0;
 
     UndoableCommand cmd("normaliseTexcoords");
 
-    selection::algorithm::TextureNormaliser normaliser(normaliseCenter);
-    foreachSelectedNode(normaliser);
+    auto normaliseNode = [](const INode::Ptr& node)
+    {
+        const auto& bounds = node->localAABB();
+        selection::algorithm::TextureNormaliser normaliser({ bounds.origin.x(), bounds.origin.y() });
+        normaliser.processNode(node);
+        return true;
+    };
+
+    if (hasSelection)
+    {
+        foreachSelectedNode(normaliseNode);
+    }
+    else
+    {
+        GlobalTextureToolSceneGraph().foreachNode(normaliseNode);
+    }
 }
 
 void TextureToolSelectionSystem::shiftSelectionCmd(const cmd::ArgumentList& args)

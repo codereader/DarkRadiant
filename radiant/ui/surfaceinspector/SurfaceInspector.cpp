@@ -202,6 +202,7 @@ void SurfaceInspector::connectButtons()
 	_alignTexture.right->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_alignTexture.left->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_modifyTex.natural->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+	_modifyTex.normalise->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 
 	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
@@ -212,6 +213,7 @@ void SurfaceInspector::connectButtons()
 	wxutil::button::connectToCommand(_flipTexture.flipX, "FlipTextureX");
 	wxutil::button::connectToCommand(_flipTexture.flipY, "FlipTextureY");
 	wxutil::button::connectToCommand(_modifyTex.natural, "TextureNatural");
+	wxutil::button::connectToCommand(_modifyTex.normalise, "NormaliseTexture");
 
 	wxutil::button::connectToCommand(_alignTexture.top, "TexAlignTop");
 	wxutil::button::connectToCommand(_alignTexture.bottom, "TexAlignBottom");
@@ -452,6 +454,9 @@ void SurfaceInspector::populateWindow()
     _modifyTex.natural = new wxButton(this, wxID_ANY, _(LABEL_NATURAL));
     _modifyTex.natural->SetToolTip(_(TT_NATURAL));
     modTextureBox->Add(_modifyTex.natural, 0, wxEXPAND);
+    _modifyTex.normalise = new wxButton(this, wxID_ANY, _("Normalise"));
+    _modifyTex.normalise->SetToolTip(_("Shift texture coordinates towards the origin"));
+    modTextureBox->Add(_modifyTex.normalise, 0, wxEXPAND | wxLEFT, 6);
     wxStaticText* defaultScaleLabel = new wxStaticText(this, wxID_ANY, _(LABEL_DEFAULT_SCALE));
     modTextureBox->Add(defaultScaleLabel, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
 
@@ -647,6 +652,7 @@ void SurfaceInspector::doUpdate()
 
 	// The natural/normalise widget sensitivity
 	_modifyTex.natural->Enable(haveSelection);
+	_modifyTex.normalise->Enable(haveSelection);
 
 	// Current shader name
 	_shaderEntry->SetValue(selection::getShaderFromSelection());

@@ -79,6 +79,7 @@ class SurfaceInspector :
 	struct ModifyTextureWidgets
 	{
 		wxButton* natural;
+		wxButton* normalise;
 	} _modifyTex;
 
 	wxSpinCtrlDouble* _defaultTexScale;
