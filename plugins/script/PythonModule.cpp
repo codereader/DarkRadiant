@@ -309,7 +309,7 @@ ScriptCommand::Ptr PythonModule::createScriptCommand(const std::string& scriptBa
             }
 
             // Successfully retrieved the command
-            return std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, relativeScriptPath);
+            return std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, relativeScriptPath, scriptBasePath);
         }
 
         rError() << "Script file " << relativeScriptPath << " does not export a __commandName__ value" << std::endl;
