@@ -32,6 +32,7 @@ private:
 	// The command-to-accelerator map containing all registered shortcuts
 	typedef std::map<std::string, Accelerator::Ptr> AcceleratorMap;
 	AcceleratorMap _accelerators;
+	AcceleratorMap _deferredAccelerators;
 
 	// The map of all registered events
 	EventMap _events;
@@ -91,6 +92,8 @@ public:
 	void loadAccelerators() override;
 
 	void foreachEvent(IEventVisitor& eventVisitor) override;
+
+	void connectDeferredAccelerators() override;
 
 	// Tries to locate an accelerator, that is connected to the given command
 	Accelerator& findAccelerator(wxKeyEvent& ev);

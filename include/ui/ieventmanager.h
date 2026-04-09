@@ -202,6 +202,8 @@ public:
 	/* greebo: Retrieves the string representation of the given event
 	 */
 	virtual std::string getEventStr(wxKeyEvent& ev) = 0;
+
+	virtual void connectDeferredAccelerators() = 0;
 };
 
 // Global accessor for the event manager

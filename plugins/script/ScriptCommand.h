@@ -23,12 +23,15 @@ private:
 	// The script file name to execute (relative to scripts/ folder)
 	std::string _scriptFilename;
 
+	std::string _basePath;
+
 public:
     using Ptr = std::shared_ptr<ScriptCommand>;
 
 	ScriptCommand(const std::string& name,
 				  const std::string& displayName,
-				  const std::string& scriptFilename);
+				  const std::string& scriptFilename,
+				  const std::string& basePath);
 
 	~ScriptCommand() override;
 
@@ -45,6 +48,11 @@ public:
 	const std::string& getDisplayName() const override
     {
 		return _displayName;
+	}
+
+	const std::string& getBasePath() const
+    {
+		return _basePath;
 	}
 };
 
