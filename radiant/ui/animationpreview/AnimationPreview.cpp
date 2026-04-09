@@ -178,6 +178,15 @@ void AnimationPreview::setupSceneGraph()
 
 	// This entity is acting as our root node in the scene
 	getScene()->setRoot(_root);
+
+	auto lightClass = GlobalEntityClassManager().findClass("light");
+	if (lightClass)
+	{
+		_light = GlobalEntityModule().createEntity(lightClass);
+		_light->tryGetEntity()->setKeyValue("light_radius", "750 750 750");
+		_light->tryGetEntity()->setKeyValue("origin", "150 150 150");
+		_root->addChildNode(_light);
+	}
 }
 
 void AnimationPreview::onModelRotationChanged()

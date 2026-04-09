@@ -25,6 +25,9 @@ private:
 	// Each model node needs a parent entity to be properly renderable
 	EntityNodePtr _entity;
 
+	// Light to illuminate the model in lighting mode
+	scene::INodePtr _light;
+
 	// The animation to play on this model
 	md5::IMD5AnimPtr _anim;
 
