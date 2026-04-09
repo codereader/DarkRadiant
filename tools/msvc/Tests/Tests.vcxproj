@@ -142,6 +142,7 @@
     <ClCompile Include="..\..\..\test\SceneStatistics.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\test\SelectionGroup.cpp" />
     <ClCompile Include="..\..\..\test\Settings.cpp" />
     <ClCompile Include="..\..\..\test\Skin.cpp" />
     <ClCompile Include="..\..\..\test\SoundManager.cpp" />

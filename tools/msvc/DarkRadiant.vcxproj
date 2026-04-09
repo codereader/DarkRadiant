@@ -351,6 +351,7 @@
     <ClCompile Include="..\..\radiant\ui\scatter\ScatterDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\script\ScriptMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\script\ScriptWindow.cpp" />
+    <ClCompile Include="..\..\radiant\ui\selectiongroup\SelectionGroupPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\skin\SkinEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\skin\SkinEditorTreeView.cpp" />
@@ -593,6 +594,8 @@
     <ClInclude Include="..\..\radiant\ui\script\ScriptPanel.h" />
     <ClInclude Include="..\..\radiant\ui\script\ScriptWindow.h" />
     <ClInclude Include="..\..\radiant\ui\SelectionModeToggle.h" />
+    <ClInclude Include="..\..\radiant\ui\selectiongroup\SelectionGroupControl.h" />
+    <ClInclude Include="..\..\radiant\ui\selectiongroup\SelectionGroupPanel.h" />
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h" />
     <ClInclude Include="..\..\radiant\ui\skin\SkinEditor.h" />
     <ClInclude Include="..\..\radiant\ui\skin\SkinEditorTreeView.h" />

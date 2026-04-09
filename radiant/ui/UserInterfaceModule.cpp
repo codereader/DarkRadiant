@@ -83,6 +83,7 @@
 #include "lightinspector/LightInspectorControl.h"
 #include "decalshooter/DecalShooterControl.h"
 #include "overlay/OrthoBackgroundControl.h"
+#include "selectiongroup/SelectionGroupControl.h"
 #include "patch/PatchInspectorControl.h"
 #include "surfaceinspector/SurfaceInspectorControl.h"
 #include "textool/TextureToolControl.h"
@@ -206,6 +207,12 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		[]() { return cmd::ExecutionNotPossible::ToBool(selection::checkUngroupSelectedAvailable); }),
 		IOrthoContextMenu::SECTION_SELECTION_GROUPS);
 
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
+		new wxutil::IconTextMenuItem(_("Ungroup Selection Recursively"), "ungroup_selection.png"),
+		[]() { selection::ungroupSelectedRecursively(); },
+		[]() { return cmd::ExecutionNotPossible::ToBool(selection::checkUngroupSelectedAvailable); }),
+		IOrthoContextMenu::SECTION_SELECTION_GROUPS);
+
 	_longOperationHandler.reset(new LongRunningOperationHandler);
 	_mapFileProgressHandler.reset(new MapFileProgressHandler);
 	_autoSaveRequestHandler.reset(new AutoSaveRequestHandler);
@@ -270,6 +277,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<FindShaderControl>());
     registerControl(std::make_shared<OrthoBackgroundControl>());
     registerControl(std::make_shared<DecalShooterControl>());
+    registerControl(std::make_shared<SelectionGroupControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -310,6 +318,9 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         );
         GlobalMainFrame().addControl(
             UserControl::DecalShooter, ControlSettings::floating(300, 200)
+        );
+        GlobalMainFrame().addControl(
+            UserControl::SelectionGroupPanel, ControlSettings::floating(300, 400)
         );
 
         _viewMenu = std::make_unique<ViewMenu>();

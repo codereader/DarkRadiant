@@ -179,4 +179,39 @@ inline void ungroupSelected()
 	SceneChangeNotify();
 }
 
+/**
+ * Dissolve all group memberships of the currently selected nodes,
+ * removing every nested group level at once.
+ * Will throw cmd::ExecutionNotPossible if it cannot execute.
+ */
+inline void ungroupSelectedRecursively()
+{
+	checkUngroupSelectedAvailable();
+
+	UndoableCommand cmd("UngroupSelectedRecursively");
+
+	std::set<std::size_t> ids;
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		std::shared_ptr<IGroupSelectable> selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		if (!selectable) return;
+
+		for (std::size_t id : selectable->getGroupIds())
+		{
+			ids.insert(id);
+		}
+	});
+
+	auto& selGroupMgr = detail::getMapSelectionGroupManager();
+
+	std::for_each(ids.begin(), ids.end(), [&](std::size_t id)
+	{
+		selGroupMgr.deleteSelectionGroup(id);
+	});
+
+	SceneChangeNotify();
+}
+
 }
