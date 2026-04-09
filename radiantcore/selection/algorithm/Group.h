@@ -128,6 +128,7 @@ namespace algorithm
 	void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args);
 	void groupSelectedCmd(const cmd::ArgumentList& args);
 	void ungroupSelectedCmd(const cmd::ArgumentList& args);
+	void ungroupSelectedRecursivelyCmd(const cmd::ArgumentList& args);
 
 } // namespace algorithm
 } // namespace selection

@@ -52,6 +52,7 @@ add_executable(drtest
                SceneStatistics.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
+               SelectionGroup.cpp
                Settings.cpp
                SoundManager.cpp
                TerrainGenerator.cpp

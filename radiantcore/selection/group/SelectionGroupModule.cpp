@@ -39,6 +39,7 @@ public:
 	{
 		GlobalCommandSystem().addCommand("GroupSelected", algorithm::groupSelectedCmd);
 		GlobalCommandSystem().addCommand("UngroupSelected", algorithm::ungroupSelectedCmd);
+		GlobalCommandSystem().addCommand("UngroupSelectedRecursively", algorithm::ungroupSelectedRecursivelyCmd);
 		GlobalCommandSystem().addCommand("DeleteAllSelectionGroups", algorithm::deleteAllSelectionGroupsCmd);
 
 		GlobalMapModule().signal_mapEvent().connect(

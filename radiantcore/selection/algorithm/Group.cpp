@@ -397,6 +397,11 @@ void ungroupSelectedCmd(const cmd::ArgumentList& args)
 	ungroupSelected();
 }
 
+void ungroupSelectedRecursivelyCmd(const cmd::ArgumentList& args)
+{
+	ungroupSelectedRecursively();
+}
+
 } // namespace algorithm
 
 } // namespace selection

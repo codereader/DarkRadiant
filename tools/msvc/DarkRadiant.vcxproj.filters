@@ -137,6 +137,9 @@
     <Filter Include="src\ui\selectionset">
       <UniqueIdentifier>{44f6abf2-2b6d-46ce-8c41-291f862855f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\selectiongroup">
+      <UniqueIdentifier>{8b3a1c4d-5e2f-4a7b-9c6d-3e8f1a2b4c5d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\map">
       <UniqueIdentifier>{8d1f0555-13d0-4735-ad5e-26bdf8578bc6}</UniqueIdentifier>
     </Filter>
@@ -498,6 +501,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp">
       <Filter>src\ui\selectionset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\selectiongroup\SelectionGroupPanel.cpp">
+      <Filter>src\ui\selectiongroup</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp">
       <Filter>src\ui\modelexport</Filter>
@@ -1133,6 +1139,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h">
       <Filter>src\ui\selectionset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\selectiongroup\SelectionGroupControl.h">
+      <Filter>src\ui\selectiongroup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\selectiongroup\SelectionGroupPanel.h">
+      <Filter>src\ui\selectiongroup</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h">
       <Filter>src\ui\modelexport</Filter>
