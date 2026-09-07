@@ -37,3 +37,4 @@ OpenFBX library - see the LICENSE file in radiantcore/model/import/openfbx (MIT 
 pugixml library - see the LICENSE file in the libs/pugixml folder (MIT license)
 SHA256 implementation - by Brad Conte, released into the public domain, see this URL: 
     (https://github.com/B-Con/crypto-algorithms/tree/master#readme)
+cgltf library - see the LICENSE file in the radiantcore/model/import/gltf folder (MIT license)
