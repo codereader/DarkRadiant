@@ -150,6 +150,7 @@ add_library(radiantcore MODULE
             model/import/ModelImporterBase.cpp
             model/import/openfbx/ofbx.cpp
             model/import/FbxModelLoader.cpp
+            model/import/GltfModelLoader.cpp
             model/picomodel/PicoModelLoader.cpp
             model/picomodel/PicoModelModule.cpp
             model/StaticModel.cpp

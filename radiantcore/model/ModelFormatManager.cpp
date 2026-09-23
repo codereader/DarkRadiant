@@ -9,11 +9,14 @@
 
 #include "module/StaticModule.h"
 
+#include "import/GltfModelLoader.h"
 #include "import/FbxModelLoader.h"
 #include "export/AseExporter.h"
 #include "export/Lwo2Exporter.h"
 #include "export/WavefrontExporter.h"
 #include "command/ExecutionFailure.h"
+
+
 
 namespace model
 {
@@ -40,6 +43,7 @@ void ModelFormatManager::initialiseModule(const IApplicationContext& ctx)
 
     // Register the built-in model importers
     registerImporter(std::make_shared<FbxModelLoader>());
+    registerImporter(std::make_shared<GltfModelLoader>());
 
 	// Register the built-in model exporters
 	registerExporter(std::make_shared<AseExporter>());

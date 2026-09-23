@@ -215,6 +215,9 @@
     <Filter Include="src\fx">
       <UniqueIdentifier>{8090888b-90cb-49eb-b203-f30f0635ab17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\model\import\gltf">
+      <UniqueIdentifier>{f9cb3f01-2a75-4b83-b0a7-1bcc85cb5df1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1110,6 +1113,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\skins\Doom3ModelSkin.cpp">
       <Filter>src\skins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\import\GltfModelLoader.cpp">
+      <Filter>src\model\import</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2261,6 +2267,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\SceneSelectionTesters.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\import\GltfModelLoader.h">
+      <Filter>src\model\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\import\gltf\cgltf.h">
+      <Filter>src\model\import\gltf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
